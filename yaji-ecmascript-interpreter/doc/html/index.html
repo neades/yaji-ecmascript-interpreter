@@ -1,0 +1,232 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="generator"
+ content="pop!site Version 1.0R60 for Win32/80x86">
+  <meta name="GENERATOR"
+ content="Mozilla/4.72 [en] (Win98; U) [Netscape]">
+  <meta name="Author" content="Jean-MarcLugrin">
+  <meta name="Description"
+ content="Describe the FESI EcmaScript interpreter">
+  <meta name="KeyWords"
+ content="EcmaScript, JavaScript, JScript, Java, BSF">
+  <title>FESI (pr. like fuzzy) EcmaScript interpreter</title>
+</head>
+<body style="background-color: rgb(173, 216, 230);" link="#00008b"
+ vlink="#00008b">
+&nbsp;
+<table cellspacing="6" width="100%">
+  <tbody>
+    <tr>
+      <td align="center"><img src="fesi.gif" height="60" width="75"> </td>
+      <td align="left"><font color="#a52a2a"><font size="+3">FESI
+(pronounced like <i>fuzzy</i>)</font></font><br>
+      <font color="#a52a2a"><font size="+3">a Free EcmaScript
+Interpreter.</font></font></td>
+    </tr>
+  </tbody>
+</table>
+<center>
+<p><font color="#ff0000"><font size="+3">Release 1.1.8</font></font><br>
+<font color="#ff0000"><font size="+3">Uses JDK 1.4 regular expressions<br>
+Precompiled library for JDK 1.1.8 and up included.<br>
+</font></font></p>
+</center>
+<p><br>
+<table width="100%" bgcolor="#a52a2a" text="#FFFFFF">
+  <tbody>
+    <tr>
+      <td>
+      <center><b><font color="#ffffff"><font size="+2">The </font><tt><font
+ size="+3"> FESI</font></tt><font size="+2"> (pronounced like <i>fuzzy</i>)
+home
+page</font></font></b></center>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<center><b>Version 1.1.8&nbsp; 29-Sep-2003)</b><br>
+<b><a href="copyright.html">Download current version</a>&nbsp;
+(combined source/binary kit)</b><br>
+<b><a href="copyright.html">Download
+previous version</a>
+(separate source and binary kits)<br>
+</b><b>You can mail me by clicking
+<script type="text/javascript" language="javascript">
+<!--
+// eMail Obfuscator Script 2.1 by Tim Williams - freeware
+{
+ 	coded = "mlzp@s3nypu.jo"
+		cipher = "aZbYcXdWeVfUgThSiRjQkPlOmNnMoLpKqJrIsHtGuFvEwDxCyBzA1234567890"
+		shift=coded.length
+		link=""
+		for (i=0; i<coded.length; i++){
+			if (cipher.indexOf(coded.charAt(i))==-1){
+				ltr=coded.charAt(i)
+				link+=(ltr)
+			}
+			else {     
+				ltr = (cipher.indexOf(coded.charAt(i))-shift+cipher.length) % cipher.length
+				link+=(cipher.charAt(ltr))
+			}				
+    }
+			document.write("<a href='mailto:"+link+"'> here</a>")
+    }
+//-->
+</script>
+<noscript> <p>Sorry, but a Javascript-enabled browser is required to
+read the mail address.</p> </noscript>
+(requires a Javascript enabled browser)</b></center>
+<hr>
+<p><tt>FESI</tt> (pronounced like <i>fuzzy</i>)&nbsp; is a full
+implementation of the first version of the EcmaScript language (defined
+in the standard <tt>ECMA 262</tt> available at <tt><a
+ href="http://www.ecma-international.org">
+http://www.ecma-international.org</a> </tt>
+(edition of june 97).&nbsp; EcmaScript is largely equivalent to the
+JavaScript language version 1.1 or to the core part of JScript, but
+without the navigator specific extensions. <br>
+</p>
+<p><span style="font-style: italic;">Capabilities:<br>
+</span></p>
+<ul>
+  <li><tt>FESI </tt>implements most of the specified standard (there
+are small discrepancies dues to the grammar and naturally some bugs,
+but it is not a toy implementation).</li>
+  <li><tt>FESI </tt>currently implements only the first version of the
+standard (roughly Javascript 1.1). It does not include the significant
+extensions of version 2.</li>
+  <li><tt>FESI </tt>is easy to extend in a compatible way (without
+changing the grammar). A set of <a href="ext.html">extensions</a> are
+provided they are:</li>
+  <ul>
+    <li><a href="ext.html#BasicIO">basic
+input/output</a> ,</li>
+    <li><a href="ext.html#FileIO">file
+input/output</a> ,</li>
+    <li><a href="ext.html#JavaAccess">access
+to Java objects</a> (including dynamic loading of classes and
+beans).</li>
+    <li><a href="ext.html#Database">database
+access</a> and</li>
+    <li><a href="ext.html#RegExp">regular
+expression based search </a> from an
+EcmaScript program.</li>
+  </ul>
+</ul>
+<ul>
+  <li><tt>FESI </tt>can be used from the <a href="bsf.html"><span
+ style="font-family: monospace;">Bean Scripting Framework</span></a>.</li>
+  <li><tt>FESI </tt>can run on any version of Java since JDK 1.1.8,
+with the exception of some extensions requiring external libraries.<br>
+  </li>
+</ul>
+<p><br>
+The documentation of <tt>FESI</tt> is included <a href="docindex.html">here</a>.
+It is part of the kit too. </p>
+<p><tt>FESI</tt> consists of <a href="javalib.html">a set of java
+packages</a> , allowing to use EcmaScript as a macro language for Java
+applications, and of an <a href="interp.html">interactive interpreter</a>
+(usable from the command line to test EcmaScript programs). The
+integration with Java is very strong, making <tt>FESI</tt> a useful
+tool to test Java libraries. </p>
+<p>There is a simple editor included with the Swing version of the
+interpreter. You can execute scripts interactively or from the editor
+windows. </p>
+<hr>
+<h4>A few examples of code:</h4>
+<ul>
+  <li> Simple code to<a href="properties.txt"> list system properties</a>
+, an example to access Java from EcmaScript.</li>
+  <li> The <a href="juggler.txt">juggler code</a> creates the juggler
+bean with start and stop button. An example how
+a bean can be tested from an EcmaScript program.</li>
+  <li> An example of <a href="swingev.txt">using Swing</a> from
+EcmaScript, including event handling.</li>
+  <li> A simple <a href="xparse.txt"><tt>XML</tt> parser</a> written
+entirely in EcmaScript.</li>
+  <li><a href="forsite/fesiftp/fesiftp.html">FesiFTP</a> , a simple FTP
+access program with macros written in EcmaScript. - CURRENTLY NOT
+INCLUDED IN THE DISTRIBUTION.<br>
+  </li>
+</ul>
+<hr>
+<h4> Latest changes:</h4>
+<blockquote><i>1.1.8 - Septembre 29, 2003<br>
+&nbsp;&nbsp;&nbsp; Include a jar for execution on JDK 1.1.8, for
+example on PDA or other small devices.<br>
+&nbsp;&nbsp;&nbsp; Use the Appache version (2.3) of the BSF.<br>
+&nbsp;&nbsp;&nbsp; Upgraded to latest IzPack.<br>
+  <br>
+1.1.7 - August 31,&nbsp; 2003</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Support access to static fields from an object
+(before, the class object had to be specified).<br>
+&nbsp;&nbsp;&nbsp; Support of BSF, version 2.2 (see </i><a
+ href="bsf.html">Bean Scripting Framwork</a><i>), allowing to call FESI
+from a common interface used by many tools.<br>
+&nbsp;&nbsp;&nbsp; Added example for swing (examples/swing/swingev.esw)
+that demonstrate use of events.<br>
+&nbsp;&nbsp;&nbsp; Added getWrappedObject and getWrappedBean to the js
+package.<br>
+&nbsp;&nbsp;&nbsp; Upgraded to latest JavaCC and IzPack (no user
+visible change).<br>
+  </i><i><br>
+1.1.6a - August 22,&nbsp; 2003</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Only changes to the documentation and site,
+included all build files in the source kit.</i><i><br>
+&nbsp;&nbsp;&nbsp; Made previous version (1.1.5) available.<br>
+  <br>
+  </i><i>1.1.6 - August 4,&nbsp; 2003</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Upgraded to JDK 1.4 (including RegExp library),
+latest versions of JavaCC, ORO and GNU RegExp.<br>
+  </i><i>&nbsp;&nbsp;&nbsp; Corrected an important bug in scope chain
+and 'this'
+(thanks to Michael Schneider).<br>
+&nbsp;&nbsp;&nbsp; Added command @modules to load using the classpath
+(now @load uses the file loader).<br>
+&nbsp;&nbsp;&nbsp; Moved to www.lugrin.ch/fesi.<br>
+&nbsp;&nbsp;&nbsp; Use IzPack installer.<br>
+  </i><br>
+  <i>Additional details and previous history is available <a
+ href="file:///C:/javadev/FESI/doc/html/history.html"> here</a> .</i></blockquote>
+<hr>
+<ul>
+  <ul>
+    <li><a href="docindex.html">Documentation</a> - Describes
+the interpreter, library interface and extensions.</li>
+    <li><a href="pubkey.html">Public key</a> - Contains my public PGP
+key used to sign some redistribution licenses (under the old license
+agreement, prior to 1.1.3).</li>
+    <li><a href="links.html">Links</a> - List links useful
+for EcmaScript developers and <tt>FESI</tt> users.</li>
+    <li><a href="install.html">Installation instructions</a> -
+Describes reprequisites and installation steps.</li>
+    <li><a href="history.html">Change history</a> - List history of
+changes.</li>
+    <li><a href="copyright.html">Download FESI</a> - You will first
+have to read and accept the conditions.</li>
+    <li><a href="http://www.lugrin.ch/fesi/index.html">FESI&nbsp; home
+page on Internet</a> - For more recent information.</li>
+  </ul>
+</ul>
+<center>
+</center>
+<hr>
+<div align="left">
+<table cellpadding="0" cellspacing="0" border="0"
+ style="width: 100%; text-align: left;">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><font size="-2">Copyright &copy;
+Jean-Marc Lugrin 1998-2003 - Under LGPL license</font></td>
+      <td style="vertical-align: top; text-align: right;"><font
+ size="-2">Last update: 29 September 2003</font></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</body>
+</html>

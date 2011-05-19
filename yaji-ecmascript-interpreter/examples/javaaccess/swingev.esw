@@ -1,0 +1,68 @@
+// swing.es
+//
+// FESI examples - JM Lugrin - 1998
+//
+// This example demonstrates how you can play with the swing 
+// toolkit with the FESI EcmaScript interpreter.
+
+// Requires: JavaAccess, Swing-1.0
+//           Adapt swingev.bat to run this example
+
+
+// First define some shortcuts - note that partially expanded
+// package names can be assigned. 
+
+Swing = Packages.javax.swing; // Just change this line if it moves
+
+JFrame = Swing.JFrame;
+JButton = Swing.JButton;
+JRadioButton = Swing.JRadioButton;
+ButtonGroup = Swing.ButtonGroup;
+JPanel = Swing.JPanel;
+UIManager = Swing.UIManager;
+SwingUtilities = Swing.SwingUtilities;
+
+// As there is no exception handling in EcmaScript, there
+// will be an error if the look and feel is not on the classpath
+cplfClassName = UIManager.getCrossPlatformLookAndFeelClassName();
+slfClassName = UIManager.getSystemLookAndFeelClassName();
+
+
+// Create the panel and its content 
+panel = new JPanel();
+button = new JButton("Hello, world");
+button.setToolTipText("This is a Button with Text");
+button.setMnemonic('h'); //for looks only; button does nada
+
+cplfButton = new JRadioButton("Cross Platform");
+cplfButton.setMnemonic('c');  // String of length 1 are considered as char 
+slfButton = new JRadioButton("System");
+slfButton.setMnemonic('s'); 
+	
+// Group the radio buttons.
+group = new ButtonGroup();
+group.add(cplfButton);
+group.add(slfButton);
+
+panel.add(button);
+panel.add(cplfButton);
+panel.add(slfButton);
+
+
+// Now create the frame
+frame = new JFrame("Show swing");
+frame.getContentPane().add("Center", panel);
+frame.pack();
+frame.setVisible(true);
+frame.onWindowClosing = "frame.dispose();exit();";
+
+cplfButton.onAction = "setLF(cplfClassName);";
+slfButton.onAction = "setLF(slfClassName);";
+
+function setLF(lf) {
+    UIManager.setLookAndFeel(lf);
+	SwingUtilities.updateComponentTreeUI(frame);
+	frame.pack();
+}
+
+

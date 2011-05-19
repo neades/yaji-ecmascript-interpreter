@@ -1,0 +1,381 @@
+// stmt.estest
+// FESI Copyright (c) Jean-Marc Lugrin, 1999
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+writeln ("// " + document.URL);
+writeln ("// " + Date());
+writeln ("// Test statements");
+writeln();
+
+// 12.1
+
+@test block.1
+{a = 1; {3; b= 4}; c = b;}
+c==4;
+
+@test block.2
+// Just test proper parsing of empty blocks
+{}
+true;
+
+// 12.2
+@test var.1
+v2=4;
+v1=5;
+var v1, v2=3, v4;
+typeof v4 == "undefined";
+
+@test var.2
+v2==3;
+
+@test var.3
+v1==5;
+
+// 12.3
+@test empty.1
+;;;true;
+
+@test empty.2
+function ef1() {;}
+e1 = ef1();
+typeof e1 == "undefined";
+
+function ef2() {}
+er = ef2();
+typeof er == "undefined";
+
+
+//12.4
+@test expr.1
+34+23; 12*4/(3+4); true 
+
+// 12.5
+@test if.1
+if (2==2) true;
+
+@test if.2
+if (2==3) false; else true;
+
+@test if.3
+if (0) ; true;
+
+@test if.4
+if (23+4-27) {1; false;} {false; true;}
+
+@test if.5
+if ("") false; else true;
+
+@test if.6
+if ("false") true; else false;
+
+@test if.7
+a=false;
+if (!a) a = true;
+a;
+
+@test if.8
+function ef3(v) {if (1 == 0) {return 1;}}
+er = ef3();
+typeof er == "undefined";
+
+@test if.9
+if (ef3()) er=1; else er=2;
+er == 2;
+
+// 12.6
+// 12.6.2
+@test while.1
+a = 1;
+while (a<5) a++;
+a==5;
+
+@test while.2
+a = 1;
+while (a<1) a++;
+a==1;
+
+@test while.3
+a = 1;
+while (a<5) {a++; if (a==3) break; }
+a==3;
+
+@test while.4
+a = 1;
+b = true;
+while (b) {a++; if (a==5) b = false;}
+a==5;
+
+@test while.5
+var ir=-1;
+var i=0;
+while (i<4) {
+  ir = i;
+  if (i>10) break;
+  i++;
+  continue;
+  ir = -1;
+}
+ir == 3;
+
+
+@test while.6
+var ir=-1;
+while (ef3()) {
+  ir = 1;
+}
+ir == -1;
+
+// 12.6.2
+@test for.1
+for (a =0; a<5; a++) ;
+a==5;
+
+@test for.2
+a = 0;
+for (; a<6; a++) ;
+a==6;
+
+@test for.3
+for (a=0;; a++) if (a==5) break;
+a==5;
+
+@test for.4
+a = 0;
+for (a =0; a<5;) a++;
+a==5;
+
+@test for.5
+for (a=5; a>0; a--) ;
+a==0;
+
+@test for.6
+for (var a =0; a<5; a++) ;
+a==5;
+
+@test for.7
+for (var a=0;; a++) if (a==5) break;
+a==5;
+
+@test for.8
+a = 0;
+for (var a =0; a<5;) a++;
+a==5;
+
+@test for.9
+for (var a=5; a>0; a--) ;
+a==0;
+
+@test for.10
+for (var a=0, b=5; a<5; b++) a++;
+b==10;
+
+@test for.11
+var ir = 0;
+for (var i = 0; i < 4; i++ )
+{
+	ir = i; 
+	if (i>10) break;
+	continue ;
+	ir = -1;
+}
+ir==3;
+
+@test for.12
+var ir=-1;
+for (ef3();ef3();ef3()) {
+  ir = 1;
+}
+ir == -1;
+
+// 11.6.3
+@test forin.1
+o = new Object();
+o.a = 1;
+o.b = 2;
+o.c = 4;
+a = 0;
+for (i in o) {a += o[i]}
+a == 7;
+
+@test forin.2
+a = new Array();
+a[2] = 3;
+a[4] = 5;
+v = 0;
+for (i in a)  v += a[i];
+v == 8;
+
+@test forin.3
+o = new Object();
+o.a = 1;
+o.b = 2;
+o.c = 4;
+a = 0;
+for (var i in o) {a += o[i]}
+a == 7;
+
+@test forin.4
+a = new Array();
+a[2] = 3;
+a[4] = 5;
+v = 0;
+i = 5;
+for (var i in a)  v += a[i];
+v == 8;
+
+@test forin.5
+a = new Array();
+a[2] = 3;
+a["xx"] = 2;
+a[4] = 5;
+v = 0;
+i = 5;
+for (var i in a)  v += a[i];
+v == 10;
+
+
+// 12.9
+@test return.1
+function r1(x) {1; return x+2; 5}
+r1(3) == 5;
+
+@test return.2
+function r2(x) {1; 
+   for (var i=0; i<5; i++) {
+       if (i == 3) return x;
+       x ++;
+   }
+   return "aa";
+}
+r2(3) == 6;
+
+
+@test return.3
+function r3(x) {1; 
+   for (var i=0; i<x; i++) {
+       aa+=2;
+       if (i == 3) return;
+   }
+   a = "wrong";
+   return;
+}
+aa = 0;
+r3(5);
+aa == 8;
+
+// 12.10;
+@test with.1
+with (Math) {
+  a = sin(2);
+}
+true;
+
+@test with.2
+o = new Object();
+function sin(x) { return "a";}
+o.sin = sin;
+
+with (o) {
+  sin(1)=="a";
+}
+
+@test with.3
+with (Math) with (o) {a = sin(1);}
+a == "a";
+
+@test with.4
+with (o) with (Math) {a = sin(1);}
+0.8<a && a<0.9;
+
+@test with.5
+with (o) {gl=123;}
+gl==123;
+
+
+// The scoping (with) implementation has a peculiarity which makes
+// the following tests worthwhile
+@test scope.1
+sa = 1;
+sb = 2;
+sc = 3;
+function testScope() {
+s1.sb = 22;
+s1.sc = 33;
+s2.sc=333;
+with (s1) {
+  with (s2) {
+    return (sa==1 && sb == 22 && sc == 333)
+  }
+}
+}
+
+s1 = new Number(99);
+s2 = new Number(98)
+testScope();
+
+@test scope.2
+s1 = new String("abc");
+s2 = new String("def")
+testScope();
+
+@test scope.3
+s1 = new Date();
+s2 = new Date()
+testScope();
+
+@test scope.4
+s1 = new Array(1,2,3);
+s2 = new Array(4,5,6)
+testScope();
+
+@test scope.5
+s1 = new Boolean(true);
+s2 = new Boolean(false)
+testScope();
+
+@test scope.6
+s1 = new Function("return 1");
+s2 = new Function("return 2")
+testScope();
+
+@test scope.7
+s1 = new Object();
+s2 = new Object()
+testScope();
+
+@test scope.8
+function getArg(a) {
+  return arguments;
+}
+
+s1 = new getArg(1);
+s2 = new getArg(2);
+testScope();
+
+// This is to test a bug in chaining scopes
+@test scopeChain.1
+var sca = new Object();
+function scNewObject() {}
+scNewObject.prototype = sca;
+var scb = new scNewObject();
+sca.test = 1;
+with(scb) {test==1}
+
+
+
+
+
+

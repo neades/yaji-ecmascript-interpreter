@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="Author" content="Jean-MarcLugrin">
+  <meta name="GENERATOR"
+ content="Mozilla/4.5 [en] (Win98; I) [Netscape]">
+  <meta name="Description"
+ content="Describe the FESI EcmaScript extension for event processing">
+  <meta name="KeyWords"
+ content="EcmaScript, JavaScript, JScript, Java, extension">
+  <title>FESI Event Processing</title>
+</head>
+<body style="background-color: rgb(173, 216, 230);" link="#00008b"
+ vlink="#00008b">
+&nbsp;
+<table cellspacing="6" width="100%">
+  <tbody>
+    <tr>
+      <td align="center"><img src="fesi.gif" height="60" width="75"></td>
+      <td align="left"><font color="#a52a2a"><font size="+3">Free
+EcmaScript Interpreter.&nbsp;</font></font> <br>
+      <font color="#a52a2a"><font size="+3">A JavaScript interpreter
+written
+in Java.</font></font></td>
+    </tr>
+  </tbody>
+</table>
+<br>
+&nbsp;
+<table width="100%" bgcolor="#a52a2a" text="#FFFFFF">
+  <tbody>
+    <tr>
+      <td><b><font color="#ffffff"><font size="+2">Language extensions
+- Event
+processing</font></font></b></td>
+    </tr>
+  </tbody>
+</table>
+The event processing mechanism is very similar to the Netscape event
+processing
+by the syntax, but differ in its semantic. These differences are
+required
+because the goal is different. The <tt>FESI</tt> event processing
+capability
+is targeted to the processing of Java 1.1 events (as found in the <tt>AWT</tt>,
+<tt>Beans</tt>
+and Swing), and not to a specific browser environment. The event
+mechanism
+can be used both for beans and for non bean objects (as long as they
+follow
+the Java 1.1 event model).
+<p><i>The <tt>FESI</tt> event processing is capable to handle any Java
+1.1 event, the event adaptor is built dynamically as needed.</i>
+</p>
+<p>If <tt>FESI</tt> is used as an embedded scripting capability in
+another
+product, the built-in event extension capability can be used or another
+set of capabilities can be developed, at the programmer choice.
+</p>
+<p>Event procedures are of two kinds: functions (with the event as the
+parameter) or string to be evaluated. The parsing is done at the time
+of
+event establishement and parsing error are raised there. If a string if
+used, the variable <i><tt>event</tt></i> is bound to the first
+parameter
+of the handler method. The variable <i><tt>this</tt></i> is bound to
+the
+object for which the variable was registered. Only one event of a type
+can be registered on any object (that is on its wrapper). The event
+handler
+is unregistered by using <i><tt>null</tt></i> as event handler.
+</p>
+<ul>
+  <tt>// Common abreviations</tt> <br>
+  <tt>Frame = java.awt.Frame;</tt> <br>
+  <tt>Button = java.awt.Button;</tt>
+  <p><tt>// Create the GUI</tt> <br>
+  <tt>f = new Frame("An EcmaScript Frame");</tt> <br>
+  <tt>f.setSize(200,200)</tt> <br>
+  <tt>b = new Button("FESI");</tt> <br>
+  <tt>f.add("Center",b)</tt> <br>
+  <tt>f.pack();</tt> <br>
+  <tt>f.show()</tt> </p>
+  <p><tt>// Example of using twice the same action - the first one will
+be</tt> <br>
+  <tt>// overridden and only the second action will be processed</tt> <br>
+  <tt>b.onAction = "writeln ('ES Action 1');";</tt> <br>
+  <tt>b.onAction = "writeln ('ES Action 2');";</tt> </p>
+  <p><tt>// The event variable contains the event</tt> <br>
+  <tt>b.onKeyTyped = "writeln('KEY: ' + event);";</tt> </p>
+  <p><tt>// Use of a function - this is the object (wrapper) for which
+the
+action was registered</tt> <br>
+  <tt>function dispose(event) {</tt> <br>
+  <tt>&nbsp; writeln();</tt> <br>
+  <tt>&nbsp; writeln("Event received: " + event);</tt> <br>
+  <tt>&nbsp; writeln("By: " + this);</tt> <br>
+  <tt>&nbsp; this.dispose();</tt> <br>
+  <tt>}</tt> <br>
+  <tt>f.onWindowClosing = dispose;</tt> <br>
+  <tt>writeln("ready");</tt> <br>
+  <tt>}</tt> <br>
+&nbsp;</p>
+</ul>
+The event parameter is the Java event value (wrapped as an EcmaScript
+value),
+and can be used as any other Java value.
+<br>
+The name of the event is as follow:
+<ol>
+  <ol>
+    <li>For event listener which have a single function handler (as <tt>ActionEvent</tt>),
+either the name of the event or the name of the event handler (preceded
+by "on") can be used.</li>
+    <li>For event listener which have multiple event handlers (as <tt>WindowEvent</tt>),
+the name of the function must be used (preceded by "on").</li>
+  </ol>
+</ol>
+<i>Remarks:</i>
+<ul>
+  <li>If there are conflict between these names or with properties or
+other
+functions
+of the same object, you are out of luck.</li>
+  <li>When evaluating anything the evaluator locks itself - the same
+lock is
+required to process events. This can easily create deadlock!</li>
+  <li>Using the Sun JDK, Ctrl-break on Win32, or Ctrl-/ on Solaris will
+dump
+out all the active threads and monitors of a running Java apps. That's
+the fastest way to find out what's causing deadlocks.</li>
+</ul>
+<hr>
+<center><a href="index.html">Return to the main page</a></center>
+<hr>
+<div align="left">
+<table cellpadding="0" cellspacing="0" border="0"
+ style="width: 100%; text-align: left;">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><font size="-2">Copyright &copy;
+Jean-Marc Lugrin 1998-2003 - Under LGPL license</font></td>
+      <td style="vertical-align: top; text-align: right;"><font
+ size="-2">Last update: 26 August 2003</font></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</body>
+</html>

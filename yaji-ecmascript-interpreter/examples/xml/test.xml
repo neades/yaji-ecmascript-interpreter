@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+
+<document>
+
+<sample type="XML">
+<p>This is some <i>sample</i> text.</p>
+<p>It does support <breath/> empty tags.</p>
+<p>When you <event>press</event> the button,
+the parser will process this text and a simple javascript
+loop will regenerate it.</p>
+</sample>
+
+
+<comment>
+This section contains
+<!-- a comment -->
+in the middle of it
+</comment>
+
+
+<pi>
+This section contains
+<? a processing instruction ?>
+in the middle of it.
+PI's are embedded information for applications.
+</pi>
+
+
+<CDATA>
+This is a special section that
+<tag>contains <![CDATA[ a CDATA </tag>section]]> in</tag>
+the middle of it.
+</CDATA>
+
+</document>
+

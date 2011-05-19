@@ -1,0 +1,188 @@
+// fileio.estest
+// FESI Copyright (c) Jean-Marc Lugrin, 1999
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+writeln ("// " + document.URL);
+writeln ("// " + Date());
+writeln ("// Test the fileIO extension - FESI specific");
+writeln();
+
+@test fileio.1
+// Test that FileIO is loaded
+!!File
+
+@test fileio.2
+f1 = new File("esfileio.tmp");
+f2 = File("esfileio.bak");
+f1.remove();
+f2.remove();
+(!f1.exists() && !f2.exists());
+
+@test list.1
+!f1.list()
+
+@test list.2
+fl = File(".").list();
+fl.length>0;
+
+@test isopened.1
+!f1.isOpened();
+
+@test open.1
+status = f1.open()
+f1.exists() && status;
+
+@test isopened.2
+f1.isOpened();
+
+@test write.1
+f1.writeln("This is a test file installed by fileio.estest");
+f1.writeln("line 2");
+
+@test flush.1
+status = f1.flush();
+f1.writeln("line 3");
+status;
+
+@test write.2
+status = f2.writeln("impossible")
+!status && f2.error().indexOf("IllegalStateException:")==0;
+
+@test clearError.1
+f2.clearError();
+!f2.error()
+
+@test readln.1
+status = f1.readln()
+!status && f1.error().indexOf("IllegalStateException:")==0;
+
+@test close.1
+f1.close()
+
+@test close.2
+!f2.close();
+
+@test open.2
+f1.open();
+
+@test eof.1
+f1.readln();
+!f1.eof()
+
+@test readln.2
+f1.readln()=="line 2";
+
+@test readln.3
+line = f1.readln();
+line = f1.readln();
+typeof(line)=="object";
+
+@test readln.4
+status = f1.error().indexOf("EOFException:")==0
+f1.clearError();
+status;
+
+@test eof.2
+f1.eof();
+
+@test eof.3
+status = f2.eof()
+status &= f2.error().indexOf("IllegalStateException:")==0;
+f2.clearError();
+status;
+
+@test isFile.1
+f1.close()
+f1.isFile() 
+
+@test isFile.2
+!File(".").isFile();
+
+@test isFile.3
+!f2.isFile()
+
+@test isDirectory.1
+File(".").isDirectory()
+
+@test isDirectory.2
+!f1.isDirectory()
+
+@test isDirectory.3
+!f2.isDirectory()
+
+@test getLength.1
+f1.getLength()>50
+
+@test getLength.2
+f2.getLength()==0
+
+@test remove.1
+!f2.remove()
+
+@test renameTo.1
+status = f1.renameTo(f2);
+status && f2.exists() && !f1.exists()
+
+@test remove.2
+f1.open();
+f1.writeln("test");
+f1.close();
+status = f1.remove()
+status & !f1.exists()
+
+@test canRead.1
+f2.canRead();
+
+@test canRead.2
+!f1.canRead()
+
+// canWrite cannot be much tested, for lack of a way to set a file readonly
+@test canWrite.1
+f2.canWrite()
+
+@test canWrite.2
+!f1.canWrite()
+
+@test path.1
+ff = File(f1.getAbsolutePath())
+par = ff.getParent()
+// par.length()<ff.length();
+par != ff;
+
+@test path.2
+ff.getPath()==ff.toString();
+
+@test path.3
+ff.getName()== "esfileio.tmp";
+
+@test path.4
+ff.isAbsolute() && !f1.isAbsolute()
+
+@test preparedir.1
+fd = File("zzztdir");
+if (fd.exists() && fd.isDirectory()) fd.remove()
+!fd.exists();
+
+@test mkdir.1
+fd.mkdir();
+
+@test mkdir.2
+fd.list().length==0;
+
+@test cleanup
+f2.remove();
+fd.remove()
+

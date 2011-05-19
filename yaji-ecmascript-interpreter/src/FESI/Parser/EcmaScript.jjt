@@ -1,0 +1,959 @@
+/**
+ * Copyright (C) 1998-2003 Jean-Marc Lugrin - all rights reserved.
+ *
+ * This file contains an EcmaScript grammar and actions that implement a front-end.
+ * Reference to EcmaScript standard 262 June 1977 
+ */
+
+options {
+  STATIC = false;
+  DEBUG_PARSER = false;
+  DEBUG_TOKEN_MANAGER = false;
+  JAVA_UNICODE_ESCAPE = false; // We do our own Unicode processing
+  UNICODE_INPUT = false; // Wait until JavaCC uses Java 1.1 !
+  // Set BUILD_NODE_FILES to true to rebuild all AST routines, in case
+  // a new production is added to the grammar.
+  // BEWARE: 
+  // ONLY the NEW AST routines must be copied from the 
+  // FESI.Parser package to the FESI.AST package manually, and the 
+  // import FESI.Parser.* statement must be added to it.
+  // SOME AST ROUTINES WHERE MODIFIED MANUALLY - do not overwrite them!
+  // The FESI.AST.EcmaScriptVisitor interface must manually be adapted, as
+  // well as the FESI.AST.EcmaScriptDumpVisitor.
+  // Then all sources AST routines and the SimpleNode routine must be 
+  // deleted from the parser package where they were generated.
+  // 
+  BUILD_NODE_FILES=false; 
+  MULTI=true;
+  NODE_DEFAULT_VOID=true;
+  NODE_PACKAGE = "FESI.AST";
+  VISITOR=true;
+  NODE_SCOPE_HOOK=true;   // Used to save line number
+}
+
+PARSER_BEGIN(EcmaScript)
+
+package FESI.Parser;
+
+import FESI.AST.*;
+
+public class EcmaScript {
+
+  // Just for test
+  public static void main(String args[]) {
+    EcmaScript parser;
+    if (args.length == 0) {
+      System.out.println("FESI EcmaScript Parser:  Reading from standard input . . .");
+      parser = new EcmaScript(System.in);
+    } else if (args.length == 1) {
+      System.out.println("FESI EcmaScript Parser:  Reading from file " + args[0] + " . . .");
+      try {
+        parser = new EcmaScript(new java.io.FileInputStream(args[0]));
+      } catch (java.io.FileNotFoundException e) {
+        System.out.println("FESI EcmaScript Parser:  File " + args[0] + " not found.");
+        return;
+      }
+    } else {
+      System.out.println("FESI EcmaScript Parser:  Usage is one of:");
+      System.out.println("         java EcmaScript < inputfile");
+      System.out.println("OR");
+      System.out.println("         java EcmaScript inputfile");
+      return;
+    }
+    try {
+        // ASTProgram n = parser.Program();
+        SimpleNode n = parser.Program();
+		System.out.println("Dump using dump() routine of nodes");
+		System.out.println("----------------------------------");
+        n.dump("");
+		System.out.println();
+		System.out.println("Dump using visitor pattern");
+		System.out.println("--------------------------");
+        EcmaScriptVisitor v = new EcmaScriptDumpVisitor();
+        n.jjtAccept(v, null);
+     System.out.println("FESI EcmaScript parser:  EcmaScript program parsed successfully.");
+    } catch (ParseException e) {
+      System.out.println(e.getMessage());
+      System.out.println("FESI EcmaScript parser:  Encountered errors during parse.");
+    }
+  }
+
+   /**
+    * Save the current line number for run-time error messages
+    */
+   void jjtreeOpenNodeScope(Node n)
+    {
+       Token t = getToken(1);
+       if (t!= null) {
+           ((SimpleNode) n).setLineNumber(t.beginLine);
+       }
+    }
+
+   /**
+    * Dummy routine, required because NODE_SCOPE_HOOK is true
+    */
+    void jjtreeCloseNodeScope(Node n)
+    {
+    }
+
+}
+PARSER_END(EcmaScript)
+
+
+/* WHITE SPACE - 7.1*/
+
+SKIP :
+{
+  " "
+| "\t"
+| "\r"
+| "\f"
+}
+
+/* Line terminator (EmcaScript 7.2)
+ * Handled especialyl due to the EOL as semicolon rules
+ * Splical token do not impact parse, but are available for examination 
+ */
+SPECIAL_TOKEN :
+{
+  <EOL: (["\n","\r"])+ >
+}
+
+/* COMMENTS - EcmaScript 7.3
+ * Use states to skip until EOL
+ */
+
+MORE :
+{
+  "//" : IN_SINGLE_LINE_COMMENT
+|
+  "/*" : IN_MULTI_LINE_COMMENT
+}
+
+<IN_SINGLE_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <SINGLE_LINE_COMMENT: "\n" | "\r" | "\r\n" > : DEFAULT
+}
+
+<IN_MULTI_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <MULTI_LINE_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_SINGLE_LINE_COMMENT,IN_MULTI_LINE_COMMENT>
+MORE :
+{
+  < ~[] >
+}
+
+/* RESERVED WORDS AND LITERALS EcmaScript 7.4 */
+
+TOKEN :
+{
+  < BREAK: "break" >
+| < CONTINUE: "continue" >
+| < DELETE: "delete" >
+| < ELSE: "else" >
+| < FOR: "for" >
+| < FUNCTION: "function" >
+| < IF: "if" >
+| < IN: "in" >
+| < NEW: "new" >
+| < RETURN: "return" >
+| < THIS: "this" >
+| < TYPEOF: "typeof" >
+| < VAR: "var" >
+| < VOID: "void" >
+| < WHILE: "while" >
+| < WITH: "with" >
+
+
+| < CASE: "case" >
+| < CATCH: "catch" >
+| < CLASS: "class" >
+| < CONST: "const" >
+| < DEBUGGER: "debugger" >
+| < _DEFAULT: "default" >
+| < DO: "do" >
+| < ENUM: "enum" >
+| < EXPORT: "export" >
+| < EXTENDS: "extends" >
+| < FINALLY: "finally" >
+| < IMPORT: "import" >
+| < SUPER: "super" >
+| < SWITCH: "switch" >
+| < THROW: "throw" >
+| < TRY: "try" >
+
+// They are not supposed to be keywords
+| < TRUE: "true" >
+| < FALSE: "false" >
+| < NULL: "null" >
+
+
+}
+
+/* LITERALS EcmaScript 7.7 
+ * Decimal and floating point literals are recognized separately (to ease storing?)
+ * FLoating points literals are too permissive (ONLY ONE LEADING ZERO ALLOWED)
+ */
+
+TOKEN :
+{
+  < DECIMAL_LITERAL: ["1"-"9"] (["0"-"9"])* >
+|
+  < HEX_LITERAL: "0" ["x","X"] (["0"-"9","a"-"f","A"-"F"])+ >
+|
+  < OCTAL_LITERAL: "0" (["0"-"7"])* >
+|
+  < FLOATING_POINT_LITERAL:
+        (["0"-"9"])+ "." (["0"-"9"])* (<EXPONENT>)? 
+      | "." (["0"-"9"])+ (<EXPONENT>)? 
+      | (["0"-"9"])+ (<EXPONENT>)? 
+  >
+|
+  < #EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+ >
+|
+  < STRING_LITERAL:
+        "\""
+        (   (~["\"","\\","\n","\r"])
+        | <ESCAPE_SEQUENCE>
+        )*
+        "\""
+      | "'"
+        (   (~["'","\\","\n","\r"])
+        | <ESCAPE_SEQUENCE>
+        )*
+        "'"
+  >
+|  
+  < #ESCAPE_SEQUENCE:
+      "\\"
+        ( ["n","t","b","r","f","\\","'","\""]
+        | ["0"-"7"] ( ["0"-"7"] )?
+        | ["0"-"3"] ["0"-"7"] ["0"-"7"]
+        | ["x"] ["0"-"9","a"-"f","A"-"F"] ["0"-"9","a"-"f","A"-"F"]
+        | ["u"] ["0"-"9","a"-"f","A"-"F"] ["0"-"9","a"-"f","A"-"F"] ["0"-"9","a"-"f","A"-"F"] ["0"-"9","a"-"f","A"-"F"]
+        )
+  >
+|
+  < UNTERMINATED_STRING_LITERAL:
+        "\""
+        (   (~["\"","\\","\n","\r"])
+        | <ESCAPE_SEQUENCE>
+        )*
+        (["\n","\r"])?
+      | "'"
+        (   (~["'","\\","\n","\r"])
+        | <ESCAPE_SEQUENCE>
+        )*
+        (["\n","\r"])?
+  >
+}
+
+/* IDENTIFIERS */
+
+TOKEN :
+{
+  < IDENTIFIER: <LETTER> (<LETTER>|<DIGIT>)* >
+|
+  < #LETTER:
+      [
+       "a"-"z",
+       "A"-"Z",
+       "$",
+       "_"
+      ]
+  >
+|
+  < #DIGIT:
+      [
+       "0"-"9"
+      ]
+  >
+}
+
+/* SEPARATORS */
+
+TOKEN :
+{
+  < LPAREN: "(" >
+| < RPAREN: ")" >
+| < LBRACE: "{" >
+| < RBRACE: "}" >
+| < LBRACKET: "[" >
+| < RBRACKET: "]" >
+| < SEMICOLON: ";" >
+| < COMMA: "," >
+| < DOT: "." >
+}
+
+/* OPERATORS */
+
+TOKEN :
+{
+  < ASSIGN: "=" >
+| < GT: ">" >
+| < LT: "<" >
+| < BANG: "!" >
+| < TILDE: "~" >
+| < HOOK: "?" >
+| < COLON: ":" >
+| < EQ: "==" >
+| < LE: "<=" >
+| < GE: ">=" >
+| < NE: "!=" >
+| < SC_OR: "||" >
+| < SC_AND: "&&" >
+| < INCR: "++" >
+| < DECR: "--" >
+| < PLUS: "+" >
+| < MINUS: "-" >
+| < STAR: "*" >
+| < SLASH: "/" >
+| < BIT_AND: "&" >
+| < BIT_OR: "|" >
+| < XOR: "^" >
+| < REM: "%" >
+| < LSHIFT: "<<" >
+| < RSIGNEDSHIFT: ">>" >
+| < RUNSIGNEDSHIFT: ">>>" >
+| < PLUSASSIGN: "+=" >
+| < MINUSASSIGN: "-=" >
+| < STARASSIGN: "*=" >
+| < SLASHASSIGN: "/=" >
+| < ANDASSIGN: "&=" >
+| < ORASSIGN: "|=" >
+| < XORASSIGN: "^=" >
+| < REMASSIGN: "%=" >
+| < LSHIFTASSIGN: "<<=" >
+| < RSIGNEDSHIFTASSIGN: ">>=" >
+| < RUNSIGNEDSHIFTASSIGN: ">>>=" >
+}
+
+
+
+void Literal() #Literal :
+{
+  Token t;
+}
+{  t = <DECIMAL_LITERAL>
+  {
+    jjtThis.setDecimalValue(t.image);
+  }
+|
+  t = <OCTAL_LITERAL>
+  {
+    jjtThis.setOctalValue(t.image);
+  }
+|
+  t = <HEX_LITERAL>
+  {
+    jjtThis.setHexValue(t.image);
+  }
+|
+  t = <FLOATING_POINT_LITERAL>
+  {
+    jjtThis.setFloatingPointValue(t.image);
+  }
+|
+  t = <STRING_LITERAL>
+  {
+    jjtThis.setStringValue(t.image.substring(1,t.image.length()-1));
+  }
+|
+  t = <TRUE>
+  {
+    jjtThis.setBooleanValue(true);
+  }
+|
+  t = <FALSE>
+  {
+    jjtThis.setBooleanValue(false);
+  }
+|
+  t = <NULL>
+  {
+    jjtThis.setNullValue();
+  }
+|
+  t = <UNTERMINATED_STRING_LITERAL>
+  {
+       throw generateParseException();
+  }
+}
+
+void Identifier() #Identifier :
+{
+  Token t;
+}
+{
+  t=<IDENTIFIER>
+  {
+    jjtThis.setName(t.image);
+  }
+}
+
+
+/*---------------------------------------------*
+ * THE ECMASCRIPT LANGUAGE GRAMMAR STARTS HERE *
+ *---------------------------------------------*/
+
+/*
+ * Expression syntax follows - 11.1, 11.2
+ */
+
+void PrimaryExpression() #void :
+{}
+{
+	( ( ( ("this") #ThisReference) ( PrimarySuffix() )* ) #CompositeReference(>1) )
+|   ( ( Identifier() ( PrimarySuffix() )* ) #CompositeReference(>1) )
+|	Literal()
+|	( ( "(" Expression() ")" ( PrimarySuffix() )* ) #CompositeReference(>1) )
+|	AllocationExpression()  
+}
+
+void PrimarySuffix() #void :
+{}
+{
+	( ( Arguments() ) #FunctionCallParameters )
+| 	( ( "[" Expression() "]" ) #PropertyValueReference )
+| 	( ( "." Identifier() ) # PropertyIdentifierReference )
+}
+
+
+
+void Arguments() # void:
+{}
+{
+	"(" [ ArgumentList() ] ")"
+}
+
+void ArgumentList() #void :
+{}
+{
+	AssignmentExpression() ( "," AssignmentExpression() )*
+}
+
+// ISSUE - New is more flexible, see SYNTAX
+void NewSuffix() #void :
+{}
+{
+    ( ( "." Identifier() ) # PropertyIdentifierReference )
+}
+
+void AllocationExpression() #AllocationExpression :
+{}
+{
+    // "new"  Identifier()  ( ( Arguments() ) #FunctionCallParameters )
+    // "new"  PrimaryExpression() 
+    LOOKAHEAD(2)
+    "new" ( ( ( ("this") #ThisReference) ( NewSuffix() )* ) #CompositeReference(>1) ) ( ( Arguments() )? #FunctionCallParameters )
+
+|   "new" ( ( Identifier() ( NewSuffix() )* ) #CompositeReference(>1) ) ( ( Arguments() )? #FunctionCallParameters )
+
+}
+
+
+// Expressions - 11.3 -11.13
+
+void PostfixOp() #Operator :
+{
+  Token t;
+}
+{
+  ( "++" | "--")
+  {
+    jjtThis.setOperator(getToken(0).kind);
+  }
+}
+void PostfixExpression() #PostfixExpression(>1) :
+{}
+{
+	PrimaryExpression()  [ PostfixOp() ] 
+}
+
+
+void UnaryOp() #Operator :
+{
+  Token t;
+}
+{ 
+  ( "delete" | "void" | "typeof" | "++" | "--" | "+" | "-" | "~" | "!" )
+  {
+    jjtThis.setOperator(getToken(0).kind);
+  }
+}
+void UnaryExpression() #UnaryExpression(>1) :
+{}
+{ 
+	PostfixExpression()
+|	UnaryOp() UnaryExpression()
+}
+
+
+
+void MulOp() #Operator :
+{
+  Token t;
+}
+{
+  ( "*" | "/" | "%" )
+  {
+    jjtThis.setOperator(getToken(0).kind);
+  }
+}
+
+void MultiplicativeExpression() #BinaryExpressionSequence(>1) :
+{}
+{  
+	UnaryExpression() (MulOp() UnaryExpression() )*
+} 
+
+
+void AddOp() #Operator :
+{
+  Token t;
+}
+{
+  ( "+" | "-" )
+  {
+    jjtThis.setOperator(getToken(0).kind);
+  }
+}
+
+void AdditiveExpression() #BinaryExpressionSequence(>1) :
+{}
+{
+	MultiplicativeExpression()( AddOp() MultiplicativeExpression() )*
+} 
+
+
+
+void ShiftOp() #Operator :
+{
+  Token t;
+}
+{
+  ( "<<" | ">>" | ">>>" ) 
+  {
+    jjtThis.setOperator(getToken(0).kind);
+  }
+}
+void ShiftExpression() #BinaryExpressionSequence(>1) :
+{}
+{
+	AdditiveExpression()( ShiftOp() AdditiveExpression() )*
+}
+
+
+
+void RelOp() #Operator :
+{
+  Token t;
+}
+{
+  ( "<" | ">" | "<=" | ">=" ) 
+  {
+    jjtThis.setOperator(getToken(0).kind);
+  }
+}
+void RelationalExpression() #BinaryExpressionSequence(>1) :
+{}
+{
+	ShiftExpression() ( RelOp() ShiftExpression() )*
+}
+
+
+
+void EqualOp() #Operator :
+{
+  Token t;
+}
+{
+  ( "==" | "!=" )
+  {
+    jjtThis.setOperator(getToken(0).kind);
+  }
+}
+void EqualityExpression() #BinaryExpressionSequence(>1) :
+{}
+{
+	RelationalExpression() ( EqualOp() RelationalExpression() )*  
+}
+
+
+
+void BitwiseANDOp() #Operator :
+{
+  Token t;
+}
+{
+  "&"
+  {
+    jjtThis.setOperator(getToken(0).kind);
+  }
+}
+void BitwiseANDExpression() #BinaryExpressionSequence(>1) :
+{}
+{
+	EqualityExpression() ( BitwiseANDOp() EqualityExpression() )*
+}
+
+
+
+void BitwiseXOROp() #Operator :
+{
+  Token t;
+}
+{
+  "^"
+  {
+    jjtThis.setOperator(getToken(0).kind);
+  }
+}
+void BitwiseXORExpression() #BinaryExpressionSequence(>1) :
+{}
+{
+	BitwiseANDExpression() ( BitwiseXOROp() BitwiseANDExpression() )*
+}
+
+
+
+void BitwiseOROp() #Operator :
+{
+  Token t;
+}
+{
+  "|"
+  {
+    jjtThis.setOperator(getToken(0).kind);
+  }
+}
+void BitwiseORExpression() #BinaryExpressionSequence(>1) :
+{}
+{
+	BitwiseXORExpression() ( BitwiseOROp() BitwiseXORExpression() )*
+}
+
+
+
+
+void LogicalANDExpression() #AndExpressionSequence(>1) :
+{}
+{
+	BitwiseORExpression() ( "&&" BitwiseORExpression() )*
+}
+
+
+
+void LogicalORExpression() #OrExpressionSequence(>1) :
+{}
+{
+	LogicalANDExpression() ( "||" LogicalANDExpression() )*
+}
+
+
+
+void ConditionalExpression() #ConditionalExpression(>1) :
+{}
+{
+	LogicalORExpression() [ "?" Expression() ":" ConditionalExpression() ]
+}
+
+// Must check that ConditionalExpression is an LVALUE if assignement used
+// Maybe in runtime ?
+void AssignementOperator() #Operator :
+{
+  Token t;
+}
+{
+    ( "=" | "*=" | "/=" | "%=" | "+=" | "-=" | "<<=" | ">>=" | ">>>=" | "&=" | "^=" | "|=" )
+  {
+    jjtThis.setOperator(getToken(0).kind);  
+  }
+}
+void AssignmentExpression() #AssignmentExpression(>1) :
+{}
+{
+	ConditionalExpression() 
+	[
+	    AssignementOperator() AssignmentExpression()
+	]
+}
+
+// Check that priority is ok, check with assigment
+void Expression() #ExpressionList(>1) :
+{}
+{
+	AssignmentExpression() ( "," AssignmentExpression() )*
+	// AssignmentExpression() 
+}		
+
+
+/*
+ * Statement syntax - 12
+ */
+ 
+ /*
+  * Statement declaration syntax follows.
+  */
+ void Statement() #Statement :
+ {}
+ {
+ 	Block()
+ | 	VariableStatement()
+ |	EmptyStatement()
+ |	ExpressionStatement()
+ |	IfStatement()
+ |	IterationStatement()
+ |	ContinueStatement()
+ |	BreakStatement()
+ |	ReturnStatement()
+ |	WithStatement()
+ }
+ 
+ void Block() #void :
+ {}
+ {
+   LOOKAHEAD(3) "{" "}" #StatementList
+ | "{" [ StatementList() ] "}"
+ }
+ 
+ void VariableStatement() #void :
+ {}
+ {
+ 	"var" VariableDeclarationList() Sc()
+ }
+ 
+ // Use statement list (instead of void) to group declaration (statement being unary)
+ void VariableDeclarationList() #StatementList(>1) :
+ {}
+ {
+ 	VariableDeclaration() ( "," VariableDeclaration() )*
+ }
+ 
+ void VariableDeclaration() #VariableDeclaration :
+ {}
+ {
+ 	Identifier() [ Initializer() ]
+ }
+ 
+ void Initializer() #void :
+ {}
+ {
+ //    "=" Expression()
+     "=" AssignmentExpression()
+ }
+ 
+ 
+ 
+ void EmptyStatement() #void :
+ {}
+ {
+ 	";"
+ }
+ 
+ void ExpressionStatement() #void :
+ {}
+ {
+ 	Expression() Sc() 
+ }
+ 
+ JAVACODE
+    void Sc() {
+
+      Token tok = getToken(1);
+      if (tok.kind == SEMICOLON) {
+         tok = getNextToken();
+      } else if (tok.specialToken != null) {
+         if ((tok.specialToken.kind != EOL) &&
+             (tok.specialToken.kind != SINGLE_LINE_COMMENT)) {
+            throw generateParseException();
+         }
+      } else if ((tok.kind != EOF) && (tok.kind!=RBRACE)) {
+           throw generateParseException();
+      }
+    }
+ 
+ void IfStatement() #IfStatement :
+ /*
+  * The disambiguating algorithm of JavaCC automatically binds dangling
+  * else's to the innermost if statement.  The LOOKAHEAD specification
+  * is to tell JavaCC that we know what we are doing.
+  */
+ {}
+ {
+   "if" "(" Expression() ")" Statement() [ LOOKAHEAD(1) "else" Statement() ]
+ }
+ 
+ 
+ void IterationStatement() #void :
+ {}
+ {
+     WhileStatement()
+ |   LOOKAHEAD( "for" "(" Expression() ";" ) ForStatement()
+ |   LOOKAHEAD( "for" "(" ";" ) ForStatement()
+ |   LOOKAHEAD( "for" "(" "var" VariableDeclarationList() ";" ) ForVarStatement()
+ |	LOOKAHEAD(3) ForInStatement()
+ |	LOOKAHEAD(3) ForVarInStatement()
+ }
+ 
+ void WhileStatement() #WhileStatement :
+ {}
+ {
+     "while" "(" Expression() ")" Statement()
+ }
+ 
+ void ForStatement() #ForStatement :
+ {}
+ {
+     "for" "(" ( [ Expression() ] ) #EmptyExpression(jjtree.nodeArity()==0)  ";"  
+                            ( [ Expression() ] ) #EmptyExpression(jjtree.nodeArity()==0)  ";"  
+                            ( [ Expression() ] ) #EmptyExpression(jjtree.nodeArity()==0) ")" 
+                            Statement()
+ }
+ 
+ void ForVarStatement() #ForVarStatement :
+ {}
+ {
+     "for" "(" "var"  VariableDeclarationList()  ";"  
+     ( [ Expression() ] ) #EmptyExpression(jjtree.nodeArity()==0) ";"  
+     ( [ Expression() ] ) #EmptyExpression(jjtree.nodeArity()==0) ")" 
+     Statement()
+ }
+ 
+ void ForInStatement() #ForInStatement :
+ {}
+ {
+     "for" "(" Expression() "in" Expression() ")" Statement()
+ }
+ 
+ void ForVarInStatement() #ForVarInStatement :
+ {}
+ {
+     "for" "(" "var" Identifier() ( [ Initializer() ] ) #EmptyExpression(jjtree.nodeArity()==0) "in" Expression() ")" Statement()
+ }
+ 
+ void ContinueStatement() #ContinueStatement :
+ {}
+ {
+ 	"continue" Sc()
+ }
+ 
+ void BreakStatement() #BreakStatement :
+ {}
+ {
+ 	"break" Sc()
+ }
+ 
+ void ReturnStatement() #ReturnStatement :
+ {}
+ {
+     "return" ( [ Expression() ] ) #EmptyExpression(jjtree.nodeArity()==0) Sc()
+ }
+ 
+ void WithStatement() #WithStatement :
+ {}
+ {
+ 	"with" "(" Expression() ")" Statement()
+ }
+ 
+
+/*
+ * Function definition - 13
+ */
+
+
+
+
+
+
+/*
+ * Function declaration syntax follows.
+ */
+
+// Formal parameters are handled in a somehwat special way
+// as it is an entry point to parse the parameter list
+// of Function.
+void FunctionDeclaration() #FunctionDeclaration :
+//{}
+//{
+//  "function" Identifier()  ( "(" [ FormalParameterList() ] ")" ) #FormalParameterList(jjtree.nodeArity()==0) Block()
+//}
+{
+   Token t1 = getToken(1); // 0 is the last matched token, so use 1 to get
+                           // the next one.
+   Token t2;
+}
+{
+   try {
+    "function" Identifier()  ( "(" [ FormalParameterList() ] ")" ) #FormalParameterList(jjtree.nodeArity()==0) Block()
+   }
+   finally {
+      t2 = getToken(0);
+      StringBuffer sourceString = new StringBuffer("");
+
+      // test special case for empty production
+      if (t2.next != t1) { // Something consumed.
+    
+          for(; t1 != t2; t1 = t1.next)
+          {
+             if (t1.specialToken != null) {
+                 sourceString.append(t1.specialToken.image); // last special token
+             }
+             sourceString.append(t1.image);
+             sourceString.append(" ");
+          }
+      }
+      sourceString.append(t2.image);
+      jjtThis.setSourceString(sourceString.toString());
+   }
+}           
+           
+               
+SimpleNode FormalParameterList() #FormalParameterList :
+{  
+   Token t; // to force creation of jjThis
+}
+{
+   Identifier() ( "," Identifier() )*
+  { return jjtThis; }
+
+}
+
+
+
+
+
+
+/*
+ * Program structuring syntax - 14
+ */
+
+// ASTProgram Program() #Program :
+SimpleNode Program() #Program :
+{}
+{
+  ( SourceElement() )+  <EOF>
+  { return jjtThis; }
+}
+
+void SourceElement() #void :
+{}
+{
+  Statement() 
+| FunctionDeclaration()
+}
+
+SimpleNode StatementList() #StatementList : 
+{  
+   Token t; // to force creation of jjThis
+}
+{
+	( Statement() )+
+      { return jjtThis; }
+
+}

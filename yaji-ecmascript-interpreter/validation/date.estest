@@ -1,0 +1,101 @@
+// date.estest
+// FESI Copyright (c) Jean-Marc Lugrin, 1999
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+writeln ("// " + document.URL);
+writeln ("// " + Date());
+writeln ("// Test Date");
+writeln();
+
+
+// 15.9
+@test date.1
+Date().substring(0,10)==Date(1,2,4,5,3,2).substring(0,10);
+
+@test date.2
+Date().substring(0,10)==(new Date()).toString().substring(0,10)
+
+@test date.3
+
+ECT = Packages.java.util.TimeZone.getTimeZone('ECT')
+Packages.java.util.TimeZone.setDefault(ECT);
+
+d3 = new Date(1998,0,3,12,30,5,10);
+d3.getFullYear()==1998 && d3.getYear()==98 &&
+d3.getMonth()==0 && d3.getDate()==3 && d3.getDay()==6 &&
+d3.getHours()==12 && d3.getMinutes()==30 &&
+d3.getSeconds()==5 && d3.getMilliseconds()==10;
+
+@test date.3
+d3.getUTCFullYear()==1998  &&
+d3.getUTCMonth()==0 && d3.getUTCDate()==3 && d3.getUTCDay()==6 &&
+d3.getUTCHours()==11 && d3.getUTCMinutes()==30 &&
+d3.getUTCSeconds()==5 && d3.getUTCMilliseconds()==10;
+
+@test date.4
+d3.valueOf()==d3.getTime();
+
+@test date.5
+Date.prototype.constructor == Date;
+
+// Very simple tests to ensure that some string was generated
+@test date.6
+d3.toString().indexOf("98")>0;
+
+@test date.7
+d3.toLocaleString().indexOf("98")>0;
+
+@test date.8
+d3.toUTCString().indexOf("98")>0;
+
+@test date.9
+d3.toGMTString().indexOf("98")>0;
+
+@test date.10
+Date.UTC(1998,0,3,12,30,5,10) - d3.valueOf() == 3600000;
+
+@test date.10
+d4 = new Date(1,0,1);
+d4.getYear() == 1;
+
+@test date.10
+d4 = new Date(100,0,1);
+d4.getYear() == -1800 && d4.getFullYear() == 100;
+
+@test date.11
+d4 = new Date(1000,0,1);
+d4.getYear() == -900 && d4.getFullYear() == 1000;
+
+@test date.12
+d4 = new Date(98,0,1);
+d4.getYear() == 98  && d4.getFullYear() == 1998;
+
+@test date.13
+d4 = new Date(2000,0,1);
+d4.getYear() == 100 && d4.getFullYear() == 2000;
+
+@test date.14
+d4 = new Date(98,0,1);
+d4.setFullYear(98)
+d4.getFullYear() == 98;
+
+@test date.15
+d5 = new Date();
+d5.valueOf()>100000;
+
+// Just checking that it works - only in western hemisphere...
+@test date.16
+d5.getTimezoneOffset() < 24*60;

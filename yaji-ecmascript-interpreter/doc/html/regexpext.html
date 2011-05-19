@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="Author" content="Jean-MarcLugrin">
+  <meta name="GENERATOR"
+ content="Mozilla/4.72 [en] (Win98; U) [Netscape]">
+  <meta name="Description"
+ content="Describe the FESI EcmaScript interpreter extensions to access File I/O capabilities">
+  <meta name="KeyWords"
+ content="EcmaScript, JavaScript, JScript, Java, extension">
+  <title>FESI language extensions - File I/O</title>
+</head>
+<body style="background-color: rgb(173, 216, 230);" link="#00008b"
+ vlink="#00008b">
+&nbsp;
+<table cellspacing="6" width="100%">
+  <tbody>
+    <tr>
+      <td align="center"><img src="fesi.gif" height="60" width="75"> </td>
+      <td align="left"><font color="#a52a2a"><font size="+3">Free
+EcmaScript
+Interpreter.&nbsp;</font></font> <br>
+      <font color="#a52a2a"><font size="+3">A JavaScript interpreter
+written in Java.</font></font></td>
+    </tr>
+  </tbody>
+</table>
+<br>
+&nbsp;
+<table width="100%" bgcolor="#a52a2a" text="#FFFFFF">
+  <tbody>
+    <tr>
+      <td><b><font color="#ffffff"><font size="+2">Language extensions
+- Regular Expressions</font></font></b></td>
+    </tr>
+  </tbody>
+</table>
+There regular expression can either user the Java JDK 1.4 regular
+expression pacakge, the GNU RegExp package or the ORO Inc package. It
+is possible to
+specify the desired extension using the option -R. By default the
+interpreter
+attempt to load the packages in the order Java, ORO, GNU, until one is
+found.
+<p>You can evaluate the value of RegExp to find which version is used
+(it prints the name of the class of the RegExp extension loaded). </p>
+<p>The <tt>RegExp</tt> extension provides a regular expression bsed
+search and replacement mechanism which is similar to the same
+capabilities in latest
+version of JavaScript by Netscape. It is a subset of these
+capabilities, as
+the Netscape variant add incompatible extensions to the EcmaScript
+syntax, and could not be extended to support multithreading. </p>
+<p>The ORO regular expression extension uses the <a
+ href="http://jakarta.apache.org/oro/index.html">
+OROMatcher</a> package and therefore depends on it for the detailed
+capabilities of the matcher, which is highly compatible with Perl 5.
+This is now an Apache pacakge
+and is open source. </p>
+<p>The <a href="http://www.cacas.org/java/gnu/regexp/">GNU regular
+expression</a> extension allow to distribute programs which are fully
+LGPL. Only the classes are included in the FESI distribution itself,
+the original sources being available
+at <a href="ftp://ftp.cacas.org/pub/java/gnu.regexp-1.0.8.tar.gz">gnu.regexp-1.0.8.tar.gz</a>
+. The version 1.1.4 is used. </p>
+<p>Regular expressions are built by the <tt>RegExp</tt> constructor
+and can
+then be used either by <tt>RegExp</tt> specific functions or selected <tt>
+String</tt> functions. </p>
+<h3> <font color="#990000">OptionalRegExp extension</font></h3>
+If you do not know which regular expression matcher will be available
+at run-time, but you would like to provide it to user if available,
+then your main program can load <tt>Fesi.Extensions.OptionalRegExp</tt>
+instead of&nbsp; specifically <tt>Fesi.Extension.ORORegExp</tt>
+or&nbsp; <tt>Fesi.Extension.GNURegExp</tt>
+. That way there will be no error message at load time, only at
+execution time of a script attempt to create a <tt>RegExp</tt> object.
+This is the method
+used by the interpreter bundled with the package. <br>
+&nbsp;
+<h3> <font color="#990000">RegExp constructor</font></h3>
+The <tt>RegExp</tt> constructor creates a regular expression from a
+text representation. The regular expression is created as case
+sensitive and for
+single replacement. Its syntax is not checked before its first use.
+Exemple:
+<blockquote><tt>r = new RegExp("[a-z][a-z0-9]*");</tt></blockquote>
+It is not possible to create regular expressions by using the <tt>/regexp/</tt>
+syntax.
+<h3> <font color="#990000">RegExp objects</font></h3>
+The objects created by the <tt>RegExp</tt> constructor keep some
+attributes of the regular expression, as its case insensitiveness and
+its substitution mode. The recognized attributes are:
+<dl>
+  <dl>
+    <dt> <tt>global</tt></dt>
+    <dd> Use global (multiple) replacement in the <tt>replace</tt>
+function
+if <tt>true</tt>. <tt>false</tt> by default.</dd>
+    <dt> <tt>ignoreCase</tt></dt>
+    <dd> Ignore case if <tt>true</tt>. <tt>false</tt> by default.</dd>
+  </dl>
+</dl>
+The attributes can be changed anytime. The regular expression is
+automatically recompiled if neeeded. There is therefore no <tt>compile</tt>
+routine. <br>
+The following routines are defined on regular expression objects:
+<dl>
+  <dl>
+    <dt> <tt>exec("string")</tt></dt>
+    <dd> Does a match on the string with the regular expression.
+Return <tt>null</tt> or a result array (see below).</dd>
+    <dt> <tt>test("string")</tt></dt>
+    <dd> Does a match on the string with the regular expression,
+returning <tt>true</tt> or <tt>false</tt> (faster than <tt>test</tt>)..</dd>
+  </dl>
+</dl>
+<h3> <font color="#990000">Added String routines</font></h3>
+The following <tt>String</tt> routines are added or enhanced:
+<dl>
+  <dl>
+    <dt> <tt>match(regexp)</tt></dt>
+    <dd> Does a match on the string with the regular expression.
+Return <tt>null</tt> or a result array (see below).</dd>
+    <dt> <tt>replace(regexp,replacementString)</tt></dt>
+    <dd> Replaces the first (default) or all (if <tt>
+global</tt> is <tt>true</tt>) occurences of the regular expression
+with the
+replacement String, extrapolation $n variables.</dd>
+    <dt> <tt>search(regexp)</tt></dt>
+    <dd> Does a match on the string with the regular
+expression. Returns -1 if not found or the index of the start of the
+match
+if found. Faster than <tt>match</tt>.</dd>
+    <dt> <tt>split(regexp[,limit])</tt></dt>
+    <dd> Split the string at regexp points, returning
+at most limit (defaults to all) substrings. The default <tt>split</tt>
+behaviour
+is still used if the parameter is not a regexp.</dd>
+  </dl>
+  <h3> <font color="#990000">Result array</font></h3>
+A result array is returned by some routines. It includes both
+properties and
+the strings as the array elements. The properties are:: <br>
+&nbsp;
+  <dl>
+    <dl>
+      <dt> <tt>index</tt></dt>
+      <dd> The index of the start of the match.</dd>
+      <dt> <tt>input</tt></dt>
+      <dd> The string which was matched.</dd>
+    </dl>
+  </dl>
+  <p><br>
+The array elements are the total match followed by the submatches (the
+parts
+inside parentheses). <br>
+If there is no match, a <tt>null</tt> (which is tested as <tt>false</tt>)
+is returned.</p>
+</dl>
+<hr>
+<center><a href="index.html">Return
+to the main page</a> </center>
+<hr>
+<div align="left">
+<table cellpadding="0" cellspacing="0" border="0"
+ style="width: 100%; text-align: left;">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><font size="-2">Copyright &copy;
+Jean-Marc Lugrin 1998-2003 - Under LGPL license</font></td>
+      <td style="vertical-align: top; text-align: right;"><font
+ size="-2">Last update: 26 August 2003</font></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</body>
+</html>

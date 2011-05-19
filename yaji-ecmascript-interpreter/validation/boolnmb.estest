@@ -1,0 +1,103 @@
+// boolnmb.estest
+// FESI Copyright (c) Jean-Marc Lugrin, 1999
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+writeln ("// " + document.URL);
+writeln ("// " + Date());
+writeln ("// Test Boolean and Number");
+writeln();
+
+
+// 15.6
+@test boolean.1
+b = Boolean(2)
+b && typeof(b)=="boolean";
+
+@test boolean.2
+!Boolean()
+
+@test boolean.3
+!Boolean(0);
+
+@test boolean.4
+ob=new Boolean("true");
+ob && typeof(ob)=="object";
+
+@test boolean.5
+Boolean.prototype.constructor==Boolean
+
+@test boolean.6
+ob = new Boolean()
+ob.toString()=="false";
+
+@test boolean.7
+ob = new Boolean(true);
+v = ob.valueOf();
+v && typeof(v)=="boolean";
+
+@test boolean.8
+!Boolean.prototype;
+
+@test number.1
+b = Number(2)
+b==2.0 && typeof(b)=="number";
+
+@test number.2
+Number()==0;
+
+@test number.3
+no = new Number("12.5");
+no==12.5 && typeof(no)=="object"
+
+@test number.4
+no = new Number();
+no==0 && typeof(no)=="object"
+
+@test number.5
+n = Number.MAX_VALUE;
+1.79769e308<n && n <Infinity;
+
+@test number.6
+n = Number.MIN_VALUE;
+0<n && n <1e-323;
+
+@test number.7
+isNaN(Number.NaN);
+
+@test number.8
+Number.POSITIVE_INFINITY == Infinity;
+
+@test number.9
+Number.NEGATIVE_INFINITY == -Infinity;
+
+@test number.10
+Number.prototype==0;
+
+@test number.11
+Number.prototype.constructor == Number;
+
+@test number.12
+n = new Number(15);
+n.toString()=="15";
+
+@test number.13
+n.toString(16).toLowerCase()=="f";
+
+@test number.14
+vn = n.valueOf();
+vn == 15 && typeof(vn)=="number";
+
+

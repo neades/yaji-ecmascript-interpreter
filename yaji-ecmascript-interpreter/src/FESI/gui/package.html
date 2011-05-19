@@ -1,0 +1,26 @@
+<html>
+<head>
+   <title>gui package</title>
+</head>
+<body>
+Defines the interface of the gui functions, so that they
+can be implemented with AWT and Swing. Both the basicIO
+functions and the functions used by the interpreter are defined.
+<p>
+Some functions may return an error with some implementation,
+as not all implementations support all capabilities.
+<p>
+The implementation is select by loading dynamically the proper
+guiFactory  as in
+<pre>      
+guiFactory = (GuiFactory) Class
+              .forName("FESI.awtgui.AwtGuiFactory")
+              .newInstance();
+</pre>
+Or by loading the BasicIOs or BasicIOw extension.
+<p>
+All other code should not refer directly to AWT or Swing classes,
+to ensure that FESI can compile and be distributed with only one
+of those classes.
+</body>
+</html>

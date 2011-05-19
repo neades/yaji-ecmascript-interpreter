@@ -1,0 +1,418 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="Author" content="Jean-MarcLugrin">
+  <meta name="GENERATOR"
+ content="Mozilla/4.7 [en] (Win98; I) [Netscape]">
+  <meta name="Description"
+ content="Describe the FESI EcmaScript interpreter extensions">
+  <meta name="KeyWords"
+ content="EcmaScript, JavaScript, JScript, Java, extension">
+  <title>FESI Java library</title>
+</head>
+<body style="background-color: rgb(173, 216, 230);" link="#00008b"
+ vlink="#00008b">
+&nbsp;
+<table cellspacing="6" width="100%">
+  <tbody>
+    <tr>
+      <td align="center"><img src="fesi.gif" height="60" width="75"></td>
+      <td align="left"><font color="#a52a2a"><font size="+3">Free
+EcmaScript Interpreter.&nbsp;</font></font> <br>
+      <font color="#a52a2a"><font size="+3">A JavaScript interpreter
+written
+in Java.</font></font></td>
+    </tr>
+  </tbody>
+</table>
+<br>
+&nbsp;
+<table width="100%" bgcolor="#a52a2a" text="#FFFFFF">
+  <tbody>
+    <tr>
+      <td><b><font color="#ffffff"><font size="+2">The Java library
+(package FESI.jslib)</font></font></b></td>
+    </tr>
+  </tbody>
+</table>
+<h3>
+<font color="#993366">Capabilities</font></h3>
+The library can be used to extend the capabilities of the EcmaScript
+interpreter,
+allowing a Java program to create an interpreter, to evaluate scripts,
+and to set and get properties of EcmaScript objects. It is largely
+compatible
+with the Netscape <tt>JSObject</tt> and <tt>JSExeption</tt> classes,
+simplifying
+the development of common code.
+<p>The library is very simple, and only provide access to basic
+capabilities
+of the interpreter. However it is quite independent of the internal
+structure
+of the interpreter, so the programs are not impacted by changes of <tt>FESI</tt>.
+</p>
+<p>See the <a href="ext.html#JavaAccess">Java Access</a> page on how
+to
+access Java objects from an EcmaScript program.
+</p>
+<h3><font color="#993366">The API documentation</font></h3>
+The API documentation is in <tt><a
+ href="api/FESI/jslib/package-summary.html">jslib
+package</a></tt>.
+<p>The API functionality is implemented in:
+<br>
+&nbsp;
+</p>
+<center>
+<table cellspacing="2" cellpadding="2" width="100%">
+  <tbody>
+    <tr>
+      <td>
+      <div align="right"><tt><a href="api/FESI/jslib/JSObject.html">JSObject</a></tt></div>
+      </td>
+      <td>The generic type of EcmaScript objects, allowing to access
+the member
+properties, evaluate strings, call EcmaScript functions and find the
+global
+object of the interpreter.</td>
+    </tr>
+    <tr>
+      <td>
+      <div align="right"><tt><a
+ href="api/FESI/jslib/JSGlobalObject.html">JSGlobalObject</a></tt></div>
+      </td>
+      <td>The global object representing the interpreter. Used to
+create new
+objects and arrays, and to evaluate strings or call functions in the
+global
+environment.</td>
+    </tr>
+    <tr>
+      <td>
+      <div align="right"><tt><a href="api/FESI/jslib/JSExtension.html">JSExtension</a></tt></div>
+      </td>
+      <td>The interface that a loadable extension must implement</td>
+    </tr>
+    <tr>
+      <td>
+      <div align="right"><tt><a href="api/FESI/jslib/JSFunction.html">JSFunction</a></tt></div>
+      </td>
+      <td>The interface that a function callable by EcmaScript must
+implement.</td>
+    </tr>
+    <tr>
+      <td>
+      <div align="right"><tt><a
+ href="api/FESI/jslib/JSFunctionAdapter.html">JSFunctionAdapter</a></tt></div>
+      </td>
+      <td>An utility adapter to create new functions.</td>
+    </tr>
+    <tr>
+      <td>
+      <div align="right"><tt><a href="api/FESI/jslib/JSUtil.html">JSUtil</a></tt></div>
+      </td>
+      <td>The package containing the static evaluator creation and
+routine to
+access version information.</td>
+    </tr>
+    <tr>
+      <td>
+      <div align="right"><tt><a href="api/FESI/jslib/JSException.html">JSException</a></tt></div>
+      </td>
+      <td>The exception wrapping all exceptions.</td>
+    </tr>
+  </tbody>
+</table>
+</center>
+<br>
+&nbsp;
+<h3><font color="#993366">Creating an interpreter</font></h3>
+The simplest example (listed below) is in <tt>SimpleIntrp.java</tt> in
+the directory <tt>examples/jslib</tt>. You can create an interpreter
+simply
+following this pattern:
+<ul>
+  <tt>import java.io.*;</tt> <br>
+  <tt>import FESI.jslib.*;</tt> <br>
+  <tt>public class SimpleIntrp {</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp; public static void main(String args[]) {</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // Create the
+interpreter</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; JSGlobalObject global
+= null;</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; try {</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+global = JSUtil.makeEvaluator();</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } catch (JSException
+e) {</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+System.err.println(e);</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+System.exit(1);</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DataInputStream ins
+= new DataInputStream(System.in);</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String input = null;</tt>
+  <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // read eval print loop</tt>
+  <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; while (true) {</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+System.out.print("&gt; "); System.out.flush();</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+try {</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+input = ins.readLine();</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+} catch (IOException e) {</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+System.exit(0);</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+}</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+if (input == null) break;</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+try {</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Object result = global.eval(input);</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+if (result!=null) System.out.println(result.toString());</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+} catch (JSException e) {</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+System.out.println(e.getMessage());</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+if (DEBUG)</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+e.printStackTrace();</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Exception oe = e.getOriginalException();</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+if (oe!=null) {</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+oe.printStackTrace();</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+};</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+System.out.println(e.getMessage());</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+System.out.println(e.getMessage());</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+}</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } // while</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp; }</tt> <br>
+  <tt>&nbsp;}</tt>
+</ul>
+The source file in the example directory is more complete, initializing
+some extensions.
+<br>
+&nbsp;
+<h3><font color="#993366">Java object as an EcmaScript object</font></h3>
+It is sometime useful to force a Java object to be considered an
+EcmaScript
+object, to use the <span style="font-family: monospace;">JSObject </span>functions
+on it (for example eval). This
+can
+be doneusing <span style="font-family: monospace;">makeObjectWrapper</span>,
+as follow:
+<ul>
+  <pre><tt>JButton jb = new JButton();<br>JSObject jsjb = global.makeObjectWrapper(jb);<br>jsjb.eval("this.setLabel(Date())");</tt></pre>
+</ul>
+The function <tt>makeObjectWrapper</tt> has no effect if the object is
+already a <span style="font-family: monospace;">JSObject</span>. It
+will also respect the bean handling flag as set by <tt>makeBeanWrapper</tt>
+(see below).
+<br>
+An important restriction is that such an object cannot be considered
+a full interpreter (it is not a global object). Especially it is not
+possible to create new
+properties
+on a Java object from an EcmaScript script (this would require
+dynamically adding fields to a compiled object).<br>
+When such an object is return from a <span
+ style="font-family: monospace;">JSObject </span>function as <span
+ style="font-family: monospace;">eval</span> or <span
+ style="font-family: monospace;">getMember</span>, it is unwrapped: the
+the original object is returned. It is possible to specificaly unwrap
+the Java variable by:<br>
+<pre><tt>      Object obj = global.getWrappedObject(</tt><tt>jsjb</tt><tt>);<br></tt></pre>
+to get the original object.<br>
+Wrapping are relatively light operations (compared to any script
+evaluation), so there is no need to keep the wrapped object around for
+performance reasons.<br>
+&nbsp;
+<h3><font color="#993366">Java object and Java beans in EcmaScript</font></h3>
+If you set an EcmaScript value value (including a property, via <span
+ style="font-family: monospace;">setMember</span>) to a Java object
+that cannot be converted
+to an EcmaScript value, the value can be used as any object created via
+the <tt>Package</tt> system, including the access of bean properties
+which
+are not public fields (see the <tt><a href="ext.html#JavaAccess">JavaAccess</a></tt>
+extension for details). If you want an object set as a bean (only
+allowing
+access to bean properties and method), you can use the routine <tt>JSGlobalObject.makeBeanWrapper</tt>.
+For example, in java:
+<ul>
+  <pre><tt>dialogBean db = new DialogBean();</tt></pre>
+  <pre><tt>o.setMember("dialog", global.makeBeanWrapper(db));</tt></pre>
+</ul>
+Where <tt>o</tt> is some <tt>JSObject</tt>. Then the object <tt>db</tt>
+(the <i>dialog</i> property of the object <tt>o</tt>) will be handled
+as
+a java bean rather than a java object, and only the bean declared
+properties
+and&nbsp; methods can be called on it. <tt>makeBeanWrapper</tt> does
+not
+return a JSObject, but an opaque object. If you want to use the bean as
+a <tt>JSObject</tt> (to call eval on it), you must wrap the result of <tt>makeBeanWrapper</tt>
+using <tt>makeObjectWrapper</tt>.
+<br>
+When such an object is return from a JSxxx function as <span
+ style="font-family: monospace;">eval</span> or <span
+ style="font-family: monospace;">getMember</span>, it is unwrapped,
+that is the original object is returned. <br>
+It is possible to specificaly unwrap the java variable by:<br>
+<pre><tt>      Object db = global.getWrappedBean(</tt><tt>wrappedDb</tt><tt>);<br></tt></pre>
+to get the original object.<br>
+<br>
+&nbsp;
+<h3><font color="#993366">Specifying extensions to load</font></h3>
+Extensions are specified via an array of String, as the optional second
+parameter of <a href="api/FESI/jslib/JSUtil.html#makeEvaluator%28%29">makeEvaluator</a>.
+For example:
+<pre><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String[] extensions = new String[] {"FESI.Extensions.BasicIO",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "FESI.Extensions.JavaAccess"};<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; JSObject global = JSObject.makeEvaluator(extensions);</tt></pre>
+See as well the function <tt>loadExtension</tt> in the <tt><a
+ href="ext.html#JavaAccess">JavaAccess</a></tt>
+extension.
+<br>
+&nbsp;
+<h3><font color="#993366">Creating an extended script host</font></h3>
+A script host need not be (and usually is not) an extended interpreter.
+The example <tt><a href="SampleFunc.txt">SampleFunc.java</a></tt>in
+the
+directory <tt>examples/jslib</tt> demonstrate how a main program can
+extend
+and use EcmaScript. See the documentation of <tt><a
+ href="api/FESI/jslib/JSObject.html">JSObject</a></tt>
+for more details.
+<ul>
+  <tt><font color="#000000">// Create interpreter</font></tt> <br>
+  <tt><font color="#000000">JSGlobalObject global =
+JSUtil.makeEvaluator();</font></tt>
+  <p><tt>// Declare a function</tt> <br>
+  <tt>global.setMember("loadPage",</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp; new JSFunctionAdapter() {</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public Object
+doCall(JSObject
+thisObject, Object args[]) throws JSException {</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+if (args.length == 0) throw new JSException("loadPage: At least one
+argument
+needed (page name)");</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+return loadPage(args[0].toString());</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt> <br>
+  <tt>&nbsp;&nbsp;&nbsp; });</tt> </p>
+  <p><tt>// Interpret some user macro</tt> <br>
+  <tt>String userCommand = ...</tt> <br>
+  <tt>global.eval(userCommand);</tt> </p>
+  <p><tt>// Routine implementing the core of the function (need not be
+public!)</tt> <br>
+  <tt>private Object loadPage(String pageName) {</tt> <br>
+  <tt>&nbsp;&nbsp; // Create an EcmaScript object to store the page
+attributes</tt> <br>
+  <tt>&nbsp;&nbsp; JSObject page = global.makeJSObject();</tt> <br>
+  <tt>&nbsp;&nbsp; page.setMemeber("name", pageName);</tt> <br>
+  <tt>&nbsp;&nbsp; page.setMember("data", loadPageFromFile("pageName");</tt>
+  <br>
+  <tt>}</tt></p>
+</ul>
+There can be more than one interpreter created in each program. Access
+to an interpreter is synchronized. Each <tt><a
+ href="api/FESI/jslib/JSObject.html">JSObject</a></tt>
+belongs to a specific interpreter.
+<br>
+&nbsp;
+<h3><font color="#993366">Creating a dynamically loadable extension</font></h3>
+<font color="#000000">The example <tt>FesiPop</tt> demonstrate how to
+create
+an extension which can then be loaded in any interpreter or script host
+program.</font> An extension is created by implementing the <tt><a
+ href="api/FESI/jslib/JSExtension.html">JSExtension</a></tt>
+interface, and then using the standard <tt><a
+ href="api/FESI/jslib/JSObject.html">JSObject</a></tt>
+capabilities. Using an extension allow you to adapt the capabilities of
+a Java package to the specific need of the EcmaScript user, and have
+specific
+error handling.
+<br>
+&nbsp;
+<h3><font color="#993366">Use of code as function</font></h3>
+It is sometime convenient to have the code fragments of a script be
+implemented
+as anonymous parameterless function, rather than as a main program.
+This
+allow using the <tt>return</tt> statement, for example in a
+conditional
+statement,
+that can simplify the code. To achieve this goal, use <a
+ href="api/FESI/jslib/JSObject.html#evalAsFunction%28java.lang.String%29">evalAsFunction</a>
+instead of <a
+ href="api/FESI/jslib/JSObject.html#eval%28java.lang.String%29">eval</a>
+when calling the interpreter. Then code as:
+<blockquote>
+  <blockquote><tt>if (tag == "H") return 1;</tt> <br>
+    <tt>else if (tag == "A" return 2;</tt> <br>
+    <tt>else return -1;</tt></blockquote>
+</blockquote>
+will work as expected.
+<p>In addition it is possible to build a function on the fly
+with
+specified parameter names and values. This is useful for code which
+must
+look like an event handler. The function <tt><a
+ href="api/FESI/jslib/JSObject.html#evalAsFunction%28java.lang.String%29">evalAsFunction</a></tt>
+with parameters names and values serves this purpose. For example an
+event
+handler could look like:
+</p>
+<blockquote>
+  <blockquote><tt>String names[] = {"event", "timeStamp"};</tt> <br>
+    <tt>Object values [] = {event, new Date(event.getTimeStamp)};</tt> <br>
+    <tt>target.evalAsFunction(script, names, values);</tt></blockquote>
+</blockquote>
+Where the script could be for example:
+<blockquote>
+  <blockquote><tt>var _c = event.getChar();</tt> <br>
+    <tt>if (_c == "t") alert("t received at: " + timeStamp);</tt></blockquote>
+</blockquote>
+The code is executet as&nbsp; a function of two parameters:
+<tt>event</tt>
+and <tt>timeStamp</tt>.
+<br>
+&nbsp;
+<br>
+&nbsp;
+<br>
+&nbsp;
+<hr>
+<center><a href="index.html">Return to the main page</a></center>
+<hr>
+<div align="left">
+<table cellpadding="0" cellspacing="0" border="0"
+ style="width: 100%; text-align: left;">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><font size="-2">Copyright &copy;
+Jean-Marc Lugrin 1998-2003 - Under LGPL license</font></td>
+      <td style="vertical-align: top; text-align: right;"><font
+ size="-2">Last update: 26 August 2003</font></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</body>
+</html>

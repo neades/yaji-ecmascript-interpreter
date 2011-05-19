@@ -1,0 +1,30 @@
+// juggler.esw
+//
+// FESI examples - JM Lugrin - 1998
+//
+// This example demonstrates how the a bean can be loaded
+
+// Requires: JavaAccess (standard in the interpeter)
+// Used as:  fesiw molecule.esw
+
+// First define some shortcuts, including for the jar
+Frame = java.awt.Frame;
+MoleculeJar = Beans("C:/java/bdk/jars/molecule.jar")
+
+// Create the frame for the labels
+frm = new Frame("For the molecule");
+
+// Create the "molecule", directly using the class name
+molecule = new MoleculeJar.sunw.demo.molecule.Molecule();
+frm.add(molecule);
+
+
+// Show the result
+frm.pack();
+frm.show();
+
+
+// Dispose the frame when the window closes
+frm.onWindowClosing="this.dispose();";
+
+

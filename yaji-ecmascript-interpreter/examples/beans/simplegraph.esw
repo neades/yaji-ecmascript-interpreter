@@ -1,0 +1,40 @@
+// simplegraph.esw
+//
+// FESI examples - JM Lugrin - 1998
+//
+// This example demonstrates how an applet can be
+// loaded as a bean. SimpleGraph is an applet provided
+// as an example of the JDK 1.1, just adapt the directory
+// bellow.
+
+// Requires: JavaAccess (standard in the interpeter)
+// Used as:  fesiw simplegraph.esw
+
+// Ensure that we can access the applet
+classpath = new File("D:/java11/jdk1.1.5/demo/SimpleGraph/1.1");
+if (!classpath.isDirectory()) {
+   alert("Directory not found\n"+classpath);
+   exit(1);
+}
+
+// First define some shortcuts, including for the jar
+Frame = java.awt.Frame;
+AppletBean = Beans(classpath)
+
+// Create the frame for the labels
+frm = new Frame("Applet Frame");
+
+// Create the "molecule", directly using the class name
+applet = new AppletBean.GraphApplet();
+frm.add(applet);
+
+frm.setSize(300,200)
+
+// Show the result
+frm.show();
+applet.start();
+
+// Dispose the frame when the window closes
+frm.onWindowClosing="this.dispose();";
+
+

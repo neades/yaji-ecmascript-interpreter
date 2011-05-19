@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="Author" content="Jean-MarcLugrin">
+  <meta name="GENERATOR"
+ content="Mozilla/4.05 [en] (Win95; I) [Netscape]">
+  <meta name="Description"
+ content="Describe the FESI EcmaScript interpreter extensions">
+  <meta name="KeyWords"
+ content="EcmaScript, JavaScript, JScript, Java, extension">
+  <title>FESI language extensions</title>
+</head>
+<body style="background-color: rgb(173, 216, 230);" link="#00008b"
+ vlink="#00008b">
+&nbsp;
+<table cellspacing="6" width="100%">
+  <tbody>
+    <tr>
+      <td align="center"><img src="fesi.gif" height="60" width="75"> </td>
+      <td align="left"><font color="#a52a2a"><font size="+3">Free
+EcmaScript
+Interpreter.&nbsp;</font></font>&nbsp; <br>
+      <font color="#a52a2a"><font size="+3">A JavaScript interpreter
+written in Java.</font></font></td>
+    </tr>
+  </tbody>
+</table>
+&nbsp; <br>
+&nbsp;
+<table width="100%" bgcolor="#a52a2a" text="#FFFFFF">
+  <tbody>
+    <tr>
+      <td><b><font color="#ffffff"><font size="+2">Language extensions</font></font></b></td>
+    </tr>
+  </tbody>
+</table>
+<font color="#000000"><span style="font-family: monospace;">FESI </span></font><font
+ color="#000000">implements few language extensions and try to follow
+the standard as much as possible. This is unlike most implementation of
+JavaScript, which are unfortunately very incompatibles between them.</font>
+However to be useful at all EcmaScript must be extended, at least to
+link it to some host application. Because many applications have some
+common needs,
+FESI extensions can be build as libraries and loaded on demand, using
+the
+Java dynamic loading capability. A host program will usually list the
+required
+extensions as part of its initialization (see the <a
+ href="javalib.html">
+FESI Java library</a>
+). The extensions only add host objects and functions as prescribe the
+the
+EcmaScript standard, they do not change existing functions or extend
+the
+syntax. <br>
+&nbsp; <br>
+<hr size="4" width="99%">
+<center><font color="#990000"><font size="+3">Builtin extensions</font></font></center>
+<p>The builtin extensions are capabilities always present on the
+interpreter. They include the following capabilities: </p>
+<ul>
+  <li> The interactive interpreter add the global array variables <tt>args[]</tt>
+, which contains the arguments of the command line after the option <tt>-A</tt>
+, if any. This is not present in the called interpreter (unless the
+progammer implements it).</li>
+  <li>The possibility to call <font color="#000000"><span
+ style="font-family: monospace;">FESI</span></font><font color="#000000">
+    </font>from the <a href="file:///C:/javadev/FESI/doc/html/bsf.html"><span
+ style="font-family: monospace;">Bean Scripting Framework</span></a>. <br>
+  </li>
+  <li> the <tt>tryEval</tt> routine, described below.</li>
+  <li> The capability of calling&nbsp; methods of Java objects (if such
+an
+object is returned by some other extension or if the <a
+ href="#JavaAccess">
+JavaAccess</a> extension is loaded). This is explained as part of the <a
+ href="#JavaAccess">
+JavaAccess</a> extension.</li>
+  <li> The capability to use Java beans as EcmaScript objects (mapping
+of
+bean properties and EcmaScript properties).</li>
+  <li> The capability to <a href="events.html">add event handlers</a>
+to Java objects (if such an object is returned by some other extension
+or
+if the <a href="#JavaAccess">JavaAccess</a> extension is loaded).</li>
+</ul>
+<dl>
+  <dt> <a name="tryEval"></a> <tt>tryEval(string[,default])</tt></dt>
+  <dd> &nbsp;&nbsp;&nbsp; <tt>tryEval</tt> evaluates the parameter as <tt>
+eval</tt>, but returns an object with two properties: <tt>value</tt>
+and <tt>error</tt>. If the evaluation is successful, the <tt>value</tt>
+properties
+contains the result of the evaluation and the <tt>error</tt> property
+is <tt>null</tt> (which tests as <tt>false</tt>). If the evaluation
+results
+in an error, the the value property is either the value of the <tt>default</tt>
+parameter (if specified) or <tt>undefined</tt>, and the <tt>error</tt>
+property
+contains an object describing the error, which is guaranteed to test as
+    <tt>
+true</tt>. The error object string representation is some description
+of
+the error. In the future more detailed error information may be
+available.</dd>
+  <br>
+&nbsp;<dt> <a name="throwError"></a> <tt>throwError([stringOrException])</tt></dt>
+  <dd> &nbsp;&nbsp;&nbsp; <tt>throwError</tt> throws and exception.
+The
+parameter is converted to a string, and added as an exception parameter
+if
+it is a <tt>Throwable</tt>.</dd>
+</dl>
+<hr size="4" width="99%">
+<center><font color="#990000"><font size="+3">Loadable extensions</font></font></center>
+<p>The following extensions are all loaded by default by the
+interactive interpreter. However they may or may not be loaded by a
+user program using the interpreter as an embedded language, depending
+on the caller. <br>
+</p>
+<hr width="99%">
+<h3> <a name="BasicIO"></a> <font color="#993366">BasicIO, BasicIOw
+and BasicIOs</font></h3>
+<dl>
+Provide basic <tt>document</tt>and <tt>window</tt>based IO to enable
+to share
+some scripts with&nbsp;interpreter hosted in browsers.
+</dl>
+<center><font size="+1"><a href="bioext.html">&nbsp;BasicIO and
+BasicIOw documentation</a> </font></center>
+<center>
+<hr width="99%"></center>
+<h3> <a name="JavaAccess"></a> <font color="#993366">JavaAccess</font></h3>
+&nbsp;Allows to created Java objects and provide access to any public
+Java class and function from an EcmaScript program.
+<center><font size="+1"><a href="jaext.html">&nbsp;JavaAccess
+documentation</a> </font></center>
+<hr width="99%">
+<h3> <a name="FileIO"></a> <font color="#993366">FileIO</font></h3>
+Provides text file IO and directory manipulation functions to
+EcmaScript programs.
+<center><font size="+1"><a href="fioext.html">&nbsp;FileIO documentation</a>
+</font></center>
+<p> </p>
+<hr width="99%">
+<h3> <a name="Database"></a> <font color="#993366">Database</font></h3>
+Provides simple database access functions (via JDBC) to EcmaScript
+programs.
+<center><font size="+1"><a href="dbext.html">&nbsp;Database Access
+documentation</a> </font></center>
+<p> </p>
+<hr>
+<h3> <a name="RegExp"></a> <font color="#993366">RegExp</font></h3>
+Provides regular expression base search and replace, based on the Java
+1.4
+regular expression pacakage or, if not available, on the Apache ORO or
+GNU
+RegExp pacakge..
+<center><font size="+1"><a href="regexpext.html">&nbsp;Regular
+Expression documentation</a> </font></center>
+<p> </p>
+<hr>
+<center><a href="index.html">Return to the main page</a> </center>
+<hr>
+<div align="left">
+<table cellpadding="0" cellspacing="0" border="0"
+ style="width: 100%; text-align: left;">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><font size="-2">Copyright &copy;
+Jean-Marc Lugrin 1998-2003 - Under LGPL license</font></td>
+      <td style="vertical-align: top; text-align: right;"><font
+ size="-2">Last update: 26 August 2003</font></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</body>
+</html>

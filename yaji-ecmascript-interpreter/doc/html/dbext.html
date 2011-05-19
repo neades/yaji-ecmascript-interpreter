@@ -1,0 +1,297 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="Author" content="Jean-MarcLugrin">
+  <meta name="GENERATOR"
+ content="Mozilla/4.05 [en] (Win95; I) [Netscape]">
+  <meta name="Description"
+ content="Describe the FESI EcmaScript interpreter extensions to access File I/O capabilities">
+  <meta name="KeyWords"
+ content="EcmaScript, JavaScript, JScript, Java, extension">
+  <title>FESI language extensions - File I/O</title>
+</head>
+<body style="background-color: rgb(173, 216, 230);" link="#00008b"
+ vlink="#00008b">
+&nbsp;
+<table cellspacing="6" width="100%">
+  <tbody>
+    <tr>
+      <td align="center"><img src="fesi.gif" height="60" width="75"></td>
+      <td align="left"><font color="#a52a2a"><font size="+3">Free
+EcmaScript Interpreter.&nbsp;</font></font>&nbsp; <br>
+      <font color="#a52a2a"><font size="+3">A JavaScript interpreter
+written
+in Java.</font></font></td>
+    </tr>
+  </tbody>
+</table>
+&nbsp;
+<br>
+&nbsp;
+<table width="100%" bgcolor="#a52a2a" text="#FFFFFF">
+  <tbody>
+    <tr>
+      <td><b><font color="#ffffff"><font size="+2">Language extensions
+- Database</font></font></b></td>
+    </tr>
+  </tbody>
+</table>
+The <tt>Database</tt> extension is always loaded by the interactive
+interpreter,
+and provide access to database functions via <tt>JDBC</tt>. The
+database
+mechanism is patterned after the Infobus 1.1 database access interface,
+but it has been adapted to be well integrated in EcmaScript. The more
+general
+<tt>JDBC</tt> access is still available using the <a href="jaext.html">JavaAcess</a>
+extension, but the Database extension provides a simple to use access,
+more suitable to a scripting language.
+<p>SQL errors can be detected - in general a false is returned in case
+of error, and the function getLastError can be used to the error object
+(which is a Java exception). Programming errors (as reading after the
+last
+record was signaled, or reading on a released connection) directly
+throws
+an exception.
+</p>
+<p>The error handling capability allows to use it as interactive script
+without having to worry about errors - a message will be generated at
+the
+first command following an error. But it is possible to check for error
+status as well, and therefore trap all SQL errors (EcmaScript
+programming
+errors are not trappable).
+</p>
+<h3><font color="#990000">Global database object</font></h3>
+A global <tt>Database</tt> object is used to implement access to the
+databases
+via <tt>JDBC</tt>.&nbsp; The <tt>Database</tt> object is a prototype,
+which
+can be instanciated for various specific databases. The instanciated
+objects
+implement the <tt>DbAccess</tt> protocol of the InfoBus, allowing to
+connect
+to and disconnect from the database. For example a new database access
+iobject may be created by:
+<blockquote><tt>db = new Database("com.sybase.jdbc.SybDriver");</tt></blockquote>
+The JDBC driver does not have to be in the path, the two argument
+version
+of the Database creation routine allows to specify the path of the
+driver,
+as in:
+<blockquote><tt>db = new
+Database("myorg.com.ourDriver","d:\\java\\drivers\\ourDriver")</tt></blockquote>
+This is very useful during development, but all referenced routines
+must
+then be reachable from that path or from the default path. Note that
+the
+naming system of java creates a driver which is different from a driver
+which would be loaded from the default path.
+<p>It is recommended to test in an error occured by calling <tt>getLastError</tt>
+on the just created database object. It should returned <tt>undefined</tt>.
+Otherwise the database object will generate an error on its first usage
+if it was not initialized correctly.
+</p>
+<p>The string representation of a Database object includes its state
+(connected
+or disconnected).
+<br>
+&nbsp;
+</p>
+<h3><font color="#990000">DbAccess protocol</font></h3>
+As implemented in <tt>FESI</tt>, the <tt>DbAccess</tt> protocol
+includes
+the following routines:
+<dl>
+  <dl>
+    <dt><tt>connect(url)</tt></dt>
+    <dd>Open a new connection for the specified <tt>URL</tt> on the <tt>DbAccess</tt>
+object. Generates an error if the driver was not correctly initialized,
+returns <tt>true</tt>&nbsp; if connection is successful, <tt>false</tt>
+otherwise. Use <tt>getLastError</tt> to get details on the error.</dd>
+    <dt><tt>connect(url, userName, password)</tt></dt>
+    <dd>Open a new connection for the specified <tt>URL</tt>, with
+specified user
+name and password, on the <tt>DbAccess</tt> object. Generates an error
+if the driver was not correctly initialized, returns <tt>true</tt>&nbsp;
+if connection is successful, <tt>false</tt> otherwise. Use <tt>getLastError</tt>
+to get details on the error.</dd>
+    <dt><tt>disconnect()</tt></dt>
+    <dd>Close a connection (do nothing if not connected). Generates an
+error if
+the driver was not correctly initialized, returns <tt>true</tt> if
+successful
+or already disconnected, <tt>false</tt> in case of error. Use <tt>getLastError</tt>
+to get details in case of error.</dd>
+    <dt><tt>getLastError()</tt></dt>
+    <dd>Return the last error which occured when connecting or
+executing a statement,
+undefined if none.</dd>
+    <dt><tt>getMetaData()</tt></dt>
+    <dd>Return the meta data attached to the connection.</dd>
+    <dt><tt>release()</tt></dt>
+    <dd>Equivalent to <tt>disconnect</tt>, but does not return a
+status and alway
+succeed. Usually this will release any associated <tt>RowSet</tt>.</dd>
+    <dt><tt>executeRetrieval(sqlString)</tt></dt>
+    <dd>Used to implement <tt>SELECT</tt> and other value returning
+statements.
+Return a <tt>RowSet</tt> object implementing the <tt>RowsetAccess</tt>
+protocol if the request is successful. Returns <tt>false</tt>
+otherwise.
+Additional arguments are ignored, and data is always returned as a <tt>RowsetAccess</tt>.
+The cursor is positioned before the fist row. If <tt>false</tt> was
+returned, <tt>getLastError</tt> may be called on the database object
+to get
+the error
+information. Note that an error is generated (rather than returning a
+status)
+if the connection was not successful.</dd>
+    <dt><tt>executeCommand(sqlString)</tt></dt>
+    <dd>Used to implement <tt>INSERT</tt>, <tt>UPDATE</tt>, ddl
+statements and
+other non value returning statements. Returns the number of rows
+impacted
+if the request is successful. Returns <tt>false</tt> otherwise. If <tt>false</tt>
+was returned, <tt>getLastError</tt> may be called on the database
+object
+to get the error information. Note that an error is generated (rather
+than
+returning a status) if the connection was not successful.</dd>
+  </dl>
+  <h3><font color="#990000">RowAccess protocol (RowSet object)</font></h3>
+As implemented in <tt>FESI</tt>, the <tt>RowSetAccess</tt>protocol
+includes
+the following routines: <br>
+&nbsp;
+  <dl>
+    <dl>
+      <dt><tt>next()</tt></dt>
+      <dd>Get the next row of results, return true if there is a next
+row, false
+otherwise. Note that <tt>next</tt> must be called before the first row
+can be accesses.</dd>
+      <dt><tt>hasMoreRows()</tt></dt>
+      <dd>Optimistic view of the possibility that more rows are
+present. Currently
+only returns <tt>false</tt> if <tt>next</tt> returned false.It is
+possible
+to call this routine at any time.</dd>
+      <dt><tt>getLastError()</tt></dt>
+      <dd>Return the last error which occured when connecting or
+executing a statement, <tt>null</tt> (which test as <tt>false</tt>)
+if none.</dd>
+      <dt><tt>getMetaData()</tt></dt>
+      <dd>Return the meta data attached to the row set.</dd>
+      <dt><tt>release()</tt></dt>
+    </dl>
+  </dl>
+  <dl>
+    <dl>
+      <dd>Release the resources attached to this RwoSet object. The
+object should
+not be accessed after it has been released.The use of release is not
+mandatory,
+but is recommended&nbsp; as otherwise the resources (which may include
+large cache and a database connection) is not reclaimed before the next
+garbage collection, in this only if it is not reachable anymore.</dd>
+      <dt><tt>getColumnCount()</tt></dt>
+      <dd>Get the number of columns of this result, identical to the <tt>length</tt>
+attribute. It is possible to call this routine before the first record
+is fetched.</dd>
+    </dl>
+  </dl>
+  <dl>
+    <dl>
+      <dt><tt>getColumnName()</tt></dt>
+      <dd>Get the name of a column, in a way which is always working.
+The names can
+be accessed as properties, but they are shadowed by the functions and
+properties
+of the <tt>RowSetAccess</tt> prototype object. It is possible to call
+this
+routine before the first record is fetched.</dd>
+    </dl>
+  </dl>
+  <dl>
+    <dl>
+      <dt><tt>getColumnDatatypeNumber()</tt></dt>
+      <dd>Get the number of the datatype associated with the column.
+See the jdbc
+documentation for details. It is possible to call this routine before
+the
+first record is fetched.</dd>
+      <dt><tt>getColumnDatatypeName()</tt></dt>
+      <dd>Get the&nbsp; name of the datatype associated with the
+column. See the
+jdbc documentation for details. Some database do not return a valid
+name,
+in that case undefined is returned. It is possible to call this routine
+before the first record is fetched.</dd>
+      <dt><tt>getColumnItem(name)</tt></dt>
+      <dd>Get the value of a column by its name (the value can be
+accessed by number
+simply indexing them - this is not faster than by name for <tt>FESI</tt>).
+The proper value is returned even if the name is used for a property of
+the <tt>RowSetAccess</tt> protocol, as <tt>next</tt> or <tt>length</tt>.
+A record must be available (that is <tt>next</tt> must have been
+called
+at least once).</dd>
+    </dl>
+  </dl>
+&nbsp;<br>
+In addition, the RowSet will return any column name property as its
+value, any index as the value of the corresponding column, and
+enumerate
+column names. The enumeration will only contain the column names, not
+any
+property added to the prototype or the object itself. However the
+internal
+names (<tt>valueOf</tt>, <tt>toString</tt>, <tt>length</tt>), the
+properties
+of the prototype (including the routines of the <tt>RowSetAccess</tt>protocol)
+takes precedence over the name of columns when accessed as a property.
+The usage of indexed access or of the routine <tt>getColumnItem</tt>is
+therefore prefered.
+  <p>The <tt>RowSet</tt> string representation includes the SQL
+statement
+and its logical position if at start or at end.</p>
+</dl>
+<h3>
+<font color="#990000">Examples</font></h3>
+<dl>
+  <dl>
+    <tt>db= new Database("com.sybase.jdbc.SybDriver");</tt><br>
+    <tt>db.connect("jdbc:sybase:Tds:charlie:7078","dba","sql")</tt>
+    <p><tt>result = db.executeRetrieval("select * from employee")</tt> <br>
+    <tt>while (result.next()) {</tt> <br>
+    <tt>&nbsp;&nbsp; writeln("record has " + result.length + "
+columns");</tt> <br>
+    <tt>&nbsp;&nbsp; for (c in result) {</tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; writeln("Column: " + c + ": " +
+result.getColumnItem(c));</tt> <br>
+    <tt>&nbsp;&nbsp; }</tt> <br>
+    <tt>}</tt> <br>
+    <tt>db.disconnect();</tt></p>
+  </dl>
+</dl>
+<hr>
+<center><a href="index.html">Return to the main page</a></center>
+<hr>
+<div align="left">
+<table cellpadding="0" cellspacing="0" border="0"
+ style="width: 100%; text-align: left;">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><font size="-2">Copyright &copy;
+Jean-Marc Lugrin 1998-2003 - Under LGPL license</font></td>
+      <td style="vertical-align: top; text-align: right;"><font
+ size="-2">Last update: 26 August 2003</font></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</body>
+</html>
