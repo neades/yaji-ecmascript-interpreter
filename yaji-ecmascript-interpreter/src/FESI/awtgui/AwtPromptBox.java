@@ -36,87 +36,94 @@ import FESI.gui.PromptBox;
  * Implementation of the prompt box
  */
 public class AwtPromptBox implements PromptBox {
-    
+
     private boolean waiting = true;
     private String response = null;
-    
+
     /**
      * Create a PromptBox with default response
-     * @param title The window title
-     * @param prompt The prompt string
-     * @param defaultResponse The default response (will be "" if null)
+     * 
+     * @param title
+     *            The window title
+     * @param prompt
+     *            The prompt string
+     * @param defaultResponse
+     *            The default response (will be "" if null)
      */
     public AwtPromptBox(String title, String prompt, String defaultResponse) {
-        
-      response = defaultResponse == null ? "" : defaultResponse;
-      final Frame frame = new Frame(title);
-      frame.setLayout(new BorderLayout(10,10));
-      frame.setBackground(Color.lightGray);
-      MultiLineLabel mll = new MultiLineLabel(prompt,15,15);
-      frame.add("Center", mll);
-      Panel panel = new Panel();
-      panel.setLayout(new FlowLayout(FlowLayout.CENTER,10,10));
-      frame.add("South", panel);
-      final TextField tf = new TextField(response,20);
-      if (!response.equals("")){
-          tf.setSelectionStart(0);
-          tf.setSelectionEnd(response.length());
-      }
-      panel.add(tf);
-      Button bOK = new Button("OK");
-      panel.add(bOK);
-      
-      frame.pack();
-      Dimension    dimScreen = frame.getToolkit ().getScreenSize ();
-      Dimension    dimWindow = frame.getSize (); 
-      frame.setLocation (dimScreen.width/2 - dimWindow.width/2, // Center screen
-                         dimScreen.height/2 - dimWindow.height/2);
-      
-      frame.addWindowListener(new WindowAdapter() {
-          public void windowClosing(WindowEvent e) {
-              response = "";
-              frame.setVisible(false); 
-              frame.dispose();
-              completed();
-          }
-      });
-      bOK.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-              response = tf.getText();
-              frame.setVisible(false); 
-              frame.dispose();
-              completed();
-          }
-      });
-      tf.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-              response = tf.getText();
-              frame.setVisible(false); 
-              frame.dispose();
-              completed();
-          }
-      });
-      frame.setVisible(true);
-   }
-   
-   private synchronized void completed() {
-       waiting = false;
-       notifyAll();
-   }
-   
+
+        response = defaultResponse == null ? "" : defaultResponse;
+        final Frame frame = new Frame(title);
+        frame.setLayout(new BorderLayout(10, 10));
+        frame.setBackground(Color.lightGray);
+        MultiLineLabel mll = new MultiLineLabel(prompt, 15, 15);
+        frame.add("Center", mll);
+        Panel panel = new Panel();
+        panel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        frame.add("South", panel);
+        final TextField tf = new TextField(response, 20);
+        if (!response.equals("")) {
+            tf.setSelectionStart(0);
+            tf.setSelectionEnd(response.length());
+        }
+        panel.add(tf);
+        Button bOK = new Button("OK");
+        panel.add(bOK);
+
+        frame.pack();
+        Dimension dimScreen = frame.getToolkit().getScreenSize();
+        Dimension dimWindow = frame.getSize();
+        frame.setLocation(dimScreen.width / 2 - dimWindow.width / 2, // Center
+                                                                     // screen
+                dimScreen.height / 2 - dimWindow.height / 2);
+
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                response = "";
+                frame.setVisible(false);
+                frame.dispose();
+                completed();
+            }
+        });
+        bOK.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                response = tf.getText();
+                frame.setVisible(false);
+                frame.dispose();
+                completed();
+            }
+        });
+        tf.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                response = tf.getText();
+                frame.setVisible(false);
+                frame.dispose();
+                completed();
+            }
+        });
+        frame.setVisible(true);
+    }
+
+    private synchronized void completed() {
+        waiting = false;
+        notifyAll();
+    }
+
     /**
      * Wait that the user returned a response
+     * 
      * @return the string response (may be "" but not null)
      */
-   public synchronized String waitResponse() {
-       while (waiting) {
-           try {
-               wait();
-           } catch (Exception e) {}
+    public synchronized String waitResponse() {
+        while (waiting) {
+            try {
+                wait();
+            } catch (Exception e) {
+            }
         }
         return response;
-   }
-       
+    }
+
 }
 
 // This example is from _Java Examples in a Nutshell_. (http://www.oreilly.com)

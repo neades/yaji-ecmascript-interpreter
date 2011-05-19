@@ -5,40 +5,40 @@ package FESI.AST;
 import FESI.Parser.EcmaScript;
 
 public class ASTWithStatement extends SimpleNode {
-    
-  /**
+
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = -7773673519889605810L;
-Object evaluationSource = null;
-  
-  public ASTWithStatement(int id) {
-    super(id);
-  }
+    private static final long serialVersionUID = -7773673519889605810L;
+    Object evaluationSource = null;
 
-  public ASTWithStatement(EcmaScript p, int id) {
-    super(p, id);
-  }
+    public ASTWithStatement(int id) {
+        super(id);
+    }
 
-  public static Node jjtCreate(int id) {
-      return new ASTWithStatement(id);
-  }
+    public ASTWithStatement(EcmaScript p, int id) {
+        super(p, id);
+    }
 
-  public static Node jjtCreate(EcmaScript p, int id) {
-      return new ASTWithStatement(p, id);
-  }
+    public static Node jjtCreate(int id) {
+        return new ASTWithStatement(id);
+    }
 
-  /** Accept the visitor. **/
-  public Object jjtAccept(EcmaScriptVisitor visitor, Object data) {
-    return visitor.visit(this, data);
-  }
-  
-  // JMCL
-  public void setEvaluationSource(Object evaluationSource) {
-      this.evaluationSource = evaluationSource;
-  }
-  
-  public Object getEvaluationSource() {
-      return evaluationSource;
-  }
+    public static Node jjtCreate(EcmaScript p, int id) {
+        return new ASTWithStatement(p, id);
+    }
+
+    /** Accept the visitor. **/
+    public Object jjtAccept(EcmaScriptVisitor visitor, Object data) {
+        return visitor.visit(this, data);
+    }
+
+    // JMCL
+    public void setEvaluationSource(Object evaluationSource) {
+        this.evaluationSource = evaluationSource;
+    }
+
+    public Object getEvaluationSource() {
+        return evaluationSource;
+    }
 }

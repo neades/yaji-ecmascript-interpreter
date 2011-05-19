@@ -21,18 +21,22 @@ import FESI.Interpreter.Evaluator;
 
 /**
  * Implements the prototype and is the class of all Object objects.
- * <P>All functionality of objects is implemented in the superclass
- * ESObject.
+ * <P>
+ * All functionality of objects is implemented in the superclass ESObject.
  */
 public class ObjectPrototype extends ESObject {
-     
+
+    private static final long serialVersionUID = -4836187608032396557L;
+
     /**
-     * Create a new Object with a specific prototype. This should be used
-     * by routine implementing object with another prototype than Object.
-     * To create an EcmaScript Object use ObjectObject.createObject()
-     *
-     * @param  prototype the prototype of the new object
-     * @param  evaluator The evaluator 
+     * Create a new Object with a specific prototype. This should be used by
+     * routine implementing object with another prototype than Object. To create
+     * an EcmaScript Object use ObjectObject.createObject()
+     * 
+     * @param prototype
+     *            the prototype of the new object
+     * @param evaluator
+     *            The evaluator
      */
     public ObjectPrototype(ESObject prototype, Evaluator evaluator) {
         super(prototype, evaluator);

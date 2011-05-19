@@ -21,9 +21,10 @@ package FESI.gui;
  * Interface to the prompt box
  */
 public interface PromptBox {
-    
+
     /**
      * Wait that the user returned a response
+     * 
      * @return the string response (may be "" but not null)
      */
     String waitResponse();

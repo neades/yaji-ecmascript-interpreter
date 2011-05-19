@@ -20,10 +20,9 @@ package FESI.Extensions;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Interpreter.Evaluator;
 
-
-public abstract class  Extension implements java.io.Serializable {
+public abstract class Extension implements java.io.Serializable {
     private static final long serialVersionUID = 7359522094517571L;
 
     abstract public void initializeExtension(Evaluator evaluator)
-           throws EcmaScriptException;
+            throws EcmaScriptException;
 }

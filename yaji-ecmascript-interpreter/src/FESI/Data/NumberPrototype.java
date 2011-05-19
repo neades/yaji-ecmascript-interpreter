@@ -20,7 +20,6 @@ package FESI.Data;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Interpreter.Evaluator;
 
-
 /**
  * Implements the prototype and is the class of all Number objects
  */
@@ -28,54 +27,55 @@ class NumberPrototype extends ESObject {
     private static final long serialVersionUID = 5851526384066944881L;
     // The value
     protected ESNumber value = ESNumber.valueOf(0.0);
-    
+
     /**
      * Create a new un-initialzed Number
-     */    
+     */
     NumberPrototype(ESObject prototype, Evaluator evaluator) {
         super(prototype, evaluator);
     }
-    
+
     // overrides
     public String getESClassName() {
         return "Number";
     }
-    
+
     // overrides
     public boolean isNumberValue() {
-        return true; 
+        return true;
     }
-    
+
     // overrides
     public double doubleValue() {
         return value.doubleValue();
     }
-    
+
     // overrides
     public boolean booleanValue() {
         return value.booleanValue();
     }
-    
+
     // overrides
-    public String toString()  {
-    	if (value==null) return super.toString();
-         return value.toString();
+    public String toString() {
+        if (value == null)
+            return super.toString();
+        return value.toString();
     }
-        
+
     // overrides
     public ESValue toESNumber() throws EcmaScriptException {
-       return value;
+        return value;
     }
-    
+
     // overrides
     public Object toJavaObject() {
         return new Double(value.doubleValue());
     }
-    
+
     // overrides
     public String toDetailString() {
-        return "ES:[Object: builtin " + this.getClass().getName() + ":" + 
-            ((value == null) ? "null" : value.toString()) + "]";
+        return "ES:[Object: builtin " + this.getClass().getName() + ":"
+                + ((value == null) ? "null" : value.toString()) + "]";
     }
 
 }

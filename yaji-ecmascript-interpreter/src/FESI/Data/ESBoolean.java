@@ -28,171 +28,162 @@ import FESI.Interpreter.Evaluator;
  */
 public final class ESBoolean extends ESPrimitive {
 
-	// There is only one true and one false value (allowing
-	// efficient comparisons)
-	private static ESBoolean trueValue = new ESBoolean();
-	private static ESBoolean falseValue = new ESBoolean();
+    // There is only one true and one false value (allowing
+    // efficient comparisons)
+    private static ESBoolean trueValue = new ESBoolean();
+    private static ESBoolean falseValue = new ESBoolean();
 
+    private ESBoolean() {
+        // do nothing
+    }
 
-	private ESBoolean() {
-		// do nothing
-	}
+    /**
+     * Create a boolean primitive (either true or false) by returning the
+     * predefined (unique) true or false values
+     * 
+     * @return either trueValue or falseValue
+     */
+    static public ESBoolean makeBoolean(boolean value) {
+        return value ? trueValue : falseValue;
+    }
 
-	/**
-	 * Create a boolean primitive (either true or false)
-	 * by returning the predefined (unique) true or false values
-	 *
-	 * @return either trueValue or falseValue
-	 */
-	static public ESBoolean makeBoolean(boolean value) {
-		return value ? trueValue: falseValue;
-	}
-
-	// overrides
-	@Override
+    // overrides
+    @Override
     public String toDetailString() {
-		return "ES:<" + (this==trueValue ? "true" : "false") + ">";
-	}
+        return "ES:<" + (this == trueValue ? "true" : "false") + ">";
+    }
 
-	// overrides
-	@Override
+    // overrides
+    @Override
     public int getTypeOf() {
-		return EStypeBoolean;
-	}
+        return EStypeBoolean;
+    }
 
-	// overrides
-	@Override
+    // overrides
+    @Override
     public String getTypeofString() {
-		return "boolean";
-	}
+        return "boolean";
+    }
 
-
-	// overrides
-	@Override
+    // overrides
+    @Override
     public String toString() {
-		return this==trueValue ? "true" : "false";
-	}
+        return this == trueValue ? "true" : "false";
+    }
 
-	// overrides
-	@Override
+    // overrides
+    @Override
     public double doubleValue() {
-		return this==trueValue ? 1 : 0;
-	}
+        return this == trueValue ? 1 : 0;
+    }
 
-	// overrides
-	@Override
+    // overrides
+    @Override
     public boolean booleanValue() {
-		return this==trueValue;
-	}
+        return this == trueValue;
+    }
 
-	// overrides
-	@Override
+    // overrides
+    @Override
     public ESValue toESBoolean() {
-		return this;
-	}
+        return this;
+    }
 
-	// overrides
-	@Override
+    // overrides
+    @Override
     public ESValue toESObject(Evaluator evaluator) throws EcmaScriptException {
-		BooleanPrototype theObject = null;
-		ESObject bp = evaluator.getBooleanPrototype();
-		theObject = new BooleanPrototype(bp, evaluator);
-		theObject.value = this;
-		return theObject;
-	}
+        BooleanPrototype theObject = null;
+        ESObject bp = evaluator.getBooleanPrototype();
+        theObject = new BooleanPrototype(bp, evaluator);
+        theObject.value = this;
+        return theObject;
+    }
 
-	// overrides
-	@Override
+    // overrides
+    @Override
     public Object toJavaObject() {
-		return Boolean.valueOf(this==trueValue);
-	}
+        return Boolean.valueOf(this == trueValue);
+    }
 
-	// overrides
-	/**
-	 * returns true as we implement booleanValue without an evaluator.
-	 * @return true
-	 */
-	@Override
+    // overrides
+    /**
+     * returns true as we implement booleanValue without an evaluator.
+     * 
+     * @return true
+     */
+    @Override
     public boolean isBooleanValue() {
-		return true;
-	}
+        return true;
+    }
 
-	/**
-	 * Advanced FESI
-	 * GT Modified: 5/10/2002
-	 *              Serialisation of ESBoolean objects.
-	 *              writeReplace() and readResolve ensure that
-	 *              the reinstantiated ESBoolean will be the
-	 *              ESBoolean.trueValue or the ESBoolean.falseValue object
-	 *              @throws ObjectStreamException
-	 */
-	public Object writeReplace() throws ObjectStreamException {
-		return new ESBooleanReplace (this==trueValue);
-	}
+    /**
+     * Advanced FESI GT Modified: 5/10/2002 Serialisation of ESBoolean objects.
+     * writeReplace() and readResolve ensure that the reinstantiated ESBoolean
+     * will be the ESBoolean.trueValue or the ESBoolean.falseValue object
+     * 
+     * @throws ObjectStreamException
+     */
+    public Object writeReplace() throws ObjectStreamException {
+        return new ESBooleanReplace(this == trueValue);
+    }
 
-	private static class ESBooleanReplace implements java.io.Serializable
-	{
-		private static final long serialVersionUID = -123640878171914112L;
-		private boolean value = false;
+    private static class ESBooleanReplace implements java.io.Serializable {
+        private static final long serialVersionUID = -123640878171914112L;
+        private boolean value = false;
 
-		ESBooleanReplace(boolean value)
-		{
-			this.value = value;
-		}
+        ESBooleanReplace(boolean value) {
+            this.value = value;
+        }
 
-		/**
-		 * @throws ObjectStreamException
-		 */
-		public Object readResolve ()
-		throws ObjectStreamException
-		{
-			return ESBoolean.makeBoolean (value);
-		}
-	}
+        /**
+         * @throws ObjectStreamException
+         */
+        public Object readResolve() throws ObjectStreamException {
+            return ESBoolean.makeBoolean(value);
+        }
+    }
 
-	/**
-	 * Advanced FESI
-	 * GT Modified: 5/10/2004
-	 * Support for subtypes (storing values in hashset)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-    public int hashCode()
-	{
-		return booleanValue() ? 1 : 0;
-	}
+    /**
+     * Advanced FESI GT Modified: 5/10/2004 Support for subtypes (storing values
+     * in hashset)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return booleanValue() ? 1 : 0;
+    }
 
-	/**
-	 * Advanced FESI
-	 * GT Modified: 12/10/2004
-	 * Support for subtypes (storing values in hashset)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
+    /**
+     * Advanced FESI GT Modified: 12/10/2004 Support for subtypes (storing
+     * values in hashset)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
     public boolean equals(Object o) {
-		if(this == o) {
-			return true;
-		}
-		else if(o instanceof ESValue) {
-			// handle the special cases of ESNull and ESUndefined
-			if(o == ESNull.theNull || o == ESUndefined.theUndefined) {
-				return false;
-			}
+        if (this == o) {
+            return true;
+        } else if (o instanceof ESValue) {
+            // handle the special cases of ESNull and ESUndefined
+            if (o == ESNull.theNull || o == ESUndefined.theUndefined) {
+                return false;
+            }
 
-			try {
-				return booleanValue() == ((ESValue) o).booleanValue();
-			} catch (EcmaScriptException e) {
-				return false;
-			}
-		}
+            try {
+                return booleanValue() == ((ESValue) o).booleanValue();
+            } catch (EcmaScriptException e) {
+                return false;
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	@Override
+    @Override
     public boolean equalsSameType(ESValue v2) throws EcmaScriptException {
-		boolean b1 = booleanValue();
-		boolean b2 = v2.booleanValue();
-		return b1==b2;
-	}
+        boolean b1 = booleanValue();
+        boolean b2 = v2.booleanValue();
+        return b1 == b2;
+    }
 }

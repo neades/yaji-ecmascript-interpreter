@@ -9,9 +9,11 @@ public class WrappedStringBuilderFactory implements IAppendableFactory {
     private final int MAXIMUM_INITIAL_SIZE = 1024 * 100;
 
     /**
-     * @param estimatedNumberOfAppends not needed for this implementation. 
+     * @param estimatedNumberOfAppends
+     *            not needed for this implementation.
      */
-    public IAppendable create(int estimatedNumberOfAppends, int estimatedNumberOfCharacters) {
+    public IAppendable create(int estimatedNumberOfAppends,
+            int estimatedNumberOfCharacters) {
         int initialSize = estimatedNumberOfCharacters;
 
         if (initialSize < MINIMUM_INITIAL_SIZE) {

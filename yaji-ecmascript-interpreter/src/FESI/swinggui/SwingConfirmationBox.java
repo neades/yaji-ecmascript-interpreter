@@ -21,34 +21,35 @@ import javax.swing.JOptionPane;
 
 import FESI.gui.ConfirmationBox;
 
-
 /**
  * Implementation of a confirmation box
  */
 public class SwingConfirmationBox implements ConfirmationBox {
-    
+
     private boolean response = false;
 
     /**
      * Create a confirmation box
-     * @param title The title string
-     * @param message The message text
+     * 
+     * @param title
+     *            The title string
+     * @param message
+     *            The message text
      */
     public SwingConfirmationBox(String title, String message) {
-        response = (JOptionPane.showConfirmDialog(null, 
-                        message, title, JOptionPane.YES_NO_OPTION))==
-                                JOptionPane.YES_OPTION;
-   }
-   
-   
-   /** 
-    * Wait for the answer and return it
-    * @return the answer as a boolean
-    */        
-   public boolean waitYesOrNo() {
+        response = (JOptionPane.showConfirmDialog(null, message, title,
+                JOptionPane.YES_NO_OPTION)) == JOptionPane.YES_OPTION;
+    }
+
+    /**
+     * Wait for the answer and return it
+     * 
+     * @return the answer as a boolean
+     */
+    public boolean waitYesOrNo() {
         return response;
-   }
-       
+    }
+
 }
 
 // This example is from _Java Examples in a Nutshell_. (http://www.oreilly.com)

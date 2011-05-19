@@ -17,7 +17,7 @@
 
 package FESI.Interpreter;
 
-import java.util.Vector;
+import java.util.List;
 
 import FESI.AST.ASTProgram;
 
@@ -28,26 +28,31 @@ public class ParsedProgram {
     // The parsed tree of the function
     private ASTProgram programNode = null;
     // The list of declared variables
-    private Vector variableNames = null;
-    // The source of the parsed program    
+    private List<String> variableNames = null;
+    // The source of the parsed program
     private EvaluationSource evaluationSource = null;
-    
+
     /**
-     * Create a parsed program representation from the abstract tree and list of variables
-     * @param programNode the parsed program
-     * @param variableNames The variables declared by var
-     * @param evaluationSource the source of the parsed tree
+     * Create a parsed program representation from the abstract tree and list of
+     * variables
+     * 
+     * @param programNode
+     *            the parsed program
+     * @param variableNames
+     *            The variables declared by var
+     * @param evaluationSource
+     *            the source of the parsed tree
      */
-    protected ParsedProgram(ASTProgram programNode,
-                            Vector variableNames,
-                            EvaluationSource evaluationSource) {
+    protected ParsedProgram(ASTProgram programNode, List<String> variableNames,
+            EvaluationSource evaluationSource) {
         this.programNode = programNode;
         this.variableNames = variableNames;
         this.evaluationSource = evaluationSource;
     }
-    
+
     /**
      * Get the program node
+     * 
      * @return the program node
      */
     protected ASTProgram getProgramNode() {
@@ -56,14 +61,16 @@ public class ParsedProgram {
 
     /**
      * Get the variable list
+     * 
      * @return the variable list
      */
-    protected Vector getVariableNames() {
+    protected List<String> getVariableNames() {
         return variableNames;
     }
-    
+
     /**
-     * Get the evaluation souce 
+     * Get the evaluation souce
+     * 
      * @return the evaluation source
      */
     protected EvaluationSource getEvaluationSource() {

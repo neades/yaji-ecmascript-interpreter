@@ -3,15 +3,18 @@
  */
 package FESI.Interpreter;
 
-
 /**
  * @author roryg
  */
-public interface IProcedureProfiler extends IProfiler  {
+public interface IProcedureProfiler extends IProfiler {
 
     public Object[] startProcedure(String className, String functionName);
-    public void endProcedure(String className, String functionName, Object[] start, long endTime);
+
+    public void endProcedure(String className, String functionName,
+            Object[] start, long endTime);
+
     public void addElement(String message);
+
     public void endProfiling();
 
 }

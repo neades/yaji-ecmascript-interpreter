@@ -17,7 +17,6 @@
 
 package FESI.Interpreter;
 
-
 /**
  * Add line number to an evaluation source
  */
@@ -25,26 +24,32 @@ package FESI.Interpreter;
 public class LineEvaluationSource extends EvaluationSource {
     private static final long serialVersionUID = 5359296622424415907L;
     private int theLineNumber;
-     
+
     /**
-     * Create a source description being the line number of a previous description
-     * @param theLineNumber Describe the line number
-     * @param previousSource Describe the calling source
+     * Create a source description being the line number of a previous
+     * description
+     * 
+     * @param theLineNumber
+     *            Describe the line number
+     * @param previousSource
+     *            Describe the calling source
      */
-    public LineEvaluationSource(int theLineNumber, EvaluationSource previousSource) {
+    public LineEvaluationSource(int theLineNumber,
+            EvaluationSource previousSource) {
         super(previousSource);
         this.theLineNumber = theLineNumber;
     }
-    
+
     /**
      * Return the string describing the line number
      */
     protected String getEvaluationSourceText() {
-        return "at line " + theLineNumber + " " + previousSource.getEvaluationSourceText();
+        return "at line " + theLineNumber + " "
+                + previousSource.getEvaluationSourceText();
     }
-    
+
     /**
-      * Get the line number of the error if possible
+     * Get the line number of the error if possible
      */
     public int getLineNumber() {
         return theLineNumber;

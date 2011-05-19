@@ -31,74 +31,74 @@ import FESI.Data.GlobalObject;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Interpreter.Evaluator;
 
-
-
 public class JavaAccess extends Extension {
     private static final long serialVersionUID = 1639896019075230024L;
 
-
     class GlobalObjectJavaTypeOf extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1436041700328969737L;
-        GlobalObjectJavaTypeOf(String name, Evaluator evaluator, FunctionPrototype fp) {
+
+        GlobalObjectJavaTypeOf(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
             super(fp, evaluator, name, 1);
         }
-        public ESValue callFunction(ESObject thisObject, 
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-             
-           if (arguments.length>0) { 
-               Object obj = arguments[0].toJavaObject();
-               String cn = (obj==null) ? "null" : ESLoader.typeName(obj.getClass());
-               return new ESString(cn);
-           }
-           return ESUndefined.theUndefined;
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+
+            if (arguments.length > 0) {
+                Object obj = arguments[0].toJavaObject();
+                String cn = (obj == null) ? "null" : ESLoader.typeName(obj
+                        .getClass());
+                return new ESString(cn);
+            }
+            return ESUndefined.theUndefined;
         }
     }
-    
+
     class GlobalObjectLoadExtension extends BuiltinFunctionObject {
         private static final long serialVersionUID = -164035943654712169L;
-        GlobalObjectLoadExtension(String name, Evaluator evaluator, FunctionPrototype fp) {
+
+        GlobalObjectLoadExtension(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
             super(fp, evaluator, name, 1);
         }
-        public ESValue callFunction(ESObject thisObject, 
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-             
-           Object ext = null;
-           if (arguments.length>0) { 
-               String pathName = arguments[0].toString();
-               ext = this.getEvaluator().addExtension(pathName);
-           }
-           return ESBoolean.makeBoolean(ext!=null);
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+
+            Object ext = null;
+            if (arguments.length > 0) {
+                String pathName = arguments[0].toString();
+                ext = this.getEvaluator().addExtension(pathName);
+            }
+            return ESBoolean.makeBoolean(ext != null);
         }
     }
- 
-    public JavaAccess () {
+
+    public JavaAccess() {
         super();
     }
-    
-        
-    public void initializeExtension(Evaluator evaluator) throws EcmaScriptException {
- 
+
+    public void initializeExtension(Evaluator evaluator)
+            throws EcmaScriptException {
+
         GlobalObject go = evaluator.getGlobalObject();
-        FunctionPrototype fp = (FunctionPrototype) evaluator.getFunctionPrototype();
-            
-        go.putHiddenProperty("javaTypeOf", 
-                   new GlobalObjectJavaTypeOf("javaTypeOf", evaluator, fp));
-        go.putHiddenProperty("loadExtension", 
-                   new GlobalObjectLoadExtension("loadExtension", evaluator, fp));
+        FunctionPrototype fp = (FunctionPrototype) evaluator
+                .getFunctionPrototype();
+
+        go.putHiddenProperty("javaTypeOf", new GlobalObjectJavaTypeOf(
+                "javaTypeOf", evaluator, fp));
+        go.putHiddenProperty("loadExtension", new GlobalObjectLoadExtension(
+                "loadExtension", evaluator, fp));
 
         ESPackages packagesObject = (ESPackages) evaluator.getPackageObject();
         String java = ("java").intern();
-        ESPackages javaPackages = (ESPackages) packagesObject.getProperty(java,java.hashCode()); 
+        ESPackages javaPackages = (ESPackages) packagesObject.getProperty(java,
+                java.hashCode());
         go.putHiddenProperty("Packages", packagesObject);
         go.putHiddenProperty(java, javaPackages);
-        ESBeans javaBeans = new ESBeans(evaluator); 
+        ESBeans javaBeans = new ESBeans(evaluator);
         go.putHiddenProperty("Beans", javaBeans);
-            
-     }
- }
- 
 
- 
- 
+    }
+}

@@ -18,16 +18,18 @@
 package FESI.Tests;
 
 /**
- * File used by the validation suite
- * added to the FESI jar file for convenience of validating the system
+ * File used by the validation suite added to the FESI jar file for convenience
+ * of validating the system
  */
- 
+
 public class TestJavaBean {
     // To test access via setter/getter
     private int hidden = 12; // Magic value, checked by test program
+
     public int getHidden() {
         return hidden;
     }
+
     public void setHidden(int x) {
         hidden = x;
     }
@@ -40,14 +42,17 @@ public class TestJavaBean {
     // to test if access was
     // via setter/getter or directly.
     public int both = 5; // Magic value, checked by test program
+
     public void setBoth(int x) {
         both = -x;
     }
+
     public int getBoth() {
         return -both;
     }
-    
+
     public String toString() {
-        return "TestJavaBean: visible="+visible+", hidden="+hidden+", both="+both;
+        return "TestJavaBean: visible=" + visible + ", hidden=" + hidden
+                + ", both=" + both;
     }
 }

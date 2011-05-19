@@ -22,7 +22,6 @@
  * @author Laurence P. G. Cable
  */
 
-
 package FESI.ClassFile;
 
 import java.io.DataOutputStream;
@@ -30,8 +29,8 @@ import java.io.IOException;
 
 /**
  * <p>
- * This class provides Constant Pool support for all the simple constant
- * value data types supported in the class file format.
+ * This class provides Constant Pool support for all the simple constant value
+ * data types supported in the class file format.
  * </p>
  */
 
@@ -40,102 +39,135 @@ class ConstantValue extends Attribute {
     private ConstantPoolEntry constant;
 
     /**
-     * <p> construct an Attribute describing a Constant  </p>
-     *
-     * @param cf	the class file
-     * @param cpe 	the cpe of the constant
+     * <p>
+     * construct an Attribute describing a Constant
+     * </p>
+     * 
+     * @param cf
+     *            the class file
+     * @param cpe
+     *            the cpe of the constant
      */
 
     private ConstantValue(ClassFile cf, ConstantPoolEntry cpe) {
-    	super(Attribute.CONSTANTVALUE, cf);
-    	constant = cpe;
+        super(Attribute.CONSTANTVALUE, cf);
+        constant = cpe;
     }
 
     /**
-     * <p> Integer Constant </p>
-     *
-     * @param cf	the class file
-     * @param ic	the Integer Constant
+     * <p>
+     * Integer Constant
+     * </p>
+     * 
+     * @param cf
+     *            the class file
+     * @param ic
+     *            the Integer Constant
      */
 
     ConstantValue(ClassFile cf, IntegerConstant ic) {
-    	this(cf, (ConstantPoolEntry)ic);
+        this(cf, (ConstantPoolEntry) ic);
     }
 
     /**
-     * <p> Long Constant </p>
-     *
-     * @param cf	the class file
-     * @param lc	the Long Constant
+     * <p>
+     * Long Constant
+     * </p>
+     * 
+     * @param cf
+     *            the class file
+     * @param lc
+     *            the Long Constant
      */
 
     ConstantValue(ClassFile cf, LongConstant lc) {
-    	this(cf, (ConstantPoolEntry)lc);
+        this(cf, (ConstantPoolEntry) lc);
     }
 
     /**
-     * <p> Float Constant </p>
-     *
-     * @param cf	the class file
-     * @param fc	the Float Constant
+     * <p>
+     * Float Constant
+     * </p>
+     * 
+     * @param cf
+     *            the class file
+     * @param fc
+     *            the Float Constant
      */
 
     ConstantValue(ClassFile cf, FloatConstant fc) {
-    	this(cf, (ConstantPoolEntry)fc);
+        this(cf, (ConstantPoolEntry) fc);
     }
 
     /**
-     * <p> Double Constant </p>
-     *
-     * @param cf	the class file
-     * @param dc	the Double Constant
+     * <p>
+     * Double Constant
+     * </p>
+     * 
+     * @param cf
+     *            the class file
+     * @param dc
+     *            the Double Constant
      */
 
     ConstantValue(ClassFile cf, DoubleConstant dc) {
-    	this(cf, (ConstantPoolEntry)dc);
+        this(cf, (ConstantPoolEntry) dc);
     }
 
     /**
-     * <p> String Constant </p>
-     *
-     * @param cf	the class file
-     * @param sc	the String Constant
+     * <p>
+     * String Constant
+     * </p>
+     * 
+     * @param cf
+     *            the class file
+     * @param sc
+     *            the String Constant
      */
 
     ConstantValue(ClassFile cf, StringConstant sc) {
-    	this(cf, (ConstantPoolEntry)sc);
+        this(cf, (ConstantPoolEntry) sc);
     }
 
     /**
      * @return the length of this ConstantValue Attribute (minus header)
      */
 
-    int getLength() { return 2; } 
+    int getLength() {
+        return 2;
+    }
 
     /**
      * @return the CPE of the constant represented
      */
 
-    ConstantPoolEntry getConstant() { return constant; }
+    ConstantPoolEntry getConstant() {
+        return constant;
+    }
 
     /**
      * @return the CPE type tag of the constant represented
      */
 
-    byte getConstantTag() { return constant.getTag(); }
+    byte getConstantTag() {
+        return constant.getTag();
+    }
 
     /**
-     *<p> write the Attribute to the stream </p>
-     *
-     * @param dos the output stream
-     *
+     *<p>
+     * write the Attribute to the stream
+     * </p>
+     * 
+     * @param dos
+     *            the output stream
+     * 
      * @throws IOException
      */
 
     void write(DataOutputStream dos) throws IOException {
-    	dos.writeShort(getNameConstantPoolIndex());
-    	dos.writeInt(getLength());
-    	dos.writeShort(constant.getConstantPoolIndex());
+        dos.writeShort(getNameConstantPoolIndex());
+        dos.writeInt(getLength());
+        dos.writeShort(constant.getConstantPoolIndex());
     }
 
     /**
@@ -143,6 +175,6 @@ class ConstantValue extends Attribute {
      */
 
     public boolean equals(Object o) {
-    	return constant.equals(o);
+        return constant.equals(o);
     }
 }

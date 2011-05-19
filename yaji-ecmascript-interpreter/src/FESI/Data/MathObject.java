@@ -27,8 +27,8 @@ import FESI.Interpreter.Evaluator;
 public class MathObject extends ObjectPrototype {
     private static final long serialVersionUID = 3759859709073220773L;
 
-    private MathObject(ESObject prototype, Evaluator evaluator, FunctionPrototype functionPrototype)
-                                throws EcmaScriptException {
+    private MathObject(ESObject prototype, Evaluator evaluator,
+            FunctionPrototype functionPrototype) throws EcmaScriptException {
         super(prototype, evaluator);
 
         // Initialization used to be in makeMathObject, but this caused
@@ -38,198 +38,180 @@ public class MathObject extends ObjectPrototype {
         putHiddenProperty("E", ESNumber.valueOf(Math.E));
         putHiddenProperty("LN10", ESNumber.valueOf(Math.log(10.0d)));
         putHiddenProperty("LN2", ESNumber.valueOf(Math.log(2.0d)));
-        putHiddenProperty("LOG2E", ESNumber.valueOf(1.0d/Math.log(2.0d)));
-        putHiddenProperty("LOG10E", ESNumber.valueOf(1.0d/Math.log(10.0d)));
+        putHiddenProperty("LOG2E", ESNumber.valueOf(1.0d / Math.log(2.0d)));
+        putHiddenProperty("LOG10E", ESNumber.valueOf(1.0d / Math.log(10.0d)));
         putHiddenProperty("PI", ESNumber.valueOf(Math.PI));
-        putHiddenProperty("SQRT1_2", ESNumber.valueOf(1.0d/Math.sqrt(2.0d)));
+        putHiddenProperty("SQRT1_2", ESNumber.valueOf(1.0d / Math.sqrt(2.0d)));
         putHiddenProperty("SQRT2", ESNumber.valueOf(Math.sqrt(2.0d)));
 
-        putHiddenProperty("abs",
-           new BuiltinMathFunctionOne("abs", evaluator, functionPrototype) {
-                private static final long serialVersionUID = 1L;
+        putHiddenProperty("abs", new BuiltinMathFunctionOne("abs", evaluator,
+                functionPrototype) {
+            private static final long serialVersionUID = 1L;
 
-                @Override
-                public double applyMathFunction(double arg) {
-                   return Math.abs(arg);
-                }
+            @Override
+            public double applyMathFunction(double arg) {
+                return Math.abs(arg);
             }
-        );
-        putHiddenProperty("acos",
-           new BuiltinMathFunctionOne("acos", evaluator, functionPrototype) {
-                private static final long serialVersionUID = 1L;
+        });
+        putHiddenProperty("acos", new BuiltinMathFunctionOne("acos", evaluator,
+                functionPrototype) {
+            private static final long serialVersionUID = 1L;
 
-                @Override
-                public double applyMathFunction(double arg) {
-                   return Math.acos(arg);
-                }
+            @Override
+            public double applyMathFunction(double arg) {
+                return Math.acos(arg);
             }
-        );
-        putHiddenProperty("asin",
-           new BuiltinMathFunctionOne("asin", evaluator, functionPrototype) {
-                private static final long serialVersionUID = 1L;
+        });
+        putHiddenProperty("asin", new BuiltinMathFunctionOne("asin", evaluator,
+                functionPrototype) {
+            private static final long serialVersionUID = 1L;
 
-                @Override
-                public double applyMathFunction(double arg) {
-                   return Math.asin(arg);
-                }
+            @Override
+            public double applyMathFunction(double arg) {
+                return Math.asin(arg);
             }
-        );
-        putHiddenProperty("atan",
-           new BuiltinMathFunctionOne("atan", evaluator, functionPrototype) {
-                private static final long serialVersionUID = 1L;
+        });
+        putHiddenProperty("atan", new BuiltinMathFunctionOne("atan", evaluator,
+                functionPrototype) {
+            private static final long serialVersionUID = 1L;
 
-                @Override
-                public double applyMathFunction(double arg) {
-                   return Math.atan(arg);
-                }
+            @Override
+            public double applyMathFunction(double arg) {
+                return Math.atan(arg);
             }
-        );
-        putHiddenProperty("atan2",
-           new BuiltinMathFunctionTwo("atan2", evaluator, functionPrototype) {
-                private static final long serialVersionUID = 1L;
+        });
+        putHiddenProperty("atan2", new BuiltinMathFunctionTwo("atan2",
+                evaluator, functionPrototype) {
+            private static final long serialVersionUID = 1L;
 
-                @Override
-                public double applyMathFunction(double arg1, double arg2) {
-                   return Math.atan2(arg1,arg2);
-                }
+            @Override
+            public double applyMathFunction(double arg1, double arg2) {
+                return Math.atan2(arg1, arg2);
             }
-        );
-        putHiddenProperty("ceil",
-           new BuiltinMathFunctionOne("ceil", evaluator, functionPrototype) {
-                private static final long serialVersionUID = 1L;
+        });
+        putHiddenProperty("ceil", new BuiltinMathFunctionOne("ceil", evaluator,
+                functionPrototype) {
+            private static final long serialVersionUID = 1L;
 
-                @Override
-                public double applyMathFunction(double arg) {
-                   return Math.ceil(arg);
-                }
+            @Override
+            public double applyMathFunction(double arg) {
+                return Math.ceil(arg);
             }
-        );
-        putHiddenProperty("cos",
-           new BuiltinMathFunctionOne("cos", evaluator, functionPrototype) {
-                private static final long serialVersionUID = 1L;
+        });
+        putHiddenProperty("cos", new BuiltinMathFunctionOne("cos", evaluator,
+                functionPrototype) {
+            private static final long serialVersionUID = 1L;
 
-                @Override
-                public double applyMathFunction(double arg) {
-                   return Math.cos(arg);
-                }
+            @Override
+            public double applyMathFunction(double arg) {
+                return Math.cos(arg);
             }
-        );
-        putHiddenProperty("exp",
-           new BuiltinMathFunctionOne("exp", evaluator, functionPrototype) {
-                private static final long serialVersionUID = 1L;
+        });
+        putHiddenProperty("exp", new BuiltinMathFunctionOne("exp", evaluator,
+                functionPrototype) {
+            private static final long serialVersionUID = 1L;
 
-                @Override
-                public double applyMathFunction(double arg) {
-                   return Math.exp(arg);
-                }
+            @Override
+            public double applyMathFunction(double arg) {
+                return Math.exp(arg);
             }
-        );
-        putHiddenProperty("floor",
-           new BuiltinMathFunctionOne("floor", evaluator, functionPrototype) {
-                private static final long serialVersionUID = 1L;
+        });
+        putHiddenProperty("floor", new BuiltinMathFunctionOne("floor",
+                evaluator, functionPrototype) {
+            private static final long serialVersionUID = 1L;
 
-                @Override
-                public double applyMathFunction(double arg) {
-                   return Math.floor(arg);
-                }
+            @Override
+            public double applyMathFunction(double arg) {
+                return Math.floor(arg);
             }
-        );
-        putHiddenProperty("log",
-           new BuiltinMathFunctionOne("log", evaluator, functionPrototype) {
-                private static final long serialVersionUID = 1L;
+        });
+        putHiddenProperty("log", new BuiltinMathFunctionOne("log", evaluator,
+                functionPrototype) {
+            private static final long serialVersionUID = 1L;
 
-                @Override
-                public double applyMathFunction(double arg) {
-                   return Math.log(arg);
-                }
+            @Override
+            public double applyMathFunction(double arg) {
+                return Math.log(arg);
             }
-        );
-        putHiddenProperty("max",
-           new BuiltinMathFunctionTwo("max", evaluator, functionPrototype) {
-                private static final long serialVersionUID = 1L;
+        });
+        putHiddenProperty("max", new BuiltinMathFunctionTwo("max", evaluator,
+                functionPrototype) {
+            private static final long serialVersionUID = 1L;
 
-                @Override
-                public double applyMathFunction(double arg1, double arg2) {
-                   return Math.max(arg1,arg2);
-                }
+            @Override
+            public double applyMathFunction(double arg1, double arg2) {
+                return Math.max(arg1, arg2);
             }
-        );
-        putHiddenProperty("min",
-           new BuiltinMathFunctionTwo("min", evaluator, functionPrototype) {
-                private static final long serialVersionUID = 1L;
+        });
+        putHiddenProperty("min", new BuiltinMathFunctionTwo("min", evaluator,
+                functionPrototype) {
+            private static final long serialVersionUID = 1L;
 
-                @Override
-                public double applyMathFunction(double arg1, double arg2) {
-                   return Math.min(arg1,arg2);
-                }
+            @Override
+            public double applyMathFunction(double arg1, double arg2) {
+                return Math.min(arg1, arg2);
             }
-        );
-        putHiddenProperty("pow",
-           new BuiltinMathFunctionTwo("pow", evaluator, functionPrototype) {
-                private static final long serialVersionUID = 1L;
+        });
+        putHiddenProperty("pow", new BuiltinMathFunctionTwo("pow", evaluator,
+                functionPrototype) {
+            private static final long serialVersionUID = 1L;
 
-                @Override
-                public double applyMathFunction(double arg1, double arg2) {
-                   double d = Double.NaN;
-                   try {
-                        d = Math.pow(arg1,arg2);
-                    } catch (ArithmeticException e) {
-                        // return NaN
-                    }
-                   return d;
+            @Override
+            public double applyMathFunction(double arg1, double arg2) {
+                double d = Double.NaN;
+                try {
+                    d = Math.pow(arg1, arg2);
+                } catch (ArithmeticException e) {
+                    // return NaN
                 }
+                return d;
             }
-        );
-        putHiddenProperty("random",
-           new BuiltinMathFunctionZero("random", evaluator, functionPrototype) {
-                private static final long serialVersionUID = 1L;
+        });
+        putHiddenProperty("random", new BuiltinMathFunctionZero("random",
+                evaluator, functionPrototype) {
+            private static final long serialVersionUID = 1L;
 
-                @Override
-                public double applyMathFunction() {
-                   return Math.random();
-                }
+            @Override
+            public double applyMathFunction() {
+                return Math.random();
             }
-        );
-        putHiddenProperty("round",
-           new BuiltinMathFunctionOne("round", evaluator, functionPrototype) {
-                private static final long serialVersionUID = 1L;
+        });
+        putHiddenProperty("round", new BuiltinMathFunctionOne("round",
+                evaluator, functionPrototype) {
+            private static final long serialVersionUID = 1L;
 
-                @Override
-                public double applyMathFunction(double arg) {
-                   return Math.round(arg);
-                }
+            @Override
+            public double applyMathFunction(double arg) {
+                return Math.round(arg);
             }
-        );
-        putHiddenProperty("sin",
-           new BuiltinMathFunctionOne("sin", evaluator, functionPrototype) {
-                private static final long serialVersionUID = 1L;
+        });
+        putHiddenProperty("sin", new BuiltinMathFunctionOne("sin", evaluator,
+                functionPrototype) {
+            private static final long serialVersionUID = 1L;
 
-                @Override
-                public double applyMathFunction(double arg) {
-                   return Math.sin(arg);
-                }
+            @Override
+            public double applyMathFunction(double arg) {
+                return Math.sin(arg);
             }
-        );
-        putHiddenProperty("sqrt",
-           new BuiltinMathFunctionOne("sqrt", evaluator, functionPrototype) {
-                private static final long serialVersionUID = 1L;
+        });
+        putHiddenProperty("sqrt", new BuiltinMathFunctionOne("sqrt", evaluator,
+                functionPrototype) {
+            private static final long serialVersionUID = 1L;
 
-                @Override
-                public double applyMathFunction(double arg) {
-                   return Math.sqrt(arg);
-                }
+            @Override
+            public double applyMathFunction(double arg) {
+                return Math.sqrt(arg);
             }
-        );
-        putHiddenProperty("tan",
-           new BuiltinMathFunctionOne("tan", evaluator, functionPrototype) {
-                private static final long serialVersionUID = 1L;
+        });
+        putHiddenProperty("tan", new BuiltinMathFunctionOne("tan", evaluator,
+                functionPrototype) {
+            private static final long serialVersionUID = 1L;
 
-                @Override
-                public double applyMathFunction(double arg) {
-                   return Math.tan(arg);
-                }
+            @Override
+            public double applyMathFunction(double arg) {
+                return Math.tan(arg);
             }
-        );
+        });
     }
 
     // overrides
@@ -241,80 +223,91 @@ public class MathObject extends ObjectPrototype {
     // class of nilary functions
     abstract class BuiltinMathFunctionZero extends BuiltinFunctionObject {
         private static final long serialVersionUID = -403656694341333710L;
-        BuiltinMathFunctionZero(String name, Evaluator evaluator, FunctionPrototype fp) {
+
+        BuiltinMathFunctionZero(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
             super(fp, evaluator, name, 0);
         }
+
         abstract double applyMathFunction();
+
         @Override
         public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
-               throws EcmaScriptException {
-           return ESNumber.valueOf(applyMathFunction());
+                throws EcmaScriptException {
+            return ESNumber.valueOf(applyMathFunction());
         }
     }
 
     // class of unary functions
     abstract class BuiltinMathFunctionOne extends BuiltinFunctionObject {
         private static final long serialVersionUID = -4281492306473644175L;
-        BuiltinMathFunctionOne(String name, Evaluator evaluator, FunctionPrototype fp) {
+
+        BuiltinMathFunctionOne(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
             super(fp, evaluator, name, 1);
         }
+
         abstract double applyMathFunction(double arg);
+
         @Override
-        public ESValue callFunction(ESObject thisObject,
-                            ESValue[] arguments)
-               throws EcmaScriptException {
-           double arg = (arguments.length>0) ?
-                               arguments[0].doubleValue() :
-                               Double.NaN;
-           if (Double.isNaN(arg)) {
-               return ESNumber.valueOf(Double.NaN);
-           }
-           return ESNumber.valueOf(applyMathFunction(arg));
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            double arg = (arguments.length > 0) ? arguments[0].doubleValue()
+                    : Double.NaN;
+            if (Double.isNaN(arg)) {
+                return ESNumber.valueOf(Double.NaN);
+            }
+            return ESNumber.valueOf(applyMathFunction(arg));
         }
     }
 
     // class of dyadic functions
     abstract class BuiltinMathFunctionTwo extends BuiltinFunctionObject {
         private static final long serialVersionUID = 978692357189557419L;
-        BuiltinMathFunctionTwo(String name, Evaluator evaluator, FunctionPrototype fp) {
+
+        BuiltinMathFunctionTwo(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
             super(fp, evaluator, name, 2);
         }
+
         abstract double applyMathFunction(double arg1, double arg2);
+
         @Override
-        public ESValue callFunction(ESObject thisObject,
-                                ESValue[] arguments)
-               throws EcmaScriptException {
-           if (arguments.length<2) {
-               throw new EcmaScriptException("Missing parameter in function " + this);
-           }
-           double arg1 = (arguments.length>0) ?
-                               arguments[0].doubleValue() :
-                               Double.NaN;
-           double arg2 = (arguments.length>01) ?
-                               arguments[1].doubleValue() :
-                               Double.NaN;
-           if (Double.isNaN(arg1) || Double.isNaN(arg2)) {
-               return ESNumber.valueOf(Double.NaN);
-           }
-           return ESNumber.valueOf(applyMathFunction(arg1, arg2));
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            if (arguments.length < 2) {
+                throw new EcmaScriptException("Missing parameter in function "
+                        + this);
+            }
+            double arg1 = (arguments.length > 0) ? arguments[0].doubleValue()
+                    : Double.NaN;
+            double arg2 = (arguments.length > 01) ? arguments[1].doubleValue()
+                    : Double.NaN;
+            if (Double.isNaN(arg1) || Double.isNaN(arg2)) {
+                return ESNumber.valueOf(Double.NaN);
+            }
+            return ESNumber.valueOf(applyMathFunction(arg1, arg2));
         }
     }
 
     /**
      * Utility function to create the Math single object
-     *
-     * @param evaluator the Evaluator
-     * @param prototype The Object prototype attached to the evaluator
-     * @param functionPrototype The Function prototype attached to the evaluator
-     *
+     * 
+     * @param evaluator
+     *            the Evaluator
+     * @param prototype
+     *            The Object prototype attached to the evaluator
+     * @param functionPrototype
+     *            The Function prototype attached to the evaluator
+     * 
      * @return the Math singleton
      */
-    static public ESObject makeMathObject (Evaluator evaluator,
-                                    ObjectPrototype prototype,
-                                    FunctionPrototype functionPrototype) {
+    static public ESObject makeMathObject(Evaluator evaluator,
+            ObjectPrototype prototype, FunctionPrototype functionPrototype) {
         try {
-          MathObject mo = new MathObject(prototype, evaluator, functionPrototype);
-          return mo;
+            MathObject mo = new MathObject(prototype, evaluator,
+                    functionPrototype);
+            return mo;
         } catch (EcmaScriptException e) {
             e.printStackTrace();
             throw new ProgrammingError(e.getMessage());

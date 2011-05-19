@@ -22,9 +22,9 @@ package FESI.gui;
  */
 public interface MessageBox {
 
-    /** 
+    /**
      * Wait that the user confirmed reception of the message
      */
-   void waitOK();
-       
+    void waitOK();
+
 }

@@ -26,33 +26,35 @@ import java.net.URLConnection;
 import FESI.Data.ESLoader;
 
 public class FESIResourceConnection extends URLConnection {
-    private static boolean debug = false;
-
-    private Object resource;    // the resource we are fetching
-    private String cookie;    // identification of the loader instance to use
-    private String name;    // name of the resource
+    private Object resource; // the resource we are fetching
+    private String cookie; // identification of the loader instance to use
+    private String name; // name of the resource
     private final String prefix = LocalClassLoader.urlPrefix;
     private final int prefixLength = prefix.length();
 
-    public FESIResourceConnection (URL url)
-        throws MalformedURLException, IOException
-    {
+    public FESIResourceConnection(URL url) throws MalformedURLException,
+            IOException {
         super(url);
-        if (ESLoader.isDebugLoader()) System.out.println(" ** new FESIResourceConnection('"+url+"')");
+        if (ESLoader.isDebugLoader())
+            System.out.println(" ** new FESIResourceConnection('" + url + "')");
         String file = url.getFile();
         if (file.startsWith("/")) {
             file = file.substring(1);
         }
-        if (! file.startsWith(prefix)) {
-            throw new MalformedURLException("FESIResource file should start with /" + prefix);
+        if (!file.startsWith(prefix)) {
+            throw new MalformedURLException(
+                    "FESIResource file should start with /" + prefix);
         }
         cookie = file.substring(prefixLength, file.indexOf("/+/"));
-        name = file.substring(file.indexOf("/+/")+3);
-        if (ESLoader.isDebugLoader()) System.out.println(" ** cookie: " + cookie + ", name: " + name);    
+        name = file.substring(file.indexOf("/+/") + 3);
+        if (ESLoader.isDebugLoader())
+            System.out.println(" ** cookie: " + cookie + ", name: " + name);
     }
 
     public void connect() throws IOException {
-        if (ESLoader.isDebugLoader()) System.out.println(" ** Connect: cookie: " + cookie + ", name: " + name);    
+        if (ESLoader.isDebugLoader())
+            System.out.println(" ** Connect: cookie: " + cookie + ", name: "
+                    + name);
         Object o = LocalClassLoader.getLocalResource(cookie, name);
         if (o == null) {
             resource = null;

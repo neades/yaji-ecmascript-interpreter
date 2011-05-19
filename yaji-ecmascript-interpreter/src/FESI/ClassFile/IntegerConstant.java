@@ -22,67 +22,77 @@
  * @author Laurence P. G. Cable
  */
 
-
 package FESI.ClassFile;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
- * <p> this class provides minimal support for the CONSTANT_INTEGER CPE </p>
+ * <p>
+ * this class provides minimal support for the CONSTANT_INTEGER CPE
+ * </p>
  */
 
 class IntegerConstant extends ConstantPoolEntry {
 
-    private int	integer;
+    private int integer;
 
     /**
-     * <p> construct a CONSTANT_INTEGER CPE </p>
-     *
-     * @param i		the integer constant
-     * @param cf	the class file
+     * <p>
+     * construct a CONSTANT_INTEGER CPE
+     * </p>
+     * 
+     * @param i
+     *            the integer constant
+     * @param cf
+     *            the class file
      */
 
     IntegerConstant(int i, ClassFile cf) {
-    	super(CONSTANT_INTEGER, cf);
-    
-    	integer = i;
+        super(CONSTANT_INTEGER, cf);
 
-    	addToConstantPool();
+        integer = i;
+
+        addToConstantPool();
     }
 
     /**
-     * <p> write the CONSTANT_INTEGER to the stream </p>
-     *
-     * @param dos the output stream
-     *
+     * <p>
+     * write the CONSTANT_INTEGER to the stream
+     * </p>
+     * 
+     * @param dos
+     *            the output stream
+     * 
      * @throws IOException
      */
 
     void write(DataOutputStream dos) throws IOException {
-    	dos.writeByte(getTag());
-    	dos.writeInt(integer);
+        dos.writeByte(getTag());
+        dos.writeInt(integer);
     }
 
     /**
      * @return the value of the CONSTANT_INTEGER
      */
 
-    int getValue() { return integer; }
+    int getValue() {
+        return integer;
+    }
 
     /**
      * @return object equality
      */
 
     public boolean equals(Object o) {
-    	if (o instanceof Integer) {
-    	    return integer == ((Integer)o).intValue();
-    	} else if (o instanceof IntegerConstant) {
-    	    IntegerConstant ic = (IntegerConstant)o;
+        if (o instanceof Integer) {
+            return integer == ((Integer) o).intValue();
+        } else if (o instanceof IntegerConstant) {
+            IntegerConstant ic = (IntegerConstant) o;
 
-    	    return integer == ic.getValue();
-    	}
+            return integer == ic.getValue();
+        }
 
-    	return false;
+        return false;
     }
 }

@@ -22,26 +22,32 @@
  * @author Laurence P. G. Cable
  */
 
-
 package FESI.ClassFile;
 
-
 /**
- * <p> implements a CONSTANT_FIELDREF CPE </p>
+ * <p>
+ * implements a CONSTANT_FIELDREF CPE
+ * </p>
  */
 
 final class FieldConstant extends RefConstant {
 
     /**
-     * <p> construct a CONSTANT_FIELDREF CPE </p>
-     *
-     * @param cName	the class name
-     * @param nName	the name of the field
-     * @param tName 	the type descriptor for the field
-     * @param cf	the class file
+     * <p>
+     * construct a CONSTANT_FIELDREF CPE
+     * </p>
+     * 
+     * @param cName
+     *            the class name
+     * @param nName
+     *            the name of the field
+     * @param tName
+     *            the type descriptor for the field
+     * @param cf
+     *            the class file
      */
-    
+
     FieldConstant(String cName, String nName, String tName, ClassFile cf) {
-    	super(CONSTANT_FIELDREF, cName, nName, tName, cf);
+        super(CONSTANT_FIELDREF, cName, nName, tName, cf);
     }
 }

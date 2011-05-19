@@ -22,80 +22,89 @@
  * @author Laurence P. G. Cable
  */
 
-
 package FESI.ClassFile;
-
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
  * <p>
- * Implements the field_info structure of a class file, used to describe
- * the attributes of all fields implemented by this class. The class provides
+ * Implements the field_info structure of a class file, used to describe the
+ * attributes of all fields implemented by this class. The class provides
  * minimal support to write the formatted structure to the stream.
  * </p>
  */
 
 final class FieldDesc {
 
-    final static short ACC_PUBLIC	    = 0x0001;
-    final static short ACC_PRIVATE	    = 0x0002;
-    final static short ACC_PROTECTED        = 0x0004;
-    final static short ACC_STATIC	    = 0x0008;
-    final static short ACC_FINAL	    = 0x0010;
-    final static short ACC_VOLATILE	    = 0x0040;
-    final static short ACC_TRANSIENT        = 0x0080;
+    final static short ACC_PUBLIC = 0x0001;
+    final static short ACC_PRIVATE = 0x0002;
+    final static short ACC_PROTECTED = 0x0004;
+    final static short ACC_STATIC = 0x0008;
+    final static short ACC_FINAL = 0x0010;
+    final static short ACC_VOLATILE = 0x0040;
+    final static short ACC_TRANSIENT = 0x0080;
 
-    private UTF8Constant	name;
-    private UTF8Constant	descriptor;
+    private UTF8Constant name;
+    private UTF8Constant descriptor;
 
-    private short		accessFlags;
+    private short accessFlags;
 
-
-    private Attribute[]		attributes;
+    private Attribute[] attributes;
 
     /**
-     * <p> construct a descriptor for a field. </p>
-     *
-     * @param field	name
-     * @param desc	its type descriptor
-     * @param flags	access flags
-     * @param cf	the class file
-     * @param attrs	any associated attributes
-     *
+     * <p>
+     * construct a descriptor for a field.
+     * </p>
+     * 
+     * @param field
+     *            name
+     * @param desc
+     *            its type descriptor
+     * @param flags
+     *            access flags
+     * @param cf
+     *            the class file
+     * @param attrs
+     *            any associated attributes
+     * 
      */
 
-    FieldDesc(String field, String desc, short flags, ClassFile cf, Attribute[] attrs) {
-    	super();
+    FieldDesc(String field, String desc, short flags, ClassFile cf,
+            Attribute[] attrs) {
+        super();
 
-    	// we would validate here ...
+        // we would validate here ...
 
-    	name        = new UTF8Constant(field, cf);
-    	descriptor  = new UTF8Constant(desc,  cf);
-    	accessFlags = flags;
-    	attributes  = attrs;
+        name = new UTF8Constant(field, cf);
+        descriptor = new UTF8Constant(desc, cf);
+        accessFlags = flags;
+        attributes = attrs;
     }
 
     /**
-     * <p> write the field to the stream </p>
-     *
-     * @param dos	the output stream
-     *
+     * <p>
+     * write the field to the stream
+     * </p>
+     * 
+     * @param dos
+     *            the output stream
+     * 
      * @throws IOException
      */
 
     void write(DataOutputStream dos) throws IOException {
-    	dos.writeShort(accessFlags);
-    	dos.writeShort(name.getConstantPoolIndex());
-    	dos.writeShort(descriptor.getConstantPoolIndex());
+        dos.writeShort(accessFlags);
+        dos.writeShort(name.getConstantPoolIndex());
+        dos.writeShort(descriptor.getConstantPoolIndex());
 
-	if (attributes != null && attributes.length == 0) {
-    	    dos.writeShort(attributes.length);
+        if (attributes != null && attributes.length == 0) {
+            dos.writeShort(attributes.length);
 
-    	    for (int i = 0; i < attributes.length; i++) {
-    		attributes[i].write(dos);
-    	    }
-	} else dos.writeShort(0);
+            for (int i = 0; i < attributes.length; i++) {
+                attributes[i].write(dos);
+            }
+        } else
+            dos.writeShort(0);
     }
 }

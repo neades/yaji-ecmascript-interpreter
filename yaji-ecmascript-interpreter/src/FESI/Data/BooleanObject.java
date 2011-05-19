@@ -31,96 +31,104 @@ public class BooleanObject extends BuiltinFunctionObject {
         super(prototype, evaluator, "Boolean", 1);
     }
 
-    // overrides    
+    // overrides
     public String toString() {
         return "<Boolean>";
     }
-      
-    // overrides    
-    public ESValue callFunction(ESObject thisObject,
-                                    ESValue[] arguments) 
-                                            throws EcmaScriptException {
-         if (arguments.length==0) {
-             return ESBoolean.makeBoolean(false);
-         }
-         return ESBoolean.makeBoolean(arguments[0].booleanValue());
-          
+
+    // overrides
+    public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+            throws EcmaScriptException {
+        if (arguments.length == 0) {
+            return ESBoolean.makeBoolean(false);
+        }
+        return ESBoolean.makeBoolean(arguments[0].booleanValue());
+
     }
-    
-       
-    // overrides    
-    public ESObject doConstruct(ESObject thisObject, 
-                                ESValue[] arguments) 
-                                        throws EcmaScriptException {
-         BooleanPrototype theObject = null;
-         ESObject bp = getEvaluator().getBooleanPrototype();
-         theObject= new BooleanPrototype(bp, getEvaluator());
-         if (arguments.length>0) {
-             theObject.value = ESBoolean.makeBoolean(arguments[0].booleanValue());
-         } else {
-             theObject.value = ESBoolean.makeBoolean(false);
-         }
-         return theObject;
+
+    // overrides
+    public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
+            throws EcmaScriptException {
+        BooleanPrototype theObject = null;
+        ESObject bp = getEvaluator().getBooleanPrototype();
+        theObject = new BooleanPrototype(bp, getEvaluator());
+        if (arguments.length > 0) {
+            theObject.value = ESBoolean
+                    .makeBoolean(arguments[0].booleanValue());
+        } else {
+            theObject.value = ESBoolean.makeBoolean(false);
+        }
+        return theObject;
     }
-        
+
     /**
      * Utility function to create the single Boolean object
-     *
-     * @param evaluator the Evaluator
-     * @param objectPrototype The Object prototype attached to the evaluator
-     * @param functionPrototype The Function prototype attached to the evaluator
-     *
+     * 
+     * @param evaluator
+     *            the Evaluator
+     * @param objectPrototype
+     *            The Object prototype attached to the evaluator
+     * @param functionPrototype
+     *            The Function prototype attached to the evaluator
+     * 
      * @return the Boolean singleton
      */
     public static BooleanObject makeBooleanObject(Evaluator evaluator,
-                                   ObjectPrototype objectPrototype,
-                                   FunctionPrototype functionPrototype) {
-            
-         BooleanPrototype booleanPrototype = new BooleanPrototype(objectPrototype, evaluator);
-         BooleanObject booleanObject = new BooleanObject(functionPrototype, evaluator);
+            ObjectPrototype objectPrototype, FunctionPrototype functionPrototype) {
+
+        BooleanPrototype booleanPrototype = new BooleanPrototype(
+                objectPrototype, evaluator);
+        BooleanObject booleanObject = new BooleanObject(functionPrototype,
+                evaluator);
         try {
             // For booleanPrototype
             class BooleanPrototypeToString extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
-                BooleanPrototypeToString(String name, Evaluator evaluator, FunctionPrototype fp) {
+
+                BooleanPrototypeToString(String name, Evaluator evaluator,
+                        FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
-                public ESValue callFunction(ESObject thisObject, 
-                                        ESValue[] arguments)
-                       throws EcmaScriptException { 
-                   ESValue v = ((BooleanPrototype) thisObject).value;
-                   String s = v.toString();
-                   return new ESString(s);
+
+                public ESValue callFunction(ESObject thisObject,
+                        ESValue[] arguments) throws EcmaScriptException {
+                    ESValue v = ((BooleanPrototype) thisObject).value;
+                    String s = v.toString();
+                    return new ESString(s);
                 }
             }
             class BooleanPrototypeValueOf extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
-                BooleanPrototypeValueOf(String name, Evaluator evaluator, FunctionPrototype fp) {
+
+                BooleanPrototypeValueOf(String name, Evaluator evaluator,
+                        FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
-                public ESValue callFunction(ESObject thisObject, 
-                                                ESValue[] arguments)
-                       throws EcmaScriptException { 
-                   return ((BooleanPrototype) thisObject).value;
+
+                public ESValue callFunction(ESObject thisObject,
+                        ESValue[] arguments) throws EcmaScriptException {
+                    return ((BooleanPrototype) thisObject).value;
                 }
             }
 
-            booleanObject.putHiddenProperty("prototype",booleanPrototype);
-            booleanObject.putHiddenProperty("length",ESNumber.valueOf(1));
+            booleanObject.putHiddenProperty("prototype", booleanPrototype);
+            booleanObject.putHiddenProperty("length", ESNumber.valueOf(1));
 
-            booleanPrototype.putHiddenProperty("constructor",booleanObject);
-            booleanPrototype.putHiddenProperty("toString", 
-               new BooleanPrototypeToString("toString", evaluator, functionPrototype));
+            booleanPrototype.putHiddenProperty("constructor", booleanObject);
+            booleanPrototype.putHiddenProperty("toString",
+                    new BooleanPrototypeToString("toString", evaluator,
+                            functionPrototype));
             booleanPrototype.putHiddenProperty("valueOf",
-               new BooleanPrototypeValueOf("valueOf", evaluator, functionPrototype));
+                    new BooleanPrototypeValueOf("valueOf", evaluator,
+                            functionPrototype));
         } catch (EcmaScriptException e) {
             e.printStackTrace();
             throw new ProgrammingError(e.getMessage());
         }
-       
-         evaluator.setBooleanPrototype(booleanPrototype);
 
-       return booleanObject;   
+        evaluator.setBooleanPrototype(booleanPrototype);
+
+        return booleanObject;
     }
 
 }

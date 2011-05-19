@@ -35,8 +35,11 @@ public class DatePrototype extends ESObject {
 
     /**
      * Create a new Date object with a null date
-     * @param prototype the Date prototype
-     * @param evaluator the Evaluator
+     * 
+     * @param prototype
+     *            the Date prototype
+     * @param evaluator
+     *            the Evaluator
      */
     protected DatePrototype(ESObject prototype, Evaluator evaluator) {
         super(prototype, evaluator);
@@ -45,22 +48,28 @@ public class DatePrototype extends ESObject {
 
     /**
      * Create a new Date object with a specified date
-     * @param evaluator the Evaluator
-     * @param aDate the Date
+     * 
+     * @param evaluator
+     *            the Evaluator
+     * @param aDate
+     *            the Date
      */
-    public DatePrototype (Evaluator evaluator, Date aDate) {
-       super(evaluator.getDatePrototype(), evaluator);
-       date = new Date(aDate.getTime());
-   }
+    public DatePrototype(Evaluator evaluator, Date aDate) {
+        super(evaluator.getDatePrototype(), evaluator);
+        date = new Date(aDate.getTime());
+    }
 
     /**
      * Create a new Date object with a specified date
-     * @param evaluator the Evaluator
-     * @param time the Date
+     * 
+     * @param evaluator
+     *            the Evaluator
+     * @param time
+     *            the Date
      */
-    public DatePrototype (Evaluator evaluator, long time) {
-       super(evaluator.getDatePrototype(), evaluator);
-       date = new Date(time);
+    public DatePrototype(Evaluator evaluator, long time) {
+        super(evaluator.getDatePrototype(), evaluator);
+        date = new Date(time);
     }
 
     // overrides
@@ -76,11 +85,15 @@ public class DatePrototype extends ESObject {
 
     /**
      * Set the year value of the date. BEWARE: Fixed as base 1900 !
-     * @param arguments The array of arguments, the first one being the year
+     * 
+     * @param arguments
+     *            The array of arguments, the first one being the year
      * @return the new date as a number
      */
     public ESValue setYear(ESValue[] arguments) throws EcmaScriptException {
-        if (date == null) { return ESNumber.valueOf(Double.NaN); }
+        if (date == null) {
+            return ESNumber.valueOf(Double.NaN);
+        }
         if (arguments.length <= 0) {
             date = null;
             return ESNumber.valueOf(Double.NaN);
@@ -103,25 +116,28 @@ public class DatePrototype extends ESObject {
 
     }
 
-
     /**
      * Set the time value of the date based on the element type to change Assume
      * that the time elements are in the local time zone
-     *
+     * 
      * @param arguments
      *            The array of arguments
      * @para, argTypes The array of element type
      * @return the new date as a number
      */
-    public ESValue setTime(ESValue[] arguments, int[] argTypes) throws EcmaScriptException {
-        if (date == null) { return ESNumber.valueOf(Double.NaN); }
+    public ESValue setTime(ESValue[] arguments, int[] argTypes)
+            throws EcmaScriptException {
+        if (date == null) {
+            return ESNumber.valueOf(Double.NaN);
+        }
         if (arguments.length <= 0) {
             date = null;
             return ESNumber.valueOf(Double.NaN);
         }
         GregorianCalendar cal = new GregorianCalendar(TimeZone.getDefault());
         cal.setTime(date);
-        for (int iarg = 0; (iarg < argTypes.length) && (iarg < arguments.length); iarg++) {
+        for (int iarg = 0; (iarg < argTypes.length)
+                && (iarg < arguments.length); iarg++) {
             double d = arguments[iarg].doubleValue();
             if (Double.isNaN(d)) {
                 date = null;
@@ -143,21 +159,26 @@ public class DatePrototype extends ESObject {
     /**
      * Set the time value of the date based on the element type to change Assume
      * that the time elements are in the UTC time zone
-     *
+     * 
      * @param arguments
      *            The array of arguments
      * @para, argTypes The array of element type
      * @return the new date as a number
      */
-    public ESValue setUTCTime(ESValue[] arguments, int[] argTypes) throws EcmaScriptException {
-        if (date == null) { return ESNumber.valueOf(Double.NaN); }
+    public ESValue setUTCTime(ESValue[] arguments, int[] argTypes)
+            throws EcmaScriptException {
+        if (date == null) {
+            return ESNumber.valueOf(Double.NaN);
+        }
         if (arguments.length <= 0) {
             date = null;
             return ESNumber.valueOf(Double.NaN);
         }
-        GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+        GregorianCalendar cal = new GregorianCalendar(TimeZone
+                .getTimeZone("GMT"));
         cal.setTime(date);
-        for (int iarg = 0; (iarg < argTypes.length) && (iarg < arguments.length); iarg++) {
+        for (int iarg = 0; (iarg < argTypes.length)
+                && (iarg < arguments.length); iarg++) {
             double d = arguments[iarg].doubleValue();
             if (Double.isNaN(d)) {
                 date = null;
@@ -174,13 +195,15 @@ public class DatePrototype extends ESObject {
 
     /**
      * Get an element of the date (in local time zone)
-     *
+     * 
      * @param element
      *            The type of the element
      * @return the element as a value
      */
     public ESValue get(int element) {
-        if (date == null) { return ESNumber.valueOf(Double.NaN); }
+        if (date == null) {
+            return ESNumber.valueOf(Double.NaN);
+        }
         GregorianCalendar cal = new GregorianCalendar(TimeZone.getDefault());
         cal.setTime(date);
         long t = cal.get(element);
@@ -194,14 +217,17 @@ public class DatePrototype extends ESObject {
 
     /**
      * Get an element of the date (in UTC time zone)
-     *
+     * 
      * @param element
      *            The type of the element
      * @return the element as a value
      */
     public ESValue getUTC(int element) {
-        if (date == null) { return ESNumber.valueOf(Double.NaN); }
-        GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+        if (date == null) {
+            return ESNumber.valueOf(Double.NaN);
+        }
+        GregorianCalendar cal = new GregorianCalendar(TimeZone
+                .getTimeZone("GMT"));
         cal.setTime(date);
         long t = cal.get(element);
         // EcmaScript has SUNDAY=0, java SUNDAY=1 - converted in DatePrototype
@@ -215,14 +241,14 @@ public class DatePrototype extends ESObject {
     // overrides
     @Override
     public String toString() {
-         return (date==null ? "null" : date.toString());
+        return (date == null ? "null" : date.toString());
     }
 
     // overrides
     @Override
     public String toDetailString() {
-        return "ES:[Object: builtin " + this.getClass().getName() + ":" +
-            ((date == null) ? "null" : date.toString()) + "]";
+        return "ES:[Object: builtin " + this.getClass().getName() + ":"
+                + ((date == null) ? "null" : date.toString()) + "]";
     }
 
     // overrides
@@ -233,31 +259,28 @@ public class DatePrototype extends ESObject {
 
     // overrides
     @Override
-    public ESValue getDefaultValue()
-                                throws EcmaScriptException {
+    public ESValue getDefaultValue() throws EcmaScriptException {
         return this.getDefaultValue(EStypeString);
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         // equating null and java epoch start, January 1, 1970, 00:00:00 GMT (!)
         return date != null ? date.hashCode() : 0;
     }
 
     /**
-     * Advanced FESI
-     * GT Modified: 12/4/2005
-     * Support for subtypes
+     * Advanced FESI GT Modified: 12/4/2005 Support for subtypes
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
     public boolean equals(Object o) {
-        if(this == o) {
+        if (this == o) {
             return true;
         }
 
-        if(o instanceof DatePrototype) {
+        if (o instanceof DatePrototype) {
             DatePrototype other = (DatePrototype) o;
             return date == null ? other.date == null : date.equals(other.date);
         }

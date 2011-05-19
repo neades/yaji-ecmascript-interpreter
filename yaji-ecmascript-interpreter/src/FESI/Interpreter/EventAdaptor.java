@@ -35,16 +35,15 @@ import java.util.EventObject;
 import FESI.Data.ESWrapper;
 import FESI.Exceptions.ProgrammingError;
 
-
 /**
  * <p>
- * FESI.Interpreter.EventAdaptor is an abstract base
- * class designed to support the dynamic generation of java.util.EventListener
- * sub-interface adaptor classes.
+ * FESI.Interpreter.EventAdaptor is an abstract base class designed to support
+ * the dynamic generation of java.util.EventListener sub-interface adaptor
+ * classes.
  * </p>
  * <p>
  * These dynamically generated adaptor classes can be used to take arbitrary
- * events and call EcmaScript handlers. 
+ * events and call EcmaScript handlers.
  * </p>
  * <p>
  * Using this dynamic adaptor class, objects that emits events on arbitrary`
@@ -52,11 +51,19 @@ import FESI.Exceptions.ProgrammingError;
  * onto a single EventListener interface, this allowing late binding of event
  * behaviors and filtering applications.
  * </p>
- *
- * <P>see sunw.demo.encapsulatedEvents.EncapsulatedEvent</P>
- * <P>see sunw.demo.encapsulatedEvents.EncapsulatedEventListener</P>
- * <P>see sunw.demo.encapsulatedEvents.EncapsulatedEventException</P>
- * <P>see sunw.demo.encapsulatedEvents.EncapsulatedEventAdaptorGenerator</P>
+ * 
+ * <P>
+ * see sunw.demo.encapsulatedEvents.EncapsulatedEvent
+ * </P>
+ * <P>
+ * see sunw.demo.encapsulatedEvents.EncapsulatedEventListener
+ * </P>
+ * <P>
+ * see sunw.demo.encapsulatedEvents.EncapsulatedEventException
+ * </P>
+ * <P>
+ * see sunw.demo.encapsulatedEvents.EncapsulatedEventAdaptorGenerator
+ * </P>
  */
 
 public abstract class EventAdaptor {
@@ -66,7 +73,7 @@ public abstract class EventAdaptor {
      */
 
     protected Object source;
-    
+
     /**
      * The target Wrapper object
      */
@@ -82,43 +89,46 @@ public abstract class EventAdaptor {
      * The Event Source's remove<T>Listener method
      */
 
-    protected Method removeAdaptorMethod; 
-
+    protected Method removeAdaptorMethod;
 
     /**
      * Generate an Adaptor instance for the Listener Interface and Event Source
-     *
-     * @param  lc       The java.lang.Class object for the listener to adapt.
-     * @param  s        The source object that the adaptor will listen to.
-     * @param  w        The wrapper object that the adaptor will listen to.
-     *
+     * 
+     * @param lc
+     *            The java.lang.Class object for the listener to adapt.
+     * @param s
+     *            The source object that the adaptor will listen to.
+     * @param w
+     *            The wrapper object that the adaptor will listen to.
+     * 
      * @return The newly instantiated dynamic adaptor
      * 
-     * @exception ClassNotFoundException If class cannot be loaded
-     * @exception IntrospectionException If error in introspection
-     * @exception InstantiationException If class found but cannot be instantiated
-     * @exception IllegalAccessException If operationis not allowed
+     * @exception ClassNotFoundException
+     *                If class cannot be loaded
+     * @exception IntrospectionException
+     *                If error in introspection
+     * @exception InstantiationException
+     *                If class found but cannot be instantiated
+     * @exception IllegalAccessException
+     *                If operationis not allowed
      */
 
-    public static EventAdaptor getEventAdaptor(Class lc, Object s, ESWrapper w) 
-         throws ClassNotFoundException, InstantiationException, 
-                 IllegalAccessException, IntrospectionException {
-        Class                    eeac  = null;
-        EventAdaptor eea   = null;
-        BeanInfo                 sbi   = Introspector.getBeanInfo(s.getClass());
-        EventSetDescriptor[]     sesd  = sbi.getEventSetDescriptors();
+    public static EventAdaptor getEventAdaptor(Class<?> lc, Object s,
+            ESWrapper w) throws ClassNotFoundException, InstantiationException,
+            IllegalAccessException, IntrospectionException {
+        Class<?> eeac = null;
+        EventAdaptor eea = null;
+        BeanInfo sbi = Introspector.getBeanInfo(s.getClass());
+        EventSetDescriptor[] sesd = sbi.getEventSetDescriptors();
 
         /*
          * first validate that the event source emits event on the interface
          * specified.
          */
- 
-        if (validateEventSource(sesd, lc) == -1) { 
-            throw new IllegalArgumentException("Object: "           +
-                                               s                    +
-                                               " does not source: " +
-                                               lc.getName()
-                      );
+
+        if (validateEventSource(sesd, lc) == -1) {
+            throw new IllegalArgumentException("Object: " + s
+                    + " does not source: " + lc.getName());
         }
 
         // generate the adaptor class
@@ -127,10 +137,10 @@ public abstract class EventAdaptor {
 
         // instantiate an instance of it ...
 
-        eea  = (EventAdaptor)eeac.newInstance();
+        eea = (EventAdaptor) eeac.newInstance();
 
         eea.setWrapper(w);
-        
+
         // and register the adaptor with the event source
 
         try {
@@ -142,38 +152,46 @@ public abstract class EventAdaptor {
         return eea;
     }
 
-
     /**
-     *
-     * @param   lc       The java.lang.Class object for the listener to adapt.
-     *
-     * @exception ClassNotFoundException If class cannot be loaded
-     *
+     * 
+     * @param lc
+     *            The java.lang.Class object for the listener to adapt.
+     * 
+     * @exception ClassNotFoundException
+     *                If class cannot be loaded
+     * 
      * @return The Class object for the newly generated dynamic adaptor class.
      */
 
-    public static Class getEventAdaptorClass(Class lc) throws ClassNotFoundException {
+    public static Class<?> getEventAdaptorClass(Class<?> lc)
+            throws ClassNotFoundException {
         if (!java.util.EventListener.class.isAssignableFrom(lc)) {
-            throw new IllegalArgumentException("Class is not a subinterface of java.util.EventListenerEventListener");
+            throw new IllegalArgumentException(
+                    "Class is not a subinterface of java.util.EventListenerEventListener");
         }
 
         return EventAdaptorGenerator.getAdaptorClassForListenerClass(lc);
     }
 
     /**
-     * <p> default constructor.
+     * <p>
+     * default constructor.
      */
 
-    protected EventAdaptor() { super(); }
+    protected EventAdaptor() {
+        super();
+    }
 
     /**
-     * @return the java.lang.Class object for the java.util.EventListener subinterface this instance adapts.
+     * @return the java.lang.Class object for the java.util.EventListener
+     *         subinterface this instance adapts.
      */
 
-    abstract public Class getListenerClass();
+    abstract public Class<?> getListenerClass();
 
     /**
-     * @return the name of the java.util.EventListener subinterface this instance adapts.
+     * @return the name of the java.util.EventListener subinterface this
+     *         instance adapts.
      */
 
     public String getListenerClassName() {
@@ -184,74 +202,85 @@ public abstract class EventAdaptor {
      * @return the event source object that this instance is adapting.
      */
 
-    public synchronized Object getSource() { return source; }
+    public synchronized Object getSource() {
+        return source;
+    }
 
+    public synchronized ESWrapper getWarepper() {
+        return wrapper;
+    }
 
-    public synchronized ESWrapper getWarepper() { return wrapper; }
-    public synchronized void setWrapper(ESWrapper w) { wrapper = w; }
-    
+    public synchronized void setWrapper(ESWrapper w) {
+        wrapper = w;
+    }
+
     /**
-     * @param  sesd     the EventSetDescriptor[] from the prospective event source.
-     * @param  lc       the java.lang.Class for the EventListener we are adapting.
+     * @param sesd
+     *            the EventSetDescriptor[] from the prospective event source.
+     * @param lc
+     *            the java.lang.Class for the EventListener we are adapting.
      * @return the index of the matching EventSetDescriptor or -1.
      */
 
-    private static int validateEventSource(EventSetDescriptor[] sesd, Class lc) {
+    private static int validateEventSource(EventSetDescriptor[] sesd,
+            Class<?> lc) {
         for (int i = 0; i < sesd.length; i++)
-            if (lc.equals(sesd[i].getListenerType())) return i;
+            if (lc.equals(sesd[i].getListenerType()))
+                return i;
 
         return -1;
     }
 
     /**
      * <p>
-     * setSource sets the adaptor instance to listen to the specified
-     * source. This operation will fail if the source does not emit events
-     * on the EventListener subinterface this adaptor implements.
+     * setSource sets the adaptor instance to listen to the specified source.
+     * This operation will fail if the source does not emit events on the
+     * EventListener subinterface this adaptor implements.
      * </p>
-     *
-     * @param s         the prospective event source.
-     *
-     * @exception IntrospectionException If any error with introspection
-     * @exception Exception If any other error
+     * 
+     * @param s
+     *            the prospective event source.
+     * 
+     * @exception IntrospectionException
+     *                If any error with introspection
+     * @exception Exception
+     *                If any other error
      */
 
-    public synchronized void setSource(Object s)
-    throws IntrospectionException, Exception {
+    public synchronized void setSource(Object s) throws IntrospectionException,
+            Exception {
 
-        if (source != null && s != null && source.equals(s)) return;
+        if (source != null && s != null && source.equals(s))
+            return;
 
-        if (source != null) removeAdaptorFromSource(); // unregister current
+        if (source != null)
+            removeAdaptorFromSource(); // unregister current
 
         if (s == null) {
-            source              = null;
-            addAdaptorMethod    = null;
+            source = null;
+            addAdaptorMethod = null;
             removeAdaptorMethod = null;
             return;
         }
 
-        BeanInfo             sbi   = Introspector.getBeanInfo(s.getClass());
-        EventSetDescriptor[] sesd  = sbi.getEventSetDescriptors();
+        BeanInfo sbi = Introspector.getBeanInfo(s.getClass());
+        EventSetDescriptor[] sesd = sbi.getEventSetDescriptors();
 
-        int                  i;
+        int i;
 
         if ((i = validateEventSource(sesd, getListenerClass())) == -1) {
-            throw new IllegalArgumentException("Object: "           +
-                                               s                    +
-                                               " does not source: " +
-                                               getListenerClassName()
-                      );
+            throw new IllegalArgumentException("Object: " + s
+                    + " does not source: " + getListenerClassName());
         }
-
 
         // update state
 
-        Object               olds  = source;
-        Method               oldam = addAdaptorMethod;
-        Method               oldrm = removeAdaptorMethod;
+        Object olds = source;
+        Method oldam = addAdaptorMethod;
+        Method oldrm = removeAdaptorMethod;
 
-        source              = s;
-        addAdaptorMethod    = sesd[i].getAddListenerMethod();
+        source = s;
+        addAdaptorMethod = sesd[i].getAddListenerMethod();
         removeAdaptorMethod = sesd[i].getRemoveListenerMethod();
 
         try {
@@ -260,99 +289,104 @@ public abstract class EventAdaptor {
 
             // something went wrong ... restore previous state.
 
-            source              = olds;
-            addAdaptorMethod    = oldam;
+            source = olds;
+            addAdaptorMethod = oldam;
             removeAdaptorMethod = oldrm;
 
-            if (source != null) addAdaptorToSource();
+            if (source != null)
+                addAdaptorToSource();
 
             throw e; // reraise problem
         }
     }
 
     /**
-     *
+     * 
      * <p>
-     * This method is called from simple EventListener method stubs of
-     * dynamic subclasses in order to create and EncapsulatedEvent and
-     * deliver it to the registered listeners.
+     * This method is called from simple EventListener method stubs of dynamic
+     * subclasses in order to create and EncapsulatedEvent and deliver it to the
+     * registered listeners.
      * </p>
-     *
-     * @param e  The EventObject being encapsulated
-     * @param lm The jav.lang.reflect.Method describing the listener Method.
-     *
-     * @exception Exception If any error occured in dispatch event
+     * 
+     * @param e
+     *            The EventObject being encapsulated
+     * @param lm
+     *            The jav.lang.reflect.Method describing the listener Method.
+     * 
+     * @exception Exception
+     *                If any error occured in dispatch event
      */
 
     protected void fire(EventObject e, Method lm) throws Exception {
-        Object [] a = new Object [] {e};
-        // System.out.println("FIRE: " + lm.getName() + " for " + getListenerClass().getName());
+        Object[] a = new Object[] { e };
+        // System.out.println("FIRE: " + lm.getName() + " for " +
+        // getListenerClass().getName());
         wrapper.dispatchEvent(a, getListenerClass(), lm);
     }
 
     /**
      * <p>
-     * This method is called from cracked EventListener method stubs of
-     * dynamic subclasses in order to create and EncapsulatedEvent and
-     * deliver it to the registered listeners.
+     * This method is called from cracked EventListener method stubs of dynamic
+     * subclasses in order to create and EncapsulatedEvent and deliver it to the
+     * registered listeners.
      * </p>
-     *
-     * @param a  The cracked Event arguments being encapsulated
-     * @param lm The jav.lang.reflect.Method describing the listener Method.
-     *
-     * @exception Exception If any error occured in dispatch event
+     * 
+     * @param a
+     *            The cracked Event arguments being encapsulated
+     * @param lm
+     *            The jav.lang.reflect.Method describing the listener Method.
+     * 
+     * @exception Exception
+     *                If any error occured in dispatch event
      */
 
     protected void fire(Object[] a, Method lm) throws Exception {
-        //System.out.println("FIRE: " + lm.getName() + " for " + getListenerClass().getName());
+        // System.out.println("FIRE: " + lm.getName() + " for " +
+        // getListenerClass().getName());
         wrapper.dispatchEvent(a, getListenerClass(), lm);
     }
 
-    
     /**
      * <p>
-     * EncapsulatedEventListener's may raise exceptions to the originating
-     * event source through an adaptor by throwing the actual exception within
-     * an instance of EncapsulatedEventException.
+     * EncapsulatedEventListener's may raise exceptions to the originating event
+     * source through an adaptor by throwing the actual exception within an
+     * instance of EncapsulatedEventException.
      * </p>
      * <p>
      * This method is called to verify that it is allowable to re-raise the
      * exception from the adaptor to the source, by checking that the listener
-     * method on the adaptor that the source delivered the original event to
-     * is permitted to throw such an exception, otherwise a RuntimeException
-     * is raised.
+     * method on the adaptor that the source delivered the original event to is
+     * permitted to throw such an exception, otherwise a RuntimeException is
+     * raised.
      * </p>
-     *
-     * @param ex        the exception thrown by the listener
-     * @param eel       the listener instance that threw it
-     * @param lm        the adaptors listener method that must re-raise it
-     *
+     * 
+     * @param ex
+     *            the exception thrown by the listener
+     * @param eel
+     *            the listener instance that threw it
+     * @param lm
+     *            the adaptors listener method that must re-raise it
+     * 
      */
 
-/*
-    protected final void handleEventException(EncapsulatedEventException ex, EncapsulatedEventListener eel, Method lm) throws Exception {
-        Class   ec  = ex.getExceptionClass();
-        Class[] ext = lm.getExceptionTypes();
-
-        // let's see if the Exception encapsulated is one the source is expecting
-        // if it is then throw it.
-
-        for (int i = 0; i < ext.length; i++) {
-            if (ext[i].isAssignableFrom(ec)) throw ex.getException();
-        }
-
-        // if we get here then the Exception the listener is trying
-        // to throw isnt one the source is expecting ... so throw it as a RTE
-
-        throw new RuntimeException("Event Source ["                + 
-                                   source                          +
-                                    "] is not prepared to catch [" +
-                                   ex.getException()               +
-                                   "] from listener ["             +
-                                   eel
-        );
-    }
-*/
+    /*
+     * protected final void handleEventException(EncapsulatedEventException ex,
+     * EncapsulatedEventListener eel, Method lm) throws Exception { Class ec =
+     * ex.getExceptionClass(); Class[] ext = lm.getExceptionTypes();
+     * 
+     * // let's see if the Exception encapsulated is one the source is expecting
+     * // if it is then throw it.
+     * 
+     * for (int i = 0; i < ext.length; i++) { if (ext[i].isAssignableFrom(ec))
+     * throw ex.getException(); }
+     * 
+     * // if we get here then the Exception the listener is trying // to throw
+     * isnt one the source is expecting ... so throw it as a RTE
+     * 
+     * throw new RuntimeException("Event Source [" + source +
+     * "] is not prepared to catch [" + ex.getException() + "] from listener ["
+     * + eel ); }
+     */
     /**
      * Adds this Adaptor to the Event Source
      */
@@ -365,21 +399,13 @@ public abstract class EventAdaptor {
 
             addAdaptorMethod.invoke(source, args);
         } catch (InvocationTargetException ite) {
-            throw new ProgrammingError("cannot add adaptor ["          +
-                               this                            +
-                               "] to source ["                 +
-                               source                          +
-                               "] InvocationTargetException: " +
-                               ite.getMessage()
-            );
+            throw new ProgrammingError("cannot add adaptor [" + this
+                    + "] to source [" + source
+                    + "] InvocationTargetException: " + ite.getMessage());
         } catch (IllegalAccessException iae) {
-            throw new ProgrammingError("cannot add adaptor ["       +
-                               this                         +
-                               "] to source ["              +
-                               source                       +
-                               "] IllegalAccessException: " +
-                               iae.getMessage()
-            );
+            throw new ProgrammingError("cannot add adaptor [" + this
+                    + "] to source [" + source + "] IllegalAccessException: "
+                    + iae.getMessage());
         }
     }
 
@@ -395,21 +421,13 @@ public abstract class EventAdaptor {
 
             removeAdaptorMethod.invoke(source, args);
         } catch (InvocationTargetException ite) {
-            System.err.println("cannot remove adaptor ["       +
-                               this                            +
-                               "] from source ["               +
-                               source                          +
-                               "] InvocationTargetException: " +
-                               ite.getMessage()
-            );
+            System.err.println("cannot remove adaptor [" + this
+                    + "] from source [" + source
+                    + "] InvocationTargetException: " + ite.getMessage());
         } catch (IllegalAccessException iae) {
-            System.err.println("cannot remove adaptor ["    +
-                               this                         +
-                               "] from source ["            +
-                               source                       +
-                               "] IllegalAccessException: " +
-                               iae.getMessage()
-            );
+            System.err.println("cannot remove adaptor [" + this
+                    + "] from source [" + source + "] IllegalAccessException: "
+                    + iae.getMessage());
         }
     }
 }

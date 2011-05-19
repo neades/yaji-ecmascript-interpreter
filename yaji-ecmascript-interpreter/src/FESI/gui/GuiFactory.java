@@ -18,27 +18,28 @@
 package FESI.gui;
 
 /**
- * Factory class to create the GUI elements, used to achieve independence
- * of GUI implementation at compile time.
+ * Factory class to create the GUI elements, used to achieve independence of GUI
+ * implementation at compile time.
  */
 public abstract class GuiFactory {
-	
-	/**
-	 * Must have a null constructor so that it can be created by newInstance
-	 */
-	public GuiFactory() {
-		super();
-	}
-	
-  /** 
-   * Display a message box (using the GUI of the console) with 
-   * specified title and text
-   */
-  public abstract MessageBox displayMessageBox(String title, String msg);
-	
-  /**
-   * Create aa new console
-   */
-  public abstract Console makeConsole(InterpreterCommands itrpParam, String title, int rows, int columns);
+
+    /**
+     * Must have a null constructor so that it can be created by newInstance
+     */
+    public GuiFactory() {
+        super();
+    }
+
+    /**
+     * Display a message box (using the GUI of the console) with specified title
+     * and text
+     */
+    public abstract MessageBox displayMessageBox(String title, String msg);
+
+    /**
+     * Create aa new console
+     */
+    public abstract Console makeConsole(InterpreterCommands itrpParam,
+            String title, int rows, int columns);
 
 }

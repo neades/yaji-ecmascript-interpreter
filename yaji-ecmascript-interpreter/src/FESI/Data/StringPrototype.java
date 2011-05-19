@@ -23,71 +23,75 @@ import FESI.Interpreter.ScopeChain;
 
 class StringPrototype extends ESObject {
     private static final long serialVersionUID = 1434073915774458544L;
-private static final String LENGTHstring = ("length").intern();
-   private static final int LENGTHhash = LENGTHstring.hashCode();
+    private static final String LENGTHstring = ("length").intern();
+    private static final int LENGTHhash = LENGTHstring.hashCode();
 
     ESString value = new ESString("");
-        
+
     StringPrototype(ESObject prototype, Evaluator evaluator) {
         super(prototype, evaluator);
     }
+
     public String getESClassName() {
         return "String";
     }
+
     public String toString() {
-    	if (value==null) return super.toString();
-         return value.toString();
+        if (value == null)
+            return super.toString();
+        return value.toString();
     }
+
     public ESValue toESString() {
-       return value;
+        return value;
     }
 
     public boolean booleanValue() throws EcmaScriptException {
-       return value.booleanValue();
+        return value.booleanValue();
     }
-    
+
     public double doubleValue() throws EcmaScriptException {
-       return value.doubleValue();
+        return value.doubleValue();
     }
-    
-    public ESValue getPropertyInScope(String propertyName, ScopeChain previousScope, int hash) 
-             throws EcmaScriptException {
-        if (hash==LENGTHhash && propertyName.equals(LENGTHstring)) {
+
+    public ESValue getPropertyInScope(String propertyName,
+            ScopeChain previousScope, int hash) throws EcmaScriptException {
+        if (hash == LENGTHhash && propertyName.equals(LENGTHstring)) {
             return ESNumber.valueOf(value.getStringLength());
         }
         return super.getPropertyInScope(propertyName, previousScope, hash);
     }
 
-    public ESValue getProperty(String propertyName, int hash) 
-                            throws EcmaScriptException {
-        if (hash==LENGTHhash && propertyName.equals(LENGTHstring)) {
-             return ESNumber.valueOf(value.getStringLength());
-         }
-         return super.getProperty(propertyName, hash);         
-     }
+    public ESValue getProperty(String propertyName, int hash)
+            throws EcmaScriptException {
+        if (hash == LENGTHhash && propertyName.equals(LENGTHstring)) {
+            return ESNumber.valueOf(value.getStringLength());
+        }
+        return super.getProperty(propertyName, hash);
+    }
 
-    
     public String[] getSpecialPropertyNames() {
-        String [] ns = {LENGTHstring};
+        String[] ns = { LENGTHstring };
         return ns;
     }
-    
+
     public Object toJavaObject() {
         return value.toString();
     }
 
     public String toDetailString() {
-        return "ES:[Object: builtin " + this.getClass().getName() + ":" + 
-            ((value == null) ? "null" : value.toString()) + "]";
+        return "ES:[Object: builtin " + this.getClass().getName() + ":"
+                + ((value == null) ? "null" : value.toString()) + "]";
     }
-    
+
     /**
-     * Information routine to check if a value is a string
-     * if true, must implement toString without a evaluator.
-     * @return true 
+     * Information routine to check if a value is a string if true, must
+     * implement toString without a evaluator.
+     * 
+     * @return true
      */
     public boolean isStringValue() {
-        return true; 
+        return true;
     }
 
 }

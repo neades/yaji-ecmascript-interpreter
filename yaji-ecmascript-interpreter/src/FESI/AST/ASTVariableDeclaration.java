@@ -5,29 +5,29 @@ package FESI.AST;
 import FESI.Parser.EcmaScript;
 
 public class ASTVariableDeclaration extends SimpleNode {
-  /**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = 1619763958940270278L;
+    private static final long serialVersionUID = 1619763958940270278L;
 
-public ASTVariableDeclaration(int id) {
-    super(id);
-  }
+    public ASTVariableDeclaration(int id) {
+        super(id);
+    }
 
-  public ASTVariableDeclaration(EcmaScript p, int id) {
-    super(p, id);
-  }
+    public ASTVariableDeclaration(EcmaScript p, int id) {
+        super(p, id);
+    }
 
-  public static Node jjtCreate(int id) {
-      return new ASTVariableDeclaration(id);
-  }
+    public static Node jjtCreate(int id) {
+        return new ASTVariableDeclaration(id);
+    }
 
-  public static Node jjtCreate(EcmaScript p, int id) {
-      return new ASTVariableDeclaration(p, id);
-  }
+    public static Node jjtCreate(EcmaScript p, int id) {
+        return new ASTVariableDeclaration(p, id);
+    }
 
-  /** Accept the visitor. **/
-  public Object jjtAccept(EcmaScriptVisitor visitor, Object data) {
-    return visitor.visit(this, data);
-  }
+    /** Accept the visitor. **/
+    public Object jjtAccept(EcmaScriptVisitor visitor, Object data) {
+        return visitor.visit(this, data);
+    }
 }

@@ -22,26 +22,32 @@
  * @author Laurence P. G. Cable
  */
 
-
 package FESI.ClassFile;
 
-
 /**
- * <p> this class provides minimal support for the CONSTANT_METHODREF CPE </p>
+ * <p>
+ * this class provides minimal support for the CONSTANT_METHODREF CPE
+ * </p>
  */
 
 class MethodConstant extends RefConstant {
 
     /**
-     * <p> construct a CONSTANT_METHODREF </p>
-     *
-     * @param cName the name of the implementing class
-     * @param nName the name of the method
-     * @param tName the type descriptor of the method
-     * @param cf    the class file
+     * <p>
+     * construct a CONSTANT_METHODREF
+     * </p>
+     * 
+     * @param cName
+     *            the name of the implementing class
+     * @param nName
+     *            the name of the method
+     * @param tName
+     *            the type descriptor of the method
+     * @param cf
+     *            the class file
      */
 
     MethodConstant(String cName, String nName, String tName, ClassFile cf) {
-	super(CONSTANT_METHODREF, cName, nName, tName, cf);
+        super(CONSTANT_METHODREF, cName, nName, tName, cf);
     }
 }

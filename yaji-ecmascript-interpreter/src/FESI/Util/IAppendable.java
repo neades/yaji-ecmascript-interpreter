@@ -42,10 +42,12 @@ public interface IAppendable extends Appendable {
 
     public IAppendable cloneAppendable();
 
-    // We don't really want to support this, but some rework is required to get rid of it.
+    // We don't really want to support this, but some rework is required to get
+    // rid of it.
     public IAppendable insertAtStart(IAppendable app);
 
-    // We don't really want to support this, but some rework is required to get rid of it.
+    // We don't really want to support this, but some rework is required to get
+    // rid of it.
     public IAppendable insertAtStart(String str);
 
     public int length();

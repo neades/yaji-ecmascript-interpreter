@@ -35,66 +35,71 @@ import FESI.gui.MessageBox;
  * Implementation of message box function
  */
 public class AwtMessageBox implements MessageBox {
-    
+
     private boolean waiting = true;
-    
+
     /**
      * Create a message box
-     * @param title The window title of the message
-     * @param message The message string
+     * 
+     * @param title
+     *            The window title of the message
+     * @param message
+     *            The message string
      */
     public AwtMessageBox(String title, String message) {
-        
-      final Frame frame = new Frame(title);
-      frame.setLayout(new BorderLayout(10,10));
-      frame.setBackground(Color.lightGray);
-      //TextArea textArea = new TextArea(message);
-      //textArea.setEditable(false);
-      MultiLineLabel mll = new MultiLineLabel(message,15,15);
-      frame.add("Center", mll);
-      Panel panel = new Panel();
-      panel.setLayout(new FlowLayout(FlowLayout.CENTER,10,10));
-      frame.add("South", panel);
-      Button bOK = new Button("  OK  ");
-      panel.add(bOK);
-      
-      frame.pack();
-      Dimension    dimScreen = frame.getToolkit ().getScreenSize ();
-      Dimension    dimWindow = frame.getSize (); 
-      frame.setLocation (dimScreen.width/2 - dimWindow.width/2, // Center screen
-                         dimScreen.height/2 - dimWindow.height/2);
-      
-      frame.addWindowListener(new WindowAdapter() {
-          public void windowClosing(WindowEvent e) {
-              frame.setVisible(false); 
-              frame.dispose();
-              completed();
-          }
-      });
-      bOK.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-              frame.setVisible(false); 
-              frame.dispose();
-              completed();
-          }
-      });
-      frame.setVisible(true);
-   }
-   
-   private synchronized void completed() {
-       waiting = false;
-       notifyAll();
-   }
-   
-    /** 
+
+        final Frame frame = new Frame(title);
+        frame.setLayout(new BorderLayout(10, 10));
+        frame.setBackground(Color.lightGray);
+        // TextArea textArea = new TextArea(message);
+        // textArea.setEditable(false);
+        MultiLineLabel mll = new MultiLineLabel(message, 15, 15);
+        frame.add("Center", mll);
+        Panel panel = new Panel();
+        panel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        frame.add("South", panel);
+        Button bOK = new Button("  OK  ");
+        panel.add(bOK);
+
+        frame.pack();
+        Dimension dimScreen = frame.getToolkit().getScreenSize();
+        Dimension dimWindow = frame.getSize();
+        frame.setLocation(dimScreen.width / 2 - dimWindow.width / 2, // Center
+                                                                     // screen
+                dimScreen.height / 2 - dimWindow.height / 2);
+
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                frame.setVisible(false);
+                frame.dispose();
+                completed();
+            }
+        });
+        bOK.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                frame.setVisible(false);
+                frame.dispose();
+                completed();
+            }
+        });
+        frame.setVisible(true);
+    }
+
+    private synchronized void completed() {
+        waiting = false;
+        notifyAll();
+    }
+
+    /**
      * Wait that the user confirmed reception of the message
      */
-   public synchronized void waitOK() {
-       while (waiting) {
-           try {
-               wait();
-           } catch (Exception e) {}
+    public synchronized void waitOK() {
+        while (waiting) {
+            try {
+                wait();
+            } catch (Exception e) {
+            }
         }
-   }
-       
+    }
+
 }

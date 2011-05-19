@@ -24,27 +24,25 @@ import FESI.Interpreter.Evaluator;
  * Implement the common functionality of all built-in functions
  */
 public abstract class BuiltinFunctionObject extends FunctionPrototype {
-        
-  
+
+    private static final long serialVersionUID = 8812972956505265898L;
+
     protected BuiltinFunctionObject(ESObject functionPrototype,
-                                 Evaluator evaluator,
-                                 String functionName,
-                                 int length) {
+            Evaluator evaluator, String functionName, int length) {
         super(functionPrototype, evaluator, functionName, length);
     }
-    
-    
+
     // overrides
-    public void putProperty(String propertyName, ESValue propertyValue, int hash) 
-                                throws EcmaScriptException {
-         if (!propertyName.equals("prototype")) {
-           super.putProperty(propertyName, propertyValue, hash);
-         } // Allowed via putHiddenProperty, used internally !
+    public void putProperty(String propertyName, ESValue propertyValue, int hash)
+            throws EcmaScriptException {
+        if (!propertyName.equals("prototype")) {
+            super.putProperty(propertyName, propertyValue, hash);
+        } // Allowed via putHiddenProperty, used internally !
     }
 
-    
     /**
      * get the string defining the function
+     * 
      * @return a string indicating that the function is native
      */
     public String getFunctionImplementationString() {
@@ -53,16 +51,17 @@ public abstract class BuiltinFunctionObject extends FunctionPrototype {
 
     /**
      * Get the function parameter description as a string
-     *
+     * 
      * @return the function parameter string as (a,b,c)
      */
     public String getFunctionParametersString() {
-       return "(<" + getLengthProperty()+ " args>)";
+        return "(<" + getLengthProperty() + " args>)";
     }
 
     // overrides
     public String toString() {
-        return "<" + this.getFunctionName() + ":" + this.getClass().getName() +">";
+        return "<" + this.getFunctionName() + ":" + this.getClass().getName()
+                + ">";
     }
-  
+
 }

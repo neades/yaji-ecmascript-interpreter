@@ -26,22 +26,26 @@ import FESI.Parser.Token;
 /**
  * Exception used to signal parsing errors
  */
-public class EcmaScriptParseException extends EcmaScriptException
-                    implements EcmaScriptConstants {
+public class EcmaScriptParseException extends EcmaScriptException implements
+        EcmaScriptConstants {
     private static final long serialVersionUID = 3037065674594117662L;
     /** @serial Original parse exception */
     private final ParseException parseException;
     /** @serial Source description */
     private final EvaluationSource evaluationSource;
-    /** @serial true if the synatx error may be that the
-        source is not yet complete (for interactive usage) */
+    /**
+     * @serial true if the synatx error may be that the source is not yet
+     *         complete (for interactive usage)
+     */
     private boolean canBeIncomplete = true;
 
     /**
      * Create a new parsing exception
-     *
-     * @param e The error from the parser
-     * @param s The evaluation source location of the error
+     * 
+     * @param e
+     *            The error from the parser
+     * @param s
+     *            The evaluation source location of the error
      */
     public EcmaScriptParseException(ParseException e, EvaluationSource s) {
         super("Parsing error");
@@ -49,29 +53,28 @@ public class EcmaScriptParseException extends EcmaScriptException
         evaluationSource = s;
     }
 
-   /**
-    * Get the line number of the error if possible
-    */
-   @Override
-public int getLineNumber() {
+    /**
+     * Get the line number of the error if possible
+     */
+    @Override
+    public int getLineNumber() {
 
-       Token next = null;
-       Token tok = parseException.currentToken;
-       if (tok != null && tok.next != null) {
-        next = tok.next; // get offending token
-    }
+        Token next = null;
+        Token tok = parseException.currentToken;
+        if (tok != null && tok.next != null) {
+            next = tok.next; // get offending token
+        }
 
-        if (next!=null) {
+        if (next != null) {
             return next.beginLine;
         }
         return -1;
 
     }
 
-
     /**
-     * return true if incomplete parse (maybe the user
-     * is given a chance to complete it)
+     * return true if incomplete parse (maybe the user is given a chance to
+     * complete it)
      */
     @Override
     public boolean isIncomplete() {
@@ -86,9 +89,9 @@ public int getLineNumber() {
     }
 
     /**
-     * Indicate that this cannot be a recoverable incomplete error because,
-     * for example, the evaluation source is a string passed as
-     * a parameter to eval, not a stream read from an user.
+     * Indicate that this cannot be a recoverable incomplete error because, for
+     * example, the evaluation source is a string passed as a parameter to eval,
+     * not a stream read from an user.
      */
     public void setNeverIncomplete() {
         canBeIncomplete = false;
@@ -102,53 +105,40 @@ public int getLineNumber() {
         Token tok = parseException.currentToken;
         Token next = null;
         String retval;
-        if (tok != null && tok.kind==UNTERMINATED_STRING_LITERAL) {
-            retval = "Unterminated string constant near line " + tok.beginLine +
-                        ", column " + tok.beginColumn;
+        if (tok != null && tok.kind == UNTERMINATED_STRING_LITERAL) {
+            retval = "Unterminated string constant near line " + tok.beginLine
+                    + ", column " + tok.beginColumn;
         } else {
             if (tok != null && tok.next != null) {
                 next = tok.next; // get offending token
             }
             if (next != null & isForFutureExtension(next.kind)) {
-                retval = "Keyword '" + next.image +
-                          "' reserved for future extension near line " +
-                          next.beginLine +
-                            ", column " + next.beginColumn;
+                retval = "Keyword '" + next.image
+                        + "' reserved for future extension near line "
+                        + next.beginLine + ", column " + next.beginColumn;
             } else {
-                retval = "Syntax error detected near line " + next.beginLine +
-                            ", column " + next.beginColumn;
+                retval = "Syntax error detected near line " + next.beginLine
+                        + ", column " + next.beginColumn;
             }
             if (tok != null) {
                 retval += ", after " + parseException.tokenImage[tok.kind];
             }
         }
 
-        if(evaluationSource instanceof StringEvaluationSource && next != null) {
-            retval += eol + ((StringEvaluationSource) evaluationSource).getLineText(next.beginLine);
-        }else {
+        if (evaluationSource instanceof StringEvaluationSource && next != null) {
+            retval += eol
+                    + ((StringEvaluationSource) evaluationSource)
+                            .getLineText(next.beginLine);
+        } else {
             retval += eol + evaluationSource;
         }
         return retval;
     }
 
-
     private boolean isForFutureExtension(int k) {
-        return
-            k==CASE ||
-            k==CATCH||
-            k==CLASS ||
-            k==CONST ||
-            k==DEBUGGER ||
-            k==_DEFAULT ||
-            k==DO ||
-            k==ENUM ||
-            k==EXPORT ||
-            k==EXTENDS ||
-            k==FINALLY ||
-            k==IMPORT ||
-            k==SUPER ||
-            k==SWITCH ||
-            k==THROW ||
-            k==TRY;
+        return k == CASE || k == CATCH || k == CLASS || k == CONST
+                || k == DEBUGGER || k == _DEFAULT || k == DO || k == ENUM
+                || k == EXPORT || k == EXTENDS || k == FINALLY || k == IMPORT
+                || k == SUPER || k == SWITCH || k == THROW || k == TRY;
     }
 }

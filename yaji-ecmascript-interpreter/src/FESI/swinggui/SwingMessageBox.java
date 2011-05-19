@@ -25,23 +25,24 @@ import FESI.gui.MessageBox;
  * Implementation of message box function
  */
 public class SwingMessageBox implements MessageBox {
-    
-   
+
     /**
      * Create a message box
-     * @param title The window title of the message
-     * @param message The message string
+     * 
+     * @param title
+     *            The window title of the message
+     * @param message
+     *            The message string
      */
     public SwingMessageBox(String title, String message) {
-         JOptionPane.showMessageDialog(null, 
-                        message, title, JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(null, message, title,
+                JOptionPane.PLAIN_MESSAGE);
     }
-   
-   
-    /** 
+
+    /**
      * Wait that the user confirmed reception of the message
      */
     public synchronized void waitOK() {
     }
-       
+
 }

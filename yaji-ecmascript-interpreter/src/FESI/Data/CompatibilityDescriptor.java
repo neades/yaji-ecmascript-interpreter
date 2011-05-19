@@ -18,66 +18,68 @@
 package FESI.Data;
 
 /**
- * Descripe the compatibility of a method, allowing to
- * postpone the choice of the method to call until all
- * potentially compatible ones have been examined.
+ * Descripe the compatibility of a method, allowing to postpone the choice of
+ * the method to call until all potentially compatible ones have been examined.
  */
 class CompatibilityDescriptor {
-  int distance;
-  boolean [] convertToChar = null; // flag to indicate if conversion to char is needed
-  Object [] convertedArrays = null; // Converted array if any needed
-  
-/*   
- * Create a new descrptor (note that there is a predefined one for
- * incompatible parameters).
- * @param distance -1 if incompatible, or evaluation of conversion distance
- * @param convertToChar Optional flag for each parameter
- * @param convertedArrays Optional list of converted arrays
- */
-  CompatibilityDescriptor(int distance, 
-            boolean[] convertedToChar, 
-            Object[]  convertedArrays) {
-     this.distance = distance;
-     if (distance>=0) {
-       this.convertToChar = convertedToChar;
-       this.convertedArrays = convertedArrays;
-     }
-  }
-  
-  /** Return true if the method is compatible with the parameters */
-  public boolean isCompatible() {
-    return distance>=0;
-  }
+    int distance;
+    boolean[] convertToChar = null; // flag to indicate if conversion to char is
+                                    // needed
+    Object[] convertedArrays = null; // Converted array if any needed
 
-  /** Return the distance between perfect compatibility and this one */
-  public int getDistance() {
-    return distance;
-  }
-  
-  /** Convert the parameters for this method call */
-  public void convert(Object params[]) {
-    if (params != null && distance>=0) {
-      // Modify the parameters 
-      int n = params.length;
-      
-      if (convertToChar!=null) {
-          for (int i=0; i<n; i++) {
-              if (convertToChar[i]) {
-                  String s = (String) params[i];
-                  Character c = Character.valueOf(s.charAt(0));
-                  params[i] = c;
-              }
-          }
-      }
-      if (convertedArrays!=null) {
-          for (int i=0; i<n; i++) {
-              if (convertedArrays[i] != null) {
-                  params[i] = convertedArrays[i];
-              }
-          }
-      }
+    /*
+     * Create a new descrptor (note that there is a predefined one for
+     * incompatible parameters).
+     * 
+     * @param distance -1 if incompatible, or evaluation of conversion distance
+     * 
+     * @param convertToChar Optional flag for each parameter
+     * 
+     * @param convertedArrays Optional list of converted arrays
+     */
+    CompatibilityDescriptor(int distance, boolean[] convertedToChar,
+            Object[] convertedArrays) {
+        this.distance = distance;
+        if (distance >= 0) {
+            this.convertToChar = convertedToChar;
+            this.convertedArrays = convertedArrays;
+        }
     }
-      
-  } // convert
-            
+
+    /** Return true if the method is compatible with the parameters */
+    public boolean isCompatible() {
+        return distance >= 0;
+    }
+
+    /** Return the distance between perfect compatibility and this one */
+    public int getDistance() {
+        return distance;
+    }
+
+    /** Convert the parameters for this method call */
+    public void convert(Object params[]) {
+        if (params != null && distance >= 0) {
+            // Modify the parameters
+            int n = params.length;
+
+            if (convertToChar != null) {
+                for (int i = 0; i < n; i++) {
+                    if (convertToChar[i]) {
+                        String s = (String) params[i];
+                        Character c = Character.valueOf(s.charAt(0));
+                        params[i] = c;
+                    }
+                }
+            }
+            if (convertedArrays != null) {
+                for (int i = 0; i < n; i++) {
+                    if (convertedArrays[i] != null) {
+                        params[i] = convertedArrays[i];
+                    }
+                }
+            }
+        }
+
+    } // convert
+
 } // class CompatibilityDescriptor

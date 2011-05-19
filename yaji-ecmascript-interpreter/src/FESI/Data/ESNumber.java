@@ -22,9 +22,9 @@ import FESI.Interpreter.Evaluator;
 
 /**
  * Implements the number primitive value as a double
- *
- * GT Modification to optimise the handling of integer values. Put in primarily for a Sun Fire T1000
- * as it only has one FPU shared between multiple cores.
+ * 
+ * GT Modification to optimise the handling of integer values. Put in primarily
+ * for a Sun Fire T1000 as it only has one FPU shared between multiple cores.
  */
 
 public final class ESNumber extends ESPrimitive {
@@ -32,33 +32,34 @@ public final class ESNumber extends ESPrimitive {
     public static final ESNumber ZERO;
     // The value
     private final double value;
-    private long   longValue;
+    private long longValue;
     private boolean isLongValue;
     private static String[] toStringCache = new String[128];
     private static ESNumber[] cache;
     private static int maxESNumberCached;
     static {
         try {
-            maxESNumberCached = Integer.getInteger("com.gtnet.fesi.esnumcachesize", 128).intValue();
-        }
-        catch (NumberFormatException e) {
+            maxESNumberCached = Integer.getInteger(
+                    "com.gtnet.fesi.esnumcachesize", 128).intValue();
+        } catch (NumberFormatException e) {
             maxESNumberCached = 128;
-            System.err.println("Property com.gtnet.fesi.esnumcachesize set to invalid value : using 128");
+            System.err
+                    .println("Property com.gtnet.fesi.esnumcachesize set to invalid value : using 128");
         }
         final int low = -128;
         cache = new ESNumber[(maxESNumberCached - low) + 1];
         int j = low;
-        for(int k = 0; k < cache.length; k++) {
+        for (int k = 0; k < cache.length; k++) {
             cache[k] = new ESNumber(j++);
         }
         ZERO = ESNumber.valueOf(0L);
     }
 
-
     /**
      * Create a new double with a specific value
-     *
-     * @param value The (immutable) value
+     * 
+     * @param value
+     *            The (immutable) value
      */
     private ESNumber(double value) {
         long intValue = (long) value;
@@ -73,7 +74,7 @@ public final class ESNumber extends ESPrimitive {
 
     public static ESNumber valueOf(long l) {
         if (l >= -128 && l <= maxESNumberCached) {
-            return cache[(int) l+128];
+            return cache[(int) l + 128];
         }
         return new ESNumber(l);
     }
@@ -81,8 +82,8 @@ public final class ESNumber extends ESPrimitive {
     public static ESNumber valueOf(double d) {
         if (d == 0.0) {
             return ESNumber.ZERO;
-        } else if  ( ((long)d) == d ) {
-            return ESNumber.valueOf((long)d);
+        } else if (((long) d) == d) {
+            return ESNumber.valueOf((long) d);
         }
         return new ESNumber(d);
     }
@@ -123,7 +124,7 @@ public final class ESNumber extends ESPrimitive {
         if (isLongValue) {
             return !(longValue == 0);
         }
-        return !(Double.isNaN(value) || value==0.0);
+        return !(Double.isNaN(value) || value == 0.0);
     }
 
     // overrides
@@ -131,7 +132,7 @@ public final class ESNumber extends ESPrimitive {
     public String toString() {
         if (isLongValue) {
             if (longValue < 128 && longValue >= 0) {
-                int intValue = (int)longValue;
+                int intValue = (int) longValue;
                 String stringValue = toStringCache[intValue];
                 if (stringValue == null) {
                     stringValue = Integer.toString(intValue);
@@ -163,7 +164,7 @@ public final class ESNumber extends ESPrimitive {
     @Override
     public int toInt32() throws EcmaScriptException {
         if (isLongValue) {
-            return (int)longValue;
+            return (int) longValue;
         }
         return super.toInt32();
     }
@@ -188,7 +189,7 @@ public final class ESNumber extends ESPrimitive {
                 o = Long.valueOf(longValue);
             }
         } else {
-            o= Double.valueOf(doubleValue());
+            o = Double.valueOf(doubleValue());
         }
         return o;
     }
@@ -196,35 +197,33 @@ public final class ESNumber extends ESPrimitive {
     // overrides
     @Override
     public String toDetailString() {
-        return "ES:#'" + toString()+"'";
+        return "ES:#'" + toString() + "'";
     }
 
     /**
-     * Advanced FESI
-     * GT Modified: 12/10/2004
-     * Support for subtypes (storing values in hashset)
+     * Advanced FESI GT Modified: 12/10/2004 Support for subtypes (storing
+     * values in hashset)
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return toString().hashCode();
     }
 
     /**
-     * Advanced FESI
-     * GT Modified: 12/10/2004
-     * Support for subtypes (storing values in hashset)
+     * Advanced FESI GT Modified: 12/10/2004 Support for subtypes (storing
+     * values in hashset)
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
     public boolean equals(Object o) {
-        if(this == o) {
+        if (this == o) {
             return true;
-        }
-        else if(o instanceof ESValue) {
+        } else if (o instanceof ESValue) {
             // handle the special cases of ESNull and ESUndefined
-            if(o == ESNull.theNull || o == ESUndefined.theUndefined) {
+            if (o == ESNull.theNull || o == ESUndefined.theUndefined) {
                 return false;
             }
 
@@ -259,13 +258,13 @@ public final class ESNumber extends ESPrimitive {
         }
         double d1 = doubleValue();
         double d2 = v2.doubleValue();
-        return (d1==d2);
+        return (d1 == d2);
     }
 
     @Override
     public ESValue addValue(ESValue v2) throws EcmaScriptException {
         if (isLongValue && v2.isIntegerValue()) {
-            return ESNumber.valueOf( longValue + v2.longValue());
+            return ESNumber.valueOf(longValue + v2.longValue());
         }
         return super.addValue(v2);
     }
@@ -273,7 +272,7 @@ public final class ESNumber extends ESPrimitive {
     @Override
     public ESValue subtract(ESValue v2) throws EcmaScriptException {
         if (isLongValue && v2.isIntegerValue()) {
-            return ESNumber.valueOf( longValue - v2.longValue());
+            return ESNumber.valueOf(longValue - v2.longValue());
         }
         return super.subtract(v2);
     }
@@ -281,7 +280,7 @@ public final class ESNumber extends ESPrimitive {
     @Override
     public ESValue decrement() throws EcmaScriptException {
         if (isLongValue) {
-            return ESNumber.valueOf( longValue - 1);
+            return ESNumber.valueOf(longValue - 1);
         }
         return super.decrement();
     }
@@ -289,7 +288,7 @@ public final class ESNumber extends ESPrimitive {
     @Override
     public ESValue increment() throws EcmaScriptException {
         if (isLongValue) {
-            return ESNumber.valueOf( longValue + 1);
+            return ESNumber.valueOf(longValue + 1);
         }
         return super.increment();
     }
@@ -297,7 +296,7 @@ public final class ESNumber extends ESPrimitive {
     @Override
     public ESValue multiply(ESValue v2) throws EcmaScriptException {
         if (isLongValue && v2.isIntegerValue()) {
-            return ESNumber.valueOf( longValue * v2.longValue() );
+            return ESNumber.valueOf(longValue * v2.longValue());
         }
         return super.multiply(v2);
     }
@@ -305,7 +304,8 @@ public final class ESNumber extends ESPrimitive {
     @Override
     public int compareNumbers(ESValue v2) throws EcmaScriptException {
         if (isLongValue && v2.isIntegerValue()) {
-            return (longValue() < v2.longValue()) ? ESValue.COMPARE_TRUE : ESValue.COMPARE_FALSE;
+            return (longValue() < v2.longValue()) ? ESValue.COMPARE_TRUE
+                    : ESValue.COMPARE_FALSE;
         }
         return super.compareNumbers(v2);
     }

@@ -8,7 +8,8 @@ package FESI.Util;
 
 import java.io.Serializable;
 
-public class WrappedStringBuilder implements IAppendable, Serializable, CharSequence {
+public class WrappedStringBuilder implements IAppendable, Serializable,
+        CharSequence {
     private static final long serialVersionUID = 6074813468105579212L;
     StringBuilder stringBuilder;
 
@@ -90,7 +91,7 @@ public class WrappedStringBuilder implements IAppendable, Serializable, CharSequ
 
     public WrappedStringBuilder append(IAppendable app) {
         if (app instanceof WrappedStringBuilder) {
-            append(((WrappedStringBuilder)app).stringBuilder);
+            append(((WrappedStringBuilder) app).stringBuilder);
         } else {
             append(app.toString());
         }
@@ -100,7 +101,7 @@ public class WrappedStringBuilder implements IAppendable, Serializable, CharSequ
 
     public WrappedStringBuilder append(String... strings) {
         for (String string : strings) {
-             append(string);
+            append(string);
         }
 
         return this;
@@ -120,7 +121,8 @@ public class WrappedStringBuilder implements IAppendable, Serializable, CharSequ
     }
 
     public WrappedStringBuilder cloneAppendable() {
-        WrappedStringBuilder clone =  new WrappedStringBuilder(stringBuilder.capacity());
+        WrappedStringBuilder clone = new WrappedStringBuilder(stringBuilder
+                .capacity());
 
         clone.stringBuilder.append(stringBuilder);
         return clone;
@@ -153,7 +155,8 @@ public class WrappedStringBuilder implements IAppendable, Serializable, CharSequ
         return this;
     }
 
-    public WrappedStringBuilder insert(int index, char[] str, int offset, int len) {
+    public WrappedStringBuilder insert(int index, char[] str, int offset,
+            int len) {
         stringBuilder.insert(index, str, offset, len);
         return this;
     }
@@ -168,7 +171,8 @@ public class WrappedStringBuilder implements IAppendable, Serializable, CharSequ
         return this;
     }
 
-    public WrappedStringBuilder insert(int index, CharSequence csq, int start, int end) {
+    public WrappedStringBuilder insert(int index, CharSequence csq, int start,
+            int end) {
         stringBuilder.insert(index, csq, start, end);
         return this;
     }
@@ -205,7 +209,7 @@ public class WrappedStringBuilder implements IAppendable, Serializable, CharSequ
 
     public WrappedStringBuilder insertAtStart(IAppendable app) {
         if (app instanceof WrappedStringBuilder) {
-            insert(0, ((WrappedStringBuilder)app).stringBuilder);
+            insert(0, ((WrappedStringBuilder) app).stringBuilder);
         } else {
             insert(0, app.toString());
         }

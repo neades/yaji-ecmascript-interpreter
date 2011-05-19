@@ -48,18 +48,16 @@ import FESI.Exceptions.EcmaScriptException;
 import FESI.Interpreter.Evaluator;
 import FESI.Interpreter.ScopeChain;
 
-
 /**
-  * An EcmaScript FileIO 'File' object
-  */
+ * An EcmaScript FileIO 'File' object
+ */
 class ESFile extends ESObject {
     private static final long serialVersionUID = -2502912532866913867L;
     File file = null;
     /**
-     * Advanced FESI 
-     * GT Modified: 5/10/2002
-     *              Added the transient modifier to allow serialization. 
-     */ 
+     * Advanced FESI GT Modified: 5/10/2002 Added the transient modifier to
+     * allow serialization.
+     */
     transient Object readerWriter = null;
     boolean atEOF = false;
     String lastLine = null;
@@ -70,8 +68,8 @@ class ESFile extends ESObject {
         file = new File(fileName);
     }
 
-    ESFile(ESObject prototype, Evaluator evaluator,
-                     String pathName, String fileName) {
+    ESFile(ESObject prototype, Evaluator evaluator, String pathName,
+            String fileName) {
         super(prototype, evaluator);
         file = new File(pathName, fileName);
     }
@@ -86,13 +84,14 @@ class ESFile extends ESObject {
     }
 
     public String toString() {
-         if (file==null) return "<null>";
-         return file.toString();
+        if (file == null)
+            return "<null>";
+        return file.toString();
     }
 
     public String toDetailString() {
-        return "ES:[Object: builtin " + this.getClass().getName() + ":" +
-            ((file == null) ? "null" : file.toString()) + "]";
+        return "ES:[Object: builtin " + this.getClass().getName() + ":"
+                + ((file == null) ? "null" : file.toString()) + "]";
     }
 
     protected void setError(Throwable e) {
@@ -100,7 +99,8 @@ class ESFile extends ESObject {
     }
 
     public boolean exists() {
-        if (file == null) return false;
+        if (file == null)
+            return false;
         return file.exists();
     }
 
@@ -118,55 +118,56 @@ class ESFile extends ESObject {
         // cannot fail except if the FileReader/FileWriter fails.
         // Otherwise we have an open file until the reader/writer
         // get garbage collected.
-        try{
-           if (file.exists()) {
-               readerWriter = new BufferedReader(new FileReader(file));
-           } else {
-               readerWriter = new PrintWriter(new FileWriter(file));
-           }
-           return true;
-       } catch (IOException e) {
-           setError(e);
-           return false;
-       }
+        try {
+            if (file.exists()) {
+                readerWriter = new BufferedReader(new FileReader(file));
+            } else {
+                readerWriter = new PrintWriter(new FileWriter(file));
+            }
+            return true;
+        } catch (IOException e) {
+            setError(e);
+            return false;
+        }
     }
 
     public boolean isOpened() {
-       return (readerWriter != null);
+        return (readerWriter != null);
     }
 
     public boolean close() {
-       if (readerWriter == null)
-                       return false;
-       try {
-          if (readerWriter instanceof Reader) {
-              ((Reader) readerWriter).close();
-          } else {
-              ((Writer) readerWriter).close();
-          }
-          readerWriter = null;
-          return true;
-       } catch (IOException e) {
-           setError(e);
-           readerWriter = null;
-           return false;
-       }
+        if (readerWriter == null)
+            return false;
+        try {
+            if (readerWriter instanceof Reader) {
+                ((Reader) readerWriter).close();
+            } else {
+                ((Writer) readerWriter).close();
+            }
+            readerWriter = null;
+            return true;
+        } catch (IOException e) {
+            setError(e);
+            readerWriter = null;
+            return false;
+        }
     }
 
-    public boolean write(boolean ln, ESValue [] arguments) {
+    public boolean write(boolean ln, ESValue[] arguments) {
         if (readerWriter == null) {
             setError(new IllegalStateException("File not opened"));
             return false;
         }
-        if (! (readerWriter instanceof PrintWriter)) {
+        if (!(readerWriter instanceof PrintWriter)) {
             setError(new IllegalStateException("File not opened for writing"));
             return false;
         }
         PrintWriter writer = (PrintWriter) readerWriter;
-        for (int i = 0; i<arguments.length; i++) {
+        for (int i = 0; i < arguments.length; i++) {
             writer.print(arguments[i].toString());
         }
-        if (ln) writer.println();
+        if (ln)
+            writer.println();
         return true;
     }
 
@@ -175,7 +176,7 @@ class ESFile extends ESObject {
             setError(new IllegalStateException("File not opened"));
             return null;
         }
-        if (! (readerWriter instanceof BufferedReader)) {
+        if (!(readerWriter instanceof BufferedReader)) {
             setError(new IllegalStateException("File not opened for reading"));
             return null;
         }
@@ -183,7 +184,7 @@ class ESFile extends ESObject {
             setError(new EOFException());
             return null;
         }
-        if (lastLine!=null) {
+        if (lastLine != null) {
             String line = lastLine;
             lastLine = null;
             return line;
@@ -191,15 +192,15 @@ class ESFile extends ESObject {
         BufferedReader reader = (BufferedReader) readerWriter;
         // Here lastLine is null, return a new line
         try {
-          String line = reader.readLine();
-          if (line == null) {
-              atEOF = true;
-              setError(new EOFException());
-          }
-          return line;
+            String line = reader.readLine();
+            if (line == null) {
+                atEOF = true;
+                setError(new EOFException());
+            }
+            return line;
         } catch (IOException e) {
-          setError(e);
-          return null;
+            setError(e);
+            return null;
         }
     }
 
@@ -208,20 +209,23 @@ class ESFile extends ESObject {
             setError(new IllegalStateException("File not opened"));
             return true;
         }
-        if (! (readerWriter instanceof BufferedReader)) {
+        if (!(readerWriter instanceof BufferedReader)) {
             setError(new IllegalStateException("File not opened for read"));
             return true;
         }
-        if (atEOF) return true;
-        if (lastLine!=null) return false;
+        if (atEOF)
+            return true;
+        if (lastLine != null)
+            return false;
         BufferedReader reader = (BufferedReader) readerWriter;
         try {
-          lastLine = reader.readLine();
-          if (lastLine == null) atEOF = true;
-          return atEOF;
+            lastLine = reader.readLine();
+            if (lastLine == null)
+                atEOF = true;
+            return atEOF;
         } catch (IOException e) {
-          setError(e);
-          return true;
+            setError(e);
+            return true;
         }
     }
 
@@ -247,41 +251,43 @@ class ESFile extends ESObject {
             return false;
         }
         if (readerWriter instanceof Writer) {
-              try {
-                  ((Writer) readerWriter).flush();
-             } catch (IOException e) {
-                 setError(e);
-                 return false;
-             }
+            try {
+                ((Writer) readerWriter).flush();
+            } catch (IOException e) {
+                setError(e);
+                return false;
+            }
         } else {
-              setError(new IllegalStateException("File not opened for write"));
-              return false; // not supported by reader
+            setError(new IllegalStateException("File not opened for write"));
+            return false; // not supported by reader
         }
         return true;
     }
 
-
     public long getLength() {
-       if (file == null) {
-           setError(new IllegalArgumentException("Uninitialized File object"));
-           return -1;
-       }
-       return file.length();
+        if (file == null) {
+            setError(new IllegalArgumentException("Uninitialized File object"));
+            return -1;
+        }
+        return file.length();
     }
 
     public long lastModified() {
-       if (file == null) {
-           setError(new IllegalArgumentException("Uninitialized File object"));
-           return 0L;
-       }
-       return file.lastModified();
+        if (file == null) {
+            setError(new IllegalArgumentException("Uninitialized File object"));
+            return 0L;
+        }
+        return file.lastModified();
     }
 
     public String error() {
-        if (lastError == null) { return ""; }
+        if (lastError == null) {
+            return "";
+        }
         String exceptionName = lastError.getClass().getName();
         int l = exceptionName.lastIndexOf(".");
-        if (l > 0) exceptionName = exceptionName.substring(l + 1);
+        if (l > 0)
+            exceptionName = exceptionName.substring(l + 1);
         return exceptionName + ": " + lastError.getMessage();
 
     }
@@ -291,49 +297,54 @@ class ESFile extends ESObject {
     }
 
     public boolean remove() {
-       if (file == null) {
-           setError(new IllegalArgumentException("Uninitialized File object"));
-           return false;
-       }
-       if (readerWriter != null) {
-           setError(new IllegalStateException("An openened file cannot be removed"));
-           return false;
-       }
-       return file.delete();
+        if (file == null) {
+            setError(new IllegalArgumentException("Uninitialized File object"));
+            return false;
+        }
+        if (readerWriter != null) {
+            setError(new IllegalStateException(
+                    "An openened file cannot be removed"));
+            return false;
+        }
+        return file.delete();
     }
 
     public boolean renameTo(ESFile toFile) {
-       if (file == null) {
-           setError(new IllegalArgumentException("Uninitialized source File object"));
-           return false;
-       }
-       if (toFile.file == null) {
-           setError(new IllegalArgumentException("Uninitialized target File object"));
-           return false;
-       }
-       if (readerWriter != null) {
-           setError(new IllegalStateException("An openened file cannot be renamed"));
-           return false;
-       }
-       if (toFile.readerWriter!=null) {
-           setError(new IllegalStateException("You cannot rename to an openened file"));
-           return false;
-       }
-       return file.renameTo(toFile.file);
+        if (file == null) {
+            setError(new IllegalArgumentException(
+                    "Uninitialized source File object"));
+            return false;
+        }
+        if (toFile.file == null) {
+            setError(new IllegalArgumentException(
+                    "Uninitialized target File object"));
+            return false;
+        }
+        if (readerWriter != null) {
+            setError(new IllegalStateException(
+                    "An openened file cannot be renamed"));
+            return false;
+        }
+        if (toFile.readerWriter != null) {
+            setError(new IllegalStateException(
+                    "You cannot rename to an openened file"));
+            return false;
+        }
+        return file.renameTo(toFile.file);
     }
 
     public boolean canRead() {
         if (file == null) {
-           setError(new IllegalArgumentException("Uninitialized File object"));
-           return false;
+            setError(new IllegalArgumentException("Uninitialized File object"));
+            return false;
         }
         return file.canRead();
     }
 
     public boolean canWrite() {
         if (file == null) {
-           setError(new IllegalArgumentException("Uninitialized File object"));
-           return false;
+            setError(new IllegalArgumentException("Uninitialized File object"));
+            return false;
         }
         return file.canWrite();
     }
@@ -344,54 +355,59 @@ class ESFile extends ESObject {
             return "";
         }
         String parent = file.getParent();
-        return (parent==null ? "" : parent);
+        return (parent == null ? "" : parent);
     }
 
     public String getName() {
         if (file == null) {
-           setError(new IllegalArgumentException("Uninitialized File object"));
-           return "";
+            setError(new IllegalArgumentException("Uninitialized File object"));
+            return "";
         }
         String name = file.getName();
-        return (name==null ? "" : name);
+        return (name == null ? "" : name);
     }
 
     public String getPath() {
         if (file == null) {
-           setError(new IllegalArgumentException("Uninitialized File object"));
-           return "";
+            setError(new IllegalArgumentException("Uninitialized File object"));
+            return "";
         }
         String path = file.getPath();
-        return (path==null ? "" : path);
+        return (path == null ? "" : path);
     }
 
     public String getAbsolutePath() {
         if (file == null) {
-           setError(new IllegalArgumentException("Uninitialized File object"));
-           return "";
+            setError(new IllegalArgumentException("Uninitialized File object"));
+            return "";
         }
         String absolutPath = file.getAbsolutePath();
-        return (absolutPath==null ? "" : absolutPath);
+        return (absolutPath == null ? "" : absolutPath);
     }
 
     public boolean isAbsolute() {
-        if (file == null) return false;
+        if (file == null)
+            return false;
         return file.isAbsolute();
     }
 
     public boolean mkdir() {
-        if (file == null) return false;
-        if(readerWriter != null) return false;
-        return file.mkdirs();   // Using multi directory version
+        if (file == null)
+            return false;
+        if (readerWriter != null)
+            return false;
+        return file.mkdirs(); // Using multi directory version
     }
 
-    public String [] list() {
-        if (file == null) return null;
-        if(readerWriter != null) return null;
-        if (!file.isDirectory()) return null;
+    public String[] list() {
+        if (file == null)
+            return null;
+        if (readerWriter != null)
+            return null;
+        if (!file.isDirectory())
+            return null;
         return file.list();
     }
-
 
     public String readAll() {
         // Open the file for readAll
@@ -403,45 +419,43 @@ class ESFile extends ESObject {
             setError(new IllegalArgumentException("Uninitialized File object"));
             return null;
         }
-        try{
-           if (file.exists()) {
-               readerWriter = new BufferedReader(new FileReader(file));
-           } else {
-               setError(new IllegalStateException("File does not exist"));
-               return null;
-           }
-           if(!file.isFile()) {
-               setError(new IllegalStateException("File is not a regular file"));
-               return null;
-           }
+        try {
+            if (file.exists()) {
+                readerWriter = new BufferedReader(new FileReader(file));
+            } else {
+                setError(new IllegalStateException("File does not exist"));
+                return null;
+            }
+            if (!file.isFile()) {
+                setError(new IllegalStateException("File is not a regular file"));
+                return null;
+            }
 
-           // read content line by line to setup properl eol
-           StringBuilder buffer = new StringBuilder((int) (file.length()*1.10));
-           BufferedReader reader = (BufferedReader) readerWriter;
-           while (true) {
-              String line = reader.readLine();
-              if (line == null) {
-                  break;
-              }
-              buffer.append(line);
-              buffer.append("\n");  // EcmaScript EOL
-           }
+            // read content line by line to setup properl eol
+            StringBuilder buffer = new StringBuilder(
+                    (int) (file.length() * 1.10));
+            BufferedReader reader = (BufferedReader) readerWriter;
+            while (true) {
+                String line = reader.readLine();
+                if (line == null) {
+                    break;
+                }
+                buffer.append(line);
+                buffer.append("\n"); // EcmaScript EOL
+            }
 
-
-           // Close the file
-           ((Reader) readerWriter).close();
-           readerWriter = null;
-           return buffer.toString();
-       } catch (IOException e) {
-           readerWriter = null;
-           setError(e);
-           return null;
-       }
+            // Close the file
+            ((Reader) readerWriter).close();
+            readerWriter = null;
+            return buffer.toString();
+        } catch (IOException e) {
+            readerWriter = null;
+            setError(e);
+            return null;
+        }
     }
 
-} //class ESFile
-
-
+} // class ESFile
 
 /**
  * An EcmaScript FileIO File 'constant' as in, err or out
@@ -450,29 +464,28 @@ class ESStdFile extends ESFile {
     private static final long serialVersionUID = -4492825896310456818L;
     String name;
     /**
-     * Advanced FESI 
-     * GT Modified: 5/10/2002
-     *              Added the transient modifier to allow serialization. 
+     * Advanced FESI GT Modified: 5/10/2002 Added the transient modifier to
+     * allow serialization.
      */
     transient InputStream ins = null;
     transient PrintStream outs = null;
 
-    ESStdFile(ESObject prototype, Evaluator evaluator,
-                   String name, InputStream ins) {
+    ESStdFile(ESObject prototype, Evaluator evaluator, String name,
+            InputStream ins) {
         super(prototype, evaluator);
         this.name = name;
         this.ins = ins;
     }
 
-    ESStdFile(ESObject prototype, Evaluator evaluator,
-                   String name, PrintStream outs) {
+    ESStdFile(ESObject prototype, Evaluator evaluator, String name,
+            PrintStream outs) {
         super(prototype, evaluator);
         this.name = name;
         this.outs = outs;
     }
 
     public String toString() {
-         return name;
+        return name;
     }
 
     public boolean exists() {
@@ -484,22 +497,23 @@ class ESStdFile extends ESFile {
     }
 
     public boolean isOpened() {
-       return true;
-   }
-
-    public boolean close() {
-       return false;
+        return true;
     }
 
-    public boolean write(boolean ln, ESValue [] arguments) {
+    public boolean close() {
+        return false;
+    }
+
+    public boolean write(boolean ln, ESValue[] arguments) {
         if (outs == null) {
             setError(new IllegalStateException("File not opened for writing"));
             return false;
         }
-        for (int i = 0; i<arguments.length; i++) {
+        for (int i = 0; i < arguments.length; i++) {
             outs.println(arguments[i].toString());
         }
-        if (ln) outs.println();
+        if (ln)
+            outs.println();
         outs.flush();
         return true;
     }
@@ -513,16 +527,16 @@ class ESStdFile extends ESFile {
         BufferedReader reader = new BufferedReader(new InputStreamReader(ins));
         // Here lastLine is null, return a new line
         try {
-          String line = reader.readLine();
-          if (line == null) {
-              atEOF = true;
-              setError(new EOFException());
-          }
-          atEOF = false;
-          return line;
+            String line = reader.readLine();
+            if (line == null) {
+                atEOF = true;
+                setError(new EOFException());
+            }
+            atEOF = false;
+            return line;
         } catch (IOException e) {
-          setError(e);
-          return null;
+            setError(e);
+            return null;
         }
     }
 
@@ -547,27 +561,27 @@ class ESStdFile extends ESFile {
             setError(new IllegalStateException("File not opened for write"));
             return false;
         }
-        return true;  // done at each write anyhow
+        return true; // done at each write anyhow
     }
 
-
     public long getLength() {
-       return -1;
+        return -1;
     }
 
     public long lastModified() {
-       return 0L;
+        return 0L;
     }
 
-
     public boolean remove() {
-       setError(new IllegalArgumentException("Operation invalid on standard input/output"));
-       return false;
+        setError(new IllegalArgumentException(
+                "Operation invalid on standard input/output"));
+        return false;
     }
 
     public boolean renameTo(ESFile toFile) {
-       setError(new IllegalArgumentException("Operation invalid on standard input/output"));
-       return false;
+        setError(new IllegalArgumentException(
+                "Operation invalid on standard input/output"));
+        return false;
     }
 
     public boolean canRead() {
@@ -579,23 +593,27 @@ class ESStdFile extends ESFile {
     }
 
     public String getParent() {
-       setError(new IllegalArgumentException("Operation invalid on standard input/output"));
-       return "";
+        setError(new IllegalArgumentException(
+                "Operation invalid on standard input/output"));
+        return "";
     }
 
     public String getName() {
-       setError(new IllegalArgumentException("Operation invalid on standard input/output"));
-       return "";
+        setError(new IllegalArgumentException(
+                "Operation invalid on standard input/output"));
+        return "";
     }
 
     public String getPath() {
-       setError(new IllegalArgumentException("Operation invalid on standard input/output"));
-       return "";
+        setError(new IllegalArgumentException(
+                "Operation invalid on standard input/output"));
+        return "";
     }
 
     public String getAbsolutePath() {
-       setError(new IllegalArgumentException("Operation invalid on standard input/output"));
-       return "";
+        setError(new IllegalArgumentException(
+                "Operation invalid on standard input/output"));
+        return "";
     }
 
     public boolean isAbsolute() {
@@ -603,21 +621,16 @@ class ESStdFile extends ESFile {
     }
 
     public boolean mkdir() {
-       setError(new IllegalArgumentException("Operation invalid on standard input/output"));
-       return false;
+        setError(new IllegalArgumentException(
+                "Operation invalid on standard input/output"));
+        return false;
     }
 
-    public String [] list() {
+    public String[] list() {
         return null;
     }
 
 } // class ESStdFile
-
-
-
-
-
-
 
 public class FileIO extends Extension {
     private static final long serialVersionUID = 2861456587190109112L;
@@ -629,28 +642,28 @@ public class FileIO extends Extension {
             super(fp, evaluator, name, 1);
         }
 
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           return doConstruct(thisObject, arguments);
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            return doConstruct(thisObject, arguments);
         }
 
-        public ESObject doConstruct(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = null;
-           if (arguments.length==0) {
-               throw new EcmaScriptException("File requires 1 or 2 arguments");
-           } else if (arguments.length==1) {
-               file = new ESFile(esFilePrototype, this.getEvaluator(), arguments[0].toString());
-           } else if (arguments.length>1) {
-               file = new ESFile(esFilePrototype, this.getEvaluator(), arguments[0].toString(),arguments[1].toString());
-           }
-           return file;
+        public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = null;
+            if (arguments.length == 0) {
+                throw new EcmaScriptException("File requires 1 or 2 arguments");
+            } else if (arguments.length == 1) {
+                file = new ESFile(esFilePrototype, this.getEvaluator(),
+                        arguments[0].toString());
+            } else if (arguments.length > 1) {
+                file = new ESFile(esFilePrototype, this.getEvaluator(),
+                        arguments[0].toString(), arguments[1].toString());
+            }
+            return file;
         }
 
-        public ESValue getPropertyInScope(String propertyName, ScopeChain previousScope, int hash)
-                    throws EcmaScriptException {
+        public ESValue getPropertyInScope(String propertyName,
+                ScopeChain previousScope, int hash) throws EcmaScriptException {
             if (propertyName.equals("separator")) {
                 return new ESString(File.separator);
             }
@@ -658,494 +671,522 @@ public class FileIO extends Extension {
         }
 
         public ESValue getProperty(String propertyName, int hash)
-                                throws EcmaScriptException {
-             if (propertyName.equals("separator")) {
-                 return new ESString(File.separator);
-             } 
-             return super.getProperty(propertyName, hash);
-             
-         }
+                throws EcmaScriptException {
+            if (propertyName.equals("separator")) {
+                return new ESString(File.separator);
+            }
+            return super.getProperty(propertyName, hash);
+
+        }
 
         public String[] getSpecialPropertyNames() {
-            String [] ns = {"separator"};
+            String[] ns = { "separator" };
             return ns;
         }
 
-    }  // class GlobalObjectFile
-
-
-
-
-
-
+    } // class GlobalObjectFile
 
     class FileWriteln extends BuiltinFunctionObject {
         private static final long serialVersionUID = -1212940361346379188L;
+
         FileWriteln(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 1);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
-           return ESBoolean.makeBoolean(file.write(true, arguments));
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+            return ESBoolean.makeBoolean(file.write(true, arguments));
         }
     }
 
     class FileReadln extends BuiltinFunctionObject {
         private static final long serialVersionUID = -6563844058409689916L;
+
         FileReadln(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 0);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
-           String line = file.readln();
-           if (line == null) {
-               return ESNull.theNull;
-           }
-           return new ESString(line);
-           
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+            String line = file.readln();
+            if (line == null) {
+                return ESNull.theNull;
+            }
+            return new ESString(line);
+
         }
     }
 
-
     class FileEof extends BuiltinFunctionObject {
         private static final long serialVersionUID = -4173944880733445209L;
+
         FileEof(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 0);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
-           return ESBoolean.makeBoolean(file.eof());
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+            return ESBoolean.makeBoolean(file.eof());
         }
     }
 
     class FileExists extends BuiltinFunctionObject {
         private static final long serialVersionUID = 7326672957348254206L;
+
         FileExists(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 0);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
-           return ESBoolean.makeBoolean(file.exists());
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+            return ESBoolean.makeBoolean(file.exists());
         }
     }
 
     class FileIsOpened extends BuiltinFunctionObject {
         private static final long serialVersionUID = 8354315134724021693L;
+
         FileIsOpened(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 0);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
-           return ESBoolean.makeBoolean(file.isOpened());
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+            return ESBoolean.makeBoolean(file.isOpened());
         }
     }
 
     class FileIsAbsolute extends BuiltinFunctionObject {
         private static final long serialVersionUID = 686656951279531101L;
+
         FileIsAbsolute(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 0);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
-           return ESBoolean.makeBoolean(file.isAbsolute());
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+            return ESBoolean.makeBoolean(file.isAbsolute());
         }
     }
 
     class FileIsFile extends BuiltinFunctionObject {
         private static final long serialVersionUID = 9013756116339087947L;
+
         FileIsFile(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 0);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
-           return ESBoolean.makeBoolean(file.isFile());
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+            return ESBoolean.makeBoolean(file.isFile());
         }
     }
 
     class FileIsDirectory extends BuiltinFunctionObject {
         private static final long serialVersionUID = 353394458055715978L;
+
         FileIsDirectory(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 0);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
-           return ESBoolean.makeBoolean(file.isDirectory());
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+            return ESBoolean.makeBoolean(file.isDirectory());
         }
     }
 
     class FileWrite extends BuiltinFunctionObject {
         private static final long serialVersionUID = 5761934263495777587L;
+
         FileWrite(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 1);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
-           return ESBoolean.makeBoolean(file.write(false, arguments));
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+            return ESBoolean.makeBoolean(file.write(false, arguments));
         }
     }
 
     class FileOpen extends BuiltinFunctionObject {
         private static final long serialVersionUID = 3197833025539110487L;
+
         FileOpen(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 1);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
 
-           return ESBoolean.makeBoolean(file.open());
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+
+            return ESBoolean.makeBoolean(file.open());
         }
     }
 
-
     class FileClose extends BuiltinFunctionObject {
         private static final long serialVersionUID = -8172955647017598492L;
+
         FileClose(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 0);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
-           return ESBoolean.makeBoolean(file.close());
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+            return ESBoolean.makeBoolean(file.close());
         }
     }
 
     class FileFlush extends BuiltinFunctionObject {
         private static final long serialVersionUID = -6292904766666156870L;
+
         FileFlush(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 0);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
-           return ESBoolean.makeBoolean(file.flush());
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+            return ESBoolean.makeBoolean(file.flush());
         }
     }
-
 
     class FileGetLength extends BuiltinFunctionObject {
         private static final long serialVersionUID = -5649442104693910207L;
+
         FileGetLength(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 0);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
-           return ESNumber.valueOf((file.getLength()));
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+            return ESNumber.valueOf((file.getLength()));
         }
     }
 
-
     class FileLastModified extends BuiltinFunctionObject {
         private static final long serialVersionUID = 6586666475850937489L;
+
         FileLastModified(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 0);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
-           long lmDate = file.lastModified();
-           DatePrototype theDate =  new DatePrototype(this.getEvaluator(), lmDate);
-           return  theDate;
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+            long lmDate = file.lastModified();
+            DatePrototype theDate = new DatePrototype(this.getEvaluator(),
+                    lmDate);
+            return theDate;
         }
     }
 
     class FileError extends BuiltinFunctionObject {
         private static final long serialVersionUID = -2034139369850182826L;
+
         FileError(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 0);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
-           return new ESString(file.error());
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+            return new ESString(file.error());
         }
     }
 
     class FileClearError extends BuiltinFunctionObject {
         private static final long serialVersionUID = 8499703287448417367L;
+
         FileClearError(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 0);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
-           file.clearError();
-           return ESUndefined.theUndefined;
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+            file.clearError();
+            return ESUndefined.theUndefined;
         }
     }
 
     class FileRemove extends BuiltinFunctionObject {
         private static final long serialVersionUID = 2926292978390363433L;
+
         FileRemove(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 0);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
-           return ESBoolean.makeBoolean(file.remove());
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+            return ESBoolean.makeBoolean(file.remove());
         }
     }
 
     class FileRenameTo extends BuiltinFunctionObject {
         private static final long serialVersionUID = 2614804455764561224L;
+
         FileRenameTo(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 1);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
-           if (arguments.length<=0) return ESBoolean.makeBoolean(false);
-           ESFile toFile = null;
-           if (arguments[0] instanceof ESFile) {
-              toFile = (ESFile) arguments[0];
-           } else {
-               toFile = new ESFile(esFilePrototype, this.getEvaluator(), arguments[0].toString());
-           }
-           return ESBoolean.makeBoolean(file.renameTo(toFile));
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+            if (arguments.length <= 0)
+                return ESBoolean.makeBoolean(false);
+            ESFile toFile = null;
+            if (arguments[0] instanceof ESFile) {
+                toFile = (ESFile) arguments[0];
+            } else {
+                toFile = new ESFile(esFilePrototype, this.getEvaluator(),
+                        arguments[0].toString());
+            }
+            return ESBoolean.makeBoolean(file.renameTo(toFile));
         }
     }
 
     class FileCanWrite extends BuiltinFunctionObject {
         private static final long serialVersionUID = 6165625127683518191L;
+
         FileCanWrite(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 0);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
-           return ESBoolean.makeBoolean(file.canWrite());
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+            return ESBoolean.makeBoolean(file.canWrite());
         }
     }
 
     class FileCanRead extends BuiltinFunctionObject {
         private static final long serialVersionUID = -1390115713208254039L;
+
         FileCanRead(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 0);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
-           return ESBoolean.makeBoolean(file.canRead());
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+            return ESBoolean.makeBoolean(file.canRead());
         }
     }
 
     class FileGetName extends BuiltinFunctionObject {
         private static final long serialVersionUID = 5290629150488957956L;
+
         FileGetName(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 0);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
-           return new ESString(file.getName());
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+            return new ESString(file.getName());
         }
     }
 
     class FileGetParent extends BuiltinFunctionObject {
         private static final long serialVersionUID = 5056689866244089478L;
+
         FileGetParent(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 0);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
-           return new ESString(file.getParent());
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+            return new ESString(file.getParent());
         }
     }
 
     // Equivallent to toString
     class FileGetPath extends BuiltinFunctionObject {
         private static final long serialVersionUID = -5427120519594023452L;
+
         FileGetPath(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 0);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
-           return new ESString(file.getPath());
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+            return new ESString(file.getPath());
         }
     }
 
     class FileGetAbsolutePath extends BuiltinFunctionObject {
         private static final long serialVersionUID = -6901269335876770825L;
-        FileGetAbsolutePath(String name, Evaluator evaluator, FunctionPrototype fp) {
+
+        FileGetAbsolutePath(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
             super(fp, evaluator, name, 0);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
-           return new ESString(file.getAbsolutePath());
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+            return new ESString(file.getAbsolutePath());
         }
     }
 
     class FileMkdir extends BuiltinFunctionObject {
         private static final long serialVersionUID = 2139015631181199033L;
+
         FileMkdir(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 0);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
-           return ESBoolean.makeBoolean(file.mkdir());
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+            return ESBoolean.makeBoolean(file.mkdir());
         }
     }
 
     class FileList extends BuiltinFunctionObject {
         private static final long serialVersionUID = 41287224913507091L;
+
         FileList(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 0);
         }
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments) throws EcmaScriptException {
+
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
             ESFile file = (ESFile) thisObject;
             String[] l = file.list();
-            if (l == null) { return ESBoolean.makeBoolean(false); }
+            if (l == null) {
+                return ESBoolean.makeBoolean(false);
+            }
             ESObject ap = this.getEvaluator().getArrayPrototype();
-            ArrayPrototype theArray = new ArrayPrototype(ap, this.getEvaluator());
+            ArrayPrototype theArray = new ArrayPrototype(ap, this
+                    .getEvaluator());
             theArray.setSize(l.length);
             for (int i = 0; i < l.length; i++) {
                 theArray.setElementAt(new ESString(l[i]), i);
             }
             return theArray;
-           
+
         }
     }
 
     class FileReadAll extends BuiltinFunctionObject {
         private static final long serialVersionUID = 778630085159043813L;
+
         FileReadAll(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 1);
         }
-        public ESValue callFunction(ESObject thisObject,
-                                        ESValue[] arguments)
-               throws EcmaScriptException {
-           ESFile file = (ESFile) thisObject;
 
-           return new ESString(file.readAll());
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            ESFile file = (ESFile) thisObject;
+
+            return new ESString(file.readAll());
         }
     }
 
     ESObject esFilePrototype = null;
 
-    public FileIO () {
+    public FileIO() {
         super();
     }
 
-    public void initializeExtension(Evaluator evaluator) throws EcmaScriptException {
+    public void initializeExtension(Evaluator evaluator)
+            throws EcmaScriptException {
 
         GlobalObject go = evaluator.getGlobalObject();
         ObjectPrototype op = (ObjectPrototype) evaluator.getObjectPrototype();
 
         esFilePrototype = new ObjectPrototype(op, evaluator);
 
-        FunctionPrototype fp = (FunctionPrototype) evaluator.getFunctionPrototype();
+        FunctionPrototype fp = (FunctionPrototype) evaluator
+                .getFunctionPrototype();
 
         ESObject file = new GlobalObjectFile("File", evaluator, fp);
 
-        ESObject infile = new ESStdFile(esFilePrototype, evaluator, "<stdin>", System.in);
-        ESObject outfile = new ESStdFile(esFilePrototype, evaluator,  "<stdout>", System.out);
-        ESObject errfile = new ESStdFile(esFilePrototype, evaluator, "<stderr>", System.err);
+        ESObject infile = new ESStdFile(esFilePrototype, evaluator, "<stdin>",
+                System.in);
+        ESObject outfile = new ESStdFile(esFilePrototype, evaluator,
+                "<stdout>", System.out);
+        ESObject errfile = new ESStdFile(esFilePrototype, evaluator,
+                "<stderr>", System.err);
 
+        esFilePrototype.putHiddenProperty("open", new FileOpen("open",
+                evaluator, fp));
+        esFilePrototype.putHiddenProperty("flush", new FileFlush("flush",
+                evaluator, fp));
+        esFilePrototype.putHiddenProperty("close", new FileClose("close",
+                evaluator, fp));
+        esFilePrototype.putHiddenProperty("exists", new FileExists("exists",
+                evaluator, fp));
+        esFilePrototype.putHiddenProperty("isFile", new FileIsFile("isFile",
+                evaluator, fp));
+        esFilePrototype.putHiddenProperty("isOpened", new FileIsOpened(
+                "isOpened", evaluator, fp));
+        esFilePrototype.putHiddenProperty("isAbsolute", new FileIsAbsolute(
+                "isAbsolute", evaluator, fp));
+        esFilePrototype.putHiddenProperty("isDirectory", new FileIsDirectory(
+                "isDirectory", evaluator, fp));
+        esFilePrototype.putHiddenProperty("eof", new FileEof("eof", evaluator,
+                fp));
+        esFilePrototype.putHiddenProperty("write", new FileWrite("write",
+                evaluator, fp));
+        esFilePrototype.putHiddenProperty("writeln", new FileWriteln("writeln",
+                evaluator, fp));
+        esFilePrototype.putHiddenProperty("readln", new FileReadln("readln",
+                evaluator, fp));
+        esFilePrototype.putHiddenProperty("error", new FileError("error",
+                evaluator, fp));
+        esFilePrototype.putHiddenProperty("clearError", new FileClearError(
+                "clearError", evaluator, fp));
+        esFilePrototype.putHiddenProperty("getLength", new FileGetLength(
+                "getLength", evaluator, fp));
 
-        esFilePrototype.putHiddenProperty("open",
-                   new FileOpen("open", evaluator, fp));
-        esFilePrototype.putHiddenProperty("flush",
-                   new FileFlush("flush", evaluator, fp));
-        esFilePrototype.putHiddenProperty("close",
-                   new FileClose("close", evaluator, fp));
-        esFilePrototype.putHiddenProperty("exists",
-                   new FileExists("exists", evaluator, fp));
-        esFilePrototype.putHiddenProperty("isFile",
-                   new FileIsFile("isFile", evaluator, fp));
-        esFilePrototype.putHiddenProperty("isOpened",
-                   new FileIsOpened("isOpened", evaluator, fp));
-        esFilePrototype.putHiddenProperty("isAbsolute",
-                   new FileIsAbsolute("isAbsolute", evaluator, fp));
-        esFilePrototype.putHiddenProperty("isDirectory",
-                   new FileIsDirectory("isDirectory", evaluator, fp));
-        esFilePrototype.putHiddenProperty("eof",
-                   new FileEof("eof", evaluator, fp));
-        esFilePrototype.putHiddenProperty("write",
-                   new FileWrite("write", evaluator, fp));
-        esFilePrototype.putHiddenProperty("writeln",
-                   new FileWriteln("writeln", evaluator, fp));
-        esFilePrototype.putHiddenProperty("readln",
-                   new FileReadln("readln", evaluator, fp));
-        esFilePrototype.putHiddenProperty("error",
-                   new FileError("error", evaluator, fp));
-        esFilePrototype.putHiddenProperty("clearError",
-                   new FileClearError("clearError", evaluator, fp));
-        esFilePrototype.putHiddenProperty("getLength",
-                   new FileGetLength("getLength", evaluator, fp));
-
-        esFilePrototype.putHiddenProperty("lastModified",
-                   new FileLastModified("lastModified", evaluator, fp));
-        esFilePrototype.putHiddenProperty("remove",
-                   new FileRemove("remove", evaluator, fp));
-        esFilePrototype.putHiddenProperty("renameTo",
-                   new FileRenameTo("renameTo", evaluator, fp));
-        esFilePrototype.putHiddenProperty("canWrite",
-                   new FileCanWrite("canWrite", evaluator, fp));
-        esFilePrototype.putHiddenProperty("canRead",
-                   new FileCanRead("canRead", evaluator, fp));
-        esFilePrototype.putHiddenProperty("getParent",
-                   new FileGetParent("getParent", evaluator, fp));
-        esFilePrototype.putHiddenProperty("getName",
-                   new FileGetName("getName", evaluator, fp));
-        esFilePrototype.putHiddenProperty("getPath",
-                   new FileGetPath("getPath", evaluator, fp));
-        esFilePrototype.putHiddenProperty("toString",
-                   new FileGetPath("toString", evaluator, fp));
+        esFilePrototype.putHiddenProperty("lastModified", new FileLastModified(
+                "lastModified", evaluator, fp));
+        esFilePrototype.putHiddenProperty("remove", new FileRemove("remove",
+                evaluator, fp));
+        esFilePrototype.putHiddenProperty("renameTo", new FileRenameTo(
+                "renameTo", evaluator, fp));
+        esFilePrototype.putHiddenProperty("canWrite", new FileCanWrite(
+                "canWrite", evaluator, fp));
+        esFilePrototype.putHiddenProperty("canRead", new FileCanRead("canRead",
+                evaluator, fp));
+        esFilePrototype.putHiddenProperty("getParent", new FileGetParent(
+                "getParent", evaluator, fp));
+        esFilePrototype.putHiddenProperty("getName", new FileGetName("getName",
+                evaluator, fp));
+        esFilePrototype.putHiddenProperty("getPath", new FileGetPath("getPath",
+                evaluator, fp));
+        esFilePrototype.putHiddenProperty("toString", new FileGetPath(
+                "toString", evaluator, fp));
         esFilePrototype.putHiddenProperty("getAbsolutePath",
-                   new FileGetAbsolutePath("getAbsolutePath", evaluator, fp));
-        esFilePrototype.putHiddenProperty("mkdir",
-                   new FileMkdir("mkdir", evaluator, fp));
-        esFilePrototype.putHiddenProperty("list",
-                   new FileList("list", evaluator, fp));
+                new FileGetAbsolutePath("getAbsolutePath", evaluator, fp));
+        esFilePrototype.putHiddenProperty("mkdir", new FileMkdir("mkdir",
+                evaluator, fp));
+        esFilePrototype.putHiddenProperty("list", new FileList("list",
+                evaluator, fp));
 
-        esFilePrototype.putHiddenProperty("readAll",
-                   new FileReadAll("readAll", evaluator, fp));
+        esFilePrototype.putHiddenProperty("readAll", new FileReadAll("readAll",
+                evaluator, fp));
 
         file.putHiddenProperty("stdin", infile);
         file.putHiddenProperty("stdout", outfile);
         file.putHiddenProperty("stderr", errfile);
 
         go.putHiddenProperty("File", file);
-     }
- }
-
-
+    }
+}

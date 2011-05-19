@@ -21,36 +21,39 @@ import javax.swing.JOptionPane;
 
 import FESI.gui.PromptBox;
 
-
 /**
  * Implementation of the prompt box
  */
 public class SwingPromptBox implements PromptBox {
-    
+
     private String response = null;
-    
+
     /**
      * Create a PromptBox with default response
-     * @param title The window title
-     * @param prompt The prompt string
-     * @param defaultResponse The default response (will be "" if null)
+     * 
+     * @param title
+     *            The window title
+     * @param prompt
+     *            The prompt string
+     * @param defaultResponse
+     *            The default response (will be "" if null)
      */
     public SwingPromptBox(String title, String prompt, String defaultResponse) {
-        
-      response = JOptionPane.showInputDialog(null, 
-                        prompt, title, JOptionPane.PLAIN_MESSAGE);
-      if (response == null) {
-          response = defaultResponse == null ? "" : defaultResponse;
-      }
-   }
-   
-   
+
+        response = JOptionPane.showInputDialog(null, prompt, title,
+                JOptionPane.PLAIN_MESSAGE);
+        if (response == null) {
+            response = defaultResponse == null ? "" : defaultResponse;
+        }
+    }
+
     /**
      * Wait that the user returned a response
+     * 
      * @return the string response (may be "" but not null)
      */
-   public synchronized String waitResponse() {
+    public synchronized String waitResponse() {
         return response;
-   }
-       
+    }
+
 }

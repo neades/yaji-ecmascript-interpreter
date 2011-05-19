@@ -5,44 +5,45 @@ package FESI.AST;
 import FESI.Parser.EcmaScript;
 
 public class ASTOperator extends SimpleNode {
-    
-  /**
+
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = 9110907140380594328L;
-private int operatorCode = EOF;
-  
-  public ASTOperator(int id) {
-    super(id);
-  }
+    private static final long serialVersionUID = 9110907140380594328L;
+    private int operatorCode = EOF;
 
-  public ASTOperator(EcmaScript p, int id) {
-    super(p, id);
-  }
+    public ASTOperator(int id) {
+        super(id);
+    }
 
-  public static Node jjtCreate(int id) {
-      return new ASTOperator(id);
-  }
+    public ASTOperator(EcmaScript p, int id) {
+        super(p, id);
+    }
 
-  public static Node jjtCreate(EcmaScript p, int id) {
-      return new ASTOperator(p, id);
-  }
+    public static Node jjtCreate(int id) {
+        return new ASTOperator(id);
+    }
 
-  /** Accept the visitor. **/
-  public Object jjtAccept(EcmaScriptVisitor visitor, Object data) {
-    return visitor.visit(this, data);
-  }
-  
-  // JMCL
-  public void setOperator(int operatorCode) {
-      this.operatorCode = operatorCode;
-  }
-  public int getOperator() {
-      return operatorCode;
-  }
-  
-  public String toString() {
-      return "<" + tokenImage[operatorCode] + ">";
-  }
+    public static Node jjtCreate(EcmaScript p, int id) {
+        return new ASTOperator(p, id);
+    }
+
+    /** Accept the visitor. **/
+    public Object jjtAccept(EcmaScriptVisitor visitor, Object data) {
+        return visitor.visit(this, data);
+    }
+
+    // JMCL
+    public void setOperator(int operatorCode) {
+        this.operatorCode = operatorCode;
+    }
+
+    public int getOperator() {
+        return operatorCode;
+    }
+
+    public String toString() {
+        return "<" + tokenImage[operatorCode] + ">";
+    }
 
 }

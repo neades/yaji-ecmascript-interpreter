@@ -22,67 +22,77 @@
  * @author Laurence P. G. Cable
  */
 
-
 package FESI.ClassFile;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
- * <p> this class provides minimal support for CONSTANT_LONG CPE's </p>
+ * <p>
+ * this class provides minimal support for CONSTANT_LONG CPE's
+ * </p>
  */
 
 class LongConstant extends ConstantPoolEntry {
 
-    private long	longish;
+    private long longish;
 
     /**
-     * <p> construct a CONSTANT_LONG </p>
-     *
-     * @param l		the long constant
-     * @param cf	the class file
+     * <p>
+     * construct a CONSTANT_LONG
+     * </p>
+     * 
+     * @param l
+     *            the long constant
+     * @param cf
+     *            the class file
      */
 
     LongConstant(long l, ClassFile cf) {
-    	super(CONSTANT_LONG, cf);
-    
-    	longish = l;
+        super(CONSTANT_LONG, cf);
 
-    	addToConstantPool();
+        longish = l;
+
+        addToConstantPool();
     }
 
     /**
-     * <p> write the CONSTANT_LONG to the stream </p>
-     *
-     * @param dos 	the output stream
-     *
+     * <p>
+     * write the CONSTANT_LONG to the stream
+     * </p>
+     * 
+     * @param dos
+     *            the output stream
+     * 
      * @throws IOException
      */
 
     void write(DataOutputStream dos) throws IOException {
-    	dos.writeByte(getTag());
-    	dos.writeLong(longish);
+        dos.writeByte(getTag());
+        dos.writeLong(longish);
     }
 
     /**
      * @return the long constant value
      */
 
-    long getValue() { return longish; }
+    long getValue() {
+        return longish;
+    }
 
     /**
      * @return object equality
      */
 
     public boolean equals(Object o) {
-    	if (o instanceof Long) {
-    	    return longish == ((Long)o).longValue();
-    	} else if (o instanceof LongConstant) {
-    	    LongConstant lc = (LongConstant)o;
+        if (o instanceof Long) {
+            return longish == ((Long) o).longValue();
+        } else if (o instanceof LongConstant) {
+            LongConstant lc = (LongConstant) o;
 
-    	    return longish == lc.getValue();
-    	}
+            return longish == lc.getValue();
+        }
 
-    	return false;
+        return false;
     }
 }

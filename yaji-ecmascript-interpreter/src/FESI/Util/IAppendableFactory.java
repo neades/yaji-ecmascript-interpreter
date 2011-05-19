@@ -5,5 +5,6 @@
 package FESI.Util;
 
 public interface IAppendableFactory {
-    public IAppendable create(int estimatedNumberOfAppends, int estimatedNumberOfCharacters);
+    public IAppendable create(int estimatedNumberOfAppends,
+            int estimatedNumberOfCharacters);
 }

@@ -43,8 +43,8 @@ public abstract class ESObject extends ESValue {
     protected long objectId;
 
     /**
-     * The prototype of this object ([[prototype]] in the standard,
-     * not the "prototype" property of functions!)
+     * The prototype of this object ([[prototype]] in the standard, not the
+     * "prototype" property of functions!)
      */
     ESObject prototype = null;
 
@@ -55,7 +55,7 @@ public abstract class ESObject extends ESValue {
     protected static final int VALUEOFhash = VALUEOFstring.hashCode();
 
     private final int initialSize;
-    
+
     // Callback used to log profiling data
     static IObjectProfiler profilingCallback = null;
 
@@ -65,48 +65,52 @@ public abstract class ESObject extends ESValue {
 
     // 5th Edition - 15.2.3.9 - if false no properties may be added to object
     private boolean extensible = true;
+
     /**
-     * Create an object with a specific prototype (which may be null)
-     * in the context of a specific evaluator (which may not be null)
-     * Uses the default hashTable size.
-     *
-     * @param   prototype  The prototype ESObject - may be null
-     * @param   evaluator  The evaluator - must not be null
+     * Create an object with a specific prototype (which may be null) in the
+     * context of a specific evaluator (which may not be null) Uses the default
+     * hashTable size.
+     * 
+     * @param prototype
+     *            The prototype ESObject - may be null
+     * @param evaluator
+     *            The evaluator - must not be null
      */
     protected ESObject(ESObject prototype, Evaluator evaluator) {
         this(prototype, evaluator, null);
     }
 
-    protected ESObject(ESObject prototype, Evaluator evaluator, Object context)
-    {
+    protected ESObject(ESObject prototype, Evaluator evaluator, Object context) {
         this(prototype, evaluator, context, 27);
     }
 
-    protected ESObject(ESObject prototype, Evaluator evaluator, Object context, int initialSize)
-    {
+    protected ESObject(ESObject prototype, Evaluator evaluator, Object context,
+            int initialSize) {
         this.prototype = prototype;
         this.evaluator = evaluator; // It will crash somewhere if null...
         this.context = context;
 
-        if(evaluator != null) {
+        if (evaluator != null) {
             this.objectId = evaluator.generateObjectId();
         }
 
         if (profilingCallback != null) {
-            finalizerListener = new ESObjectFinalizerListener(this,context);
+            finalizerListener = new ESObjectFinalizerListener(this, context);
         }
 
         this.initialSize = initialSize;
     }
 
     /**
-     * Create an object with a specific prototype (which may be null)
-     * in the context of a specific evaluator (which may not be null)
-     * Uses the specified hashTable size, which should be a prime.
-     * size is usefull for very small (arguments) or very large objects.
-     *
-     * @param   prototype  The prototype ESObject - may be null
-     * @param   evaluator  The evaluator - must not be null
+     * Create an object with a specific prototype (which may be null) in the
+     * context of a specific evaluator (which may not be null) Uses the
+     * specified hashTable size, which should be a prime. size is usefull for
+     * very small (arguments) or very large objects.
+     * 
+     * @param prototype
+     *            The prototype ESObject - may be null
+     * @param evaluator
+     *            The evaluator - must not be null
      */
     protected ESObject(ESObject prototype, Evaluator evaluator, int initialSize) {
         this(prototype, evaluator, null, initialSize);
@@ -114,27 +118,26 @@ public abstract class ESObject extends ESValue {
 
     /**
      * Get the evaluator for this object
-     *
-     * @return the evaluator
-     * Graham Technology: 19/4/2007
-     * Removed final modifier to allow mocking out of this method
+     * 
+     * @return the evaluator Graham Technology: 19/4/2007 Removed final modifier
+     *         to allow mocking out of this method
      */
     public Evaluator getEvaluator() {
         return evaluator != null ? evaluator : EvaluatorAccess.getEvaluator();
     }
 
     /**
-    * Get the context for this object
-    *
-    * @return the context
-    */
-   public final Object getESObjectContext() {
-       return context;
+     * Get the context for this object
+     * 
+     * @return the context
+     */
+    public final Object getESObjectContext() {
+        return context;
     }
 
     /**
      * All objects and thir subclasses are non primitive
-     *
+     * 
      * @return false
      */
     @Override
@@ -142,20 +145,19 @@ public abstract class ESObject extends ESValue {
         return false;
     }
 
-
     /**
      * Implements the [[prototype]] property (see 8.6.2)
-     *
-     * @return     The prototype object or null
+     * 
+     * @return The prototype object or null
      */
     public ESObject getPrototype() {
         return prototype;
     }
 
     /**
-     * Return the name of the class of objects ([[class]]), as used in the default toString
-     * method of objects (15.2.4.2)
-     *
+     * Return the name of the class of objects ([[class]]), as used in the
+     * default toString method of objects (15.2.4.2)
+     * 
      * @return the [[Class]] property of this object
      */
     public String getESClassName() {
@@ -163,60 +165,70 @@ public abstract class ESObject extends ESValue {
     }
 
     /**
-     * Return a code indicating the type of the object for the implementation
-     * of the "==" operator.
-     *
-     * @return  A type code
+     * Return a code indicating the type of the object for the implementation of
+     * the "==" operator.
+     * 
+     * @return A type code
      */
     @Override
     public int getTypeOf() {
-       return EStypeObject;
+        return EStypeObject;
     }
 
     /**
-     * Either return the property value of the specified property
-     * in the current object, or lookup the next object in the scope chain
-     * if there is one. If there is nones, generate an error message.
-     * <P>This routine must be overriden by subclass which change the
+     * Either return the property value of the specified property in the current
+     * object, or lookup the next object in the scope chain if there is one. If
+     * there is nones, generate an error message.
+     * <P>
+     * This routine must be overriden by subclass which change the
      * implementation of getProperty.
-     *
-     * @param   propertyName  The property to look for
-     * @param   previousScope  The previous scope or null
-     * @param   hash  The hashCode of propertyName
-     * @return     The value of the specified variable
-     * @exception   EcmaScriptException  if not found in any scope
+     * 
+     * @param propertyName
+     *            The property to look for
+     * @param previousScope
+     *            The previous scope or null
+     * @param hash
+     *            The hashCode of propertyName
+     * @return The value of the specified variable
+     * @exception EcmaScriptException
+     *                if not found in any scope
      */
     public ESValue getPropertyInScope(String propertyName,
-                               ScopeChain previousScope,
-                               int hash)
-                throws EcmaScriptException {
-        ESValue value = hasNoPropertyMap() ? null : getPropertyMap().get(propertyName, hash);
+            ScopeChain previousScope, int hash) throws EcmaScriptException {
+        ESValue value = hasNoPropertyMap() ? null : getPropertyMap().get(
+                propertyName, hash);
         if (value == null) {
-        	if (prototype == null) {
-        		if (previousScope == null) {
-        			throw new EcmaScriptException("global variable '" + propertyName + "' does not have a value");
-        		}
-        		value = previousScope.getValue(propertyName, hash);
-        	} else {
-        		value = prototype.getPropertyInScope(propertyName, previousScope, hash);
-        	}
+            if (prototype == null) {
+                if (previousScope == null) {
+                    throw new EcmaScriptException("global variable '"
+                            + propertyName + "' does not have a value");
+                }
+                value = previousScope.getValue(propertyName, hash);
+            } else {
+                value = prototype.getPropertyInScope(propertyName,
+                        previousScope, hash);
+            }
 
         }
         return value;
     }
 
     /**
-     * Get the property by name (see 8.6.2.1) propagating to
-     * the prototype if required
-     *
-     * @param   propertyName  The string naming the property
-     * @param   hash  The hashCode of propertyName
-     * @return     The property or <em>undefined</em>
-     * @exception   EcmaScriptException  Error in host objects ?
+     * Get the property by name (see 8.6.2.1) propagating to the prototype if
+     * required
+     * 
+     * @param propertyName
+     *            The string naming the property
+     * @param hash
+     *            The hashCode of propertyName
+     * @return The property or <em>undefined</em>
+     * @exception EcmaScriptException
+     *                Error in host objects ?
      */
     public ESValue getProperty(String propertyName, int hash)
-                            throws EcmaScriptException {
-        ESValue value = hasNoPropertyMap() ? null : getPropertyMap().get(propertyName, hash);
+            throws EcmaScriptException {
+        ESValue value = hasNoPropertyMap() ? null : getPropertyMap().get(
+                propertyName, hash);
         if (value == null) {
             if (prototype == null) {
                 value = ESUndefined.theUndefined;
@@ -228,26 +240,28 @@ public abstract class ESObject extends ESValue {
     }
 
     /**
-     * Get the property by index value. By default the index is
-     * converted to a string, but this can be optimized for arrays.
-     * <P>This is not the same as the indexed properties of the first
-     * version of JavaScript and does not allow to access named
-     * properties other than the property using the integer string
-     * representation as a name.
-     *
-     * @param   index  The property name as an integer.
-     * @return     The property or <em>undefined</em>
-     * @exception   EcmaScriptException  Error in host objects ?
+     * Get the property by index value. By default the index is converted to a
+     * string, but this can be optimized for arrays.
+     * <P>
+     * This is not the same as the indexed properties of the first version of
+     * JavaScript and does not allow to access named properties other than the
+     * property using the integer string representation as a name.
+     * 
+     * @param index
+     *            The property name as an integer.
+     * @return The property or <em>undefined</em>
+     * @exception EcmaScriptException
+     *                Error in host objects ?
      */
-    public ESValue getProperty(int index)
-                            throws EcmaScriptException {
+    public ESValue getProperty(int index) throws EcmaScriptException {
         String iString = Integer.toString(index);
         return getProperty(iString, iString.hashCode());
     }
 
     public boolean hasProperty(String propertyName, int hash)
-                            throws EcmaScriptException {
-        boolean found = properties != null && getPropertyMap().containsKey(propertyName, hash);
+            throws EcmaScriptException {
+        boolean found = properties != null
+                && getPropertyMap().containsKey(propertyName, hash);
         if (!found && prototype != null) {
             found = prototype.hasProperty(propertyName, hash);
         }
@@ -255,13 +269,14 @@ public abstract class ESObject extends ESValue {
     }
 
     public boolean isHiddenProperty(String propertyName, int hash) {
-        return properties != null && getPropertyMap().isHidden(propertyName, hash);
+        return properties != null
+                && getPropertyMap().isHidden(propertyName, hash);
     }
 
     /**
-     * Indicates that the getProperties return an enumerator to the
-     * index rather  rather than to the value index (see ESWrapper).
-     *
+     * Indicates that the getProperties return an enumerator to the index rather
+     * rather than to the value index (see ESWrapper).
+     * 
      * @return false
      */
     public boolean isDirectEnumerator() {
@@ -269,150 +284,165 @@ public abstract class ESObject extends ESValue {
     }
 
     /**
-     * Returns an enumerator for the key elements of this object,
-     * that is all is enumerable properties and the (non hidden)
-     * ones of its prototype, etc... As used for the for in
-     * statement.
-     *
+     * Returns an enumerator for the key elements of this object, that is all is
+     * enumerable properties and the (non hidden) ones of its prototype, etc...
+     * As used for the for in statement.
+     * 
      * @return the enumerator
      */
-   public Enumeration getProperties() {
-         return new Enumeration() {
-                Enumeration props = hasNoPropertyMap() ? null : getPropertyMap().keys();
-                String currentKey = null;
-                int currentHash = 0;
-                boolean inside = false;
-                public boolean hasMoreElements() {
-                    if (currentKey != null) {
-                        return true;
-                    }
-                    while (props != null && props.hasMoreElements()) {
-                       currentKey = (String) props.nextElement();
-                       currentHash = currentKey.hashCode();
-                       if (inside) {
-                          if (getPropertyMap().containsKey(currentKey, currentHash)) {
-                            continue;
-                        }
-                       } else {
-                          if (isHiddenProperty(currentKey, currentHash)) {
-                            continue;
-                        }
-                       }
-                       return true;
-                    }
-                    if (!inside && prototype != null) {
-                        inside = true;
-                        props = prototype.getProperties();
-                        while (props.hasMoreElements()) {
-                           currentKey = (String) props.nextElement();
-                           currentHash = currentKey.hashCode();
-                           if (getPropertyMap().containsKey(currentKey, currentHash)) {
-                            continue;
-                        }
-                           return true;
-                        }
-                    }
-                    return false;
+    public Enumeration<String> getProperties() {
+        return new Enumeration<String>() {
+            Enumeration<String> props = hasNoPropertyMap() ? null
+                    : getPropertyMap().keys();
+            String currentKey = null;
+            int currentHash = 0;
+            boolean inside = false;
+
+            public boolean hasMoreElements() {
+                if (currentKey != null) {
+                    return true;
                 }
-                public Object nextElement() {
-                    if (hasMoreElements()) {
-                       String key = currentKey;
-                       currentKey = null;
-                       return key;
-                     }
-                     throw new java.util.NoSuchElementException();
-
-                 }
-         };
-      }
-
-    /**
-     * Get all properties (including hidden ones), for the command
-     * @listall of the interpreter. Include the visible properties of the
-     * prototype (that is the one added by the user) but not the
-     * hidden ones of the prototype (otherwise this would list
-     * all functions for any object).
-     *
-     * @return An enumeration of all properties (visible and hidden).
-     */
-    public Enumeration getAllProperties() {
-         return new Enumeration() {
-                String [] specialProperties = getSpecialPropertyNames();
-                int specialEnumerator = 0;
-                Enumeration props = hasNoPropertyMap() ? null : getPropertyMap().keys(); // all of object properties
-                String currentKey = null;
-                int currentHash = 0;
-                boolean inside = false;     // true when examing prototypes properties
-                public boolean hasMoreElements() {
-                    // OK if we already checked for a property and one exists
-                    if (currentKey != null) {
-                        return true;
+                while (props != null && props.hasMoreElements()) {
+                    currentKey = (String) props.nextElement();
+                    currentHash = currentKey.hashCode();
+                    if (inside) {
+                        if (getPropertyMap().containsKey(currentKey,
+                                currentHash)) {
+                            continue;
+                        }
+                    } else {
+                        if (isHiddenProperty(currentKey, currentHash)) {
+                            continue;
+                        }
                     }
-                    // Loop on special properties first
-                    if (specialEnumerator < specialProperties.length) {
-                        currentKey = specialProperties[specialEnumerator];
+                    return true;
+                }
+                if (!inside && prototype != null) {
+                    inside = true;
+                    props = prototype.getProperties();
+                    while (props.hasMoreElements()) {
+                        currentKey = (String) props.nextElement();
                         currentHash = currentKey.hashCode();
-                        specialEnumerator++;
+                        if (getPropertyMap().containsKey(currentKey,
+                                currentHash)) {
+                            continue;
+                        }
                         return true;
                     }
-                    // loop on standard or prototype properties
-                    while (props != null && props.hasMoreElements()) {
-                       currentKey = (String) props.nextElement();
-                       currentHash = currentKey.hashCode();
-                       if (inside) {
-                          if (getPropertyMap().containsKey(currentKey, currentHash)) {
-                            continue;
-                              // SHOULD CHECK IF NOT IN SPECIAL
-                        }
-                       }
-                       return true;
-                    }
-                    // If prototype properties have not yet been examined, look for them
-                    if (!inside && prototype != null) {
-                        inside = true;
-                        props = prototype.getProperties();
-                        while (props.hasMoreElements()) {
-                           currentKey = (String) props.nextElement();
-                           currentHash = currentKey.hashCode();
-                           if (getPropertyMap().containsKey(currentKey, currentHash)) {
-                            continue;
-                        }
-                           return true;
-                        }
-                    }
-                    return false;
                 }
-                public Object nextElement() {
-                    if (hasMoreElements()) {
-                       String key = currentKey;
-                       currentKey = null;
-                       return key;
-                     }   throw new java.util.NoSuchElementException();
+                return false;
+            }
 
-                 }
-         };
+            public String nextElement() {
+                if (hasMoreElements()) {
+                    String key = currentKey;
+                    currentKey = null;
+                    return key;
+                }
+                throw new java.util.NoSuchElementException();
+
+            }
+        };
     }
 
     /**
-     * Put the property by name (see 8.6.2.2), ignoring if
-     * read only (integrate functionality of canPut) and
-     * creating it if needed and possible.
-     * <P>The routine implement the functionality of the canPut attribute.
-     *
-     * @param   propertyName  The string naming the property
-     * @param   propertyValue  The value to put
-     * @exception   EcmaScriptException  Error in host objects ?
+     * Get all properties (including hidden ones), for the command
+     * 
+     * @listall of the interpreter. Include the visible properties of the
+     *          prototype (that is the one added by the user) but not the hidden
+     *          ones of the prototype (otherwise this would list all functions
+     *          for any object).
+     * 
+     * @return An enumeration of all properties (visible and hidden).
      */
-    public void putProperty(String propertyName,
-                            ESValue propertyValue,
-                            int hash)
-                                throws EcmaScriptException {
-        if (!canPut(propertyName,hash)) {
+    public Enumeration<String> getAllProperties() {
+        return new Enumeration<String>() {
+            String[] specialProperties = getSpecialPropertyNames();
+            int specialEnumerator = 0;
+            Enumeration<String> props = hasNoPropertyMap() ? null
+                    : getPropertyMap().keys(); // all of object properties
+            String currentKey = null;
+            int currentHash = 0;
+            boolean inside = false; // true when examing prototypes properties
+
+            public boolean hasMoreElements() {
+                // OK if we already checked for a property and one exists
+                if (currentKey != null) {
+                    return true;
+                }
+                // Loop on special properties first
+                if (specialEnumerator < specialProperties.length) {
+                    currentKey = specialProperties[specialEnumerator];
+                    currentHash = currentKey.hashCode();
+                    specialEnumerator++;
+                    return true;
+                }
+                // loop on standard or prototype properties
+                while (props != null && props.hasMoreElements()) {
+                    currentKey = (String) props.nextElement();
+                    currentHash = currentKey.hashCode();
+                    if (inside) {
+                        if (getPropertyMap().containsKey(currentKey,
+                                currentHash)) {
+                            continue;
+                            // SHOULD CHECK IF NOT IN SPECIAL
+                        }
+                    }
+                    return true;
+                }
+                // If prototype properties have not yet been examined, look for
+                // them
+                if (!inside && prototype != null) {
+                    inside = true;
+                    props = prototype.getProperties();
+                    while (props.hasMoreElements()) {
+                        currentKey = (String) props.nextElement();
+                        currentHash = currentKey.hashCode();
+                        if (getPropertyMap().containsKey(currentKey,
+                                currentHash)) {
+                            continue;
+                        }
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            public String nextElement() {
+                if (hasMoreElements()) {
+                    String key = currentKey;
+                    currentKey = null;
+                    return key;
+                }
+                throw new java.util.NoSuchElementException();
+
+            }
+        };
+    }
+
+    /**
+     * Put the property by name (see 8.6.2.2), ignoring if read only (integrate
+     * functionality of canPut) and creating it if needed and possible.
+     * <P>
+     * The routine implement the functionality of the canPut attribute.
+     * 
+     * @param propertyName
+     *            The string naming the property
+     * @param propertyValue
+     *            The value to put
+     * @exception EcmaScriptException
+     *                Error in host objects ?
+     */
+    public void putProperty(String propertyName, ESValue propertyValue, int hash)
+            throws EcmaScriptException {
+        if (!canPut(propertyName, hash)) {
             if (isStrictMode()) {
-                throw new TypeError("Property "+propertyName+" cannot be modified");
+                throw new TypeError("Property " + propertyName
+                        + " cannot be modified");
             }
         } else {
-            getPropertyMap().put(propertyName, hash, false, false, propertyValue);
+            getPropertyMap().put(propertyName, hash, false, false,
+                    propertyValue);
         }
     }
 
@@ -429,69 +459,73 @@ public abstract class ESObject extends ESValue {
     }
 
     /**
-     * Put the property by index value. By default the index is
-     * converted to a string, but this can be optimized for arrays.
-     * <P>This is not the same as the indexed properties of the first
-     * version of JavaScript and does not allow to access named
-     * properties other than the property using the integer string
-     * representation as a name.
-     *
-     * @param   index  The property name as an integer.
-     * @param   propertyValue  The value to put
-     * @exception   EcmaScriptException  Error in host objects ?
+     * Put the property by index value. By default the index is converted to a
+     * string, but this can be optimized for arrays.
+     * <P>
+     * This is not the same as the indexed properties of the first version of
+     * JavaScript and does not allow to access named properties other than the
+     * property using the integer string representation as a name.
+     * 
+     * @param index
+     *            The property name as an integer.
+     * @param propertyValue
+     *            The value to put
+     * @exception EcmaScriptException
+     *                Error in host objects ?
      */
     public void putProperty(int index, ESValue propertyValue)
-                                throws EcmaScriptException {
+            throws EcmaScriptException {
         String iString = Integer.toString(index);
         putProperty(iString, propertyValue, iString.hashCode());
     }
 
     /**
-     * Separated from putProperty to allow read only fields to be initialised
-     * at ESObject level this simply behaves the same as putProperty - it is intended to be
-     * overridden by subclasses of ESObject.
-     *	@param index
+     * Separated from putProperty to allow read only fields to be initialised at
+     * ESObject level this simply behaves the same as putProperty - it is
+     * intended to be overridden by subclasses of ESObject.
+     * 
+     * @param index
      * @param propertyValue
      * @throws EcmaScriptException
      */
-    public void initializeProperty(String propertyName,
-            ESValue propertyValue,
-            int hash)
-    throws EcmaScriptException {
+    public void initializeProperty(String propertyName, ESValue propertyValue,
+            int hash) throws EcmaScriptException {
         getPropertyMap().put(propertyName, hash, false, false, propertyValue);
     }
 
-
-
     /**
-     * Put the property as hidden. This is mostly used by initialisation
-     * code, so a hash value is computed locally and the string is interned.
-     *
-     * @param   propertyName  The name of the property
-     * @param   propertyValue Its value
-     * @exception   EcmaScriptException  Not used
+     * Put the property as hidden. This is mostly used by initialisation code,
+     * so a hash value is computed locally and the string is interned.
+     * 
+     * @param propertyName
+     *            The name of the property
+     * @param propertyValue
+     *            Its value
+     * @exception EcmaScriptException
+     *                Not used
      */
-    public void putHiddenProperty(String propertyName,
-                                  ESValue propertyValue)
-                                throws EcmaScriptException {
+    public void putHiddenProperty(String propertyName, ESValue propertyValue)
+            throws EcmaScriptException {
         propertyName = propertyName.intern();
         int hash = propertyName.hashCode();
         getPropertyMap().put(propertyName, hash, true, false, propertyValue);
     }
 
     /**
-     * Implements the [[delete]] function (8.6.2.5), only
-     * called by the DELETE operator. Should return true if
-     * the propery does not exist any more (or did not exist
-     * at all) after the return.
-     * <P>This routine must implement the DontDelete attribue too.
-     *
-     * @param   propertyName  The name of the property
-     * @return     true if the property is not present anymore
-     * @exception   EcmaScriptException Not used
+     * Implements the [[delete]] function (8.6.2.5), only called by the DELETE
+     * operator. Should return true if the propery does not exist any more (or
+     * did not exist at all) after the return.
+     * <P>
+     * This routine must implement the DontDelete attribue too.
+     * 
+     * @param propertyName
+     *            The name of the property
+     * @return true if the property is not present anymore
+     * @exception EcmaScriptException
+     *                Not used
      */
     public boolean deleteProperty(String propertyName, int hash)
-                                throws EcmaScriptException {
+            throws EcmaScriptException {
         if (hasPropertyMap()) {
             getPropertyMap().remove(propertyName, hash, isStrictMode());
         }
@@ -500,164 +534,179 @@ public abstract class ESObject extends ESValue {
 
     /**
      * Implements [[DefaultValue]] with hint
-     *
-     * @param hint A type hint (only string or number)
-     * @exception EcmaScriptException Propagated or bad hint
+     * 
+     * @param hint
+     *            A type hint (only string or number)
+     * @exception EcmaScriptException
+     *                Propagated or bad hint
      * @return the default value of this object
      */
-    public ESValue getDefaultValue(int hint)
-                                throws EcmaScriptException {
+    public ESValue getDefaultValue(int hint) throws EcmaScriptException {
         ESValue theResult = null;
         ESValue theFunction = null;
 
         if (hint == ESValue.EStypeString) {
-            theFunction = this.getProperty(TOSTRINGstring,TOSTRINGhash);
+            theFunction = this.getProperty(TOSTRINGstring, TOSTRINGhash);
             if (theFunction instanceof ESObject) {
                 theResult = theFunction.callFunction(this, new ESValue[0]);
                 if (theResult.isPrimitive()) {
-                        return theResult;
-               }
+                    return theResult;
+                }
             }
-            theFunction = this.getProperty(VALUEOFstring,VALUEOFhash);
+            theFunction = this.getProperty(VALUEOFstring, VALUEOFhash);
             if (theFunction instanceof ESObject) {
                 theResult = theFunction.callFunction(this, new ESValue[0]);
                 if (theResult.isPrimitive()) {
-                        return theResult;
-               }
+                    return theResult;
+                }
             }
-        // Throw errror on super to avoid evaluating this with as a string,
-        // as this is exactly what we cannot do.
-           throw new EcmaScriptException ("No default value for " + super.toString() + " and hint " + hint);
+            // Throw errror on super to avoid evaluating this with as a string,
+            // as this is exactly what we cannot do.
+            throw new EcmaScriptException("No default value for "
+                    + super.toString() + " and hint " + hint);
         } else if (hint == ESValue.EStypeNumber) {
-            theFunction = this.getProperty(VALUEOFstring,VALUEOFhash);
+            theFunction = this.getProperty(VALUEOFstring, VALUEOFhash);
             if (theFunction instanceof ESObject) {
                 theResult = theFunction.callFunction(this, new ESValue[0]);
                 if (theResult.isPrimitive()) {
-                        return theResult;
-               }
+                    return theResult;
+                }
             }
-            theFunction = this.getProperty(TOSTRINGstring,TOSTRINGhash);
+            theFunction = this.getProperty(TOSTRINGstring, TOSTRINGhash);
             if (theFunction instanceof ESObject) {
                 theResult = theFunction.callFunction(this, new ESValue[0]);
                 if (theResult.isPrimitive()) {
-                        return theResult;
-               }
+                    return theResult;
+                }
             }
         }
-        throw new EcmaScriptException ("No default value for " + this + " and hint " + hint);
+        throw new EcmaScriptException("No default value for " + this
+                + " and hint " + hint);
     }
 
     /**
      * Implements [[DefaultValue]] with no hint
-     * <P> The default is different for dates
-     *
-     * @exception EcmaScriptException Propagated
+     * <P>
+     * The default is different for dates
+     * 
+     * @exception EcmaScriptException
+     *                Propagated
      * @return the default value of this object
      */
-    public ESValue getDefaultValue()
-                                throws EcmaScriptException {
+    public ESValue getDefaultValue() throws EcmaScriptException {
 
         return this.getDefaultValue(EStypeNumber);
     }
 
     /**
      * Call a function object - not implemented for default objecr
-     *
-     * @param   thisObject  The current object
-     * @param   arguments  The arguments to the function
-     * @return   The calculated value
-     * @exception   EcmaScriptException  thrown because the function is not implemented
+     * 
+     * @param thisObject
+     *            The current object
+     * @param arguments
+     *            The arguments to the function
+     * @return The calculated value
+     * @exception EcmaScriptException
+     *                thrown because the function is not implemented
      */
     @Override
-    public ESValue callFunction(ESObject thisObject,
-                               ESValue[] arguments)
-                                        throws EcmaScriptException {
-         throw new EcmaScriptException("No function defined on: " + this);
+    public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+            throws EcmaScriptException {
+        throw new EcmaScriptException("No function defined on: " + this);
     }
 
     /**
-     * A construct as thisObject.functionName() was detected,
-     * The functionName is looked up, then a call is made.
-     * This avoid creating a dummy function object when one does not
-     * exists, like for the ESWrapper objects (where functions are
-     * really java methods).
-     * <P>Only method which do not use the standard EcmaScript
-     * function evaluation mechanism need to override this method.
-     *
-     * @param   evaluator  The evaluator
-     * @param target The original target (for recursive calls)
-     * @param   functionName The name of the function property
-     * @param   arguments The arguments of the function
-     * @return  The result of calling the function
-     * @exception   EcmaScriptException  Function not defined
-     * @exception NoSuchMethodException Method not found
+     * A construct as thisObject.functionName() was detected, The functionName
+     * is looked up, then a call is made. This avoid creating a dummy function
+     * object when one does not exists, like for the ESWrapper objects (where
+     * functions are really java methods).
+     * <P>
+     * Only method which do not use the standard EcmaScript function evaluation
+     * mechanism need to override this method.
+     * 
+     * @param evaluator
+     *            The evaluator
+     * @param target
+     *            The original target (for recursive calls)
+     * @param functionName
+     *            The name of the function property
+     * @param arguments
+     *            The arguments of the function
+     * @return The result of calling the function
+     * @exception EcmaScriptException
+     *                Function not defined
+     * @exception NoSuchMethodException
+     *                Method not found
      */
-    public ESValue doIndirectCall(Evaluator evaluator,
-                        ESObject target,
-                                  String functionName,
-                                  ESValue[] arguments)
-                                        throws EcmaScriptException, NoSuchMethodException {
-        ESValue theFunction = hasNoPropertyMap() ? null : getPropertyMap().get(functionName, functionName.hashCode());
+    public ESValue doIndirectCall(Evaluator evaluator, ESObject target,
+            String functionName, ESValue[] arguments)
+            throws EcmaScriptException, NoSuchMethodException {
+        ESValue theFunction = hasNoPropertyMap() ? null : getPropertyMap().get(
+                functionName, functionName.hashCode());
         if (theFunction == null) {
             if (prototype == null) {
-                        throw new EcmaScriptException("The function '"+functionName+
-                            "' is not defined for object '"+target.toString()+"'");
+                throw new EcmaScriptException("The function '" + functionName
+                        + "' is not defined for object '" + target.toString()
+                        + "'");
             }
-            return prototype.doIndirectCall(evaluator, target, functionName, arguments);
+            return prototype.doIndirectCall(evaluator, target, functionName,
+                    arguments);
 
         }
-        return theFunction.callFunction(target,arguments);
+        return theFunction.callFunction(target, arguments);
 
     }
 
     // A routine which may return a function as the value of a builtin
     // property must override this function
     public ESValue doIndirectCallInScope(Evaluator evaluator,
-                                        ScopeChain previousScope,
-                                        ESObject thisObject,
-                                        String functionName,
-                                        int hash,
-                                        ESValue[] arguments)
-                                        throws EcmaScriptException {
-        ESValue theFunction = hasNoPropertyMap() ? null : getPropertyMap().get(functionName, hash);
+            ScopeChain previousScope, ESObject thisObject, String functionName,
+            int hash, ESValue[] arguments) throws EcmaScriptException {
+        ESValue theFunction = hasNoPropertyMap() ? null : getPropertyMap().get(
+                functionName, hash);
         if (theFunction == null) {
             if (previousScope == null) {
-                throw new EcmaScriptException("no global function named '" + functionName + "'");
+                throw new EcmaScriptException("no global function named '"
+                        + functionName + "'");
             }
-            return previousScope.doIndirectCall(evaluator, thisObject, functionName, hash, arguments);
+            return previousScope.doIndirectCall(evaluator, thisObject,
+                    functionName, hash, arguments);
 
         }
-        return theFunction.callFunction(thisObject,arguments);
+        return theFunction.callFunction(thisObject, arguments);
     }
 
     /**
      * Call the constructor - not implemented on default object
-     *
-     * @param   thisObject  The current object
-     * @param   arguments  Arguments to new
-     * @return     The created obbjecr
-     * @exception   EcmaScriptException  thrown because this function is not implemented
+     * 
+     * @param thisObject
+     *            The current object
+     * @param arguments
+     *            Arguments to new
+     * @return The created obbjecr
+     * @exception EcmaScriptException
+     *                thrown because this function is not implemented
      */
     @Override
-    public ESObject doConstruct(ESObject thisObject,
-                                ESValue[] arguments)
-                                        throws EcmaScriptException {
-         throw new EcmaScriptException("No constructor defined on: " + this);
+    public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
+            throws EcmaScriptException {
+        throw new EcmaScriptException("No constructor defined on: " + this);
     }
 
     /**
      * Return a double value for this object if possible
-     *
-     * @return  The double value
-     * @exception   EcmaScriptException  If not a suitable primitive
+     * 
+     * @return The double value
+     * @exception EcmaScriptException
+     *                If not a suitable primitive
      */
     @Override
     public double doubleValue() throws EcmaScriptException {
         ESValue value = ESUndefined.theUndefined;
         double d = Double.NaN;
         try {
-           value = toESPrimitive(EStypeNumber);
-           d = value.doubleValue();
+            value = toESPrimitive(EStypeNumber);
+            d = value.doubleValue();
         } catch (EcmaScriptException e) {
             throw new ProgrammingError(e.getMessage());
         }
@@ -666,9 +715,10 @@ public abstract class ESObject extends ESValue {
 
     /**
      * Return the boolean value of this object if possible
-     *
-     * @return  the boolean value
-     * @exception   EcmaScriptException If not a suitable primitive
+     * 
+     * @return the boolean value
+     * @exception EcmaScriptException
+     *                If not a suitable primitive
      */
     @Override
     public boolean booleanValue() throws EcmaScriptException {
@@ -697,33 +747,40 @@ public abstract class ESObject extends ESValue {
 
     /**
      * Convert to an object
-     *
-     * @param   evaluator The evaluator
-     * @return  This
-     * @exception   EcmaScriptException  not thrown
+     * 
+     * @param evaluator
+     *            The evaluator
+     * @return This
+     * @exception EcmaScriptException
+     *                not thrown
      */
     @Override
-    public final ESValue toESObject(Evaluator evaluator) throws EcmaScriptException {
+    public final ESValue toESObject(Evaluator evaluator)
+            throws EcmaScriptException {
         return this;
     }
 
     /**
      * Convert to a primitive
-     *
-     * @param   preferedType For string or number
-     * @return    The primitive value
-     * @exception   EcmaScriptException If no suitable default value
+     * 
+     * @param preferedType
+     *            For string or number
+     * @return The primitive value
+     * @exception EcmaScriptException
+     *                If no suitable default value
      */
     @Override
-    public final ESValue toESPrimitive(int preferedType) throws EcmaScriptException {
+    public final ESValue toESPrimitive(int preferedType)
+            throws EcmaScriptException {
         return getDefaultValue(preferedType);
     }
 
     /**
      * Convert to a primitive
-     *
-     * @return    The primitive value
-     * @exception   EcmaScriptException If no suitable default value
+     * 
+     * @return The primitive value
+     * @exception EcmaScriptException
+     *                If no suitable default value
      */
     @Override
     public final ESValue toESPrimitive() throws EcmaScriptException {
@@ -731,11 +788,11 @@ public abstract class ESObject extends ESValue {
     }
 
     /**
-     * Return a Java object which is the object to pass to Java routines
-     * called by FESI. By default wrap the ESObject in a wrapper object,
-     * used by the jslib. Overriden by subclass if a better type can be found.
-     *
-     * @return   a wrapper object over this ESObject.
+     * Return a Java object which is the object to pass to Java routines called
+     * by FESI. By default wrap the ESObject in a wrapper object, used by the
+     * jslib. Overriden by subclass if a better type can be found.
+     * 
+     * @return a wrapper object over this ESObject.
      */
     @Override
     public Object toJavaObject() {
@@ -744,8 +801,8 @@ public abstract class ESObject extends ESValue {
 
     /**
      * Return the name of the type of the object for the typeof operator
-     *
-     * @return  The name of the type as a String
+     * 
+     * @return The name of the type as a String
      */
     @Override
     public String getTypeofString() {
@@ -759,38 +816,41 @@ public abstract class ESObject extends ESValue {
 
     /**
      * Return true to indicate that this value is composite.
-     *
-     * @return     true
+     * 
+     * @return true
      */
     @Override
-    public boolean isComposite() {return true; }
+    public boolean isComposite() {
+        return true;
+    }
 
     /**
-     * Return the list of proprties which are not listed by getAll,
-     * that is all special properties handled directly by getProperty,
-     * which are not in the property hash table (they are considered
-     * hidden)
-     * Must be overriden by a subclass which overrides getProperty!
-     *
+     * Return the list of proprties which are not listed by getAll, that is all
+     * special properties handled directly by getProperty, which are not in the
+     * property hash table (they are considered hidden) Must be overriden by a
+     * subclass which overrides getProperty!
+     * 
      * return The array of special property names
      */
     public String[] getSpecialPropertyNames() {
         return new String[0];
     }
 
-    protected Enumeration getAllDescriptionKeys() {
-    	final String [] sp = getSpecialPropertyNames();
-    	return sp == null ? null : new Enumeration() {
-    		String [] specialProperties = sp;
+    protected Enumeration<String> getAllDescriptionKeys() {
+        final String[] sp = getSpecialPropertyNames();
+        return sp == null ? null : new Enumeration<String>() {
+            String[] specialProperties = sp;
             int specialEnumerator = 0;
-            Enumeration props = hasNoPropertyMap()?null:getPropertyMap().keys();
+            Enumeration<String> props = hasNoPropertyMap() ? null
+                    : getPropertyMap().keys();
             String currentKey = null;
+
             public boolean hasMoreElements() {
                 // If we have one already, send it
                 if (currentKey != null) {
                     return true;
-                }                
-               // Loop on special properties first
+                }
+                // Loop on special properties first
                 if (specialEnumerator < specialProperties.length) {
                     currentKey = specialProperties[specialEnumerator];
                     currentKey.hashCode();
@@ -798,121 +858,128 @@ public abstract class ESObject extends ESValue {
                     return true;
                 }
                 // Otherwise check in current enumeration
-                while (props != null &&  props.hasMoreElements()) {
-                   currentKey = (String) props.nextElement();
-                   currentKey.hashCode();
-                   return true;
+                while (props != null && props.hasMoreElements()) {
+                    currentKey = props.nextElement();
+                    currentKey.hashCode();
+                    return true;
                 }
                 return false;
             }
-            public Object nextElement() {
-                if (hasMoreElements()) {
-                   String key = currentKey;
-                   currentKey = null;
-                   return key;
-                 }   throw new java.util.NoSuchElementException();
 
-             }
-    	};
+            public String nextElement() {
+                if (hasMoreElements()) {
+                    String key = currentKey;
+                    currentKey = null;
+                    return key;
+                }
+                throw new java.util.NoSuchElementException();
+
+            }
+        };
     }
-    
+
     /**
-     * Get an enumeration of the description of various aspects
-     * of the object, including all properties.
+     * Get an enumeration of the description of various aspects of the object,
+     * including all properties.
      */
     @Override
-    public Enumeration getAllDescriptions() {
-         return new Enumeration() {
-                String [] specialProperties = getSpecialPropertyNames();
-                int specialEnumerator = 0;
-                Enumeration props = hasNoPropertyMap()?null:getPropertyMap().keys();
-                String currentKey = null;
-                boolean inside = false;
-                boolean inSpecial = true;
-                ESObject proto = prototype;
-                public boolean hasMoreElements() {
-                    // If we have one already, send it
-                    if (currentKey != null) {
-                        return true;
-                    }
-                   // Loop on special properties first
-                    if (specialEnumerator < specialProperties.length) {
-                        currentKey = specialProperties[specialEnumerator];
-                        currentKey.hashCode();
-                        specialEnumerator++;
-                        return true;
-                    }
-                    inSpecial = false;
-                    // Otherwise check in current enumeration
-                    while (props != null &&  props.hasMoreElements()) {
-                       currentKey = (String) props.nextElement();
-                       currentKey.hashCode();
-                       //if (inside) {
-                       //   if (properties.containsKey(currentKey, currentHash)) continue;
-                       //}
-                       return true;
-                    }
-                    // Got to prototype enumeration if needed
-                    if (proto != null) {
-                        inside = true;
-                        props = proto.getAllDescriptionKeys();
-                        if(props == null) {
-                        	return false;
-                        }
-                        	
-                        proto = proto.getPrototype();
-                        while (props.hasMoreElements()) {
-                           currentKey = (String) props.nextElement();
-                           currentKey.hashCode();
-                           //if (properties.containsKey(currentKey, currentHash)) continue;
-                           return true;
-                        }
-                    }
-                    return false;
+    public Enumeration<ValueDescription> getAllDescriptions() {
+        return new Enumeration<ValueDescription>() {
+            String[] specialProperties = getSpecialPropertyNames();
+            int specialEnumerator = 0;
+            Enumeration<String> props = hasNoPropertyMap() ? null
+                    : getPropertyMap().keys();
+            String currentKey = null;
+            boolean inside = false;
+            boolean inSpecial = true;
+            ESObject proto = prototype;
+
+            public boolean hasMoreElements() {
+                // If we have one already, send it
+                if (currentKey != null) {
+                    return true;
                 }
-                public Object nextElement() {
-                    if (hasMoreElements()) {
-                       String key = currentKey;
-                       int hash = key.hashCode();
-                       currentKey = null;
-                       ESValue value = null;
-                       try {
-                           value = ESObject.this.getProperty(key, hash);
-                       } catch (EcmaScriptException e) {
-                           throw new ProgrammingError("Unexpected exception " + e);
-                       }
-                       String propertyKind;
-                       if (inSpecial) {
-                           propertyKind = "HIDDEN";
-                       } else if (inside && getPropertyMap().containsKey(key, hash)) {
-                          propertyKind = "INVISIBLE";
-                       } else {
-                          propertyKind = isHiddenProperty(key, hash) ? "HIDDEN" : "VISIBLE";
-                       }
-                       propertyKind += (inside ? " PROTOTYPE" : " OBJECT");
-                       propertyKind += " PROPERTY";
-                       return new ValueDescription(key,
-                                    propertyKind,
-                                    value.toString());
-                     }
-                     throw new java.util.NoSuchElementException();
+                // Loop on special properties first
+                if (specialEnumerator < specialProperties.length) {
+                    currentKey = specialProperties[specialEnumerator];
+                    currentKey.hashCode();
+                    specialEnumerator++;
+                    return true;
+                }
+                inSpecial = false;
+                // Otherwise check in current enumeration
+                while (props != null && props.hasMoreElements()) {
+                    currentKey = (String) props.nextElement();
+                    currentKey.hashCode();
+                    // if (inside) {
+                    // if (properties.containsKey(currentKey, currentHash))
+                    // continue;
+                    // }
+                    return true;
+                }
+                // Got to prototype enumeration if needed
+                if (proto != null) {
+                    inside = true;
+                    props = proto.getAllDescriptionKeys();
+                    if (props == null) {
+                        return false;
+                    }
 
-                 }
-         };
-      }
+                    proto = proto.getPrototype();
+                    while (props.hasMoreElements()) {
+                        currentKey = (String) props.nextElement();
+                        currentKey.hashCode();
+                        // if (properties.containsKey(currentKey, currentHash))
+                        // continue;
+                        return true;
+                    }
+                }
+                return false;
+            }
 
-   /**
+            public ValueDescription nextElement() {
+                if (hasMoreElements()) {
+                    String key = currentKey;
+                    int hash = key.hashCode();
+                    currentKey = null;
+                    ESValue value = null;
+                    try {
+                        value = ESObject.this.getProperty(key, hash);
+                    } catch (EcmaScriptException e) {
+                        throw new ProgrammingError("Unexpected exception " + e);
+                    }
+                    String propertyKind;
+                    if (inSpecial) {
+                        propertyKind = "HIDDEN";
+                    } else if (inside
+                            && getPropertyMap().containsKey(key, hash)) {
+                        propertyKind = "INVISIBLE";
+                    } else {
+                        propertyKind = isHiddenProperty(key, hash) ? "HIDDEN"
+                                : "VISIBLE";
+                    }
+                    propertyKind += (inside ? " PROTOTYPE" : " OBJECT");
+                    propertyKind += " PROPERTY";
+                    return new ValueDescription(key, propertyKind, value
+                            .toString());
+                }
+                throw new java.util.NoSuchElementException();
+
+            }
+        };
+    }
+
+    /**
      * Returns a full description of the value, with the specified name.
-     *
-     * @param name The name of the value to describe
-     *
-     * @return   the description of this value
+     * 
+     * @param name
+     *            The name of the value to describe
+     * 
+     * @return the description of this value
      */
     @Override
     public ValueDescription getDescription(String name) {
-       return new ValueDescription(name,
-                                    "OBJECT",
-                                    this.toString());
+        return new ValueDescription(name, "OBJECT", this.toString());
     }
 
     public static void setObjectProfiler(IObjectProfiler op) {
@@ -923,22 +990,18 @@ public abstract class ESObject extends ESValue {
         return profilingCallback;
     }
 
-
-
     class ESObjectFinalizerListener {
         private final ESObject object;
-        private Object   myContext = null;
+        private Object myContext = null;
 
-        public ESObjectFinalizerListener (
-                ESObject object) {
+        public ESObjectFinalizerListener(ESObject object) {
             this.object = object;
             if (profilingCallback != null) {
                 writeProfile("C");
             }
         }
 
-        public ESObjectFinalizerListener (
-                ESObject object, Object context) {
+        public ESObjectFinalizerListener(ESObject object, Object context) {
             this.object = object;
             this.myContext = context;
             if (profilingCallback != null) {
@@ -956,18 +1019,20 @@ public abstract class ESObject extends ESValue {
         private void writeProfile(String state) {
             long currentTime = System.currentTimeMillis();
 
-            profilingCallback.write(getEvaluator(),currentTime,object,myContext,state);
+            profilingCallback.write(getEvaluator(), currentTime, object,
+                    myContext, state);
         }
     }
 
     // save some space with serialization by not writing empty hashtables
-    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-      FesiHashtable tmp = properties;
-      if (hasPropertyMap() && this.getPropertyMap().size() == 0) {
-        this.setPropertyMap(null);
-      }
-      out.defaultWriteObject();
-      this.setPropertyMap(tmp);
+    private void writeObject(java.io.ObjectOutputStream out)
+            throws java.io.IOException {
+        FesiHashtable tmp = properties;
+        if (hasPropertyMap() && this.getPropertyMap().size() == 0) {
+            this.setPropertyMap(null);
+        }
+        out.defaultWriteObject();
+        this.setPropertyMap(tmp);
     }
 
     protected boolean hasPropertyMap() {
@@ -1000,7 +1065,7 @@ public abstract class ESObject extends ESValue {
         }
         evaluator = null;
     }
-    
+
     public boolean isFrozen() {
         boolean frozen = extensible == false;
         if (frozen && !hasNoPropertyMap()) {
