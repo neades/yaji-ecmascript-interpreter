@@ -35,7 +35,7 @@ public class ArrayPrototype extends ESObject {
 
 	// The array value
 	// We could use a non synchronized vector or directly and array
-	protected Vector theArray = new Vector();
+	protected Vector<ESValue> theArray = new Vector<ESValue>();
 
 	/**
 	 * Create a new empty array
@@ -58,7 +58,7 @@ public class ArrayPrototype extends ESObject {
 	 * @param componentType the type of the component of the array
 	 * @return   a java array object
 	 */
-	public Object toJavaArray(Class componentType) throws EcmaScriptException {
+	public Object toJavaArray(Class<?> componentType) throws EcmaScriptException {
 		int l = size();
 		Object array = Array.newInstance(componentType, l);
 		if (l ==0) {
@@ -156,7 +156,7 @@ public class ArrayPrototype extends ESObject {
 				if (o==null) {
 					Array.set(array,i,o);
 				} else {
-					Class sourceClass = o.getClass();
+					Class<? extends Object> sourceClass = o.getClass();
 					if (componentType.isAssignableFrom(sourceClass)) {
 						Array.set(array,i,o);
 					} else {
@@ -208,7 +208,7 @@ public class ArrayPrototype extends ESObject {
 	public ESValue reverse() throws EcmaScriptException {
 		int size = theArray.size();
 		if (size>0) {
-			Vector reversed = new Vector(size);
+			Vector<ESValue> reversed = new Vector<ESValue>(size);
 			reversed.setSize(size);
 			for (int i = 0, j=size-1; i<size; i++, j--) {
 				reversed.setElementAt(theArray.elementAt(j),i);
@@ -278,7 +278,7 @@ public class ArrayPrototype extends ESObject {
 			while((i < to) && (c.compare(center, ai) > 0)) { i++; ai = (ESValue) theArray.elementAt(i);}
 			while((j > from) && (c.compare(center, aj) < 0)) {j--; aj = (ESValue) theArray.elementAt(j);}
 			if (i < j) {
-				Object tmp = ai;  theArray.setElementAt(aj,i);  theArray.setElementAt(tmp, j);
+				ESValue tmp = ai;  theArray.setElementAt(aj,i);  theArray.setElementAt(tmp, j);
 			}
 			if (i <= j) { i++; j--; }
 		} while(i <= j);

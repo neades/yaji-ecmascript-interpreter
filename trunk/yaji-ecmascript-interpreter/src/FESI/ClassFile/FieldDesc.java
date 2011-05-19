@@ -52,7 +52,6 @@ final class FieldDesc {
 
     private short		accessFlags;
 
-    private ClassFile		classFile;
 
     private Attribute[]		attributes;
 
@@ -75,7 +74,6 @@ final class FieldDesc {
     	name        = new UTF8Constant(field, cf);
     	descriptor  = new UTF8Constant(desc,  cf);
     	accessFlags = flags;
-    	classFile   = cf;
     	attributes  = attrs;
     }
 

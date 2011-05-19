@@ -11,7 +11,7 @@ public class EcmaScriptDumpVisitor implements EcmaScriptVisitor
     }
     StringBuilder sb = new StringBuilder(indent);
     for (int i = 0; i < indent; ++i) {
-      sb.append(" ");
+      sb.append(' ');
     }
     return sb.toString();
   }

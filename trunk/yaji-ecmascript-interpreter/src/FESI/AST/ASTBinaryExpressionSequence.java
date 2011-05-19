@@ -5,7 +5,12 @@ package FESI.AST;
 import FESI.Parser.EcmaScript;
 
 public class ASTBinaryExpressionSequence extends SimpleNode {
-  public ASTBinaryExpressionSequence(int id) {
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4509822808389298023L;
+
+public ASTBinaryExpressionSequence(int id) {
     super(id);
   }
 

@@ -5,7 +5,12 @@ package FESI.AST;
 import FESI.Parser.EcmaScript;
 
 public class ASTWhileStatement extends SimpleNode {
-  public ASTWhileStatement(int id) {
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 6183981014459249449L;
+
+public ASTWhileStatement(int id) {
     super(id);
   }
 

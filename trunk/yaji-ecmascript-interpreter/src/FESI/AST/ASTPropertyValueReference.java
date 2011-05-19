@@ -5,7 +5,12 @@ package FESI.AST;
 import FESI.Parser.EcmaScript;
 
 public class ASTPropertyValueReference extends SimpleNode {
-  public ASTPropertyValueReference(int id) {
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = -1302896438054603194L;
+
+public ASTPropertyValueReference(int id) {
     super(id);
   }
 

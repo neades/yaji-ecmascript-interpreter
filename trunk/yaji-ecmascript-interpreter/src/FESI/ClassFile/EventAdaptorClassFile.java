@@ -55,7 +55,7 @@ public final class EventAdaptorClassFile {
      */
 
     private String              listenerName;
-    private Class               listenerClass;
+    private Class<?>               listenerClass;
 
     private String              adaptorName;
     private ClassFile           classFile;
@@ -124,12 +124,6 @@ public final class EventAdaptorClassFile {
 
         write(os);
     }
-
-    /**
-     * Are we running debug for this Adaptor generation?
-     */
-
-    private boolean debug() { return false; }
 
     /**
      * Generate misc constant pool entries etc etc ...
@@ -362,8 +356,8 @@ public final class EventAdaptorClassFile {
                         listenerName
                 );
             } else {
-                Class[] lmParams     = listenerMethods[i].getParameterTypes();
-                Class[] lmExceptions = listenerMethods[i].getExceptionTypes();
+                Class<?>[] lmParams     = listenerMethods[i].getParameterTypes();
+                Class<?>[] lmExceptions = listenerMethods[i].getExceptionTypes();
 
 
                 if (lmParams != null     &&
@@ -389,7 +383,7 @@ public final class EventAdaptorClassFile {
      * Generate a simple EventListener interface method stub
      */
 
-    private void generateSimpleListenerMethodStub(Method listenerMethod, Class  listenerParam, Class[] listenerExceptions, int listenerMethodTableIndex) {
+    private void generateSimpleListenerMethodStub(Method listenerMethod, Class<?>  listenerParam, Class<?>[] listenerExceptions, int listenerMethodTableIndex) {
         Code          c     = new Code(classFile, (short)2, (short)4);
         Attribute[]   ary;
 
@@ -456,7 +450,7 @@ public final class EventAdaptorClassFile {
      * Generate a cracked EventListener interface method stub
      */
 
-    private void generateCrackedListenerMethodStub(Method listenerMethod, Class[] listenerParams, Class[] listenerExceptions, int listenerMethodTableIndex) {
+    private void generateCrackedListenerMethodStub(Method listenerMethod, Class<?>[] listenerParams, Class<?>[] listenerExceptions, int listenerMethodTableIndex) {
         Code          c     = new Code(classFile,
                                        (short)(listenerParams.length * 2 + 1),
                                        (short)9
@@ -592,13 +586,13 @@ public final class EventAdaptorClassFile {
      * the appropriate value on TOS for storing into the objects array.
      */
 
-    private String processParam(Code c, Class pClass, int pIdx) {
+    private String processParam(Code c, Class<?> pClass, int pIdx) {
         ClassConstant  cc = null;
         MethodConstant mc = null;
         byte           ldOpCode        = Code.OP_ALOAD; // load ref by default
         byte           convOpCode      = 0;
         boolean        singleWordParam = true;
-        Class          pType           = pClass;
+        Class<?>          pType           = pClass;
         boolean        isPrimitive;
         boolean        isArrayRef;
 

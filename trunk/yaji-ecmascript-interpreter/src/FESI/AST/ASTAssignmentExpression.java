@@ -5,7 +5,12 @@ package FESI.AST;
 import FESI.Parser.EcmaScript;
 
 public class ASTAssignmentExpression extends SimpleNode {
-  public ASTAssignmentExpression(int id) {
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = -24694765230410633L;
+
+public ASTAssignmentExpression(int id) {
     super(id);
   }
 

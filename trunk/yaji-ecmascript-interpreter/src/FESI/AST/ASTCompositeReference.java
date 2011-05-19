@@ -5,7 +5,12 @@ package FESI.AST;
 import FESI.Parser.EcmaScript;
 
 public class ASTCompositeReference extends SimpleNode {
-  public ASTCompositeReference(int id) {
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4947779724478472987L;
+
+public ASTCompositeReference(int id) {
     super(id);
   }
 

@@ -62,7 +62,7 @@ class Exceptions extends Attribute {
      * @param cf	the containing class file
      *
      */
-    Exceptions(Class[] exs, ClassFile cf) {
+    Exceptions(Class<?>[] exs, ClassFile cf) {
     	super(Attribute.EXCEPTIONS, cf);
 
     	// we should validate that the ClassConstants are all

@@ -54,8 +54,6 @@
     <mkdir dir="${doc.api}"/>
     <mkdir dir="${site}"/>
     <mkdir dir="${tmp.doc.html}"/>
-    <mkdir dir="${forJdk118.classes}"/>
-    <mkdir dir="${forJdk118.lib}"/>
    </target>
 
  <target name="clean"

@@ -55,4 +55,16 @@ public int hashCode() {
 public String toString() {
       return "<" + identifierName + ">";
   }
+  
+  @Override
+  public boolean equals(Object obj) {
+	  if (obj == this) {
+		  return true;
+	  }
+	  if (obj instanceof ASTIdentifier) {
+		ASTIdentifier other = (ASTIdentifier) obj;
+		return this.identifierName.equals(other.identifierName);
+	  }
+	  return false;
+  }
 }

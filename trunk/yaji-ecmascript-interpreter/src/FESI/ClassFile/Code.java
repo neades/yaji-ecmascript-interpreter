@@ -433,7 +433,7 @@ final class Code extends Attribute {
      * inst vars
      */
 
-    private Vector		attributes;
+    private Vector<Attribute>		attributes;
 
     private int			length = 12;	// starting value
 
@@ -443,9 +443,9 @@ final class Code extends Attribute {
     
     private short		maxStack;
 
-    private Vector		byteCodes = new Vector(1);
+    private Vector<Byte>		byteCodes = new Vector<Byte>(1);
 
-    private Vector		exceptions;
+    private Vector<ExceptionTableEntry>		exceptions;
 
     /**
      * <p> construct a Code Attribute </p>
@@ -483,7 +483,7 @@ final class Code extends Attribute {
     	dos.writeInt(byteCodes.size());
 
     	for (i = 0; i < byteCodes.size(); i++) {
-    		dos.writeByte(((Byte)byteCodes.elementAt(i)).byteValue());
+    		dos.writeByte(byteCodes.elementAt(i).byteValue());
     	}
 
     	// write exceptions (if any)
@@ -492,7 +492,7 @@ final class Code extends Attribute {
     		dos.writeShort(exceptions.size());
 
     		for (i = 0; i < exceptions.size(); i++) {
-    			((ExceptionTableEntry)exceptions.elementAt(i)).write(dos);
+    			exceptions.elementAt(i).write(dos);
     		}
     	} else dos.writeShort(0);
 
@@ -502,7 +502,7 @@ final class Code extends Attribute {
     		dos.writeShort(attributes.size());
 
     		for (i = 0; i < attributes.size(); i ++) {
-    			((Attribute)attributes.elementAt(i)).write(dos);
+    			attributes.elementAt(i).write(dos);
     		}
     	} else dos.writeShort(0);
     }
@@ -539,7 +539,7 @@ final class Code extends Attribute {
      */
 
     void addAttribute(Attribute attr) {
-    	if (attributes == null) attributes = new Vector(1);
+    	if (attributes == null) attributes = new Vector<Attribute>(1);
 
     	attributes.addElement(attr);
     	length += attr.getLength() + 6; // sizeof(Attribute)
