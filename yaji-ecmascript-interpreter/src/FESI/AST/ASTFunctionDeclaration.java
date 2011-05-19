@@ -6,7 +6,11 @@ import FESI.Parser.EcmaScript;
 
 public class ASTFunctionDeclaration extends SimpleNode {
     
-  private String sourceString  = null;
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2472394930724874278L;
+private String sourceString  = null;
   
   public ASTFunctionDeclaration(int id) {
     super(id);

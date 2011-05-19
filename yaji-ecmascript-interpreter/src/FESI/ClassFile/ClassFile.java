@@ -78,17 +78,17 @@ final class ClassFile {
      * inst vars represent the format of the classfile itself.
      */
 
-    private Vector		constantPool = new Vector(1);
+    private Vector<ConstantPoolEntry>		constantPool = new Vector<ConstantPoolEntry>(1);
 
     private short		accessFlags  = (short)(ACC_PUBLIC | ACC_SUPER);
 
     private ClassConstant	thisClass;
     private ClassConstant   	superClass;
 
-    private Vector	  	interfaces;
-    private Vector		fields;
-    private Vector		methods;
-    private Vector		attributes;
+    private Vector<Object>	  	interfaces;
+    private Vector<FieldDesc>		fields;
+    private Vector<MethodDesc>		methods;
+    private Vector<Attribute>		attributes;
 
     /**
      * @return are we debuging (used to print audit trail).
@@ -123,7 +123,7 @@ final class ClassFile {
     	dos.writeShort(constantPool.size() + 1); // for index zero
 
     	for (int i = 0; i < constantPool.size(); i++) {
-    	    ((ConstantPoolEntry)constantPool.elementAt(i)).write(dos);
+    	    constantPool.elementAt(i).write(dos);
     	}
     }
 
@@ -159,7 +159,7 @@ final class ClassFile {
 	    dos.writeShort(fields.size());
 
     	    for (int i = 0; i < fields.size(); i++) {
-    	        ((FieldDesc)fields.elementAt(i)).write(dos);
+    	        fields.elementAt(i).write(dos);
     	    }
     	} else dos.writeShort(0);
     }
@@ -177,7 +177,7 @@ final class ClassFile {
     	    dos.writeShort(methods.size());
 
     	    for (int i = 0; i < methods.size(); i++) {
-    	        ((MethodDesc)methods.elementAt(i)).write(dos);
+    	        methods.elementAt(i).write(dos);
     	    }
     	} else dos.writeShort(0);
 
@@ -266,7 +266,7 @@ final class ClassFile {
 
     synchronized ConstantPoolEntry match(byte tag, Object value) {
         for (int i = 0; i < constantPool.size(); i++) {
-            ConstantPoolEntry cpe = (ConstantPoolEntry)constantPool.elementAt(i);
+            ConstantPoolEntry cpe = constantPool.elementAt(i);
 
             if (cpe.getTag() == tag && cpe.equals(value))
 		return cpe;
@@ -299,7 +299,7 @@ final class ClassFile {
      */
 
     public synchronized void addMethodDesc(MethodDesc newMethod) {
-    	if (methods == null) methods = new Vector(1);
+    	if (methods == null) methods = new Vector<MethodDesc>(1);
 
     	methods.addElement(newMethod);
     }
@@ -309,7 +309,7 @@ final class ClassFile {
      */
 
     public synchronized void addFieldDesc(FieldDesc newField) {
-	if (fields == null) fields = new Vector(1);
+	if (fields == null) fields = new Vector<FieldDesc>(1);
 
 	fields.addElement(newField);
     }
@@ -423,7 +423,7 @@ final class ClassFile {
      */
 
     public void addInterface(String iName) {
-	if (interfaces == null) interfaces = new Vector(1);
+	if (interfaces == null) interfaces = new Vector<Object>(1);
 
 	interfaces.addElement((Object)addClassConstant(iName));
     }

@@ -6,7 +6,11 @@ import FESI.Parser.EcmaScript;
 
 public class ASTOperator extends SimpleNode {
     
-  private int operatorCode = EOF;
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 9110907140380594328L;
+private int operatorCode = EOF;
   
   public ASTOperator(int id) {
     super(id);

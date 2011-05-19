@@ -49,7 +49,6 @@ final class MethodDesc {
 
     private short		accessFlags;
 
-    private ClassFile	classFile;
 
     private Attribute[]	attributes;
 
@@ -72,7 +71,6 @@ final class MethodDesc {
     	name        = new UTF8Constant(method, cf);
     	descriptor  = new UTF8Constant(desc,   cf);
     	accessFlags = flags;
-    	classFile   = cf;
     	attributes  = attrs;
     }
 

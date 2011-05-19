@@ -79,7 +79,7 @@ class ClassConstant extends ConstantPoolEntry {
      * @return The java.lang.Class object for the class.
      */
 
-    Class getClassObject() throws ClassNotFoundException {
+    Class<?> getClassObject() throws ClassNotFoundException {
     	return Class.forName(name.getString());
     }
 

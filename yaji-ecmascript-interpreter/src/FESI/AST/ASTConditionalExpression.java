@@ -5,7 +5,12 @@ package FESI.AST;
 import FESI.Parser.EcmaScript;
 
 public class ASTConditionalExpression extends SimpleNode {
-  public ASTConditionalExpression(int id) {
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3570744060575164301L;
+
+public ASTConditionalExpression(int id) {
     super(id);
   }
 

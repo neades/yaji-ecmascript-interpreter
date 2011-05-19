@@ -5,7 +5,9 @@ package FESI.AST;
 import FESI.Parser.EcmaScript;
 
 public class ASTAllocationExpression extends SimpleNode {
-  public ASTAllocationExpression(int id) {
+	private static final long serialVersionUID = 7880238550615291445L;
+
+	public ASTAllocationExpression(int id) {
     super(id);
   }
 
