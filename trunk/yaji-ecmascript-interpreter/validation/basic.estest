@@ -1,0 +1,98 @@
+// basic.estest
+// FESI Copyright (c) Jean-Marc Lugrin, 1999
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+writeln ("// " + document.URL);
+writeln ("// " + Date());
+writeln ("// Test basic capabilities");
+writeln();
+
+@test true
+true
+
+@test notfalse
+!false;
+
+@test One
+1;
+
+@test notZero
+!0;
+
+@test notNot
+!!true;
+
+@test equalFalse
+false==false;
+
+@test equalTrue
+true==true;
+
+@test NeTruelFalse
+false!=true;
+
+@test equalOne
+1==1;
+
+@test NeEqualOneZero
+1!=0;
+
+@test add
+1+2 == 3;
+
+
+@test string
+"test"=="test"
+
+@test notEmpty
+!""
+
+@test full
+"notempty"
+
+@test typeof
+"number"==typeof 2;
+
+@test undef.1
+"undefined"==typeof undefinedVariable;
+
+@test undef.2
+o = new Object();
+undefined=o.undefined;
+"undefined"==typeof undefined;
+
+@test assign
+a=1;
+a==1;
+
+@test isNaN.1
+isNaN(NaN);
+
+@test isNaN.2
+!isNaN(12);
+
+@test var.1
+var va=3;
+va==3;
+
+@test and.1
+!(true && false)
+
+@test valueof.1
+(1234).valueOf()==1234;
+
+@test toString.1
+("abc").toString()=="abc";

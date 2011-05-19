@@ -1,0 +1,226 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="Author" content="Jean-MarcLugrin">
+  <meta name="GENERATOR"
+ content="Mozilla/4.05 [en] (Win95; I) [Netscape]">
+  <meta name="Description"
+ content="Describe the FESI EcmaScript interpreter extensions to access File I/O capabilities">
+  <meta name="KeyWords"
+ content="EcmaScript, JavaScript, JScript, Java, BSF, bean, scripting, framework">
+  <title>FESI language extensions - File I/O</title>
+</head>
+<body vlink="#00008b" link="#00008b"
+ style="background-color: rgb(173, 216, 230);">
+&nbsp;
+<table cellspacing="6" width="100%">
+  <tbody>
+    <tr>
+      <td align="center"><img src="fesi.gif" height="60" width="75"></td>
+      <td align="left"><font color="#a52a2a"><font size="+3">Free
+EcmaScript Interpreter.&nbsp;</font></font>&nbsp; <br>
+      <font color="#a52a2a"><font size="+3">A JavaScript interpreter
+written
+in Java.</font></font></td>
+    </tr>
+  </tbody>
+</table>
+&nbsp;
+<br>
+&nbsp;
+<table width="100%" bgcolor="#a52a2a" text="#FFFFFF">
+  <tbody>
+    <tr>
+      <td><b><font color="#ffffff"><font size="+2">Bean Scripting
+Framework<br>
+      </font></font></b></td>
+    </tr>
+  </tbody>
+</table>
+<p>The Bean Scripting Framework (information at <a
+ href="http://jakarta.apache.org/bsf">http://jakarta.apache.org/bsf</a>)
+, is a generic interface to many scripting engines. If you want to use
+the BSF engine, you must add the corresponding jar to the
+classpath.&nbsp;
+</p>
+<p>The source file <span style="font-family: monospace;">FESI.Tests.BSFTest.java</span>
+is a test of the interface, that&nbsp; can be used as an example on how
+to invoke it.<br>
+</p>
+<br>
+<h3><font color="#990000">Calling FESI from the BSF interface<br>
+</font></h3>
+FESI can be instantiated and then called explicitely, for example::
+<dl>
+  <dl>
+    <tt>import com.ibm.bsf.*;<br>
+    </tt>
+  </dl>
+</dl>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp; BSFManager</tt><span
+ style="font-family: monospace;">&nbsp; mgr = new BSFManager()</span></p>
+<dl>
+  <dl>
+    <p><tt>String[] extensions = { "es" }; // File name extensions</tt></p>
+    <p><tt>BSFManager.registerScriptingEngine("ecmascript",
+"FESI.Bsf.BsfEngine", extensions);<br>
+    </tt></p>
+    <p><tt>// Call via generic interface<br>
+Object result = mgr.eval("ecmascript", "testString", 0, 0, "2+32");<br>
+// Result is a Byte with value 34.<br>
+    </tt></p>
+  </dl>
+</dl>
+<p>See the documentation of BSF for alternative ways of calling the
+script and for the use bean registration.&nbsp; Use the BSF <span
+ style="font-family: monospace;">apply </span>function if you want to
+return a value using the <span style="font-family: monospace;">return </span>statetement.<br>
+</p>
+<p>It is possible to access the <span style="font-family: monospace;">JSGlobalObject</span>
+of the interpreter by using the following idom (any object can be used):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp; Object
+result = mgr.eval("ecmascript", "getAnObject", 0, 0, </span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+"new Object(); ");</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp; JSObject
+jso = (JSObject) result;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+JSGlobalObject global = jso.getGlobalObject();</span><br>
+<br>
+Or more directly using:<br>
+</p>
+<p><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span style="font-family: monospace;">FESI.Bsf.BsfEngine </span><span
+ style="font-family: monospace;">fesiEngine = (</span><span
+ style="font-family: monospace;">FESI.Bsf.BsfEngine) </span><span
+ style="font-family: monospace;">mgr.loadScriptingEngine ("</span><span
+ style="font-family: monospace;">ecmascript</span><span
+ style="font-family: monospace;">");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; JSGlobalObject global =
+fesiEngine.getJSGlobalObject();<br>
+<br style="font-family: monospace;">
+</span></p>
+<h3><font color="#990000">Configuring BSF</font><br>
+</h3>
+There are two ways to configure the BSF manager:<br>
+<dl>
+  <ol>
+    <li>Explicitely registering the interpreter in your code (as
+illustrated in the example above)</li>
+    <li>By editing the resource com.ibm.bsf.Languages,&nbsp; which is
+in the file <span style="font-family: monospace;">.../com/ibm/bsf/Languages.properties</span>,
+and adding the line:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tt
+ style="font-family: monospace;"> fesi=<span
+ style="font-family: monospace;">FESI.Bsf.BsfEngine</span></tt><span
+ style="font-family: monospace;">, es</span><br>
+The resource file can be replaced in the bsf.jar file. <span
+ style="font-family: monospace;">fesi.jar</span> must then naturally be
+on the class path of the program using <span
+ style="font-family: monospace;">BSF</span>.<br>
+      <br>
+    </li>
+  </ol>
+</dl>
+<span style="font-family: monospace;"> </span>
+<h3><font color="#990000">Information table<br>
+</font></h3>
+<br>
+<table cellpadding="2" cellspacing="2" border="1"
+ style="text-align: left; width: 979px; height: 304px;">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><span style="font-weight: bold;">Category</span><br>
+      </td>
+      <td style="vertical-align: top; font-weight: bold;">Description<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Language identifier<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace;"><span
+ style="font-family: monospace;">ecmascript</span></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">File extension(s)<br>
+      </td>
+      <td style="vertical-align: top;"><span
+ style="font-family: monospace;">.es</span><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Looking up a bean<br>
+      </td>
+      <td style="vertical-align: top;">x = bsf.lookupBean
+(&#8220;name-of-bean&#8221;)<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Create a new bean<br>
+      </td>
+      <td style="vertical-align: top;">Any Java object can be used as a
+bean.<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Registering a bean<br>
+      </td>
+      <td style="vertical-align: top;">bsf.registerBean
+(&#8220;name-of-bean&#8221;, bean)<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Unregistering a bean<br>
+      </td>
+      <td style="vertical-align: top;">bsf.unregisterBean
+(&#8220;name-of-bean&#8221;)<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Binding a script to be executed<br>
+upon event firing<br>
+      </td>
+      <td style="vertical-align: top;">target.on<span
+ style="font-style: italic;">Event</span>= "script-to-exec&#8221;<br>
+The BSF method (addEventListener) has not beend tested.<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Doing all bean operations<br>
+      </td>
+      <td style="vertical-align: top;">Use <span
+ style="font-family: monospace;">FESI </span>JavaAccess capabilities
+(similar to LiveConnect)<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Language home<br>
+      </td>
+      <td style="vertical-align: top;"><a href="http://fesi.lugrin.ch">http://fesi.lugrin.ch</a><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<hr>
+<center><a href="index.html">Return to the main page</a></center>
+<hr>
+<div align="left">
+<table cellpadding="0" cellspacing="0" border="0"
+ style="width: 100%; text-align: left;">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><font size="-2">Copyright &copy;
+Jean-Marc Lugrin 1998-2003 - Under LGPL license</font></td>
+      <td style="vertical-align: top; text-align: right;"><font
+ size="-2">Last update: 1 September 2003</font></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</body>
+</html>

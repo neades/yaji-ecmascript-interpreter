@@ -1,0 +1,131 @@
+// global.estest
+// FESI Copyright (c) Jean-Marc Lugrin, 1999
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+writeln ("// " + document.URL);
+writeln ("// " + Date());
+writeln ("// Test global object");
+writeln();
+
+
+// 15.1
+@test global.1
+"NaN"==new String(NaN);
+
+@test global.2
+"Infinity" == new String(Infinity);
+
+@test eval.1
+g1 = eval("12");
+12==g1;
+
+@test eval.2
+eval("1+3")==4;
+
+@test eval.3
+g2 = 1;
+g2 = eval("var a");
+typeof(g2)=="undefined";
+
+@test parseInt.1
+n2 = parseInt("");
+isNaN(n2);
+
+@test parseInt.2
+n1 = parseInt("albert");
+isNaN(n1);
+
+@test parseInt.3
+12 == parseInt("12");
+
+@test parseInt.4
+12 == parseInt("12.5");
+
+@test parseInt.5
+12 == parseInt("12.5albert");
+
+@test parseInt.6
+0xF0 == parseInt("0xF0");
+
+@test parseInt.7
+0x12 == parseInt("12",16);
+
+@test parseInt.8
+0xF0 == parseInt("0XF0",16);
+
+@test parseInt.9
+1234567890 == parseInt("1234567890",10);
+
+@test parseFloat.1
+f1 = parseFloat("");
+isNaN(f1);
+
+@test parseFloat.2
+f2 = parseFloat("albert");
+isNaN(f2);
+
+@test parseFloat.3
+12 == parseFloat("12");
+
+@test parseFloat.4
+12.5 == parseFloat("12.5");
+
+@test parseFloat.5
+12.5 == parseFloat("12.5albert");
+
+@test parseFloat.6
+12.5 == parseFloat("1.25E1");
+
+@test parseFloat.7
+125 == parseFloat("1.25e2albert");
+
+@test escape.1
+"abc" == escape("abc");
+
+@test escape.2
+"a%3cb" == escape("a<b");
+
+@test unescape.1
+"abc" == unescape("abc");
+
+@test unescape.2
+"a<b" == unescape("a%3cb");
+
+@test isfinite.1
+isFinite(12)
+
+@test isfinite.2
+!isFinite(Infinity)
+
+@test tryeval.1
+r=tryEval("PasDefini");
+r.error
+
+@test tryeval.2
+r=tryEval("123+1");
+r.value==124 && !r.error
+
+@test tryeval.3
+r=tryEval(32);
+r.value==32 && !r.error
+
+@test tryeval.4
+r=tryEval("PasDefini",43);
+r.error && r.value==43
+
+@test tryeval.5
+r=tryEval("1234+1", 32);
+r.value==1235 && !r.error

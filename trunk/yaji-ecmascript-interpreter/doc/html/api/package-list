@@ -1,0 +1,13 @@
+FESI.AST
+FESI.awtgui
+FESI.Bsf
+FESI.ClassFile
+FESI.Data
+FESI.Exceptions
+FESI.Extensions
+FESI.gui
+FESI.Interpreter
+FESI.jslib
+FESI.Parser
+FESI.swinggui
+FESI.Tests

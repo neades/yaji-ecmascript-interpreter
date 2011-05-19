@@ -1,0 +1,82 @@
+// swing.es
+//
+// FESI examples - JM Lugrin - 1998
+//
+// This example demonstrates how you can play with the swing 
+// toolkit with the FESI EcmaScript interpreter.
+
+// Requires: JavaAccess, Swing-0.7
+//           Adapt swingev.bat to run this example
+
+
+// First define some shortcuts - note that partially expanded
+// package names can be assigned. 
+
+Swing = Packages.javax.swing; // Just change this line if it moves
+
+JFrame = Swing.JFrame;
+JButton = Swing.JButton;
+JRadioButton = Swing.JRadioButton;
+ButtonGroup = Swing.ButtonGroup;
+JPanel = Swing.JPanel;
+UIManager = Swing.UIManager;
+SwingUtilities = Swing.SwingUtilities;
+
+// As there is no exception handling in EcmaScript, there
+// will be an error if the look and feel is not on the classpath
+jlfClassName = "javax.swing.plaf.metal.MetalLookAndFeel"
+motifClassName = "com.sun.java.swing.plaf.motif.MotifLookAndFeel"
+windowsClassName = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel"
+gtkClassName = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel"; // since 1.4
+
+UIManager.setLookAndFeel(jlfClassName);
+
+
+// Create the panel and its content 
+panel = new JPanel();
+button = new JButton("Hello, world");
+button.setToolTipText("This is a Button with Text");
+
+jlfButton = new JRadioButton("Metal");
+//jlfButton.setKeyAccelerator('j');  // String of length 1 are considered as char 
+windowsButton = new JRadioButton("Windows");
+//windowsButton.setKeyAccelerator('w'); 
+motifButton = new JRadioButton("Motif");
+//motifButton.setKeyAccelerator('m'); 
+gtkButton = new JRadioButton("Gtk");
+//gtkButton.setKeyAccelerator('g'); 
+	
+// Group the radio buttons.
+group = new ButtonGroup();
+group.add(jlfButton);
+group.add(windowsButton);
+group.add(motifButton);
+group.add(gtkButton);
+
+panel.add(button);
+panel.add(jlfButton);
+panel.add(windowsButton);
+panel.add(motifButton);
+panel.add(gtkButton);
+
+
+// Now create the frame
+frame = new JFrame("Show swing look and feels");
+frame.getContentPane().add("Center", panel);
+frame.pack();
+frame.setVisible(true);
+frame.onWindowClosing = "frame.dispose();";
+
+jlfButton.onAction = "setLF(jlfClassName);";
+motifButton.onAction = "setLF(motifClassName);";
+windowsButton.onAction = "setLF(windowsClassName);";
+gtkButton.onAction = "setLF(gtkClassName);";
+
+function setLF(lf) {
+    UIManager.setLookAndFeel(lf);
+    SwingUtilities.updateComponentTreeUI(frame);
+    frame.pack();
+}
+
+
+

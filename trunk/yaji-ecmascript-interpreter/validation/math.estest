@@ -1,0 +1,224 @@
+// math.estest
+// FESI Copyright (c) Jean-Marc Lugrin, 1999
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+writeln ("// " + document.URL);
+writeln ("// " + Date());
+writeln ("// Test Math");
+writeln();
+
+
+// 15.8
+// Just check that it is a likely value (that there was no cut-and-paste
+// error).
+@test math.1
+Math.E>2.71 && Math.E<2.72;
+
+@test math.2
+Math.LN10>2.3 && Math.LN10<2.31
+
+@test math.3
+Math.LN2>0.69 && Math.LN2<0.70
+
+@test math.4
+Math.LOG2E>1.44 && Math.LOG2E<1.45
+
+@test math.5
+Math.LOG10E>0.43 && Math.LOG10E<0.44
+
+@test math.6
+Math.PI>3.14 && Math.PI<3.15
+
+@test math.7
+Math.SQRT1_2>0.70 && Math.SQRT1_2<0.71
+
+@test math.8
+Math.SQRT2>1.41 && Math.SQRT2<1.42
+
+@test near.1
+
+// For all functions just test some border cases (they are normally
+// handled by the underlying Java engine), and a value to ensure that
+// there was no error in the cut and paste work of creating these
+// functions.  The values where tested on a TI-36X calculator.
+// The number 0.3 was selected to be defined but give different results for
+// all the tested functions. pow(0.3,0.4) is different from pow(0.4,0.3),
+// to test argument inversion
+function near(x,y) {
+   return Math.abs(x-y)<0.001;
+}
+near(12.1231456,12.1231457) && !near(12.1,12.2);
+
+@test abs.1
+isNaN(Math.abs(NaN));
+
+@test abs.2
+2==Math.abs(-2);
+
+@test abs.3
+2==Math.abs(2);
+
+@test acos.1
+isNaN(Math.acos(NaN));
+
+@test acos.2
+isNaN(Math.acos(3));
+
+@test acos.3
+isNaN(Math.acos(-3));
+
+@test acos.4
+0==Math.acos(1);
+
+@test acos.5
+near(Math.acos(0.3),1.266103);
+
+@test asin.1
+isNaN(Math.asin(NaN));
+
+
+@test asin.2
+isNaN(Math.asin(3));
+
+@test asin.3
+isNaN(Math.asin(-3));
+
+@test asin.4
+0==Math.asin(0);
+
+@test asin.4
+near(Math.asin(.3),0.304692);
+
+@test atan.1
+0==Math.atan(0);
+
+@test atan.2
+near(Math.atan(0.3),0.291456);
+
+@test atan2.1
+0==Math.atan2(0,0)
+
+@test ceil.1
+isNaN(Math.ceil(NaN));
+
+@test ceil.2
+Math.ceil(0)==0;
+
+@test ceil.3
+Math.ceil(Infinity)==Infinity;
+
+@test ceil.4
+Math.ceil(-Infinity)==-Infinity;
+
+@test ceil.5
+Math.ceil(-2.5)==-2;
+
+@test ceil.6
+Math.ceil(12.345)==13;
+
+@test ceil.7
+Math.ceil(12.3434)-Math.floor(-12.3434);
+
+@test cos.1
+1==Math.cos(0);
+
+@test cos.2
+near(Math.cos(.3),0.9553);
+
+@test exp.1
+1==Math.exp(0);
+
+@test exp.2
+near(Math.exp(0.3),1.34985);
+
+@test floor.1
+isNaN(Math.floor(NaN));
+
+@test floor.2
+Math.floor(0)==0;
+
+@test floor.3
+Math.floor(Infinity)==Infinity;
+
+@test floor.4
+Math.floor(-Infinity)==-Infinity;
+
+@test floor.5
+Math.floor(-2.5)==-3;
+
+@test floor.6
+Math.floor(12.345)==12;
+
+@test log.1
+0==Math.log(1)
+
+@test log.2
+near(Math.log(0.3),-1.2039);
+
+@test max.1
+isNaN(Math.max(3,NaN));
+
+@test max.2
+4 == Math.max(2,4);
+
+@test min.1
+isNaN(Math.min(3,NaN));
+
+@test min.2
+2 == Math.min(2,4);
+
+@test pow.1
+Math.pow(2,3) == 8;
+
+@test pow.2
+0==Math.pow(-0.5,Infinity);
+
+@test pow.3
+near(Math.pow(0.3,0.4),0.61780);
+
+@test random
+r=Math.random()
+r>=0 && r<1;
+
+@test round.1
+Math.round(3.5)==4;
+
+@test round.2
+Math.round(-3.5)==-3;
+
+@test sin.1
+0==Math.sin(0)
+
+@test sin.2
+near(Math.sin(.3),0.29552);
+
+@test sqrt.1
+Math.sqrt(1)==1;
+
+@test sqrt.2
+near(Math.sqrt(0.3),0.54772);
+
+@test tan.1
+Math.tan(0)==0;
+
+@test tan.2
+near(Math.tan(0.3),0.30933)
+
+
+
+
+
+

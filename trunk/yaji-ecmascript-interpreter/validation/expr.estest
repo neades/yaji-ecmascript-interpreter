@@ -1,0 +1,506 @@
+// expr.estest
+// FESI Copyright (c) Jean-Marc Lugrin, 1999
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+writeln ("// " + document.URL);
+writeln ("// " + Date());
+writeln ("// Test expressions");
+writeln();
+
+function isNaN(x) {
+  var s = new String(x);
+  return s=="NaN"
+}
+
+o = new Object();
+undefined=o.undefined;
+
+// 11
+
+// 11.1
+@test primary.1
+a = 1;
+this.a == 1;
+
+@test primary.2
+b = "string";
+(((b))) == "string";
+
+// 11.2
+@test left-hand-side.1
+c = new Object();
+c["1"] = 2; 
+2 == c[1];
+
+@test left-hand-side.2
+d = new String("xx");
+d == "xx";
+
+// 11.3
+@test postfix.1
+e = 2;
+e++; e++; e++; e--;
+e == 4;
+
+// 11.4
+@test unary.1
+"number" == typeof 3;
+
+@test unary.2
+e = 2;
+f = e++;
+(f+1) == e;
+
+
+@test unary.3
+e = 2;
+f = e--;
+f == e+1;
+
+@test unary.4
+e = -4;
+f = +e;
+f == e;
+
+@test unary.5
+e = -4;
+f = -e;
+f+e == 0;
+
+@test unary.6
+e = 0xFF;
+f = ~ e;
+e==~~e && f!=e
+
+// 11.5
+@test multiplicative.1
+12 * 3 == 36;
+
+@test multiplicative.2
+isNaN(2 * NaN) && !isNaN(2);
+
+@test multiplicative.3
+isNaN(Infinity * 0);
+
+@test multiplicative.4
+Infinity * 2 == Infinity;
+
+@test multiplicative.5
+2.5 * 2 == 5.0;
+
+@test multiplicative.6
+5 /2.0 == 2.5;
+
+@test multiplicative.7
+5 / -2.0 == -2.5;
+
+@test multiplicative.8
+-5 /-2.0 == 2.5;
+
+@test multiplicative.9
+isNaN(Infinity / Infinity)
+
+@test multiplicative.10
+Infinity / 0 == Infinity;
+
+@test multiplicative.11
+Infinity / -23 == -Infinity;
+
+@test multiplicative.12
+isNaN(0 / 0)
+
+@test multiplicative.13
+-234454.454 / 0 == -Infinity;
+
+@test multiplicative.14
+12 % 6 == 0;
+
+@test multiplicative.15
+7 % 3 == 1;
+
+
+// 11.6
+@test additive.1
+1+1 == 2;
+
+@test additive.2
+1+"un" == "1un";
+
+@test additive.3
+1+"2" == "12";
+
+@test additive.4
+1-"2" == -1;
+
+@test additive.5
+isNaN(1+NaN);
+
+@test additive.6
+Infinity-32323 == Infinity;
+
+// 11.7
+@test bitwiseshift.1
+1<<3 == 8;
+
+@test bitwiseshift.2
+1<<3 == "8";
+
+@test bitwiseshift.3
+8>>3 == 1;
+
+@test bitwiseshift.4
+((((123<<3)>>2)<<1)>>2)==123;
+
+@test bitwiseshift.5
+-1 >> 31 == -1;
+
+@test bitwiseshift.6
+-1 >>> 31 == 1;
+
+// 11.8 Relational operators
+@test relational.1;
+1<2;
+
+@test relational.2;
+1<=2;
+
+@test relational.3;
+1<=1;
+
+@test relational.4;
+!(1<1);
+
+@test relational.5;
+!(2<=1);
+
+
+@test relational.6;
+2>1;
+
+@test relational.7;
+2>=1;
+
+@test relational.8;
+1>=1;
+
+@test relational.9;
+!(1>1);
+
+@test relational.10;
+!(1>=2);
+
+
+@test relational.11
+!(1<NaN);
+
+@test relational.12;
+1<Infinity;
+
+@test relational.13;
+1>-Infinity;
+
+@test relational.14;
+!(NaN<NaN);
+
+@test relational.15;
+!(NaN>NaN);
+
+@test relational.16;
+!(NaN<=NaN);
+
+@test relational.17;
+!(NaN>=NaN);
+
+
+@test relational.18;
+"aa"<"ab";
+
+@test relational.19;
+"aa"<="ab";
+
+@test relational.20;
+"aa"<="aa";
+
+@test relational.21;
+!("aa"<"aa");
+
+@test relational.23;
+"" <= "";
+
+@test relational.24;
+""<"a";
+
+@test relational.25;
+"A"<="a";
+
+@test relational.26;
+1 <= "1";
+
+@test relational.27;
+!(1<"1");
+
+@test relational.28;
+1<"2";
+
+
+// 11.9 
+@test equality.1
+1==1;
+
+@test equality.2
+1!=2;
+
+@test equality.3
+null == null;
+
+@test equality.4
+undefined == undefined;
+
+@test equality.5
+1!=NaN;
+
+@test equality.36
+NaN!=NaN
+
+@test equality.7
+-0.0 == 0
+
+@test equality.8
+"aaa" == "aaa";
+
+@test equality.9
+"aaa" != "aaaa";
+
+@test equality.10
+"" == "";
+
+@test equality.11
+"" != "a";
+
+@test equality.12
+"a" != "A";
+
+@test equality.13
+o == o;
+
+@test equality.14
+o != new Object();
+
+@test equality.15
+null == undefined
+
+@test equality.16
+undefined == null
+
+@test equality.17
+1 == "1";
+
+@test equality.18
+1 != "12";
+
+@test equality.19
+"-4" == -4;
+
+@test equality.20
+"0" != 1;
+
+@test equality.21
+1==true;
+
+@test equality.22
+0==false;
+
+@test equality.23
+true==1;
+
+@test equality.24
+false==0;
+
+@test equality.26
+"s" == new String("s");
+
+@test equality.27
+"s" != new String("t");
+
+@test equality.28
+new String("6") == 6;
+
+@test equality.29
+"" != new String("a");
+
+
+// 11.10
+@test bitwise.1
+(7 & 3) == 3;
+
+@test bitwise.2
+(5 ^ 3) == 6;
+
+@test bitwise.3
+(5 | 3) == 7;
+
+@test bitwise.4
+(-1 & 0) == 0;
+
+@test bitwise.5
+(-1 | 0) == -1;
+
+// 11.11
+@test binlogical.1
+true && true;
+
+@test binlogical.2
+!(false && true);
+
+@test binlogical.3
+!(false && wouldGenerateAnError);
+
+@test binlogical.4
+!(true && false);
+
+@test binlogical.5
+false || true;
+
+@test binlogical.6
+!(false || false);
+
+@test binlogical.7
+true || wouldGenerateAnError
+
+@test binlogical.8
+false || true;
+
+
+
+// 11.12
+@test cond.1
+true ? true : false;
+
+@test cond.2
+false ? false : true;
+
+@test cond.1
+((1>2) ? 12 : 34) == 34;
+
+
+// 11.13
+
+@test assign.1
+a = 9;
+a==9;
+
+@test assign.2
+a+=1;
+a==10;
+
+@test assign.3
+a -= -1;
+a == 11;
+
+@test assign.4
+a = 10;
+a *= 2;
+a==20;
+
+@test assign.5
+a/=2;
+a==10;
+
+@test assign.6
+a%=3;
+a==1;
+
+@test assign.7
+a=3
+a<<=2;
+a==12;
+
+@test assign.8
+a>>>=1;
+a==6;
+
+@test assign.9
+a>>=1;
+a==3;
+
+@test assign.10
+a = 4;
+a |= 1;
+a==5;
+
+@test assign.12
+a&=1;
+a==1;
+
+@test assign.13
+a=5;
+a^=3;
+a==6;
+
+@test assign.14
+b="abc";
+b+="de";
+b== "abcde";
+
+@test assign.15
+b+=12;
+b=="abcde12";
+
+@test assign.16
+a=12;
+a+="bc";
+a=="12bc";
+
+@test assign.17
+// Check order of evaluation
+ar = new Array(4);
+ar[0] = 10;
+ar[1] = 20;
+ar[2] = 30;
+ar[3] = 40;
+ix = 1;
+ar[ix++]=ix++;
+ar[1]==2 && ix == 3;
+
+// 11.14
+@test comma.1
+false, true;
+
+@test comma.2
+false, false, false, true;
+
+@test comma.3
+(1<2, false, 3*0)==0;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

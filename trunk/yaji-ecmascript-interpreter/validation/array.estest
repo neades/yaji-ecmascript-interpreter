@@ -1,0 +1,75 @@
+// array.estest
+// FESI Copyright (c) Jean-Marc Lugrin, 1999
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+writeln ("// " + document.URL);
+writeln ("// " + Date());
+writeln ("// Test Array");
+writeln();
+
+// 15.4
+@test array.1
+a = Array(1,2,3)
+String(a)=="1,2,3" && a.length == 3 && a[1]==2;
+
+@test array.2
+a = new Array(1,2,3,4)
+a.toString()=="1,2,3,4" && a.length==4 && a[1]==2;
+
+@test array.3
+a = new Array(12)
+a.length==12;
+
+@test array.4
+a = new Array()
+a.length==0 && a.join()=="";
+
+@test array.5
+a = new Array("aa");
+a.length==1 && a[0]=="aa";
+
+@test array.6
+Array.length == 1 && Array.prototype.length==0;
+
+@test array.7
+a = new Array(1,"aa",12.5);
+a.join("@@")=="1@@aa@@12.5"
+
+@test array.8
+a.reverse().toString()=="12.5,aa,1";
+
+@test array.9
+a.sort().join()=="1,12.5,aa";
+
+@test array.10
+a[10]="dix";
+a.length==11;
+
+@test array.11
+a.length=20;
+a[10]=="dix" && a.length==20;
+
+@test array.12
+a.toString()=="1,12.5,aa,,,,,,,,dix,,,,,,,,,";
+
+@test array.13
+a.length=4;
+a.join("$")=="1$12.5$aa$";
+
+@test array.14
+a = new Array (2433,54,44,434);
+f = new Function ("a, b", "if (a < b) return -1; if (a == b) return 0; return 1;");
+a.sort(f).join()=="44,54,434,2433";

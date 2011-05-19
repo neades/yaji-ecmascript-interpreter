@@ -1,0 +1,47 @@
+// juggler.esw
+//
+// FESI examples - JM Lugrin - 1998
+//
+// This example demonstrates how the a bean can be loaded
+
+// Requires: JavaAccess (standard in the interpeter)
+// Used as:  fesiw juggler.esw
+
+// Define some shortcuts
+Frame = java.awt.Frame;
+bdkHome = "D:/java11/bdk/jars/";
+
+// Define the JAR file and then the bean
+JugglerJar = Beans(bdkHome+"juggler.jar")
+Juggler = JugglerJar.sunw.demo.juggler.Juggler;
+
+ButtonsJar = Packages(bdkHome+"buttons.jar")
+OurButton = ButtonsJar.sunw.demo.buttons.OurButton;
+
+// Create the frame 
+frm = new Frame("For the juggler");
+
+// Create the beans and add them to the frame
+juggler = new Juggler();
+frm.add(juggler,"Center");
+
+startButton = new OurButton("Start");
+frm.add(startButton,"North");
+
+stopButton = new OurButton("Stop");
+frm.add(stopButton,"South");
+
+// Show the result
+frm.pack();
+frm.show();
+juggler.start();	// Make it move
+
+// Enable action buttons and window closing
+startButton.onAction="juggler.start();";
+stopButton.onAction="juggler.stop();";
+frm.onWindowClosing="this.dispose();";
+
+// Get something nice as the last evaluated value
+"Ok";
+
+

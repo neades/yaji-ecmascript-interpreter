@@ -1,0 +1,63 @@
+// showfonts.esw
+//
+// FESI examples - JM Lugrin - 1998
+//
+// This example demonstrates how the awt may be accessed
+// with FESI, including event processing. 
+
+// Requires: JavaAccess (standard in the interpeter)
+// Used as:  fesiw selectfont.esw
+
+// First define some shortcuts
+Font = java.awt.Font;
+Frame = java.awt.Frame;
+Button = java.awt.Button;
+Label = java.awt.Label;
+List = java.awt.List;
+
+// Get the list of fonts - an array object is converted
+theToolKit = java.awt.Toolkit.getDefaultToolkit();
+fontList = theToolKit.getFontList();
+
+// Create the frame for the list and selection box
+frm = new Frame("Select font");
+
+exampleLabel = new Label("Example text");
+exampleLabel.setFont(new Font(fontList[0], Font.PLAIN, 12));
+frm.add(exampleLabel,"North");
+
+okButton = new Button("Done");
+okButton.onAction = doSelected;
+frm.add(okButton,"South");
+
+list = new List(6);
+list.onItemStateChanged = newItem;
+
+for (var i in fontList) {
+   fontName = fontList[i];
+   list.addItem(fontName);
+}
+frm.add(list, "Center");
+
+// Show the result
+frm.pack();
+frm.show();
+
+// Dispose the frame when the window closes
+frm.onWindowClosing="this.dispose();";
+
+// Function called when an item was selected,
+// Set the label font (the label is reachableas a global variable)
+function newItem(e) {
+   var item = e.getItem();
+   exampleLabel.setFont(new Font(fontList[item], Font.PLAIN, 14));
+}
+
+// Function called when everything was selected
+function doSelected(e) {
+   frm.dispose();
+}
+
+
+
+

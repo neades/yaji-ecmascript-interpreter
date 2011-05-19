@@ -1,0 +1,59 @@
+// showfonts.esw
+//
+// FESI examples - JM Lugrin - 1998
+//
+// This example demonstrates how the awt may be accessed
+// with FESI. 
+
+// Requires: JavaAccess (standard in the interpeter)
+// Used as:  fesiw showfonts.esw
+
+// First define some shortcuts
+Font = java.awt.Font;
+Frame = java.awt.Frame;
+Label = java.awt.Label;
+GridLayout = java.awt.GridLayout;
+
+// Get the list of fonts - an array object is converted
+theToolKit = java.awt.Toolkit.getDefaultToolkit();
+fontList = theToolKit.getFontList();
+
+// Create the frame for the labels
+frm = new Frame("List of fonts");
+
+// Uses four labels for each font (one with the name in standard
+// font to recognize the 'symbol' fonts)
+frm.setLayout(new GridLayout(0,4));
+
+
+// Use a function to add a label, to show that it is easy
+// to pass any parameter (including java objects or java 
+// "constants") even between EcmaScript functions.
+for (var i in fontList) {
+   fontName = fontList[i];
+   frm.add(new Label(fontName));
+   addLabel(frm, fontName, Font.PLAIN)
+   addLabel(frm, fontName, Font.BOLD)
+   addLabel(frm, fontName, Font.ITALIC)
+}
+
+// Show the result
+frm.pack();
+frm.show();
+
+// Dispose the frame when the window closes
+frm.onWindowClosing="this.dispose();";
+
+
+
+// Utility function to create a label and add it to the frame.
+// The frame and the style parameters are Java objects (and 
+// constants).
+
+function addLabel(frame, font, style) {
+   var label, fnt;               // Recommended practice
+   label = new Label(fontName);
+   fnt = new Font(fontName, style, 14); 
+   label.setFont(fnt);
+   frame.add(label);
+}

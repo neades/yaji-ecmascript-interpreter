@@ -1,0 +1,290 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="Author" content="Jean-MarcLugrin">
+  <meta name="GENERATOR"
+ content="Mozilla/4.05 [en] (Win95; I) [Netscape]">
+  <meta name="Description"
+ content="Describe the FESI EcmaScript interpreter tool">
+  <meta name="KeyWords"
+ content="EcmaScript, JavaScript, JScript, Java, extension">
+  <title>FESI Interperter</title>
+</head>
+<body style="background-color: rgb(173, 216, 230);" link="#00008b"
+ vlink="#00008b">
+&nbsp;
+<table cellspacing="6" width="100%">
+  <tbody>
+    <tr>
+      <td align="center"><img src="fesi.gif" height="60" width="75"> </td>
+      <td align="left"><font color="#a52a2a"><font size="+3">Free
+EcmaScript
+Interpreter.&nbsp;</font></font>&nbsp; <br>
+      <font color="#a52a2a"><font size="+3">A JavaScript interpreter
+written in Java.</font></font></td>
+    </tr>
+  </tbody>
+</table>
+&nbsp; <br>
+&nbsp;
+<table width="100%" bgcolor="#a52a2a" text="#FFFFFF">
+  <tbody>
+    <tr>
+      <td><b><font color="#ffffff"><font size="+2">The interactive
+interpreter</font></font></b>
+&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
+<h3> <font color="#993366">Calling the interpreter</font></h3>
+The interpreter can run in batch mode and in interactive mode. A batch
+files has been created provided in the <i>bin</i> sub directory of the
+FESI installation. It can be edited to adapt the classpath or other
+parameters. Example: <br>
+&nbsp;
+<center><tt>java -DFESI.path=.;fesilib.jar -cp c:\program
+files\FESI\fesi.jar FESI.Interpreter.Interpret -f %1</tt></center>
+<p><font color="#000000">The source files with extension "js", "<tt>es</tt>
+" and "<tt>esw</tt>" are recognized. As "js" is often used by Netscape
+or the Internet Explorer, this allows to bind "<tt>es</tt>" and "<tt>esw</tt>
+" to <tt>FESI</tt>.</font> <br>
+The property <tt>FESI.path</tt> list the paths where the code is
+looked for
+load from the command line, by the load function (of BasicIO) and by
+the
+@module command.If it is absent, the java <tt>CLASSPATH</tt> is used
+instead.
+To obtain the same behaviour as before version 0.9-9, use "<tt>-DFESI.path=.</tt>
+" and use the option -f followed by a file name on the command line. </p>
+<p> </p>
+<h3> <font color="#993366">Batch mode</font></h3>
+If started in batch mode (without the options -i), the interpreter
+reads and interprets the files
+specified in the command line and output the result to the standard
+output
+stream (with error to the standard error stream). If no file is
+specified
+on the command line, the standard input is read. The standard input can
+be
+specified by the "<tt>&#8212;</tt>" (two dashes) on the command line too. In
+both
+cases the standard input is read in batch mode (that is until an <tt>EOF</tt>
+is encountered, then interpreted). Any error will terminate the
+evaluation. <br>
+&nbsp;
+<ul>
+  <li> If the option <i>-R className</i> is specified, then the
+specified
+regular expression extension is loaded (otherwise FESI attempts to use
+the
+JDK text.util pacakge, the ORO pacakge or the GNU package, in that
+order.</li>
+  <li> If the option <i>-e className</i> is specified, the specified
+class
+is loaded as an extension.</li>
+  <li>If the option <i>-f filename</i> is specified, then the file is
+loaded (without searching in the path).</li>
+  <li>If the option <i>-m modulename</i> is specified, then the jar
+entry
+or file is loaded, searching in the path.</li>
+  <li> If the option <i>-o filename</i> is specified, the output is
+redirected to the specified file.</li>
+  <li> If the option <i>-w</i> is specified, error output is displayed
+via
+an <tt>AWT</tt> popup window, and <a href="bioext.html">BasicIOw</a>
+is loaded instead of BasicIO ( for use with <tt>jrew</tt> and <tt>AWT</tt>
+based applications).</li>
+  <li> If the option <i>-s</i> is specified, error output is displayed
+via
+an Swing popup window, and <a href="bioext.html">BasicIOs</a> is
+loaded instead of BasicIO ( for use with <tt>jrew</tt> and Swing based
+applications).</li>
+  <li> If the option <i>-i</i> is specified, an interactive
+read-eval-print
+loop is started (rather than a batch mode interpretation).</li>
+  <li> If the option <i>-v</i> display the version of FESI and of the
+environment
+even if not in interactive mode..</li>
+  <li>If the option <i>-h</i>&nbsp;<i> filename </i>is specified, the
+corresponding html file will be expanded (as with the <tt>@expand</tt>
+command). It is not
+looked in the path.</li>
+  <li> If the option <i>-T filename</i> is specified, the test file is
+processed (used for validation). It is not looked in the path.</li>
+  <li> If the option <i>-D </i>is specified, all tracing flags are
+turned
+on.</li>
+  <li>If the option <i>-A ...</i> is specified, all arguments after <tt>-A</tt>
+are passed in the <tt>args[]</tt> array of the evaluated program)</li>
+</ul>
+The option letters 'f', 'o', 'h', 'T' and 'A' must be the last ones of
+an
+option string (-wo is ok, -ow is not ok) because they must be
+immediately followed by their arguments.
+<p>Examples: </p>
+<ul>
+  <tt>fesi preload.es -- postload.es -o result.lis</tt>
+</ul>
+The above command will process <tt>preload.es</tt>, the standard input
+file
+and the <tt>postload.es</tt>, writing the result to <tt>result.lis</tt>.
+It
+could be attached to a specific extension under Windows.
+<p>The test mode (option <tt>-T</tt>)&nbsp; implements the special <tt>FESI</tt>
+command </p>
+<blockquote>
+  <blockquote><tt>@test nameOfTest</tt></blockquote>
+</blockquote>
+All the code which follows the <tt>@test</tt> command, until the next <tt>
+@test</tt> command or end of file, is interpreted in a special test
+mode.
+In that mode, the name of the <tt>@test</tt> is printed and the code
+is execute.&nbsp; Any error causes a message to be printed and the
+interpretation to skip to
+the next <tt>@test</tt>. If no error is detected, the result of the
+last
+statement is evaluated. If it is <tt>true</tt> the test is considered
+successful,
+otherwise an error message is printed.
+<h3> <font color="#993366">Interactive mode</font></h3>
+In interactive mode (option -i) first the file specified via <tt>-f</tt>
+or the <tt>-m</tt> are executed. Then files specified in the command
+line are loaded in the editor (Swing version only). Finally the system
+enter an
+interactive <i>read-eval-print </i>loop. Each statement is evaluated
+immediately
+when entered, and errors are not fatal. If a statement is incomplete,
+the
+interpreter requires more data (just enter ";" to force the end of a
+statement).
+<p>All batch mode options are allowed too, so it is possible to preload
+an environment before entering the interactive mode. </p>
+<p>In addition the user can type the following commands: </p>
+<ul>
+&nbsp;
+  <table width="100%">
+    <tbody>
+      <tr>
+        <td><tt>@exit&nbsp;</tt></td>
+        <td>Exit the interpreter</td>
+      </tr>
+      <tr>
+        <td><tt>@reset</tt></td>
+        <td>Reset the interpreter to a null environment (forgetting all
+loaded files
+too)</td>
+      </tr>
+      <tr>
+        <td><tt>@version&nbsp;</tt></td>
+        <td>Display version of interpreter<br>
+        </td>
+      </tr>
+      <tr>
+        <td><tt>@detail</tt></td>
+        <td>Return detail of last evaluation</td>
+      </tr>
+      <tr>
+        <td><tt>@extensions</tt></td>
+        <td>List loaded extensions (can be loaded with <tt>loadExtension(class)</tt>
+)</td>
+      </tr>
+      <tr>
+        <td valign="top"><tt>@module</tt><br>
+        </td>
+        <td valign="top">Load the module in the directories and jar/zip
+files of the property FESI.path or (if the property is not defined) in
+the
+classpath (possibly adding the extension ".es", ".esw' or ".js").&nbsp;<br>
+        </td>
+      </tr>
+      <tr>
+        <td><tt>@load</tt></td>
+        <td>Load the files (possibly adding the extension ".es", ".esw'
+or ".js").&nbsp;</td>
+      </tr>
+      <tr>
+        <td><tt>@pwd</tt></td>
+        <td>Print current user directory</td>
+      </tr>
+      <tr>
+        <td><tt>@expand</tt></td>
+        <td>Expand an HTML file between <tt>&lt;script&gt;</tt> and <tt>&lt;/script&gt;</tt>
+lines, display on standard output</td>
+      </tr>
+      <tr>
+        <td><tt>@help</tt></td>
+        <td>Display an short list of the allowed commands</td>
+      </tr>
+      <tr>
+        <td><tt>@about</tt></td>
+        <td>Display information on <tt>FESI</tt></td>
+      </tr>
+      <tr>
+        <td><tt>@detail</tt></td>
+        <td>List the details of the last evaluation</td>
+      </tr>
+      <tr>
+        <td><tt>@list</tt></td>
+        <td>List the enumerated properties of the object (default to
+the global properties)</td>
+      </tr>
+      <tr>
+        <td><tt>@listall</tt></td>
+        <td>List all properties on an object (defaults to the global
+object)</td>
+      </tr>
+      <tr>
+        <td><tt>@describe</tt></td>
+        <td>Describe the detail characteristcis of an object, including
+java reflection data.</td>
+      </tr>
+      <tr>
+        <td><tt>@memory</tt></td>
+        <td>List the total and available memory (as reported by the
+Java runtime).</td>
+      </tr>
+      <tr>
+        <td><tt>@clear</tt></td>
+        <td>Clear the console window (but not the interpreter content).
+Usefull when reaching the limits of the console text area control.</td>
+      </tr>
+      <tr>
+        <td><tt>@path</tt></td>
+        <td>Display the current load path.</td>
+      </tr>
+    </tbody>
+  </table>
+&nbsp;
+</ul>
+A couple of other commands are used to debug the interpreter or the
+access to the Java system, they are listed with the <tt>@help</tt>
+command. The commands
+can be abreviated to the first unambiguous prefix. <br>
+The interactive mode is useful to test short commands, or to load a
+file
+and then test its definitions.
+<p>If both the -i and -w options are given, an interactive window is
+used. Its implementation is very limited, and this is for use in
+operating
+systems with an even poorer native console interface only. <br>
+&nbsp; </p>
+<hr>
+<center><a href="index.html">Return to the main page</a> </center>
+<hr>
+<div align="left">
+<table cellpadding="0" cellspacing="0" border="0"
+ style="width: 100%; text-align: left;">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><font size="-2">Copyright &copy;
+Jean-Marc Lugrin 1998-2003 - Under LGPL license</font></td>
+      <td style="vertical-align: top; text-align: right;"><font
+ size="-2">Last update: 26 August 2003</font></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</body>
+</html>

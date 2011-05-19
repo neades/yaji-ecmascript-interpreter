@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="GENERATOR"
+ content="Mozilla/4.51 [en] (Win98; I) [Netscape]">
+  <meta name="AUTHOR" content="Jean-MarcLugrin">
+  <meta name="CREATED" content="19990206;19413711">
+  <meta name="CHANGEDBY" content="Jean-Marc Lugrin">
+  <meta name="CHANGED" content="19990206;19420765">
+  <meta name="DESCRIPTION"
+ content="Describe the FESI EcmaScript interpreter extensions">
+  <meta name="KEYWORDS"
+ content="EcmaScript, JavaScript, JScript, Java, extension">
+  <title>FESI language extensions</title>
+  <style>
+	<!--
+		A:link { color: #00008b }
+		A:visited { color: #00008b }
+	-->
+	</style>
+</head>
+<body style="background-color: rgb(173, 216, 230);" link="#00008b"
+ vlink="#00008b">
+&nbsp;
+<br>
+&nbsp;
+<table cellspacing="6" cellpadding="2" width="100%">
+  <tbody>
+    <tr>
+      <td>
+      <center><img src="fesi.gif" name="Graphic1" border="0" height="60"
+ width="75" align="bottom"></center>
+      </td>
+      <td><font color="#a52a2a"><font size="+3">Free EcmaScript
+Interpreter.&nbsp;</font></font> <br>
+      <font color="#a52a2a"><font size="+3">A JavaScript interpreter
+written
+in Java.</font></font></td>
+    </tr>
+  </tbody>
+</table>
+<br>
+&nbsp;
+<br>
+&nbsp;
+<table cellspacing="2" cellpadding="2" width="100%" bgcolor="#a52a2a">
+  <tbody>
+    <tr>
+      <td><b><font color="#ffffff"><font size="+2">Public key (PGP</font></font></b></td>
+    </tr>
+  </tbody>
+</table>
+<br>
+&nbsp;
+<h3><font color="#993366">Public Key</font></h3>
+The following public key is used to sign redistribution certificates.
+<p><tt><font size="-1">-----BEGIN PGP PUBLIC KEY BLOCK-----</font></tt>
+<br>
+<tt><font size="-1">Version: PGPfreeware 6.0.2i</font></tt>
+</p>
+<p><tt><font size="-1">mQGiBDf3L4cRBADotT+dHAbUFWcHBBIJZRAQJzdepo1FQw36QsR0mzAbN9e4/Kub</font></tt>
+<br>
+<tt><font size="-1">V61Acu47yGQfFSZJJEgIXkwbo9XcCIOMc+vYtJdKwxbzOZN23A+Ovrn2An2tWgNA</font></tt>
+<br>
+<tt><font size="-1">gk2D9aPbvZ75WsCZ3vEiUFO9DIc/NH0gLy/sEatQyha9RfrG20oUntYhQwCg/xXz</font></tt>
+<br>
+<tt><font size="-1">r7s1exoHEmCfoxJKrZ2vr0cEAI9oKmg5unCbsG+kVOUWIup467emznZjVOaEh1Jl</font></tt>
+<br>
+<tt><font size="-1">hVo/vG0L3vzYcSF5vN393oUKt/mLc3NURdtMA5vFFM8tTF+qW9T1zQgHeTic40gZ</font></tt>
+<br>
+<tt><font size="-1">wEJLJZDrwzdu/xKqdI915ypqS6ERRQ1Jk3HdMaCr0NK62jic0yrfUwtQ88EaJp5+</font></tt>
+<br>
+<tt><font size="-1">oGuIBADXtLH6OwVfpvMdknNnhrRKsro+aTovFlXcEIfSYXVHrTOUaswVwFhKJiRD</font></tt>
+<br>
+<tt><font size="-1">NIUHlKqINl2pMORXmzGtDiWzdq9rclUrjQ4Ygdallys1+orjFlZ1lEpMbs106a/3</font></tt>
+<br>
+<tt><font size="-1">zlJfEvQvb1/ucOvrWCHyhRYTAYVKmX9SwypZItWazVwE4pE3QbQnSmVhbi1NYXJj</font></tt>
+<br>
+<tt><font size="-1">IEx1Z3JpbiA8am1sdWdyaW5Ad29ybGRjb20uY2g+iQBLBBARAgALBQI39y+HBAsD</font></tt>
+<br>
+<tt><font size="-1">AgEACgkQ/O0YYh7UzlZEJACfY6g8GL/YcaDKe+ecnKUS/dstOc8AoK0dJeS0UULG</font></tt>
+<br>
+<tt><font size="-1">xJ3zF/qNX5ELbsumuQINBDf3L4cQCAD2Qle3CH8IF3KiutapQvMF6PlTETlPtvFu</font></tt>
+<br>
+<tt><font size="-1">uUs4INoBp1ajFOmPQFXz0AfGy0OplK33TGSGSfgMg71l6RfUodNQ+PVZX9x2Uk89</font></tt>
+<br>
+<tt><font size="-1">PY3bzpnhV5JZzf24rnRPxfx2vIPFRzBhznzJZv8V+bv9kV7HAarTW56NoKVyOtQa</font></tt>
+<br>
+<tt><font size="-1">8L9GAFgr5fSI/VhOSdvNILSd5JEHNmszbDgNRR0PfIizHHxbLY7288kjwEPwpVsY</font></tt>
+<br>
+<tt><font size="-1">jY67VYy4XTjTNP18F1dDox0YbN4zISy1Kv884bEpQBgRjXyEpwpy1obEAxnIByl6</font></tt>
+<br>
+<tt><font size="-1">ypUM2Zafq9AKUJsCRtMIPWakXUGfnHy9iUsiGSa6q6Jew1XpMgs7AAICB/9jJaxU</font></tt>
+<br>
+<tt><font size="-1">HAMCC0d9FyZC+K8JnBwgViWaG+Sr6IJ5i6o/wSIwNcqFW0Rt1dm1ntUN6xvRMKoT</font></tt>
+<br>
+<tt><font size="-1">MO08bFPF50A6g3qJMqnUW1l9eBOp8u85SEnu1SsSQ0e2rsMOQa0UZ3rO5hsa59VA</font></tt>
+<br>
+<tt><font size="-1">pOwB/jElA54vmSXY0CvY3J0MpWkQP7JUhX0CBVN77yPNZwEfC0R4VExB9OiskmBN</font></tt>
+<br>
+<tt><font size="-1">KXcgaebultUrv/MAKRBwBPQ70f+s+naBIQrICCIddFQELmGhN4QPOTpOcSJGPcpr</font></tt>
+<br>
+<tt><font size="-1">qxGEUtdJbQ9Z3/jfbDafDVojJl21kFz8EKfsEJmtio/KpVQGdMM/8c4lhubj0sN+</font></tt>
+<br>
+<tt><font size="-1">17gIMcFkD3MQz5aQiQBGBBgRAgAGBQI39y+HAAoJEPztGGIe1M5WP+EAnRGYJSbn</font></tt>
+<br>
+<tt><font size="-1">0tpygQ1yUyhos1xzzabmAJ0d37VrP2/S6zoW/M0k8Z0kHqgMvg==</font></tt>
+<br>
+<tt><font size="-1">=ggo8</font></tt>
+<br>
+<tt><font size="-1">-----END PGP PUBLIC KEY BLOCK-----</font></tt>
+</p>
+<h3><font color="#993366">PGP</font></h3>
+See the site <a href="http://www.pgpi.com/">www.pgpi.com</a> to get a
+copy
+of PGP.
+<hr>
+<center>
+<p><a href="index.html">Return to the main page</a></p>
+</center>
+<hr>
+<div align="left">
+<table cellpadding="0" cellspacing="0" border="0"
+ style="width: 100%; text-align: left;">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><font size="-2">Copyright &copy;
+Jean-Marc Lugrin 1998-2003 - Under LGPL license</font></td>
+      <td style="vertical-align: top; text-align: right;"><font
+ size="-2">Last update: 26 August 2003</font></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</body>
+</html>

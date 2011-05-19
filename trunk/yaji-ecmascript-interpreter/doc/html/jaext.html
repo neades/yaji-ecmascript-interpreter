@@ -1,0 +1,318 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="Author" content="Jean-MarcLugrin">
+  <meta name="GENERATOR"
+ content="Mozilla/4.7 [en] (Win98; I) [Netscape]">
+  <meta name="Description"
+ content="Describe the FESI EcmaScript interpreter extensions to create and access Java objects">
+  <meta name="KeyWords"
+ content="EcmaScript, JavaScript, JScript, Java, extension">
+  <title>FESI language extensions - Java Access</title>
+</head>
+<body style="background-color: rgb(173, 216, 230);" link="#00008b"
+ vlink="#00008b">
+&nbsp;
+<table cellspacing="6" width="100%">
+  <tbody>
+    <tr>
+      <td align="center"><img src="fesi.gif" height="60" width="75"> </td>
+      <td align="left"><font color="#a52a2a"><font size="+3">Free
+EcmaScript
+Interpreter.&nbsp;</font></font> <br>
+      <font color="#a52a2a"><font size="+3">A JavaScript interpreter
+written in Java.</font></font></td>
+    </tr>
+  </tbody>
+</table>
+<br>
+&nbsp;
+<table width="100%" bgcolor="#a52a2a" text="#FFFFFF">
+  <tbody>
+    <tr>
+      <td><b><font color="#ffffff"><font size="+2">Language extensions
+- JavaAccess</font></font></b></td>
+    </tr>
+  </tbody>
+</table>
+The JavaAccess extension is always loaded by the interactive
+interpreter, and allows the user to directly access any Java class
+reachable via the <tt>
+CLASSPATH</tt>. It is largely compatible with the Netscape "<tt>Packages</tt>
+" capability (however this differs from Rhino). The example directory
+contains
+various usage of JavaAccess. The Netscape <a
+ href="http://developer.netscape.com/library/documentation/javascript.html">
+JavaScript reference</a> is a good source for further information.
+<p>See the <a href="javalib.html">Java library</a> section on how to
+access EcmaScript from a java program. <br>
+See the <a href="events.html">Event Handler</a> section on how to
+create Java event handlers in EcmaScript. </p>
+<h3> <font color="#993300">Objects defined by the JavaAccess extension</font></h3>
+This extensions includes&nbsp; 5 new objects:
+<dl>
+  <dl>
+    <dt> <b><tt><font color="#993300">Packages</font></tt></b></dt>
+    <dd> A <tt>JavaPackages</tt> object, representing the root of all
+Java
+packages. When a property of a <tt>Packages</tt> object is accessed, a
+corresponding <tt>JavaPackages</tt> object is created. For example "<tt>Packages.EDU.nowhereUni</tt>
+" creates a <tt>JavaPackages</tt> for "<tt>EDU.nowhereUni</tt>". A <tt>JavaPackages</tt>
+is just a name prefix, it does not have to match a real package (the
+package must be a real one when a class of the package is used).</dd>
+    <dd> It is therefore easy to create package abreviation like:</dd>
+    <dl>
+      <dd> <tt>tools = Packages.EDU.puddingtonUni.tools</tt>.</dd>
+    </dl>
+    <dd> In addition a <tt>Packages</tt> can be used to create a class
+loader, to load classes from a directory root or from a jar file. To
+create
+such a loader call <tt>Packages</tt> as a function, specifying the
+directory
+or jar file name. For example:</dd>
+    <dl>
+      <dd> <tt>new Packages("java/graphics/classes").graphics.line</tt></dd>
+    </dl>
+    <dd> refers to a class '<tt>graphics.line</tt>' in a subdirectory
+of <tt>java/graphics/classes</tt>. <tt>Packages("C:/library/tools.jar")</tt>
+would similarly create a new root for classes from the specified tools
+jar
+file.</dd>
+    <dd> A package cannot be created if the <tt>Packages</tt> object
+is the expression of a <tt>with</tt> statement - simply create the
+packages
+you need before the <tt>with</tt> statement!</dd>
+    <dt> <b><tt><font color="#993300">Beans</font></tt></b></dt>
+    <dd> A <tt>JavaBeans</tt> object, representing the root
+of all Java beans. When a property of a <tt>Beans</tt> object is
+accessed,
+a corresponding <tt>JavaBeans</tt> object is created. For example "<tt>Beans.java.awt.Button</tt>
+" refer to an awt button used as a bean. A new Beans root can be
+created
+by calling Beans as a function, specifying jar file or a directory
+root,
+for example:</dd>
+    <dl>
+      <dd> <tt>JugglerJar = Beans(bdkHome+"juggler.jar")</tt></dd>
+    </dl>
+    <dd> The bean can then be created by specifying it
+relatively the the bean root, as in&nbsp; '<tt>new
+JugglerJar.sunw.demo.juggler.Juggler()</tt>
+'. Even if it loads the bean from a jar file with a manifest, <tt>Beans</tt>
+does not test if the class was indeed declared as a bean, it will
+attempt
+to instantiate any specified class as a bean.</dd>
+    <dd> When declared as a bean, only the properties
+and method described by the corresponding <tt>BeanInfo</tt> (see Sun
+documentation
+on beans) can be accessed. Bean properties can be accessed as
+EcmaScript
+properties (<tt>FESI</tt> will use the appropriate getter or setter
+routines,
+it will not directly access the fields, even if public).</dd>
+    <dt> <b><tt><font color="#993300">java</font></tt></b></dt>
+    <dd> Equivallent to <tt>Packages.java</tt>, to
+make access to Java language functions easier.</dd>
+    <dt> <b><tt><font color="#990000">javaTypeOf</font></tt></b></dt>
+    <dd> A function which returns&nbsp; the name
+of the class of the java object which would be created, if the value
+were
+passed to a Java method. Useful to debug access to overloaded
+functions.
+The class <tt>JSWrapper</tt> is used to package EcmaScript objects as
+a Java
+object if no better type can be found, and is therefore returned if
+this
+function is called for a EcmaScript built-in object. Elementary
+EcmaScript
+values are transformed in the smallest type containing them (1234 will
+be
+a <tt>java.lang.Short</tt>).</dd>
+    <dt> <b><tt><font color="#993300">loadExtension</font></tt></b></dt>
+    <dd> A function to load an EcmaScript
+extension programmatically, giving the class name as a parameter, for
+example <tt>loadExtension("FESI.Extensions.FileIO")</tt>
+. Reloading an already loaded extension has no effect.</dd>
+  </dl>
+</dl>
+The command <tt>@describe</tt> of the interpreter is very useful to
+examine the characteristic of a java object. Its class, methods and
+fields are listed,
+including the properties if the object is used as a bean.
+<h3> <font color="#993300">Accessing
+properties or fields of a Java or Corba object</font></h3>
+The following mechanism is used to access properties or fields of an
+object created by the <tt>Packages</tt> mechanism or received from a
+Java function (including CORBA objects received as a Java object from a
+Java function).
+<ol>
+  <li> First a public Java field with the same name si looked up. If it
+is
+found, then it is directly accessed (any setter or getter function is
+ignored).</li>
+  <li> Fields with a name starting with "on" are handled specially: if
+they
+do not exist in an object, they are interpreted as a request to setup
+an
+event handler (see the <a href="events.html">event handling</a> page
+for details).</li>
+  <li> If the field is not found or not public, then bean introspection
+is
+used to find the property. If is is found by introspection then the
+getter
+or setter routines is used.</li>
+  <li> As a last ressort a routine with the name of the property is
+looked
+up as a setter (void with 1 argument of the same type) or getter (no
+argument, returning a value). This last method is compatible with CORBA
+objects accessed from Java.</li>
+</ol>
+The properties of objects declared as Bean (using the Beans creation
+mechanism) are only looked up using bean introspection.
+<p>It is naturally always possible
+to call a setter or getter routine directly. </p>
+<h3> <font color="#993300">Creating
+Java objects</font></h3>
+Once the JavaAccess package is loaded, it is possible to create new
+Java objects, for example:
+<ul>
+  <tt>cal = new java.util.GregorianCalendar();</tt>
+</ul>
+The Java objects can be called almost as native EcmaScript objects.
+Strings, dates and numeric values are converted automatically between
+EcmaScript and
+Java. Non convertible objects are wrapped, that is a Java object (as a
+Calendar)
+is represented by a wrapper object in EcmaScript. This wrapper objects
+takes
+care of calling the native functions or accessing the properties. If
+the
+wrapper is given back to a Java routine, then the wrapped (Java native)
+object
+is used as its value. In case of overloaded functions, the wrapper will
+attempt
+to find a suitable instance, possibly widening numbers or converting
+single
+character Strings to a Character if needed.
+<p>Array returned from a java routine
+as wrapped as an array and can be manipulated as an array. If the
+wrapped
+array is passed back to a Java routine, the array will be unwrapped. An
+EcmaScript <tt>Array</tt> can be used where a
+java <tt>array</tt> is required, if all elements of the array can be
+converted
+to the target array component type. In that case a copy of the array is
+used
+as a parameter. This may be time consuming for very large array. If an
+array
+must be shared between Java and EcmaScript, it must be created in Java.
+</p>
+<p>If a java class or object name conflicts
+with an EcmaScript keyword, you must&nbsp; use the dynamic indexing
+notation,
+as for example in: </p>
+<ul>
+  <tt>java.lang.System["in"]</tt>
+</ul>
+Because the notation '<tt>java.lang.System.in</tt>' would create a
+syntax error, '<tt>in</tt>' being a keyword in EcmaScript.
+<h3> <font color="#993300">Using enumerators</font></h3>
+It is possible to directly use Java enumerators in a "<i>for in</i>"
+construction. For example:
+<ul>
+  <tt>// Get the properties</tt> <br>
+  <tt>properties = java.lang.System.getProperties();</tt>
+  <p><tt>// List them, using a java
+enumerators</tt> <br>
+  <tt>for (key in properties.keys())
+{</tt> <br>
+  <tt>&nbsp;&nbsp; value = properties.get(key);</tt> <br>
+  <tt>&nbsp;&nbsp; writeln ("Property
+'" , key, " = '", value, "'");</tt> <br>
+  <tt>}</tt></p>
+</ul>
+<h3> <font color="#993300">Constructors
+used as a function</font></h3>
+If a Java class name is used as a function, the corresponding
+constructor is called if it exists - for example:
+<ul>
+  <tt>cal=java.util.GregorianCalendar()</tt>
+</ul>
+There is one difference for elementary values. In principle values
+which can be converted to an EcmaScript type are automatically
+converted. For example <tt>str=java.lang.String("Hello")</tt> will
+create an EcmaScript string, not a wrapped Java <tt>String</tt>.
+However
+if <tt>new</tt> is used with these basic types, a wrapper to a Java <tt>String</tt>
+will be returned instead. That wrapper is likely to be converted to an
+EcmaScript string at the first usage, but this may be convenient to
+force the type of
+a variable to solve a delicate overloading conflicts. For example: <tt>javaObj.append(new
+java.lang.Long(23))</tt> will direct EcmaScript to look at a variant of
+the <tt>append</tt> functionwith a <tt>
+Long</tt> parameter (rather than say a <tt>Double</tt>).
+<p>It is possible to define event processing
+routines with <tt>FESI</tt>, see the <a href="events.html">FESI event
+handling
+page</a> for details. <br>
+&nbsp; </p>
+<h3> <font color="#993300">Limitations</font></h3>
+Indexed beans properties are not currently supported, unless the full
+array can be accessed and set at once.
+<p>Information on beans and event handling
+is kept with the <i>wrapper</i> of the object. If a bean or a java
+object
+is created or received by FESI, passed to a Java routine from <tt>FESI</tt>
+and, then returned to <tt>FESI</tt> (for example as the return value),
+it
+will receive a new wrapper. This may create some confusion, especially
+regarding
+the equality of such objects. The recommendation is to always use the
+original
+reference of a bean or Java object in <tt>FESI</tt>. </p>
+<p>The selection of the routine is
+based on some heuristic to solve overloading. You may have to use <tt>@debugJavaAccess</tt>
+in the interpreter if the routine called is not the expected one.
+Because
+of the difference in model between the Java and EcmaScript typing, it
+is
+not always possible to make a unique conversion. In pratice these case
+are
+rare and if needed a wrapper routine or an extension may be created. </p>
+<p>The following limitation is non
+obvious (see bug (<a
+ href="http://developer.java.sun.com/developer/bugParade/bugs/4090460.html">
+4090460</a>
+) in Sun Java implementation): Invoking a public method on a java
+object that
+is inherited from a non-public class is callable directly but not via
+reflection
+(and therefore not from FESI) when the caller is from a different
+package.
+That problem persists under JDKs 1.1.7B through 1.3beta on Win98,
+NT4.0,
+and SunOS 5.5.1. As a workaround you can make the super class public or
+write
+a wrapper object. <br>
+</p>
+<hr>
+<center><a href="index.html">Return
+to the main page</a> </center>
+<hr>
+<div align="left">
+<table cellpadding="0" cellspacing="0" border="0"
+ style="width: 100%; text-align: left;">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><font size="-2">Copyright &copy;
+Jean-Marc Lugrin 1998-2003 - Under LGPL license</font></td>
+      <td style="vertical-align: top; text-align: right;"><font
+ size="-2">Last update: 26 August 2003</font></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</body>
+</html>

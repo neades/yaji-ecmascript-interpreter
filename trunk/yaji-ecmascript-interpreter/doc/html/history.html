@@ -1,0 +1,357 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="generator"
+ content="pop!site Version 1.0R60 for Win32/80x86">
+  <meta name="GENERATOR"
+ content="Mozilla/4.5 [en] (Win98; I) [Netscape]">
+  <meta name="Author" content="Jean-MarcLugrin">
+  <meta name="Description"
+ content="Describe the FESI EcmaScript interpreter">
+  <meta name="KeyWords" content="EcmaScript, JavaScript, JScript, Java">
+  <title>FESI (pr. like fuzzy) EcmaScript interpreter</title>
+</head>
+<body style="background-color: rgb(173, 216, 230);" link="#00008b"
+ vlink="#00008b">
+&nbsp;
+<table cellspacing="6" width="100%">
+  <tbody>
+    <tr>
+      <td align="center"><img src="fesi.gif" height="60" width="75"> </td>
+      <td align="left"><font color="#a52a2a"><font size="+3">Free
+EcmaScript
+Interpreter.&nbsp;</font></font> <br>
+      <font color="#a52a2a"><font size="+3">A JavaScript interpreter
+written in Java.</font></font></td>
+    </tr>
+  </tbody>
+</table>
+<br>
+&nbsp;
+<table width="100%" bgcolor="#a52a2a" text="#FFFFFF">
+  <tbody>
+    <tr>
+      <td>
+      <center><b><font color="#ffffff"><font size="+2">Change history
+(old)</font></font></b></center>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<ul>
+</ul>
+<i>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 1.1.7 - August 31,&nbsp; 2003</i><br>
+<i>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Support
+access to static fields from an object
+(before, the class object had to be specified).<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Support of
+BSF, version 2.2 (see </i><a
+ href="file:///C:/javadev/FESI/doc/html/bsf.html">Bean Scripting
+Framwork</a><i>), allowing to call FESI
+from a common interface used by many tools.<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Added example
+for swing (examples/swing/swingev.esw)
+that demonstrate use of events.<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Added
+getWrappedObject and getWrappedBean to the js
+package.<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Upgraded to
+latest JavaCC and IzPack (no user
+visible change).</i><i><br>
+</i>
+<ul>
+  <i>1.1.6 - August 4 2003<br>
+&nbsp;&nbsp;&nbsp; Avoid a useless backtrack in lexical parsing.<br>
+&nbsp;&nbsp;&nbsp; Corrected a bug in scope chain and prototype, added
+test<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; in validation suite (thanks to
+Michael Schneider).<br>
+&nbsp;&nbsp;&nbsp; Corrected a bug in 'this' for called functions
+(thanks to <br>
+&nbsp;&nbsp;&nbsp; Michael Schneider and a few others).<br>
+&nbsp;&nbsp;&nbsp; Corrected a bug in getTimezoneOffset (thank to
+Wendell T. Hicken)<br>
+&nbsp;&nbsp;&nbsp; Added substr from Wendell T. Hicken (not sure if in
+standard)<br>
+&nbsp;&nbsp;&nbsp; Added command @module to load module, use @load to
+load files<br>
+&nbsp;&nbsp;&nbsp; Normalized import statements (using Eclipse)<br>
+&nbsp;&nbsp;&nbsp; Use latest version of ORO and GNU regexpt libraries,
+removed <br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; deprecated methods used for
+OROlib.<br>
+&nbsp;&nbsp;&nbsp; Use latest version (3.1, open source, renamed the
+reader) of JavaCC<br>
+&nbsp;&nbsp;&nbsp; Use IzPack installer (http://www.izforge.com/izpack/)<br>
+&nbsp;&nbsp;&nbsp; Use ANT to control the code and site generation.<br>
+&nbsp;&nbsp;&nbsp; Currently removed the FesiFTP example (lack of time
+to integrate).<br>
+  <br>
+1.1.5 - July 29,&nbsp; 2000</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Corrected bug when calling a function with less
+arguments
+than the number of real parameters. Now correctly returns 'undefined'
+for
+missing parameters (thanks to Rob Noble and Sergey Borisov).</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Use 'undefined' when attempting to use no value
+at
+all (for example using the returned value of an function which ends
+with an
+empty statement). Previously this created a null pointer exception.</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Hack (adding a new line) to work around a
+parsing limitation which generated an error when a single line program
+was terminated by a // comment.</i>
+</ul>
+<ul>
+  <i>1.1.4 - January 30,&nbsp; 2000</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Added the GnuRegExp (Thanks to Mike Dillon),
+allowing LGPL support of RegExp.</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Better documentation of Windows Installation.</i>
+</ul>
+<ul>
+  <i>1.1.3 - December 25,&nbsp; 1999</i><br>
+  <i>&nbsp;&nbsp;&nbsp; LICENSED UNDER THE <a
+ href="http://www.gnu.org/copyleft/lesser.html"> LGPL</a> .Thanks to
+the Debian and FSF people who encouraged me to use a more standard
+license. NOTE: To avoid any licensing ambiguity, the ORO regular
+expression library is not included anymore, you must download it from<b>
+http://www.savarese.org</b>
+.</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Use javaCC 1.1.</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Corrected bug in getting path separator (for
+Linux).</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Pass call to functions to the prototype even if
+prototype
+is a native object.</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Add extensions of initialized objects (from
+Christophe Marton).</i><br>
+  <i>&nbsp;&nbsp;&nbsp; new Date() correctly initialize to current time.</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Corrected bug in parseInt of large numbers.</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Corrected bug when RegExp matched but one group
+did
+not match.</i><br>
+  <i>&nbsp;&nbsp;&nbsp; The limitation on calling public methods of non
+public
+classe is documented (thanks to Jason Mathews).</i><br>
+  <i>&nbsp;&nbsp;&nbsp; The LINK.HTML page has been updated.</i>
+  <p><i>1.1.2 - May 8,&nbsp; 1999</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Avoid converting BigInteger to builtin numbers
+(thanks to Denis Bohm).</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Add support to sort function in Array.sort
+(thanks to Hannes Wallnoefer)</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Corrected bug in normalize value to support
+arrays (thanks to Kurt Westerfeld)</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Corrected bug in array enumeration when non
+indexed properties were present.</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Transformed parameters of JSFunction to
+JSObject when possible.</i><br>
+  <i>1.1.1 - March 15,&nbsp; 1999</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Cleaned up web documentation</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Checked on Linux (the AWT GUI doubles all
+characters... sorry)</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Very minor cleanup of code</i><br>
+  <i>1.1 - March 7,&nbsp; 1999 (not announced)</i><br>
+  <i>&nbsp;&nbsp;&nbsp; WARNING: Use Swing 1.1 (javax.swing) in the
+swinggui if used with JDK1.1.7 !</i><br>
+  <i>&nbsp;&nbsp;&nbsp; A new option -e allows to load extensions from
+the command line.</i><br>
+  <i>&nbsp;&nbsp;&nbsp; The Interpreter structure has well as the gui
+classes have been changed to</i><br>
+  <i>&nbsp;&nbsp;&nbsp; ease subclassing and allow compilation without
+the Swinf and ORO classes.</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Validated under Java 1.2, includes Java 1.2
+compatible ORO classes.</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Added access to CORBA style properties
+(routines without set/get prefix)</i><br>
+  <i>&nbsp; From Kurt Westerfeld:</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Fix around Console to support the MS environment</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Bug correction in ESObject, avoiding an endless
+loop
+if an object which</i><br>
+  <i>&nbsp;&nbsp;&nbsp; does not have a valid default string value is
+converted to string.</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Added getMetaData() to connection and rowset in
+the
+Database extension.</i></p>
+</ul>
+<blockquote><i>1.0.2 - January 16,&nbsp; 1999</i><br>
+</blockquote>
+<blockquote>
+  <p><i>&nbsp;&nbsp;&nbsp; tryEval now return the evaluated value
+(rather than the first</i><br>
+  <i>&nbsp;&nbsp;&nbsp; parameter), as is documented and useful (from
+Kurt
+Westerfeld).</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Added getVersion and getWelcomeText to the
+JSUtil package.</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Corrected bug in @listAll of java arrays (from
+Kurt
+Westerfeld.</i><br>
+  <i>&nbsp;&nbsp;&nbsp; MathObject initialization moved around to help
+JBuilder
+users.</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Corrected bug in EcmaScriptException printing
+(from
+Kurt Westerfeld).</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Routine doWork in Interpreter made public (to
+ease
+embedding the</i><br>
+  <i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; interpreter in user code).</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Enhancement in routine lookup in inside class
+of
+interfaces (based</i><br>
+  <i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; on an idea of Rich Kadel)</i></p>
+  <i>1.0.1 - not released to the general&nbsp; public</i><br>
+</blockquote>
+<blockquote>
+  <p><i>&nbsp;&nbsp;&nbsp; Use FESI_HOME in batch files (from Matt
+Humphrey).</i><br>
+  <i>&nbsp;&nbsp;&nbsp; Corrected bug on Date(date) constructor (from
+Hannes Wallnoefer).</i><br>
+  <i>&nbsp;&nbsp;&nbsp; getWelcomeText made public on evaluator.</i></p>
+  <p><i>1.0 - October 17, 1998 - A small correction in for loop
+handling. Added ORO libraries to binary distribution.</i></p>
+  <p><i>Beta 4 - Added SetFullYear, corrected bug in new Date()
+function. Corrected bug in continue used in for and while loops.</i></p>
+  <p><i>Beta 2 - Bug in recursive call of the interpreter corrected.</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>A
+simple
+editing environment has been added to the Swing version</i></p>
+  <p><i>Beta 3 - Package was renamed Packages for compatibility with
+Netscape. The Swing development environment was enhanced.</i></p>
+  <i>Beta 1 - Some errors in java access of interface routines
+corrected. FesiForm example added.</i><br>
+  <br>
+</blockquote>
+<blockquote>
+  <p><i>Release 0.9 alpha adds:</i><br>
+  <i>&nbsp;&nbsp; (Now works with the "jit", which double the
+performance (good, but a far cry from the marketing hype!)</i></p>
+  <ul>
+    <li><i>(1): Possibility to catch the original error when a
+JSException
+was generated.</i></li>
+    <li><i>(2): Corrected bug with enumeration of non string returning
+java objects.</i></li>
+    <li><i>(3): Corrected bug with indexed access to the arguments
+special variable, getOriginalException, typeof undefined, added command
+      <tt>
+@pwd</tt>, the Database access mechanism.</i></li>
+    <li><i>(4): Completion of the database interface, addition of <a
+ href="file:///C:/javadev/FESI/doc/html/api/FESI.jslib.JSObject.html#evalAsFunction">
+evalAsFunction</a>
+, and some explanation of the option <tt>-T</tt> in the <a
+ href="file:///C:/javadev/FESI/doc/html/interp.html">
+interpreter</a>
+.</i></li>
+    <li><i>(5): Minor internal enhancements to the database interface,
+regular expression and the <a
+ href="file:///C:/javadev/FESI/doc/html/ext.html#tryEval">
+tryEval</a> capability. FesiFTP example added.</i></li>
+    <li><i>(6): Better support for with(javaObject), enhanced FesiFTP
+example, new File().readAll convenience function, small internal code
+enhancements. Beware: getLastError in the database extension has been
+changed to return null (instead of undefined) if there is no error.</i></li>
+    <li><i>(7): Bug corrections: Close the loaded file or stream in
+all cases (even in case of error), indicate that that the
+ProgrammingError
+exception is caused by FESI internal errors. Enhancements in @describe
+and
+@listall commands. Accept empty statements in more places (especially
+function(){}).</i></li>
+    <br>
+    <i>&nbsp;&nbsp;&nbsp;&nbsp; Added xml parser example using the
+ibm xml4j package. Added function makeObjectWrapper(object) to
+JSGlobalObject, allowing to use any object as an JSObject (for example
+with the eval function, making the object the "this" of the evaluation
+sequence). Added support for
+evaluating any string as if it was a function with parameters. Added
+support
+for Swing in the interpreter (-s) and as an alternate&nbsp; extension (<a
+ href="file:///C:/javadev/FESI/doc/html/ext.html#BasicIO">
+BasicIOs</a>
+).</i><li><i>(8): Corrected a bug in calling some interface class
+objects.
+Corrected a buh in the Swing console mode. Added <tt><a
+ href="file:///C:/javadev/FESI/doc/html/ext.html#throwError">
+throwError</a> </tt>.</i></li>
+    <li><i>(9): Display value for <tt>FIELD</tt> and <tt>PROPS</tt>
+in&nbsp; <tt>@describe</tt>. <tt>@load</tt> and <tt>load()</tt> now
+look
+in FESI.path or (if not present) in the classpath to find the module.
+This
+can include jar and zip files. A command <tt>@path</tt> display the
+load
+path in use. Updated the installation notes.</i></li>
+  </ul>
+  <br>
+  <i>The version 0.8 adds:</i>
+  <ul>
+    <li><i>Support for bean properties as EcmaScript properties even
+for objects not declared as bean.</i></li>
+    <li><i>Possibility to give an EcmaScript Array as a parameter for
+indexed properties or when a native Java array is required.</i></li>
+    <li><i>Many enhancements in the jslib, including a way to create
+EcmaScript objects and arrays,&nbsp; to declare objects as beans and to
+build
+functions looking as EcmaScript functions, to get original exception
+hidden
+behing JSException. See the FesiPop example too.</i></li>
+    <li><i>Command <tt>@clear</tt> added, and commands can be
+specified
+by any unique prefix.</i></li>
+  </ul>
+  <i>There was some confusion with the numbering of 0.8 and 0.9. From
+0.9 the patch levels are between parentheses, as in 0.9(2).</i></blockquote>
+<blockquote><i>The version 0.7 adds:</i>
+  <ul>
+    <li><i>Support for bean properties as EcmaScript properties.</i></li>
+    <li><i>A load routine (as part of BasicIO).</i></li>
+    <li><i>Speed enhancement (especially for java access).</i></li>
+    <li><i>Corrected various bugs.</i></li>
+  </ul>
+  <p><i>The version 0.6 adds:</i></p>
+  <ul>
+    <li><i>A general event handling capability.</i></li>
+    <li><i>Loading Java classes from a dynamically specified directory
+or jar file and dynamic loading of beans (including applets and gif
+images).</i></li>
+    <li><i>Various examples of loading beans and event handling.</i></li>
+    <li><i>The new command <tt>describe</tt></i></li>
+  </ul>
+</blockquote>
+<ul>
+  <p><i>The version 0.5 adds:</i></p>
+  <ul>
+    <li><i>&nbsp;&nbsp;&nbsp; AWT event handling. It is therefore
+possible to build and experiment with user interface with FESI.</i></li>
+  </ul>
+</ul>
+<p>(initial release)<br>
+</p>
+<ul>
+  <p><br>
+  </p>
+</ul>
+<p> </p>
+<p> </p>
+<hr><br>
+<center><a href="index.html">Return to the main page</a> </center>
+<hr>
+<div align="left">
+<table cellpadding="0" cellspacing="0" border="0"
+ style="width: 100%; text-align: left;">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><font size="-2">Copyright &copy;
+Jean-Marc Lugrin 1998-2003 - Under LGPL license</font></td>
+      <td style="vertical-align: top; text-align: right;"><font
+ size="-2">Last update: 31 August 2003</font></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</body>
+</html>

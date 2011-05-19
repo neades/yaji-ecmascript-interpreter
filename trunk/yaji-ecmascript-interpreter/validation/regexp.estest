@@ -1,0 +1,72 @@
+// regexp.estest
+// FESI Copyright (c) Jean-Marc Lugrin, 1999
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+writeln ("// " + document.URL);
+writeln ("// " + Date());
+writeln ("// Test regular expressions");
+writeln ("// Regular expression package loaded: " + RegExp);
+writeln();
+
+// @test regexp
+r = new RegExp("a(.?)b");
+// r.toString() == "/abc/";
+
+@test test.1
+r.test("xabc");
+
+@test test.2
+!r.test("XABC");
+
+
+@test test.3
+r.ignoreCase=true;
+r.test("XABC");
+
+@test ignoreCase
+r.ignoreCase
+
+@test search.1
+("XADBC").search(r)==1;
+
+@test search.2
+r.ignoreCase=false;
+("XADBC").search(r)==-1;
+
+@test match.1
+a=("bbaabb").match(r)
+a=="aab,a"
+
+@test index.1
+a.index==2;
+
+@test input.1
+a.input.toString()=="bbaabb"
+
+@test exec.1
+a=r.exec("bbaabb")
+a=="aab,a"
+
+@test nullgroup.1
+urlPattern = new RegExp( "\\w+://([\\w.]+)(:\\d+)?/[^\\s\"']+/?" );
+s = '<A HREF="http://profile.mitre.org:80/JRun/">JRun Logs</A><BR>';
+result = urlPattern.exec(s);
+result[0]=="http://profile.mitre.org:80/JRun/";
+
+@test nullgroup.2
+s = '<A HREF="http://profile.mitre.org/JRun/">JRun Logs</A><BR>';
+result = urlPattern.exec(s);
+result[0]=="http://profile.mitre.org/JRun/";

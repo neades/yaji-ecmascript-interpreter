@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="Author" content="Jean-MarcLugrin">
+  <meta name="GENERATOR"
+ content="Mozilla/4.05 [en] (Win95; I) [Netscape]">
+  <meta name="Description"
+ content="Describe the FESI EcmaScript interpreter extensions for basic I/O capabilities">
+  <meta name="KeyWords"
+ content="EcmaScript, JavaScript, JScript, Java, extension">
+  <title>FESI language extensions - Basic I/O</title>
+</head>
+<body style="background-color: rgb(173, 216, 230);" link="#00008b"
+ vlink="#00008b">
+&nbsp;
+<table cellspacing="6" width="100%">
+  <tbody>
+    <tr>
+      <td align="center"><img src="fesi.gif" height="60" width="75"> </td>
+      <td align="left"><font color="#a52a2a"><font size="+3">Free
+EcmaScript
+Interpreter.&nbsp;</font></font>&nbsp; <br>
+      <font color="#a52a2a"><font size="+3">A JavaScript interpreter
+written in Java.</font></font></td>
+    </tr>
+  </tbody>
+</table>
+&nbsp; <br>
+&nbsp;
+<table width="100%" bgcolor="#a52a2a" text="#FFFFFF">
+  <tbody>
+    <tr>
+      <td><b><font color="#ffffff"><font size="+2">Language extensions
+- BasicIO, BasicIOw and BasicIOs</font></font></b></td>
+    </tr>
+  </tbody>
+</table>
+<h3> <font color="#993366">BasicIO,&nbsp; BasicIOw and BasicIOs</font></h3>
+One of the <tt>BasicIO</tt>,&nbsp; <tt>BasicIOw</tt> and <tt>BasicIOs</tt>
+extension always loaded by the interactive interpreter program (but not
+if
+the interpreter is started by a user program, in which case it may be
+loaded
+if so desired). These extensions provide support for basic output (to
+the
+standard output), basic error message display,&nbsp; user prompt,&nbsp;
+file
+loading and program exit. The only difference between these packages is
+that
+the <tt>BasicIOw</tt> and <tt>BasicIOs</tt>&nbsp; use windows for the
+<tt>alert</tt>, <tt>prompt</tt> and <tt>confirm</tt> functions, while
+<tt>BasicIO</tt>
+just use the console. <tt>BasicIOw</tt> is for use with <tt>AWT</tt>
+based
+programs, and <tt>BasicIOs</tt> is for use with Swing based programs. <i>
+Using the wrong version is likely to cause various disasters, as <tt>AWT</tt>
+and Swing do not fit together very well!</i> When using the interactive
+interperter, <tt>BasicIOw</tt> is loaded via the <tt>-w</tt> option,
+and
+<tt>BasicIOs</tt> via the <tt>-s</tt> option.
+<p>The following global objects and routines are defined&nbsp; by <tt>BasicIO</tt>
+and <tt>BasicIOw</tt>: </p>
+<dl>
+  <dl>
+    <dt> <tt>alert (message)</tt></dt>
+    <dd> Write an <tt>[[alert]]</tt> message on the error stream.</dd>
+    <dt> <tt>confirm</tt></dt>
+    <dd> Ask the user for a yes/no confirmation.</dd>
+    <dt> <tt>exit(status)</tt></dt>
+    <dd> Exit with the specified status (uses <tt>System.exit()</tt>
+, so the program is terminated!).</dd>
+    <dt> <tt>load (moduleName)</tt></dt>
+    <dd> Locate the module in the directories and jar/zip files
+of the property FESI.path or (if the property is not defined) in the
+classpath
+(possibly adding the extension ".es", ".esw' or ".js"). Load the module
+and
+evaluate its content at run-time.</dd>
+    <dt> <tt>prompt (query, [default])</tt></dt>
+    <dd> Prompt the user for information, proposing the default
+string.</dd>
+    <dt> <tt>write(...)</tt></dt>
+    <dd> Write the parameters to the current output stream.</dd>
+    <dt> <tt>writeln(...)</tt></dt>
+    <dd> Write the parameters to the current output
+stream, followed by a new line.</dd>
+    <dt> <tt>document</tt></dt>
+    <dd> An object for compatibility with JavaScript
+when expanding html files.</dd>
+    <dt> <tt>document.close()</tt></dt>
+    <dd> Dummy routine for compatibility with
+JavaScript when expanding html files.</dd>
+    <dt> <tt>document.open()</tt></dt>
+    <dd> Dummy routine for compatibility
+with JavaScript when expanding html files.</dd>
+    <dt> <tt>document.URL</tt></dt>
+    <dd> Current file being processed
+(if defined by the interpreter).</dd>
+    <dt> <tt>document.write(...)</tt></dt>
+    <dd> Same as <tt>write</tt>
+.</dd>
+    <dt> <tt>document.writeln(...)</tt></dt>
+    <dd> Same as <tt>writeln</tt>
+.</dd>
+    <dt> <tt>window.alert
+(message)</tt></dt>
+    <dd> Same as <tt>alert</tt>
+.</dd>
+    <dt> <tt>window.confirm</tt></dt>
+    <dd> Same as <tt>
+confirm</tt>.</dd>
+    <dt> <tt>window.prompt
+(query [default])</tt></dt>
+    <dd> Same as <tt>prompt</tt>
+.</dd>
+  </dl>
+The <tt>document</tt>and <tt>window</tt>objects are only used to ease
+writing
+scripts which can be tested in a browser as well as with <tt>FESI</tt>.
+They
+do not have any "window" or "document" functionality.
+</dl>
+&nbsp;
+<p> </p>
+<hr>
+<center><a href="index.html">Return to the main page</a> </center>
+<hr>
+<div align="left">
+<table cellpadding="0" cellspacing="0" border="0"
+ style="width: 100%; text-align: left;">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><font size="-2">Copyright &copy;
+Jean-Marc Lugrin 1998-2003 - Under LGPL license</font></td>
+      <td style="vertical-align: top; text-align: right;"><font
+ size="-2">Last update: 26 August 2003</font></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</body>
+</html>

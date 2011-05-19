@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="GENERATOR"
+ content="Mozilla/4.7 [en] (Win98; I) [Netscape]">
+  <meta name="AUTHOR" content="Jean-MarcLugrin">
+  <meta name="CREATED" content="19990206;19413711">
+  <meta name="CHANGEDBY" content="Jean-Marc Lugrin">
+  <meta name="CHANGED" content="19990206;19420765">
+  <meta name="DESCRIPTION"
+ content="Describe the FESI EcmaScript interpreter extensions">
+  <meta name="KEYWORDS"
+ content="EcmaScript, JavaScript, JScript, Java, extension">
+  <title>FESI installation notes</title>
+  <style>
+	<!--
+		A:link { color: #00008b }
+		A:visited { color: #00008b }
+	-->
+	</style>
+</head>
+<body style="background-color: rgb(173, 216, 230);" link="#00008b"
+ vlink="#00008b">
+&nbsp; <br>
+&nbsp;
+<table cellspacing="6" cellpadding="2" width="100%">
+  <tbody>
+    <tr>
+      <td>
+      <center><img src="fesi.gif" name="Graphic1" border="0" height="60"
+ width="75" align="bottom"> </center>
+      </td>
+      <td><font color="#a52a2a"><font size="+3">Free EcmaScript
+Interpreter.&nbsp;</font></font> <br>
+      <font color="#a52a2a"><font size="+3">A JavaScript interpreter
+written in Java.</font></font></td>
+    </tr>
+  </tbody>
+</table>
+<br>
+&nbsp; <br>
+&nbsp;
+<table cellspacing="2" cellpadding="2" width="100%" bgcolor="#a52a2a">
+  <tbody>
+    <tr>
+      <td><b><font color="#ffffff"><font size="+2">Installation
+instructions</font></font></b></td>
+    </tr>
+  </tbody>
+</table>
+<br>
+&nbsp;
+<h3> <font color="#993366">Prerequisite</font></h3>
+<font color="#000000"><span style="font-family: monospace;">FESI </span></font><font
+ color="#000000">has been compiled with Java 1.4.2. It is
+likely
+to work on previous versions, but this has not yet been tested.</font>
+<p>As FESI uses the Java regular expression package by default, you do
+not neet add the regular expression library to the classpath (unless
+you need them for compatibility reason).<br>
+&nbsp; </p>
+<h3> <font color="#993366">Download and install the kit</font></h3>
+<font color="#000000">Available <a href="copyright.html">here</a> as a
+jar file, created with IzPack. Download it in some temporary area and
+execute by double cliking on it or by using the command:</font><br>
+<blockquote><tt>java -jar install-fesi-1.1.8.jar</tt><br>
+</blockquote>
+<font color="#000000">This assumes that the java environment is
+installed correctly. The install program will guide you for the
+remaining of the installation. You will be able to choose&nbsp; the
+target directory. Source code and examples are included in
+the package and will be installed in sub-directories of the target
+directory if so desired.<br>
+The </font><font color="#000000"><span style="font-family: monospace;">FESI
+</span></font><font color="#000000">library (</font><font
+ color="#000000"><span style="font-family: monospace;">fesi.jar</span></font><font
+ color="#000000">) is installed in the subdirectory lib of the target
+directory. It must be included in the class path of the applications
+using </font><font color="#000000"><span
+ style="font-family: monospace;">FESI</span></font><font color="#000000">.</font><br>
+<br>
+<h3> <font color="#993366">Uninstall</font></h3>
+<ul>
+The installed creates a file in the uninstaller directory, you can run
+it to remove FESI.
+</ul>
+.
+<h3> <font color="#993366">Sources</font></h3>
+<ul>
+  <li>The sources are compiled with Java 1.4.2.</li>
+  <li>The JavaCC parser tool (required if you change the grammar) is
+available at .</li>
+  <li>An ANT build file is included
+in the <span style="font-style: italic;">ant</span> subdirectory. It
+may require editing to support your environment. You can download ant
+from <a href="http://ant.apache.org/">http://ant.apache.org/</a>. I
+use version 1.5.4<br>
+  </li>
+  <li>The kit is built with IzPack, available at <a
+ href="http://www.izforge.com/izpack/">http://www.izforge.com/izpack/</a>.
+The build file is MakeFesiInstall.xml. <br>
+  </li>
+  <li>The BSF library is availe at <a
+ href="http://jakarta.apache.org/bsf">http://jakarta.apache.org/bsf</a>.<br>
+  </li>
+  <li>The sources of the site are in the doc/html subdirectory.<br>
+  </li>
+</ul>
+<hr>
+<center>
+<p><a href="index.html">Return to the main page</a> </p>
+</center>
+<hr>
+<div align="left">
+<table cellpadding="0" cellspacing="0" border="0"
+ style="width: 100%; text-align: left;">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><font size="-2">Copyright &copy;
+Jean-Marc Lugrin 1998-2003 - Under LGPL license</font></td>
+      <td style="vertical-align: top; text-align: right;"><font
+ size="-2">Last update: 30 August 2003</font></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</body>
+</html>

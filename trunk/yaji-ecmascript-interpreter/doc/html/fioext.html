@@ -1,0 +1,221 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="Author" content="Jean-MarcLugrin">
+  <meta name="GENERATOR"
+ content="Mozilla/4.05 [en] (Win95; I) [Netscape]">
+  <meta name="Description"
+ content="Describe the FESI EcmaScript interpreter extensions to access File I/O capabilities">
+  <meta name="KeyWords"
+ content="EcmaScript, JavaScript, JScript, Java, extension">
+  <title>FESI language extensions - File I/O</title>
+</head>
+<body style="background-color: rgb(173, 216, 230);" link="#00008b"
+ vlink="#00008b">
+&nbsp;
+<table cellspacing="6" width="100%">
+  <tbody>
+    <tr>
+      <td align="center"><img src="fesi.gif" height="60" width="75"></td>
+      <td align="left"><font color="#a52a2a"><font size="+3">Free
+EcmaScript Interpreter.&nbsp;</font></font>&nbsp; <br>
+      <font color="#a52a2a"><font size="+3">A JavaScript interpreter
+written
+in Java.</font></font></td>
+    </tr>
+  </tbody>
+</table>
+&nbsp;
+<br>
+&nbsp;
+<table width="100%" bgcolor="#a52a2a" text="#FFFFFF">
+  <tbody>
+    <tr>
+      <td><b><font color="#ffffff"><font size="+2">Language extensions
+- FileIO</font></font></b></td>
+    </tr>
+  </tbody>
+</table>
+The <tt>FileIO</tt> extension is always loaded by the interactive
+interpreter,
+and provide access to file functions. The FileIO mechanism is patterned
+after the Netscape File object (available on the server version of
+Javascript),
+but it has been adapted to be nearer of the Java File and Stream
+capabilities.
+Currently only text files are supported. The Microsoft JScript I/O
+mechanism
+is based on ActiveX and is very Windows specific, so it is not suitable
+as a general purpose model for a portable EcmaScript implementation.
+<p>A <tt>FESI</tt> File object correspond to a Java <tt>File</tt>
+object,
+possibly linked to a <tt>Stream</tt> (when the file is opened). The <tt>File</tt>
+object is used both for file operations (as delete or move) and for the
+I/O operations. Error can be detected by a special value being
+returned,
+and by the function <tt>error</tt>. The error text consists of the
+name
+of the exception (without the package prefix), followed by a colon, a
+space
+and a text. This is more portable than the error code used by Netscape.
+<br>
+&nbsp;
+</p>
+<h3><font color="#990000">File object constructor</font></h3>
+A <tt>File</tt> object is created by the function <tt>File("pathname")</tt>,
+<tt>File("directory","filename")</tt>, or the corresponding
+constructors.
+The directory can be a <tt>File</tt> object. The default value of a <tt>File</tt>
+object is its path name, represented as a string.
+<br>
+&nbsp;
+<h3><font color="#990000">File prototype functions</font></h3>
+The following&nbsp; routines are defined on any <tt>File</tt> object
+(but
+may be effectively used only if the object is in a correct state), as
+they
+are implemented by the file prototype object:
+<dl>
+  <dl>
+    <dt><tt>readAll()</tt></dt>
+    <dd>Open the file, read all text, close the file and return the
+read text as
+a single string. Returns null in case of error. The file must <i>not</i>
+be opened when <tt>readAll</tt> is called!.</dd>
+    <dt><tt>open()</tt></dt>
+    <dd>Open the file for reading if it exists, for writing if it does
+not exist.
+Return true if successful. To create a new file, just delete it (using <tt>remove()</tt>)
+before calling open..</dd>
+    <dd><br>
+    </dd>
+    <dt><tt>close()</tt></dt>
+    <dd>Close a file, return true if successful.</dd>
+    <dt><tt>isopened()</tt></dt>
+    <dd>Return true if the file is opened (even if at EOF), false
+otherwise..</dd>
+    <dt><tt>write(...)</tt></dt>
+    <dd>Write the parameters as a string to the file, return true if
+successful.</dd>
+    <dt><tt>writeln(...)</tt></dt>
+    <dd>Write the parameters as a string to the file, followed by a new
+line, return
+true if successful.</dd>
+    <dt><tt>flush()</tt></dt>
+    <dd>Flush the output buffer on a file opened for writing, return
+true in case
+of success..</dd>
+    <dt><tt>readln()</tt></dt>
+    <dd>Read a line from an input file. Return <tt>null</tt> if at eof
+or in case
+of error. It may be more convenient to use the <tt>error()</tt>
+routine
+to check for end of file or error conditions.</dd>
+    <dt><tt>eof()</tt></dt>
+    <dd>Return true of the file is at eof or if it is not open for
+reading. An
+error is set if the file was not opened for reading.</dd>
+    <dt><tt>exists()</tt></dt>
+    <dd>Return true if the file exists (whether opened or not).</dd>
+    <dt><tt>isFile()</tt></dt>
+    <dd>Return true if the file exists and is a regular file (not a
+directory).</dd>
+    <dt><tt>isDirectory()</tt></dt>
+    <dd>Return true if the file exists and is&nbsp; a directory.</dd>
+    <dt><tt>list()</tt></dt>
+    <dd>Return the list of files or directories in a directory, as an
+array of
+strings, but returns <tt>null</tt> if the <tt>File</tt> object does
+not
+represent a directory.</dd>
+    <dt><tt>mkdir()</tt></dt>
+    <dd>Create the directory or directories specified by the path of
+the File object
+if they do not exist. Return true if thedirectories were successfully
+created,
+false otherwise..</dd>
+    <dt><tt>getLength()</tt></dt>
+    <dd>Return the length of the file, 0 if it does not exist..</dd>
+    <dt><tt>lastModified()</tt></dt>
+    <dd>Return the date and time when the file was last modified, Jan 1
+1970 if
+it does not exist.</dd>
+    <dt><tt>remove()</tt></dt>
+    <dd>Delete the file, return true in case of success. The name <tt>remove</tt>
+is used as <tt>delete</tt> is an EcmaScript keyword..</dd>
+    <dt><tt>renameTo("new name")</tt></dt>
+    <dd>Rename the file to the target name, which can be a File object
+or a string,
+return true if successful.</dd>
+    <dt><tt>canRead()</tt></dt>
+    <dd>Return true if the file exists and is readable.</dd>
+    <dt><tt>canWrite()</tt></dt>
+    <dd>Return true if the file exists and is can be written to</dd>
+    <dt><tt>getPath()</tt></dt>
+    <dd>Return the path given at construction time. Same as <tt>toString()</tt>.</dd>
+    <dt><tt>getAbsolutePath()</tt></dt>
+    <dd>Get the complete path of the file.</dd>
+    <dt><tt>isAbsolute()</tt></dt>
+    <dd>Return true if the path is absolute, false otherwise.</dd>
+    <dt><tt>getName()</tt></dt>
+    <dd>Get the file component part of the path.</dd>
+    <dt><tt>getParent()</tt></dt>
+    <dd>Get the directory part of the file or the parent directory of a
+directory
+. Returns the null string if applied to the root directory (of any
+drive
+in Windows).</dd>
+    <dt><tt>error()</tt></dt>
+    <dd>Return the string of the last error on this file object since
+it was created
+or since clearError was called. Return the empty string (which is
+equivalent
+to false) if not error was detected.</dd>
+    <dt><tt>clearError()</tt></dt>
+    <dd>Clear the error indicator.</dd>
+    <dt><tt>toString()</tt></dt>
+    <dd>Return the path given at construction time. Same as <tt>getPath()</tt>.</dd>
+    <dt><tt>valueOf()</tt></dt>
+    <dd>TBD.</dd>
+  </dl>
+&nbsp;
+</dl>
+<h3>
+<font color="#990000">File object properties</font></h3>
+<dl>
+The <tt>File</tt>object itself has the following attributes: <br>
+&nbsp;
+  <dl>
+    <dt><tt>separator</tt></dt>
+    <dd>The path separator, for example the backslash for Windows.</dd>
+    <dt><tt>stdin</tt></dt>
+    <dd>The standard input.</dd>
+    <dt><tt>stdout</tt></dt>
+    <dd>The standard output.</dd>
+    <dt><tt>stderr()</tt></dt>
+    <dd>The standard error.</dd>
+  </dl>
+The standard IO streams cannot be renamed or closed. Some other
+operations
+may be impossible or ignored.
+</dl>
+<hr>
+<center><a href="index.html">Return to the main page</a></center>
+<hr>
+<div align="left">
+<table cellpadding="0" cellspacing="0" border="0"
+ style="width: 100%; text-align: left;">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><font size="-2">Copyright &copy;
+Jean-Marc Lugrin 1998-2003 - Under LGPL license</font></td>
+      <td style="vertical-align: top; text-align: right;"><font
+ size="-2">Last update: 26 August 2003</font></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</body>
+</html>
