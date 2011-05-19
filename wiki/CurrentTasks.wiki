@@ -2,7 +2,7 @@
 =Current Tasks=
 
   # Remove externals from commit. It would be better to download these if not present.
-  # Patch forward existing changes.
+  # ~~Patch forward existing changes.~~
   # Introduce unit tests.
   # Introduce most important new constructs to allow running of validation suite.
     * {} object instantiation
