@@ -7,12 +7,14 @@ import FESI.Parser.EcmaScript;
 import FESI.Parser.EcmaScriptConstants;
 
 public abstract class SimpleNode implements Node, EcmaScriptConstants {
+  private static final long serialVersionUID = -6168608763891131314L;
   protected Node parent;
   protected Node[] children;
   protected int id;
   protected EcmaScript parser;
-  protected int line = 0;        // JMCL
-  
+  private int line;
+  private int column;
+
   public SimpleNode(int i) {
     id = i;
   }
@@ -23,11 +25,13 @@ public abstract class SimpleNode implements Node, EcmaScriptConstants {
   }
 
   public void jjtOpen() {
+      // Required for interface Node
   }
 
   public void jjtClose() {
+      // Required for interface Node
   }
-  
+
   public void jjtSetParent(Node n) { parent = n; }
   public Node jjtGetParent() { return parent; }
 
@@ -72,8 +76,9 @@ public abstract class SimpleNode implements Node, EcmaScriptConstants {
      you need to do. */
 
   // JMCL
-  public String toString() { 
-     return EcmaScriptTreeConstants.jjtNodeName[id]; 
+  @Override
+public String toString() {
+     return EcmaScriptTreeConstants.jjtNodeName[id];
   }
   public String toString(String prefix) { return prefix + toString(); }
 
@@ -84,21 +89,26 @@ public abstract class SimpleNode implements Node, EcmaScriptConstants {
     System.out.println(toString(prefix));
     if (children != null) {
       for (int i = 0; i < children.length; ++i) {
-	SimpleNode n = (SimpleNode)children[i];
-	if (n != null) {
-	  n.dump(prefix + " ");
-	}
+    SimpleNode n = (SimpleNode)children[i];
+    if (n != null) {
+      n.dump(prefix + " ");
+    }
       }
     }
   }
-  
+
   // JMCL
-  public void setLineNumber(int line) {
-      this.line = line;
+  public void setLinePosition(int line, int column) {
+    this.line = line;
+    this.column = column;
   }
-  
+
   public int getLineNumber() {
       return line;
+  }
+
+  public int getColumnNumber() {
+      return column;
   }
 
   public void assertNoChildren() {
@@ -126,5 +136,5 @@ public abstract class SimpleNode implements Node, EcmaScriptConstants {
           throw new ProgrammingError("AST Should have 4 children");
       }
   }
-  
+
 }

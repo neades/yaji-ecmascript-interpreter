@@ -22,9 +22,9 @@ package FESI.Interpreter;
  */
 
 public class FunctionEvaluationSource extends EvaluationSource {
-    
-    private String theFunctionName;
-    
+    private static final long serialVersionUID = -5019300116593607043L;
+    private final String theFunctionName;
+
     /**
      * Create a function source description
      * @param evaluationSource Describe the function name

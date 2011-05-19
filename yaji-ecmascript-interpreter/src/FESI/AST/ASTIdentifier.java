@@ -2,13 +2,14 @@
 
 package FESI.AST;
 
+import FESI.Data.ESString;
 import FESI.Parser.EcmaScript;
 
 public class ASTIdentifier extends SimpleNode {
-    
-  private String identifierName = null;
+    private static final long serialVersionUID = 2673088409445831343L;
+private ESString identifierName = null;
   private int hash = 0;
-  
+
   public ASTIdentifier(int id) {
     super(id);
   }
@@ -26,25 +27,32 @@ public class ASTIdentifier extends SimpleNode {
   }
 
   /** Accept the visitor. **/
-  public Object jjtAccept(EcmaScriptVisitor visitor, Object data) {
+  @Override
+public Object jjtAccept(EcmaScriptVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
-  
+
   // JMCL
   public void setName(String identifierName) {
-      this.identifierName = identifierName.intern(); // to lower number of strings
+      this.identifierName = ESString.valueOf(identifierName.intern()); // to lower number of strings
       this.hash = identifierName.hashCode();
   }
-  
-  public int hashCode() {
+
+  @Override
+public int hashCode() {
       return hash;
   }
-  
+
   public String getName() {
+      return identifierName.toString();
+  }
+
+  public ESString getESName() {
       return identifierName;
   }
-  
-  public String toString() {
+
+  @Override
+public String toString() {
       return "<" + identifierName + ">";
   }
 }

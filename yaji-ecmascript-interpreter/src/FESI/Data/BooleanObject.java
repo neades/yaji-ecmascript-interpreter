@@ -25,8 +25,8 @@ import FESI.Interpreter.Evaluator;
  * Implemements the EcmaScript Boolean singleton.
  */
 public class BooleanObject extends BuiltinFunctionObject {
-        
-            
+    private static final long serialVersionUID = -4829252326779899183L;
+
     private BooleanObject(ESObject prototype, Evaluator evaluator) {
         super(prototype, evaluator, "Boolean", 1);
     }
@@ -42,9 +42,9 @@ public class BooleanObject extends BuiltinFunctionObject {
                                             throws EcmaScriptException {
          if (arguments.length==0) {
              return ESBoolean.makeBoolean(false);
-         } else {
-             return ESBoolean.makeBoolean(arguments[0].booleanValue());
-         } 
+         }
+         return ESBoolean.makeBoolean(arguments[0].booleanValue());
+          
     }
     
        
@@ -53,8 +53,8 @@ public class BooleanObject extends BuiltinFunctionObject {
                                 ESValue[] arguments) 
                                         throws EcmaScriptException {
          BooleanPrototype theObject = null;
-         ESObject bp = evaluator.getBooleanPrototype();
-         theObject= new BooleanPrototype(bp, evaluator);
+         ESObject bp = getEvaluator().getBooleanPrototype();
+         theObject= new BooleanPrototype(bp, getEvaluator());
          if (arguments.length>0) {
              theObject.value = ESBoolean.makeBoolean(arguments[0].booleanValue());
          } else {
@@ -81,6 +81,7 @@ public class BooleanObject extends BuiltinFunctionObject {
         try {
             // For booleanPrototype
             class BooleanPrototypeToString extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 BooleanPrototypeToString(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
@@ -93,6 +94,7 @@ public class BooleanObject extends BuiltinFunctionObject {
                 }
             }
             class BooleanPrototypeValueOf extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 BooleanPrototypeValueOf(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
@@ -104,7 +106,7 @@ public class BooleanObject extends BuiltinFunctionObject {
             }
 
             booleanObject.putHiddenProperty("prototype",booleanPrototype);
-            booleanObject.putHiddenProperty("length",new ESNumber(1));
+            booleanObject.putHiddenProperty("length",ESNumber.valueOf(1));
 
             booleanPrototype.putHiddenProperty("constructor",booleanObject);
             booleanPrototype.putHiddenProperty("toString", 

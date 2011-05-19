@@ -101,7 +101,7 @@ public class OptionalRegExp extends Extension {
             
             ESObject globalObjectRegExp = 
                new GlobalObjectRegExp("RegExp", evaluator, fp);         
-            globalObjectRegExp.putHiddenProperty("length",new ESNumber(1));
+            globalObjectRegExp.putHiddenProperty("length",ESNumber.valueOf(1));
             go.putHiddenProperty("RegExp", globalObjectRegExp);
         }
     }

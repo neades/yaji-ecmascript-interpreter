@@ -26,8 +26,8 @@ import FESI.Interpreter.Evaluator;
  * Implemements the EcmaScript Number singleton.
  */
 public class NumberObject extends BuiltinFunctionObject {
-        
-            
+    private static final long serialVersionUID = -4773796736269945208L;
+
     private NumberObject(ESObject prototype, Evaluator evaluator) {
         super(prototype, evaluator, "Number", 1);
     }
@@ -42,10 +42,10 @@ public class NumberObject extends BuiltinFunctionObject {
                                 ESValue[] arguments) 
                                         throws EcmaScriptException {
          if (arguments.length==0) {
-             return new ESNumber(0.0);
-         } else {
-             return new ESNumber(arguments[0].doubleValue());
+             return ESNumber.valueOf(0.0);
          }
+         return ESNumber.valueOf(arguments[0].doubleValue());
+         
     } 
     
     // overrides   
@@ -53,12 +53,12 @@ public class NumberObject extends BuiltinFunctionObject {
                                 ESValue[] arguments) 
                                         throws EcmaScriptException {
          NumberPrototype theObject = null;
-         ESObject np = evaluator.getNumberPrototype();
-         theObject= new NumberPrototype(np, evaluator);
+         ESObject np = getEvaluator().getNumberPrototype();
+         theObject= new NumberPrototype(np, getEvaluator());
          if (arguments.length>0) {
-             theObject.value = new ESNumber(arguments[0].doubleValue());
+             theObject.value = ESNumber.valueOf(arguments[0].doubleValue());
          } else {
-             theObject.value = new ESNumber(0.0);
+             theObject.value = ESNumber.valueOf(0.0);
          }
          return theObject;
     }    
@@ -84,6 +84,7 @@ public class NumberObject extends BuiltinFunctionObject {
 
                // For numberPrototype
             class NumberPrototypeToString extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 NumberPrototypeToString(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
@@ -102,6 +103,7 @@ public class NumberObject extends BuiltinFunctionObject {
                 }
             }
             class NumberPrototypeValueOf extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 NumberPrototypeValueOf(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
@@ -113,12 +115,12 @@ public class NumberObject extends BuiltinFunctionObject {
             }
 
             numberObject.putHiddenProperty("prototype",numberPrototype);
-            numberObject.putHiddenProperty("length",new ESNumber(1));
-            numberObject.putHiddenProperty("MAX_VALUE",new ESNumber(Double.MAX_VALUE));
-            numberObject.putHiddenProperty("MIN_VALUE",new ESNumber(Double.MIN_VALUE));
-            numberObject.putHiddenProperty("NaN",new ESNumber(Double.NaN));
-            numberObject.putHiddenProperty("NEGATIVE_INFINITY",new ESNumber(Double.NEGATIVE_INFINITY));
-            numberObject.putHiddenProperty("POSITIVE_INFINITY",new ESNumber(Double.POSITIVE_INFINITY));
+            numberObject.putHiddenProperty("length",ESNumber.valueOf(1));
+            numberObject.putHiddenProperty("MAX_VALUE",ESNumber.valueOf(Double.MAX_VALUE));
+            numberObject.putHiddenProperty("MIN_VALUE",ESNumber.valueOf(Double.MIN_VALUE));
+            numberObject.putHiddenProperty("NaN",ESNumber.valueOf(Double.NaN));
+            numberObject.putHiddenProperty("NEGATIVE_INFINITY",ESNumber.valueOf(Double.NEGATIVE_INFINITY));
+            numberObject.putHiddenProperty("POSITIVE_INFINITY",ESNumber.valueOf(Double.POSITIVE_INFINITY));
     
             numberPrototype.putHiddenProperty("constructor",numberObject);
             numberPrototype.putHiddenProperty("toString", 

@@ -15,7 +15,7 @@
   
   <!-- Source content directory structure -->
   <property name="src" location="src"/>
-  <property name="src.parser" location="${src}/FESI/parser"/>
+  <property name="src.parser" location="${src}/FESI/Parser"/>
   <property name="src.AST" location="${src}/FESI/AST"/>
   <property name="src.Interpreter" location="${src}/FESI/Interpreter"/>
   <property name="doc.html" location="./doc/html"/>
@@ -105,7 +105,7 @@
         description="compile the grammar " >
         
    <java classname="jjtree" fork="yes" dir="${src.parser}" failonerror="true">
-    	<arg file="${src}/FESI/parser/EcmaScript.jjt"/> 	
+    	<arg file="${src}/FESI/Parser/EcmaScript.jjt"/> 	
        <classpath refid="javacc.class.path"/>
     </java>
     
@@ -118,7 +118,7 @@
     
     
    <java classname="javacc" fork="yes" dir="${src.parser}" failonerror="true">
-    	<arg file="${src}/FESI/parser/EcmaScript.jj"/> 	
+    	<arg file="${src}/FESI/Parser/EcmaScript.jj"/> 	
        <classpath refid="javacc.class.path"/>
     </java>
   </target>

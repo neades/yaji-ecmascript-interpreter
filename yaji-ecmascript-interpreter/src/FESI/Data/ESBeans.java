@@ -29,7 +29,8 @@ import FESI.Interpreter.LocalClassLoader;
  * Implements the beans loader
  */
 public class ESBeans extends ESLoader {
-    
+    private static final long serialVersionUID = 3540708121565818932L;
+
     /**
      * Create the top level bean loader (object Bean)
      * @param evaluator the evaluator
@@ -66,11 +67,11 @@ public class ESBeans extends ESLoader {
     // Getting a property dynamically creates a new Beans prefix object
     public ESValue getProperty(String propertyName, int hash) 
                             throws EcmaScriptException {
-        ESValue value = (ESValue) properties.get(propertyName, hash);
+        ESValue value = getPropertyMap().get(propertyName, hash);
         if (value == null) {
-           String packageName = buildPrefix();
-           value = new ESBeans(propertyName, this, classLoader, evaluator);
-           properties.put(propertyName, hash, false, false, value); // Cache it for faster retrievial
+           buildPrefix();
+           value = new ESBeans(propertyName, this, classLoader, getEvaluator());
+           getPropertyMap().put(propertyName, hash, false, false, value); // Cache it for faster retrievial
        } 
        return value;
     }
@@ -90,12 +91,10 @@ public class ESBeans extends ESLoader {
              String directoryOrJar = arguments[0].toString();
              LocalClassLoader classLoader =     
                      LocalClassLoader.makeLocalClassLoader(directoryOrJar);
-              return new ESBeans(null, null, classLoader, evaluator);
-         } else {
-             throw new EcmaScriptException("Java class not found: '" + buildPrefix() +"'");
-         }    
-
-    }    
+              return new ESBeans(null, null, classLoader, getEvaluator());
+         }
+         throw new EcmaScriptException("Java class not found: '" + buildPrefix() +"'");
+     }    
     
    
     // overrides
@@ -112,12 +111,11 @@ public class ESBeans extends ESLoader {
        }
        
        try {
-           
            Object bean = Beans.instantiate(classLoader, beanName);
            if (debugJavaAccess) {
                 System.out.println(" ** Bean '" + beanName + "' created");
            }
-           value = new ESWrapper(bean, evaluator, true);
+           value = new ESWrapper(bean, getEvaluator(), true);
        } catch (ClassNotFoundException e) {
            throw new EcmaScriptException("Bean '" + beanName + "' not found: " + e);
        } catch (IOException e) {

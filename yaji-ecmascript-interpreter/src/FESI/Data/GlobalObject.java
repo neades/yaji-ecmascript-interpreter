@@ -20,27 +20,47 @@ package FESI.Data;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.EcmaScriptParseException;
 import FESI.Exceptions.ProgrammingError;
+import FESI.Interpreter.EvaluationSource;
 import FESI.Interpreter.Evaluator;
 
 /**
  * Implements the EmcaScript 'global' object
  */
 public class GlobalObject extends ObjectPrototype {
-     
-    static private final String VALUEstring = ("value").intern();
-    static private final int VALUEhash = VALUEstring.hashCode();
-    static private final String ERRORstring = ("error").intern();
-    static private final int ERRORhash = ERRORstring.hashCode();
-    	
+    private static final long serialVersionUID = -4033899977752030036L;
+    static final String VALUEstring = ("value").intern();
+    static final int VALUEhash = VALUEstring.hashCode();
+    static final String ERRORstring = ("error").intern();
+    static final int ERRORhash = ERRORstring.hashCode();
+
     private GlobalObject(ESObject prototype, Evaluator evaluator) {
         super(prototype, evaluator);
     }
-	
+
+    public void putProperty(String propertyName, ESValue propertyValue, int hash) throws EcmaScriptException {
+		StringBuilder sb = new StringBuilder(64);
+		sb.append("Warning, setting property [");
+		sb.append(propertyName);
+		sb.append("] on GLOBAL SCOPE within context [");
+		sb.append(getEvaluator().getThisObject());
+		sb.append("]\n");
+
+		EvaluationSource currentEvaluationSource = getEvaluator()
+				.getCurrentEvaluationSource();
+		if (currentEvaluationSource != null) {
+			sb.append(currentEvaluationSource.toString());
+		}
+
+		getEvaluator().getLog().asWarning(sb.toString());
+
+		super.putProperty(propertyName, propertyValue, hash);
+    }
+
     /**
      * Create the single global object
      * @param evaluator theEvaluator
      * @return the 'global' singleton
-     */ 
+     */
     static public GlobalObject makeGlobalObject(Evaluator evaluator) {
 
         GlobalObject go = null;
@@ -48,56 +68,60 @@ public class GlobalObject extends ObjectPrototype {
 
             // For objectPrototype
             class ObjectPrototypeToString extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 ObjectPrototypeToString(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
-                public ESValue callFunction(ESObject thisObject, 
+                public ESValue callFunction(ESObject thisObject,
                                         ESValue[] arguments)
-                       throws EcmaScriptException { 
+                       throws EcmaScriptException {
                    String result = "[object " + thisObject.getESClassName() +"]";
                    return new ESString(result);
                 }
             }
             class ObjectPrototypeValueOf extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 ObjectPrototypeValueOf(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
-                public ESValue callFunction(ESObject thisObject, 
+                public ESValue callFunction(ESObject thisObject,
                                                 ESValue[] arguments)
-                       throws EcmaScriptException { 
+                       throws EcmaScriptException {
                    return thisObject;
                 }
             }
-            
-            
+
+
 
 
             // For functionPrototype
             class FunctionPrototypeToString extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 FunctionPrototypeToString(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
-                public ESValue callFunction(ESObject thisObject, 
+                public ESValue callFunction(ESObject thisObject,
                                         ESValue[] arguments)
-                       throws EcmaScriptException { 
-                   String s = "function " + 
+                       throws EcmaScriptException {
+                   String s = "function " +
                            ((FunctionPrototype) thisObject).getFunctionName() +
                            ((FunctionPrototype) thisObject).getFunctionParametersString() +
                            ((FunctionPrototype) thisObject).getFunctionImplementationString() ;
                    return new ESString(s);
                 }
             }
-           
-            
+
+
             // For GlobalObject
             class GlobalObjectThrowError extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 GlobalObjectThrowError(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
-                public ESValue callFunction(ESObject thisObject, 
+                public ESValue callFunction(ESObject thisObject,
                                         ESValue[] arguments)
-                       throws EcmaScriptException { 
-                   ESObject result = ObjectObject.createObject(this.evaluator);
+                       throws EcmaScriptException {
+                   ObjectObject.createObject(this.getEvaluator());
                    if (arguments.length<1) {
                        throw new EcmaScriptException("Exception thrown by throwError");
                    }
@@ -105,9 +129,9 @@ public class GlobalObject extends ObjectPrototype {
                        Object o = ((ESWrapper) arguments[0]).getJavaObject();
                        if (o instanceof Throwable) {
                            throw new EcmaScriptException(o.toString(), (Throwable) o);
-                       } else {
-                           throw new EcmaScriptException(o.toString());
                        }
+                       throw new EcmaScriptException(o.toString());
+
                    }
                    String text = arguments[0].toString();
                    throw new EcmaScriptException(text);
@@ -115,13 +139,14 @@ public class GlobalObject extends ObjectPrototype {
             }
 
             class GlobalObjectTryEval extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 GlobalObjectTryEval(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
-                public ESValue callFunction(ESObject thisObject, 
+                public ESValue callFunction(ESObject thisObject,
                                         ESValue[] arguments)
-                       throws EcmaScriptException { 
-                   ESObject result = ObjectObject.createObject(this.evaluator);
+                       throws EcmaScriptException {
+                   ESObject result = ObjectObject.createObject(this.getEvaluator());
                    if (arguments.length<1) {
                        result.putProperty(ERRORstring,ESNull.theNull,ERRORhash);
                        return result;
@@ -134,14 +159,14 @@ public class GlobalObject extends ObjectPrototype {
                    String program = arguments[0].toString();
                    ESValue value = ESUndefined.theUndefined;
                    try {
-                      value = this.evaluator.evaluateEvalString(program);
+                      value = this.getEvaluator().evaluateEvalString(program);
                    } catch (EcmaScriptParseException e) {
                        e.setNeverIncomplete();
                        if (arguments.length>1) {
                            result.putProperty(VALUEstring,arguments[1],VALUEhash);
                        }
                        result.putProperty(ERRORstring,
-                                       ESLoader.normalizeValue(e,this.evaluator),
+                                       ESLoader.normalizeValue(e,this.getEvaluator()),
                                        ERRORhash);
                        return result;
                    } catch (EcmaScriptException e) {
@@ -149,7 +174,7 @@ public class GlobalObject extends ObjectPrototype {
                            result.putProperty(VALUEstring,arguments[1],VALUEhash);
                        }
                        result.putProperty(ERRORstring,
-                                       ESLoader.normalizeValue(e,this.evaluator),
+                                       ESLoader.normalizeValue(e,this.getEvaluator()),
                                        ERRORhash);
                        return result;
                    }
@@ -158,41 +183,43 @@ public class GlobalObject extends ObjectPrototype {
                    return result;
                 }
             }
-            
+
             class GlobalObjectEval extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 GlobalObjectEval(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
-                public ESValue callFunction(ESObject thisObject, 
+                public ESValue callFunction(ESObject thisObject,
                                         ESValue[] arguments)
-                       throws EcmaScriptException { 
+                       throws EcmaScriptException {
                    if (arguments.length<1) return ESUndefined.theUndefined;
                    if (!(arguments[0] instanceof ESString)) return arguments[0];
                    String program = arguments[0].toString();
                    ESValue value = ESUndefined.theUndefined;
                    try {
-                      value = this.evaluator.evaluateEvalString(program);
+                      value = this.getEvaluator().evaluateEvalString(program);
                    } catch (EcmaScriptParseException e) {
                        e.setNeverIncomplete();
                        throw e;
-                   }  
-                   return value;                  
+                   }
+                   return value;
                 }
             }
 
             class GlobalObjectParseInt extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 GlobalObjectParseInt(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 2);
                 }
-                public ESValue callFunction(ESObject thisObject, 
+                public ESValue callFunction(ESObject thisObject,
                                         ESValue[] arguments)
-                       throws EcmaScriptException { 
+                       throws EcmaScriptException {
                    if (arguments.length<1) return ESUndefined.theUndefined;
                    int radix = 10;
                    String s = arguments[0].toString().trim();
                    if (arguments.length>1) {
                        radix = arguments[1].toInt32();
-                       if (radix<2 || radix>36) return new ESNumber(Double.NaN);
+                       if (radix<2 || radix>36) return ESNumber.valueOf(Double.NaN);
                        if (radix == 16) {
                            if (s.startsWith("0x") || s.startsWith("0X")) {
                                s=s.substring(2);
@@ -223,25 +250,30 @@ public class GlobalObject extends ObjectPrototype {
                       case 16:
                           if ((c<'0' || '9'<c) && (c<'a' || 'f'<c) && (c<'A' || 'F'<c)) k=i;
                           break;
-                      default: 
+                      default:
                           throw new EcmaScriptException("Only radix 2,8,10 and 16 supported");
                        }
                    }
                    if (k>0) s = s.substring(0,k);
                    if (s.length()>0) {
-                      try {d = (double) Long.parseLong(s,radix);} catch (NumberFormatException e) {};
+                      try {
+                      	d = Long.parseLong(s,radix);
+                      } catch (NumberFormatException e) {
+                    	// do nothing
+                      }
                   }
-                   return new ESNumber(d);
+                   return ESNumber.valueOf(d);
                 }
             }
-            
+
             class GlobalObjectParseFloat extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 GlobalObjectParseFloat(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
-                public ESValue callFunction(ESObject thisObject, 
+                public ESValue callFunction(ESObject thisObject,
                                         ESValue[] arguments)
-                       throws EcmaScriptException { 
+                       throws EcmaScriptException {
                    if (arguments.length<1) return ESUndefined.theUndefined;
                    String s = arguments[0].toString().trim();
                    Double d = new Double(Double.NaN);
@@ -266,92 +298,93 @@ public class GlobalObject extends ObjectPrototype {
                    }
                    // System.out.println("i="+i+", s="+s);
                    s = s.substring(0,i);
-                   try {d = Double.valueOf(s); } catch (NumberFormatException e) {};
-                   return new ESNumber(d.doubleValue());
+                   try {d = Double.valueOf(s); } catch (NumberFormatException e) {
+                	// do nothing
+                   }
+                   return ESNumber.valueOf(d.doubleValue());
                 }
             }
-            
+
             class GlobalObjectEscape extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 GlobalObjectEscape(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
-                public ESValue callFunction(ESObject thisObject, 
-                                        ESValue[] arguments)
-                       throws EcmaScriptException { 
-                    if (arguments.length<=0) {
-                        return ESUndefined.theUndefined;
-                    } else {
-                        StringBuffer dst = new StringBuffer();
-                        String src = arguments[0].toString();
-                        for (int i =0; i<src.length(); i++) {
-                            char c = src.charAt(i);
-                            if (('a'<=c && c<='z') ||
-                                ('A'<=c && c<='Z') ||
-                                ('0'<=c && c<='9') ||
-                                c=='@' || c =='*' ||
-                                c=='_' || c =='+' ||
-                                c=='-' || c =='.' ||
-                                c=='/') {
-                                    dst.append(c);
-                           } else if (c<= (char) 0xF) {
-                               dst.append("%0" + Integer.toHexString(c));
-                           } else if (c<= (char) 0xFF) {
-                               dst.append("%" + Integer.toHexString(c));
-                           } else if (c<= (char) 0xFFF) {
-                               dst.append("%u0" + Integer.toHexString(c));
-                           } else {
-                               dst.append("%u" + Integer.toHexString(c));
-                           }
+                public ESValue callFunction(ESObject thisObject, ESValue[] arguments) throws EcmaScriptException {
+                    if (arguments.length <= 0) { return ESUndefined.theUndefined; }
+                    String src = arguments[0].toString();
+                    final int srcLength = src.length();
+                    StringBuilder dst = new StringBuilder(srcLength > 16 ? srcLength : 16);
+                    for (int i = 0; i < srcLength; i++) {
+                        char c = src.charAt(i);
+                        if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9') || c == '@' || c == '*' || c == '_' || c == '+'
+                                || c == '-' || c == '.' || c == '/') {
+                            dst.append(c);
+                        } else if (c <= (char) 0xF) {
+                            dst.append("%0" + Integer.toHexString(c));
+                        } else if (c <= (char) 0xFF) {
+                            dst.append("%" + Integer.toHexString(c));
+                        } else if (c <= (char) 0xFFF) {
+                            dst.append("%u0" + Integer.toHexString(c));
+                        } else {
+                            dst.append("%u" + Integer.toHexString(c));
                         }
-                        return new ESString(dst.toString());
                     }
+                    return new ESString(dst.toString());
+
                 }
             }
-            
-            
+
+
             class GlobalObjectUnescape extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 GlobalObjectUnescape(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
-                public ESValue callFunction(ESObject thisObject, 
+                public ESValue callFunction(ESObject thisObject,
                                         ESValue[] arguments)
-                       throws EcmaScriptException { 
+                       throws EcmaScriptException {
                     if (arguments.length<=0) {
-                        return ESUndefined.theUndefined;
-                    } else {
-                        StringBuffer dst = new StringBuffer();
-                        String src = arguments[0].toString();
-                        for (int i =0; i<src.length(); i++) {
-                            char c = src.charAt(i);
-                            if (c == '%') {
-                                StringBuffer d = new StringBuffer();  
-                                c = src.charAt(++i); // May raise exception
-                                if (c == 'u' || c == 'U') {
-                                    d.append(src.charAt(++i)); // May raise exception
-                                    d.append(src.charAt(++i)); // May raise exception
-                                    d.append(src.charAt(++i)); // May raise exception
-                                    d.append(src.charAt(++i)); // May raise exception
-                                } else {
-                                    d.append(src.charAt(i)); // May raise exception
-                                    d.append(src.charAt(++i)); // May raise exception
-                                }
-                                c = (char) Integer.parseInt(d.toString(), 16);
-                                    
-                            } 
-                            dst.append(c);
+                        return ESUndefined.theUndefined; }
+                    StringBuilder dst = new StringBuilder();
+                    String src = arguments[0].toString();
+                    for (int i = 0; i < src.length(); i++) {
+                        char c = src.charAt(i);
+                        if (c == '%') {
+                            StringBuilder d = new StringBuilder();
+                            c = src.charAt(++i); // May raise exception
+                            if (c == 'u' || c == 'U') {
+                                d.append(src.charAt(++i)); // May raise
+                                                           // exception
+                                d.append(src.charAt(++i)); // May raise
+                                                           // exception
+                                d.append(src.charAt(++i)); // May raise
+                                                           // exception
+                                d.append(src.charAt(++i)); // May raise
+                                                           // exception
+                            } else {
+                                d.append(src.charAt(i)); // May raise exception
+                                d.append(src.charAt(++i)); // May raise
+                                                           // exception
+                            }
+                            c = (char) Integer.parseInt(d.toString(), 16);
+
                         }
-                        return new ESString(dst.toString());
+                        dst.append(c);
                     }
+                    return new ESString(dst.toString());
+
                 }
             }
 
             class GlobalObjectIsNaN extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 GlobalObjectIsNaN(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
-                public ESValue callFunction(ESObject thisObject, 
+                public ESValue callFunction(ESObject thisObject,
                                         ESValue[] arguments)
-                       throws EcmaScriptException { 
+                       throws EcmaScriptException {
                    if (arguments.length<1) return ESUndefined.theUndefined;
                    double d = arguments[0].doubleValue();
                    return ESBoolean.makeBoolean(Double.isNaN(d));
@@ -359,79 +392,80 @@ public class GlobalObject extends ObjectPrototype {
             }
 
             class GlobalObjectIsFinite extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 GlobalObjectIsFinite(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
-                public ESValue callFunction(ESObject thisObject, 
+                public ESValue callFunction(ESObject thisObject,
                                         ESValue[] arguments)
-                       throws EcmaScriptException { 
+                       throws EcmaScriptException {
                    if (arguments.length<1) return ESUndefined.theUndefined;
                    double d = arguments[0].doubleValue();
                    return ESBoolean.makeBoolean(!Double.isInfinite(d));
                 }
             }
-            
-            
+
+
             // Create object (not yet usable!) in right order for
             // property chain
             ObjectPrototype objectPrototype = new ObjectPrototype(null, evaluator);
             FunctionPrototype functionPrototype = new FunctionPrototype(objectPrototype, evaluator, "[Function Prototype]", 0);
             ObjectObject objectObject = new ObjectObject(functionPrototype, evaluator);
             FunctionObject functionObject = new FunctionObject(functionPrototype, evaluator);
-            
-            StringObject stringObject = 
+
+            StringObject stringObject =
                 StringObject.makeStringObject(evaluator, objectPrototype, functionPrototype);
-            NumberObject numberObject = 
+            NumberObject numberObject =
                 NumberObject.makeNumberObject(evaluator, objectPrototype, functionPrototype);
-            BooleanObject booleanObject = 
+            BooleanObject booleanObject =
                 BooleanObject.makeBooleanObject(evaluator, objectPrototype, functionPrototype);
-            ArrayObject arrayObject = 
+            ArrayObject arrayObject =
                 ArrayObject.makeArrayObject(evaluator, objectPrototype, functionPrototype);
-            DateObject dateObject = 
+            DateObject dateObject =
                 DateObject.makeDateObject(evaluator, objectPrototype, functionPrototype);
-            
+
             go = new GlobalObject(objectPrototype, evaluator);
-            
+
             // Set built-in properties
             objectObject.putHiddenProperty("prototype",objectPrototype);
-            
+
             objectPrototype.putHiddenProperty("constructor",objectObject);
-            objectPrototype.putHiddenProperty("toString", 
+            objectPrototype.putHiddenProperty("toString",
                new ObjectPrototypeToString("toString", evaluator, functionPrototype));
             objectPrototype.putHiddenProperty("valueOf",
                new ObjectPrototypeValueOf("valueOf", evaluator, functionPrototype));
-            
+
             functionPrototype.putHiddenProperty("constructor",functionObject);
-            functionPrototype.putHiddenProperty("toString", 
+            functionPrototype.putHiddenProperty("toString",
                new FunctionPrototypeToString("toString", evaluator, functionPrototype));
-            
+
             functionObject.putHiddenProperty("prototype",functionPrototype);
-            functionObject.putHiddenProperty("length",new ESNumber(1));
-  
+            functionObject.putHiddenProperty("length",ESNumber.valueOf(1));
+
 
             // Save system object so that they can be quickly found
             evaluator.setObjectPrototype(objectPrototype);
             evaluator.setFunctionPrototype(functionPrototype);
             evaluator.setFunctionObject(functionObject);
-        
+
             // Populate the global object
-            go.putHiddenProperty("throwError", 
+            go.putHiddenProperty("throwError",
                     new GlobalObjectThrowError("throwError", evaluator, functionPrototype));
-            go.putHiddenProperty("tryEval", 
+            go.putHiddenProperty("tryEval",
                     new GlobalObjectTryEval("tryEval", evaluator, functionPrototype));
-            go.putHiddenProperty("eval", 
+            go.putHiddenProperty("eval",
                     new GlobalObjectEval("eval", evaluator, functionPrototype));
-            go.putHiddenProperty("parseInt", 
+            go.putHiddenProperty("parseInt",
                     new GlobalObjectParseInt("parseInt", evaluator, functionPrototype));
-            go.putHiddenProperty("parseFloat", 
+            go.putHiddenProperty("parseFloat",
                     new GlobalObjectParseFloat("parseFloat", evaluator, functionPrototype));
-            go.putHiddenProperty("escape", 
+            go.putHiddenProperty("escape",
                     new GlobalObjectEscape("escape", evaluator, functionPrototype));
-            go.putHiddenProperty("unescape", 
+            go.putHiddenProperty("unescape",
                     new GlobalObjectUnescape("unescape", evaluator, functionPrototype));
-            go.putHiddenProperty("isNaN", 
+            go.putHiddenProperty("isNaN",
                     new GlobalObjectIsNaN("isNaN", evaluator, functionPrototype));
-            go.putHiddenProperty("isFinite", 
+            go.putHiddenProperty("isFinite",
                     new GlobalObjectIsFinite("isFinite", evaluator, functionPrototype));
 
             go.putHiddenProperty("Object", objectObject);
@@ -442,12 +476,10 @@ public class GlobalObject extends ObjectPrototype {
             go.putHiddenProperty("Array", arrayObject);
             go.putHiddenProperty("Date", dateObject);
 
-            go.putHiddenProperty("NaN", new ESNumber(Double.NaN));
-            go.putHiddenProperty("Infinity", new ESNumber(Double.POSITIVE_INFINITY));
-            go.putHiddenProperty("undefined", ESUndefined.theUndefined);
+            go.putHiddenProperty("NaN", ESNumber.valueOf(Double.NaN));
+            go.putHiddenProperty("Infinity", ESNumber.valueOf(Double.POSITIVE_INFINITY));
             go.putHiddenProperty("Array", ArrayObject.makeArrayObject(evaluator, objectPrototype, functionPrototype));
             go.putHiddenProperty("Math", MathObject.makeMathObject(evaluator, objectPrototype, functionPrototype));
-        
         } catch (EcmaScriptException e) {
             e.printStackTrace();
             throw new ProgrammingError(e.getMessage());

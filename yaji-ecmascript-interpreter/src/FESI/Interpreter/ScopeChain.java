@@ -26,17 +26,18 @@ import FESI.Exceptions.EcmaScriptException;
  * The scope chaine has established by WITH statements. Used to 
  * lookup values by name.
  */
-public class ScopeChain {
-    private ScopeChain previousElement;
-    private ESObject thisElement;
-    
+public class ScopeChain implements java.io.Serializable {
+    private static final long serialVersionUID = -6458140452839959671L;
+    private final ScopeChain previousElement;
+    private final ESObject thisElement;
+
     /**
      * CReate a new scope chain linked to a previous one (which
      * is null only for the topmost chain)
      * @param thisElement Object to look at at this level
      * @param previousElement previous object in scope chain
      */
-    ScopeChain(ESObject thisElement, ScopeChain previousElement) {
+    public ScopeChain(ESObject thisElement, ScopeChain previousElement) {
         this.previousElement = previousElement;
         this.thisElement = thisElement;
     }

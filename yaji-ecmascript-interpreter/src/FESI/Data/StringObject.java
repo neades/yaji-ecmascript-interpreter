@@ -27,34 +27,40 @@ import FESI.Interpreter.Evaluator;
 public class StringObject extends BuiltinFunctionObject {
 
 
+    
+    private static final long serialVersionUID = -5722531882648574621L;
+
     private StringObject(ESObject prototype, Evaluator evaluator) {
         super(prototype, evaluator, "String", 1);
     }
 
     // overrides
+    @Override
     public String toString() {
         return "<String>";
     }
 
     // overrides
+    @Override
     public ESValue callFunction(ESObject thisObject,
                          ESValue[] arguments)
                                         throws EcmaScriptException {
          if (arguments.length==0) {
              return new ESString("");
-         } else {
-             return new ESString(arguments[0].toString());
          }
+         return new ESString(arguments[0].toString());
+
     }
 
 
     // overrides
+    @Override
     public ESObject doConstruct(ESObject thisObject,
                               ESValue[] arguments)
                                         throws EcmaScriptException {
          StringPrototype theObject = null;
-         ESObject sp = evaluator.getStringPrototype();
-         theObject= new StringPrototype(sp, evaluator);
+         ESObject sp = getEvaluator().getStringPrototype();
+         theObject= new StringPrototype(sp, getEvaluator());
          if (arguments.length>0) {
              theObject.value = new ESString(arguments[0].toString());
          } else {
@@ -82,9 +88,11 @@ public class StringObject extends BuiltinFunctionObject {
         try {
             // For stringPrototype
             class StringPrototypeToString extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 StringPrototypeToString(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
+                @Override
                 public ESValue callFunction(ESObject thisObject,
                                         ESValue[] arguments)
                        throws EcmaScriptException {
@@ -93,9 +101,11 @@ public class StringObject extends BuiltinFunctionObject {
             }
 
             class StringPrototypeValueOf extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 StringPrototypeValueOf(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
+                @Override
                 public ESValue callFunction(ESObject thisObject,
                                                 ESValue[] arguments)
                        throws EcmaScriptException {
@@ -104,9 +114,11 @@ public class StringObject extends BuiltinFunctionObject {
             }
 
             class StringPrototypeCharAt extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 StringPrototypeCharAt(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
+                @Override
                 public ESValue callFunction(ESObject thisObject,
                                                 ESValue[] arguments)
                        throws EcmaScriptException {
@@ -118,16 +130,17 @@ public class StringObject extends BuiltinFunctionObject {
                     if (pos>=0 && pos <str.length()) {
                         char c[] = {str.charAt(pos)};
                         return new ESString(new String(c));
-                    } else {
-                        return new ESString("");
                     }
+                    return new ESString("");
                 }
             }
 
             class StringPrototypeCharCodeAt extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 StringPrototypeCharCodeAt(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
+                @Override
                 public ESValue callFunction(ESObject thisObject,
                                                 ESValue[] arguments)
                        throws EcmaScriptException {
@@ -138,67 +151,74 @@ public class StringObject extends BuiltinFunctionObject {
                     }
                     if (pos>=0 && pos <str.length()) {
                         char c = str.charAt(pos);
-                        return new ESNumber((double) c);
-                    } else {
-                        return new ESNumber(Double.NaN);
+                        return ESNumber.valueOf(c);
                     }
+                    return ESNumber.valueOf(Double.NaN);
                 }
             }
 
             class StringPrototypeIndexOf extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 StringPrototypeIndexOf(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
+                @Override
                 public ESValue callFunction(ESObject thisObject,
                                                 ESValue[] arguments)
                        throws EcmaScriptException {
                     String str = thisObject.toString();
                     int pos = 0;
                     if (arguments.length<=0) {
-                        return new ESNumber(-1);
+                        return ESNumber.valueOf(-1);
                     }
                     String searched = arguments[0].toString();
                     if (arguments.length>1) {
                         pos = arguments[1].toInt32();
                     }
                     int res = str.indexOf(searched, pos);
-                     return new ESNumber(res);
+                     return ESNumber.valueOf(res);
                 }
             }
 
             class StringPrototypeLastIndexOf extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 StringPrototypeLastIndexOf(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
+                @Override
                 public ESValue callFunction(ESObject thisObject,
                                                 ESValue[] arguments)
                        throws EcmaScriptException {
                     String str = thisObject.toString();
                     int pos = str.length();
                     if (arguments.length<=0) {
-                        return new ESNumber(-1);
+                        return ESNumber.valueOf(-1);
                     }
                     String searched = arguments[0].toString();
                     if (arguments.length>1) {
                         double p = arguments[1].doubleValue();
-                        if (!Double.isNaN(p)) pos = arguments[1].toInt32();
+                        if (!Double.isNaN(p)) {
+                            pos = arguments[1].toInt32();
+                        }
                     }
                     int res = str.lastIndexOf(searched, pos);
-                    return new ESNumber(res);
+                    return ESNumber.valueOf(res);
                 }
             }
 
             // This code is replaced by the ReegExp variant when RegExp is loaded
             class StringPrototypeSplit extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 StringPrototypeSplit(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
+                @Override
                 public ESValue callFunction(ESObject thisObject,
                                                 ESValue[] arguments)
                        throws EcmaScriptException {
                     String str = thisObject.toString();
-                    ESObject ap = this.evaluator.getArrayPrototype();
-                    ArrayPrototype theArray = new ArrayPrototype(ap, this.evaluator);
+                    ESObject ap = this.getEvaluator().getArrayPrototype();
+                    ArrayPrototype theArray = new ArrayPrototype(ap, this.getEvaluator());
                     if (arguments.length<=0) {
                         theArray.setSize(1);
                         theArray.setElementAt(thisObject, 0);
@@ -216,7 +236,9 @@ public class StringObject extends BuiltinFunctionObject {
                             int start = 0;
                              while (start<str.length()) {
                                 int pos = str.indexOf(sep, start);
-                                if (pos<0) pos = str.length();
+                                if (pos<0) {
+                                    pos = str.length();
+                                }
                                 // System.out.println("start: " + start + ", pos: " + pos);
                                 theArray.setSize(i+1);
                                 theArray.setElementAt(
@@ -231,9 +253,11 @@ public class StringObject extends BuiltinFunctionObject {
             }
 
             class StringPrototypeSubstring extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 StringPrototypeSubstring(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
+                @Override
                 public ESValue callFunction(ESObject thisObject,
                                                 ESValue[] arguments)
                        throws EcmaScriptException {
@@ -243,12 +267,18 @@ public class StringObject extends BuiltinFunctionObject {
                     if (arguments.length>0) {
                         start = arguments[0].toInt32();
                     }
-                    if (start<0) start = 0;
-                    else if (start>str.length()) start = str.length();
+                    if (start<0) {
+                        start = 0;
+                    } else if (start>str.length()) {
+                        start = str.length();
+                    }
                     if (arguments.length>1) {
                         end = arguments[1].toInt32();
-                        if (end<0) end = 0;
-                        else if (end>str.length()) end = str.length();
+                        if (end<0) {
+                            end = 0;
+                        } else if (end>str.length()) {
+                            end = str.length();
+                        }
                     }
                     if (start>end) {
                         int x = start; start = end; end = x;
@@ -257,48 +287,12 @@ public class StringObject extends BuiltinFunctionObject {
                 }
             }
 
-          // Added substr from Wendell T. Hicken, not sure if in standard
-           class StringPrototypeSubstr extends BuiltinFunctionObject {
-                 StringPrototypeSubstr(String name, Evaluator evaluator, FunctionPrototype fp) {
-                     super(fp, evaluator, name, 1);
-                 }
-                 public ESValue callFunction(ESObject thisObject,
-                                                 ESValue[] arguments)
-                        throws EcmaScriptException {
-                     String str = thisObject.toString();
-                     int start = 0;
-                     if (arguments.length > 0) {
-                         start = arguments[0].toInt32();
-                     }
-                     int len = Integer.MAX_VALUE;
-                     if (arguments.length > 1) {
-                         len = arguments[1].toInt32();
-                     }
-
-                     if (start < 0) {
-                         // Note: This is how ECMA262 defines substr.
-                         // IE (Version 5.5) doesn't support negative numbers here,
-                         // just truncating to zero, like "substring"
-                         start = str.length()+start;
-
-                         if (start < 0) start = 0;
-                     }
-
-                     if (len < 0) len = 0;
-                     if (str.length()-start < len)
-                         len = str.length()-start;
-
-                     if (len <= 0) {
-                         return new ESString("");
-                     }
-                     return new ESString(str.substring(start, start+len));
-                 }
-            }
-
             class StringPrototypeToLowerCase extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 StringPrototypeToLowerCase(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
+                @Override
                 public ESValue callFunction(ESObject thisObject,
                                                 ESValue[] arguments)
                        throws EcmaScriptException {
@@ -309,9 +303,11 @@ public class StringObject extends BuiltinFunctionObject {
             }
 
             class StringPrototypeToUpperCase extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 StringPrototypeToUpperCase(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
+                @Override
                 public ESValue callFunction(ESObject thisObject,
                                                 ESValue[] arguments)
                        throws EcmaScriptException {
@@ -323,15 +319,17 @@ public class StringObject extends BuiltinFunctionObject {
 
             // For stringObject
             class StringObjectFromCharCode extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 StringObjectFromCharCode(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
+                @Override
                 public ESValue callFunction(ESObject thisObject,
                                         ESValue[] arguments)
                        throws EcmaScriptException {
-                     ESObject sp = this.evaluator.getStringPrototype();
-                     StringPrototype theObject= new StringPrototype(sp, this.evaluator);
-                     StringBuffer sb = new StringBuffer();
+                     ESObject sp = this.getEvaluator().getStringPrototype();
+                     StringPrototype theObject= new StringPrototype(sp, this.getEvaluator());
+                     StringBuilder sb = new StringBuilder();
                      for (int i =0; i<arguments.length; i++) {
                          char c = (char)(arguments[i].toUInt16());
                          sb.append(c);
@@ -342,7 +340,7 @@ public class StringObject extends BuiltinFunctionObject {
             }
 
             stringObject.putHiddenProperty("prototype",stringPrototype);
-            stringObject.putHiddenProperty("length",new ESNumber(1));
+            stringObject.putHiddenProperty("length",ESNumber.valueOf(1));
             stringObject.putHiddenProperty("fromCharCode",
                new StringObjectFromCharCode("fromCharCode", evaluator, functionPrototype));
 
@@ -363,8 +361,6 @@ public class StringObject extends BuiltinFunctionObject {
                new StringPrototypeSplit("split", evaluator, functionPrototype));
             stringPrototype.putHiddenProperty("substring",
                new StringPrototypeSubstring("substring", evaluator, functionPrototype));
-            stringPrototype.putHiddenProperty("substr",
-                new StringPrototypeSubstr("substr", evaluator,functionPrototype));
             stringPrototype.putHiddenProperty("toLowerCase",
                new StringPrototypeToLowerCase("toLowerCase", evaluator, functionPrototype));
             stringPrototype.putHiddenProperty("toUpperCase",

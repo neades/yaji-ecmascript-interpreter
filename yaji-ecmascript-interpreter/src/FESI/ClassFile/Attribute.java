@@ -54,7 +54,7 @@ abstract class Attribute {
 
     protected Attribute(String n, ClassFile cf) {
     	UTF8Constant utf8 = (UTF8Constant)
-    		cf.match(ConstantPoolEntry.CONSTANT_UTF8, (Object)n);
+    		cf.match(ConstantPoolEntry.CONSTANT_UTF8, n);
 
     	if (utf8 == null) utf8 = new UTF8Constant(n, cf);
     		

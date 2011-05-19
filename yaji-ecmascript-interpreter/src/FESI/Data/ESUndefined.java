@@ -1,5 +1,6 @@
 // ESUndefined.java
 // FESI Copyright (c) Jean-Marc Lugrin, 1999
+// Advanced FESI Copyright (c) Graham Technology, 2002
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -17,6 +18,8 @@
 
 package FESI.Data;
 
+import java.io.ObjectStreamException;
+
 import FESI.Exceptions.EcmaScriptException;
 
 
@@ -28,74 +31,121 @@ import FESI.Exceptions.EcmaScriptException;
  */
 public final class ESUndefined extends ESPrimitive {
 
-    /**
-     * the READ-ONLY undefined value
-     */
-    public static ESUndefined theUndefined = new ESUndefined(); 
-	
-    private ESUndefined() {
-    }	
-    
+	/**
+	 * the READ-ONLY undefined value
+	 */
+	public static ESUndefined theUndefined = new ESUndefined();
 
-    /**
-     * Implements a specific error message if an undfined value is called
-     * @param thisObject The object on which the call is made
-     * @param arguments The arguments of the function
-     * @exception EcmaScriptException Thrown to indicate call on undefined value
-     * @return never
-     */
-    public ESValue callFunction(ESObject thisObject, 
-                                ESValue[] arguments) 
-                            throws EcmaScriptException {
-         throw new EcmaScriptException("Function called on undefined value or property");
-    }    
+	private ESUndefined() {
+		// do nothing
+	}
 
-    /**
-     * Implements a specific error message if an undfined value is called via new
-     * @param thisObject The object on which the call is made
-     * @param arguments The arguments of the function
-     * @exception EcmaScriptException Thrown to indicate call on undefined value
-     * @return never
-     */
-    public ESObject doConstruct(ESObject thisObject, 
-                                ESValue[] arguments) 
-                            throws EcmaScriptException {
-         throw new EcmaScriptException("'new' called on undefined value or property");
-    }    
 
-    // overrides
-    public String toDetailString() {
-        return "ES:<undefined>";
-    }
+	/**
+	 * Implements a specific error message if an undfined value is called
+	 * @param thisObject The object on which the call is made
+	 * @param arguments The arguments of the function
+	 * @exception EcmaScriptException Thrown to indicate call on undefined value
+	 * @return never
+	 */
+	public ESValue callFunction(ESObject thisObject,
+			ESValue[] arguments)
+	throws EcmaScriptException {
+		throw new EcmaScriptException("Function called on undefined value or property");
+	}
 
-    // overrides
-    public int getTypeOf() {
-        return EStypeUndefined;
-       } 
+	/**
+	 * Implements a specific error message if an undfined value is called via new
+	 * @param thisObject The object on which the call is made
+	 * @param arguments The arguments of the function
+	 * @exception EcmaScriptException Thrown to indicate call on undefined value
+	 * @return never
+	 */
+	public ESObject doConstruct(ESObject thisObject,
+			ESValue[] arguments)
+	throws EcmaScriptException {
+		throw new EcmaScriptException("'new' called on undefined value or property");
+	}
 
-    // overrides
-    public String getTypeofString() {
-        return "undefined";
-    }
+	// overrides
+	public String toDetailString() {
+		return "ES:<undefined>";
+	}
 
-    // overrides
-    public String toString() {
-        return "undefined";
-    }
-    
-    // overrides
-    public double doubleValue() {
-        return Double.NaN;
-    }
+	// overrides
+	public int getTypeOf() {
+		return EStypeUndefined;
+	}
 
-    // overrides
-    public boolean booleanValue() {
-        return false;
-    }
+	// overrides
+	public String getTypeofString() {
+		return "undefined";
+	}
 
-    // overrides
-    public Object toJavaObject() {
-        return null; // should throw an error
-    }
+	// overrides
+	public String toString() {
+		return "undefined";
+	}
 
+	// overrides
+	public double doubleValue() {
+		return Double.NaN;
+	}
+
+	// overrides
+	public boolean booleanValue() {
+		return false;
+	}
+
+	// overrides
+	public Object toJavaObject() {
+		return null; // should throw an error
+	}
+
+	/**
+	 * Advanced FESI
+	 * GT Modified: 5/10/2002
+	 *              Serialisation of ESUndefined objects.
+	 *              writeReplace() and readResolve ensure that
+	 *              the reinstantiated ESUndefined will be the
+	 *              ESUndefined.theUndefined object
+	 *              @throws ObjectStreamException
+	 */
+	public Object writeReplace() throws ObjectStreamException
+	{
+		return new ESUndefinedReplace();
+	}
+
+	private static class ESUndefinedReplace implements java.io.Serializable
+	{
+		private static final long serialVersionUID = -1475304067161497230L;
+
+		ESUndefinedReplace()
+		{
+			// do nothing
+		}
+
+		/**
+		 * @throws ObjectStreamException
+		 */
+		public Object readResolve() throws ObjectStreamException
+		{
+			return ESUndefined.theUndefined;
+		}
+	}
+
+	/**
+	 * Advanced FESI
+	 * GT Modified: 12/10/2004
+	 * Support for subtypes (storing values in hashset)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode()
+	{
+		return 1;
+	}
+
+	public boolean equalsSameType(ESValue v2) {
+		return true;
+	}
 }

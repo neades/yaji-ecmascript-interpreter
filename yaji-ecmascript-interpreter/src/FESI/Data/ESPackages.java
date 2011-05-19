@@ -26,7 +26,8 @@ import FESI.Interpreter.LocalClassLoader;
  * Implements the object loader
  */
 public class ESPackages extends ESLoader {
-    
+    private static final long serialVersionUID = -6121538130460867220L;
+
     /**
      * Create the top level package loader (object Package)
      * @param evaluator the evaluator
@@ -63,9 +64,8 @@ public class ESPackages extends ESLoader {
     private Class loadClass(String className) throws ClassNotFoundException {
         if (classLoader == null) {
             return Class.forName(className);
-        } else {
-            return classLoader.loadClass(className); // use our own class loader
         }
+        return classLoader.loadClass(className); // use our own class loader        
     }
 
     // overrides
@@ -74,7 +74,7 @@ public class ESPackages extends ESLoader {
     // and returned (and will be used for example by the "new" operator).
     public ESValue getProperty(String propertyName, int hash) 
                             throws EcmaScriptException {
-        ESValue value = (ESValue) properties.get(propertyName, hash);
+        ESValue value = getPropertyMap().get(propertyName, hash);
         if (value == null) {
            String packageName = buildPrefix();
            String fullName = (packageName == null) ?  propertyName : (packageName + "." + propertyName);
@@ -83,16 +83,16 @@ public class ESPackages extends ESLoader {
                if (debugJavaAccess) {
                     System.out.println("** Class '" + fullName + "' loaded");
                }
-               value = new ESWrapper(cls, evaluator);
+               value = new ESWrapper(cls, getEvaluator());
            } catch (ClassNotFoundException e) {
                if (debugJavaAccess) {
                    System.out.println("** Could not load '" + fullName +
                                        "' by " + this);
                    System.out.println("** Exception: " + e);
                }
-               value = new ESPackages(propertyName, this, classLoader, evaluator);
+               value = new ESPackages(propertyName, this, classLoader, getEvaluator());
            }
-           properties.put(propertyName, hash, false, false, value); // Cache it for faster retrievial
+           getPropertyMap().put(propertyName, hash, false, false, value); // Cache it for faster retrievial
        } 
        return value;
     }
@@ -111,10 +111,10 @@ public class ESPackages extends ESLoader {
              String directoryOrJar = arguments[0].toString();
              LocalClassLoader classLoader =     
                      LocalClassLoader.makeLocalClassLoader(directoryOrJar);
-              return new ESPackages(null, null, classLoader, evaluator);
-         } else {
-             throw new EcmaScriptException("Java class not found: '" + buildPrefix() +"'");
-         }    
+              return new ESPackages(null, null, classLoader, getEvaluator());
+         }
+         throw new EcmaScriptException("Java class not found: '" + buildPrefix() +"'");
+           
     }    
         
     // overrides

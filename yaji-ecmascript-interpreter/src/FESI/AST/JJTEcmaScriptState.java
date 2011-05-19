@@ -2,9 +2,14 @@
 
 package FESI.AST;
 
-public class JJTEcmaScriptState {
-  private java.util.Stack nodes;
-  private java.util.Stack marks;
+
+/**
+ *              The JJTEcmaScriptState object implements the java.io.Serializable
+ */
+public class JJTEcmaScriptState implements java.io.Serializable {
+    private static final long serialVersionUID = -1384341816423710837L;
+private final java.util.Stack nodes;
+  private final java.util.Stack marks;
 
   private int sp;		// number of nodes on stack
   private int mk;		// current mark
@@ -75,7 +80,7 @@ public class JJTEcmaScriptState {
 
 
   public void openNodeScope(Node n) {
-    marks.push(new Integer(mk));
+    marks.push(Integer.valueOf(mk));
     mk = sp;
     n.jjtOpen();
   }

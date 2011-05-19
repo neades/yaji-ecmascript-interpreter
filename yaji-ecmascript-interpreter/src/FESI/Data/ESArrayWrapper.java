@@ -29,14 +29,16 @@ import FESI.Interpreter.ScopeChain;
 // Class to wrap a Java array as an EcmaScript object
 public class ESArrayWrapper extends ESObject {
 
+
+    private static final long serialVersionUID = -3203904964317381261L;
     // The java array
     protected Object javaArray;
-     
+
     /**
      * Create a new array wrapper
      * @param javaArray the java array to wrap
      * @param evaluator the evaluator
-     */   
+     */
     public ESArrayWrapper(Object javaArray, Evaluator evaluator) {
         super(null, evaluator);
         this.javaArray = javaArray;
@@ -44,50 +46,50 @@ public class ESArrayWrapper extends ESObject {
             throw new ProgrammingError("Array wrapper used on non array object");
         }
     }
-	
+
     // overrides
+    @Override
     public ESObject getPrototype() {
         throw new ProgrammingError("Cannot get prototype of Array Wrapper");
     }
-    
+
     // overrides
+    @Override
     public String getESClassName() {
         return "Java Array";
     }
 
     // overrides
+    @Override
     public int getTypeOf() {
        return EStypeObject;
     }
 
-    
+
     // overrides
-    public void putProperty(String propertyName, ESValue propertyValue, int hash) 
-                                throws EcmaScriptException {
+    @Override
+    public void putProperty(String propertyName, ESValue propertyValue, int hash) throws EcmaScriptException {
         if (propertyName.equals("length")) {
             int length = (int) (((ESPrimitive) propertyValue).doubleValue());
-            if (length<0) {
-                throw new EcmaScriptException("Invalid length value: " + propertyValue);
-            }
+            if (length < 0) { throw new EcmaScriptException("Invalid length value: " + propertyValue); }
             throw new EcmaScriptException("length of Java Arrays is immutable");
-        } else {
-            int index = -1; // indicates not a valid index value
-            try {
-                index = Integer.parseInt(propertyName); // should be uint
-            } catch (NumberFormatException e) {
-            }
-           if (index<0) { 
-               throw new EcmaScriptException("Java Arrays accept only index properties");
-           } else {
-               putProperty(index, propertyValue);
-           }
-       }
+        }
+        int index = -1; // indicates not a valid index value
+        try {
+            index = Integer.parseInt(propertyName); // should be uint
+        } catch (NumberFormatException e) {
+            // do nothing
+        }
+        if (index < 0) { throw new EcmaScriptException("Java Arrays accept only index properties"); }
+        putProperty(index, propertyValue);
+
     }
 
     // overrides
-    public void putProperty(int index, ESValue propertyValue) 
+    @Override
+    public void putProperty(int index, ESValue propertyValue)
                                 throws EcmaScriptException {
-                                    
+
        int l = Array.getLength(javaArray);
        if (index>=l || index<0) {
            throw new EcmaScriptException("Index " + index + " outside of Java Arrays size of " + l);
@@ -97,47 +99,48 @@ public class ESArrayWrapper extends ESObject {
           Array.set(javaArray, index, obj);
        } catch (IllegalArgumentException e) {
            String type = "null";
-           if (obj!=null) type = ESLoader.typeName(obj.getClass());
-           throw new EcmaScriptException("Cannot store a " + type + 
+           if (obj!=null) {
+            type = ESLoader.typeName(obj.getClass());
+        }
+           throw new EcmaScriptException("Cannot store a " + type +
                        " in the java array " + ESLoader.typeName(javaArray.getClass()));
        }
     }
 
     // overrides
-    public ESValue getPropertyInScope(String propertyName, ScopeChain previousScope, int hash) 
+    @Override
+    public ESValue getPropertyInScope(String propertyName, ScopeChain previousScope, int hash)
                 throws EcmaScriptException {
         if (propertyName.equals("length")) {
-             return new ESNumber(Array.getLength(javaArray));
+             return ESNumber.valueOf(Array.getLength(javaArray));
         }
         // Do not examine the integer values...
         if (previousScope == null) {
           throw new EcmaScriptException("global variable '" + propertyName + "' does not have a value");
-        } else {
-            return previousScope.getValue(propertyName, hash);
         }
+        return previousScope.getValue(propertyName, hash);
+
     }
 
     // overrides
-    public ESValue getProperty(String propertyName, int hash) 
-                            throws EcmaScriptException {
-         if (propertyName.equals("length")) {
-             return new ESNumber(Array.getLength(javaArray));
-         } else {
-            int index = -1; // indicates not a valid index value
-            try {
-                index = Integer.parseInt(propertyName); // should be uint
-            } catch (NumberFormatException e) {
-            }
-            if (index<0) {
-               throw new EcmaScriptException("Java Arrays accept only index properties");
-            } else {
-               return getProperty(index);
-            }
-         }
+    @Override
+    public ESValue getProperty(String propertyName, int hash) throws EcmaScriptException {
+        if (propertyName.equals("length")) { return ESNumber.valueOf(Array.getLength(javaArray)); }
+        int index = -1; // indicates not a valid index value
+        try {
+            index = Integer.parseInt(propertyName); // should be uint
+        } catch (NumberFormatException e) {
+            // do nothing
+        }
+        if (index < 0) {
+            throw new EcmaScriptException("Java Arrays accept only index properties");
+        }
+        return getProperty(index);
      }
-     
+
     // overrides
-    public ESValue getProperty(int index) 
+    @Override
+    public ESValue getProperty(int index)
                             throws EcmaScriptException {
        Object theElement = null;
        int l = Array.getLength(javaArray);
@@ -145,94 +148,97 @@ public class ESArrayWrapper extends ESObject {
                throw new EcmaScriptException("Java Array index " + index + " is out of range " + l);
        }
        theElement = Array.get(javaArray,index);
-       return ESLoader.normalizeValue(theElement, evaluator);
+       return ESLoader.normalizeValue(theElement, getEvaluator());
      }
-     
+
     // overrides
-    public boolean hasProperty(String propertyName, int hash) 
-                            throws EcmaScriptException {
-         if (propertyName.equals("length")) {
-             return true;
-         } else {
-            int index = -1; // indicates not a valid index value
-            try {
-                index = Integer.parseInt(propertyName); // should be uint
-            } catch (NumberFormatException e) {
-            }
-            if (index<0) {
-               return false;
-            } else {
-               return (index>=0) && (index<Array.getLength(javaArray));
-            }
-         }
+    @Override
+    public boolean hasProperty(String propertyName, int hash) throws EcmaScriptException {
+        if (propertyName.equals("length")) { return true; }
+        int index = -1; // indicates not a valid index value
+        try {
+            index = Integer.parseInt(propertyName); // should be uint
+        } catch (NumberFormatException e) {
+            // do nothing
+        }
+        if (index < 0) { return false; }
+        return (index >= 0) && (index < Array.getLength(javaArray));
+
+
     }
 
     // overrides
     // Skip elements which were never set (are null), as Netscape
+    @Override
     public Enumeration getProperties() {
          return new Enumeration() {
                 int nextIndex = 0;
                 int length = Array.getLength(javaArray);
                 public boolean hasMoreElements() {
                     while ( (nextIndex<length) &&
-                            (Array.get(javaArray,nextIndex) == null))
-                         nextIndex++;       
+                            (Array.get(javaArray,nextIndex) == null)) {
+                        nextIndex++;
+                    }
                     return nextIndex<length;
                 }
                 public Object nextElement() {
-                    if (hasMoreElements()) {
-                        return new ESNumber(nextIndex++);
-                     } else {
-                         throw new java.util.NoSuchElementException();
-                     }
-                 }
+                if (hasMoreElements()) { return ESNumber.valueOf(nextIndex++); }
+                throw new java.util.NoSuchElementException();
+
+            }
          };
       }
-    
+
     /**
      * Get all properties (including hidden ones), for the command
-     * @listall of the interpreter. 
-     * <P>An ESArrayWrapper has no prototype, but it has the hidden property LENGTH.
      *
-     * @return An enumeration of all properties (visible and hidden).  
+     * @listall of the interpreter.
+     *          <P>
+     *          An ESArrayWrapper has no prototype, but it has the hidden
+     *          property LENGTH.
+     *
+     * @return An enumeration of all properties (visible and hidden).
      */
+    @Override
     public Enumeration getAllProperties() {
          return new Enumeration() {
                 String [] specialProperties = getSpecialPropertyNames();
                 int specialEnumerator = 0;
-                Enumeration props = properties.keys(); // all of object properties
+                Enumeration props = getPropertyMap().keys(); // all of object properties
                 String currentKey = null;
-                int currentHash = 0;
                 int nextIndex = 0;
                 int length = Array.getLength(javaArray);
                 public boolean hasMoreElements() {
                     // OK if we already checked for a property and one exists
-                    if (currentKey != null) return true;
+                    if (currentKey != null) {
+                        return true;
+                    }
                     // loop on index properties
                     if (nextIndex<length) {
                         while ( (nextIndex<length) &&
-                                (Array.get(javaArray,nextIndex) == null))
+                                (Array.get(javaArray,nextIndex) == null)) {
                             // ignore null entries
-                            nextIndex++;       
+                            nextIndex++;
+                        }
                         if (nextIndex<length) {
                             currentKey = Integer.toString(nextIndex);
-                            currentHash = currentKey.hashCode();
-                            nextIndex++;       
+                            currentKey.hashCode();
+                            nextIndex++;
                             return true;
                         }
                     }
                     // Loop on special properties first
                     if (specialEnumerator < specialProperties.length) {
                         currentKey = specialProperties[specialEnumerator];
-                        currentHash = currentKey.hashCode();
+                        currentKey.hashCode();
                         specialEnumerator++;
                         return true;
                     }
                     // loop on standard or prototype properties
                     if (props.hasMoreElements()) {
                        currentKey = (String) props.nextElement();
-                       currentHash = currentKey.hashCode();
-                       return true;  
+                       currentKey.hashCode();
+                       return true;
                     }
                     return false;
                 }
@@ -240,81 +246,91 @@ public class ESArrayWrapper extends ESObject {
                     if (hasMoreElements()) {
                        String key = currentKey;
                        currentKey = null;
-                       return key; 
-                     } else {
-                         throw new java.util.NoSuchElementException();
+                       return key;
                      }
+                     throw new java.util.NoSuchElementException();
                  }
          };
       }
 
-    // overrides    
+    // overrides
+    @Override
     public String[] getSpecialPropertyNames() {
         String [] ns = {"length"};
         return ns;
     }
 
     // overrides
+    @Override
     public boolean isHiddenProperty(String propertyName, int hash) {
         return false;
     }
-        
+
     // overrides
-    public void putHiddenProperty(String propertyName, ESValue propertyValue) 
+    @Override
+    public void putHiddenProperty(String propertyName, ESValue propertyValue)
                                 throws EcmaScriptException {
         throw new ProgrammingError("Cannot put hidden property in " + this);
     }
 
     // overrides
-    public boolean deleteProperty(String propertyName, int hash) 
+    @Override
+    public boolean deleteProperty(String propertyName, int hash)
                                 throws EcmaScriptException {
         return !hasProperty(propertyName, hash);  // none can be deleted
     }
-    
+
     // overrides
-    public ESValue getDefaultValue(int hint) 
+    @Override
+    public ESValue getDefaultValue(int hint)
                                 throws EcmaScriptException {
         if (hint == EStypeString) {
             return new ESString(javaArray.toString());
-        } else {
-          throw new EcmaScriptException ("No default value for " + this + 
-                                     " and hint " + hint);
         }
+          throw new EcmaScriptException ("No default value for " + this +
+                                     " and hint " + hint);
+
     }
-    
-    public ESValue getDefaultValue() 
+
+    @Override
+    public ESValue getDefaultValue()
                                 throws EcmaScriptException {
         return this.getDefaultValue(EStypeString);
     }
-        
+
     // overrides
+    @Override
     public double doubleValue() {
-        double d = Double.NaN; 
+        double d = Double.NaN;
         return d;
     }
 
     // overrides
+    @Override
     public boolean booleanValue() {
-        return true; 
+        return true;
     }
 
     // overrides
+    @Override
     public String toString() {
         return (javaArray == null) ? "<?Array Wrapper to null?>" : "[object JavaArray]";
     }
-    
+
     // overrides
+    @Override
     public Object toJavaObject() {
         return javaArray;
     }
-     
+
     //public String getTypeofString() {
     //    return "JavaArray";
     //}
-  
+
     // overrides
+    @Override
     public String toDetailString() {
         return "ES:[" + getESClassName() + ":" + javaArray.toString() + "]";
     }
-    
+
 }

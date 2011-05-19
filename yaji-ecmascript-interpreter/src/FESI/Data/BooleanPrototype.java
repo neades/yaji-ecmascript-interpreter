@@ -24,57 +24,61 @@ import FESI.Interpreter.Evaluator;
  * Implements the prototype and is the class of all Boolean objects
  */
 class BooleanPrototype extends ESObject {
-
+    private static final long serialVersionUID = 6495065713332027767L;
     // The value
     protected ESBoolean value = ESBoolean.makeBoolean(false);
-     
+
     /** Create a new Boolean initialized to false
      * @param prototype the BooleanPrototype
      * @param evaluator the evaluator
-     */   
+     */
     BooleanPrototype(ESObject prototype, Evaluator evaluator) {
         super(prototype, evaluator);
     }
-    
+
     // overrides
+    @Override
     public String getESClassName() {
         return "Boolean";
     }
 
-    // overrides
-    public String toString(Evaluator evaluator) throws EcmaScriptException {
-         return value.toString();
-    }
+
 
     // overrides
+    @Override
     public double doubleValue() throws EcmaScriptException {
        return value.doubleValue();
     }
 
     // overrides
+    @Override
     public ESValue toESBoolean() throws EcmaScriptException {
        return value;
     }
 
     // overrides
+    @Override
     public boolean booleanValue() {
         return value.booleanValue();
     }
-    
+
     // overrides
+    @Override
     public Object toJavaObject() {
-        return new Boolean(value.booleanValue());
+        return Boolean.valueOf(value.booleanValue());
     }
 
     // overrides
+    @Override
     public String toDetailString() {
-        return "ES:[Object: builtin " + this.getClass().getName() + ":" + 
+        return "ES:[Object: builtin " + this.getClass().getName() + ":" +
             ((value == null) ? "null" : value.toString()) + "]";
     }
-    
+
     // overrides
+    @Override
     public boolean isBooleanValue() {
-        return true; 
+        return true;
     }
 
 }

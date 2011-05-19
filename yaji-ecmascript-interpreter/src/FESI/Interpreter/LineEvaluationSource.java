@@ -23,7 +23,7 @@ package FESI.Interpreter;
  */
 
 public class LineEvaluationSource extends EvaluationSource {
-    
+    private static final long serialVersionUID = 5359296622424415907L;
     private int theLineNumber;
      
     /**

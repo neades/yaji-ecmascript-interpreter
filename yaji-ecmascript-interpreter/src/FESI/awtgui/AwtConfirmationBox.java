@@ -91,7 +91,7 @@ public class AwtConfirmationBox implements ConfirmationBox {
               completed();
           }
       });
-      frame.show();
+      frame.setVisible(true);
    }
    
    private synchronized void completed() {

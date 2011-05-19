@@ -6,7 +6,10 @@ public class EcmaScriptDumpVisitor implements EcmaScriptVisitor
   private int indent = 0;
 
   private String indentString() {
-    StringBuffer sb = new StringBuffer();
+    if (indent <= 0) {
+        return "";
+    }
+    StringBuilder sb = new StringBuilder(indent);
     for (int i = 0; i < indent; ++i) {
       sb.append(" ");
     }
@@ -133,6 +136,13 @@ public class EcmaScriptDumpVisitor implements EcmaScriptVisitor
     return data;
   }
   public Object visit(ASTThisReference node, Object data) {
+    System.out.println(indentString() + node);
+    ++indent;
+    data = node.childrenAccept(this, data);
+    --indent;
+    return data;
+  }
+  public Object visit(ASTSuperReference node, Object data) {
     System.out.println(indentString() + node);
     ++indent;
     data = node.childrenAccept(this, data);

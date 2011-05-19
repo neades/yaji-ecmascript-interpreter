@@ -37,7 +37,7 @@ import FESI.Parser.ParseException;
  */
 public class FunctionObject extends BuiltinFunctionObject
         implements EcmaScriptTreeConstants {
-        
+    private static final long serialVersionUID = 8501827292633127950L;
     static boolean debugParse = false;
 
     FunctionObject(ESObject prototype, Evaluator evaluator) {
@@ -61,12 +61,11 @@ public class FunctionObject extends BuiltinFunctionObject
     public ESObject doConstruct(ESObject thisObject, 
                                 ESValue[] arguments) 
                                         throws EcmaScriptException {
-         ESObject fp = evaluator.getFunctionPrototype();
          ConstructedFunctionObject theFunction = null;
          ASTFormalParameterList fpl = null;
          ASTStatementList sl = null;
     
-         StringBuffer parameters = new StringBuffer();
+         StringBuilder parameters = new StringBuilder();
          int nArgs = arguments.length;
          int i;
          for (i=0; i<(nArgs-1); i++) {
@@ -75,14 +74,12 @@ public class FunctionObject extends BuiltinFunctionObject
              parameters.append(arg);
          }
          String body = arguments[i].toString();
+      
          
-         //System.out.println("P:'"+parameters+"'");
-         //System.out.println("B:'"+body+"'");
-         
-         String trimedParams = parameters.toString().trim();
+         String trimmedParams = parameters.toString().trim();
          
          String fullFunctionText = "function anonymous (" +
-                                    trimedParams +
+                                    trimmedParams +
                                     ") {" +
                                     body.toString() +
                                     "}";
@@ -91,11 +88,11 @@ public class FunctionObject extends BuiltinFunctionObject
          EcmaScript parser;
        
          // Special case for empty parameters
-         if (trimedParams.length()==0) {
+         if (trimmedParams.length()==0) {
             fpl = new ASTFormalParameterList(JJTFORMALPARAMETERLIST);
         } else {
               is = 
-                    new java.io.StringReader(trimedParams);
+                    new java.io.StringReader(trimmedParams);
               parser = new EcmaScript(is);
               try {
                   fpl = (ASTFormalParameterList) parser.FormalParameterList();
@@ -135,11 +132,11 @@ public class FunctionObject extends BuiltinFunctionObject
                new FunctionEvaluationSource(
                    new StringEvaluationSource(fullFunctionText,null),
                    "<anonymous function>");
-          EcmaScriptVariableVisitor varDeclarationVisitor = evaluator.getVarDeclarationVisitor();
+          EcmaScriptVariableVisitor varDeclarationVisitor = getEvaluator().getVarDeclarationVisitor();
           Vector variableNames = varDeclarationVisitor.processVariableDeclarations(sl, fes);
     
           theFunction = ConstructedFunctionObject.makeNewConstructedFunction(
-                        evaluator, 
+                        getEvaluator(), 
                         "anonymous", 
                         fes,
                         fullFunctionText,

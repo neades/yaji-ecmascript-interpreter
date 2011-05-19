@@ -78,7 +78,7 @@ public class AwtMessageBox implements MessageBox {
               completed();
           }
       });
-      frame.show();
+      frame.setVisible(true);
    }
    
    private synchronized void completed() {

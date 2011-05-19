@@ -160,7 +160,7 @@ public class Interpret implements InterpreterCommands {
   /**
    * Reset the system (including at initialization)
    */
-  protected void reset() throws EcmaScriptException {
+  protected void reset() {
 
     if (windowOnly) {
         if (console != null) {
@@ -393,14 +393,8 @@ public class Interpret implements InterpreterCommands {
       } // if
     }  // for
 
-    try {
-        reset();
-    } catch (EcmaScriptException e) {
-        errorStream.println("[[Error during initialization: " +e.getMessage() + "]]");
-        e.printStackTrace();
-        return;
-    }
-
+    reset();
+    
     // second pass to handle -o, -v and -D options and check other options validity
     // This pass validates the positional rules of the options
     OUTTWO: // for each argument
@@ -581,6 +575,8 @@ public class Interpret implements InterpreterCommands {
        String ARGSstring = ("args").intern();
        go.putProperty(ARGSstring, argsArray, ARGSstring.hashCode());
     } catch (EcmaScriptException e) {
+    	// do nothing
+    
     }
 
     // Third pass to load files
@@ -816,6 +812,8 @@ public class Interpret implements InterpreterCommands {
             document.putHiddenProperty("URL",
                            new ESString("module://" + moduleName));
           } catch (EcmaScriptException ignore) {
+        	// do nothing
+          
           }
         printStream.println("@@ Loading module '" + moduleName + "' . . .");
         startTime = System.currentTimeMillis();
@@ -837,6 +835,7 @@ public class Interpret implements InterpreterCommands {
                  document.putHiddenProperty("URL",
                         new ESString("module://<stdin>"));
           } catch (EcmaScriptException ignore) {
+        	// do nothing
           }
      }
   }
@@ -856,7 +855,9 @@ public class Interpret implements InterpreterCommands {
                 document.putHiddenProperty("URL",
                                new ESString("file://" + file.getCanonicalPath()));
               } catch (EcmaScriptException ignore) {
+            	// do nothing              
               } catch (IOException ignore) {
+            	// do nothing              
               }
               printStream.println("@@ Loading file '" + file.getPath() + "' . . .");
 
@@ -874,6 +875,7 @@ public class Interpret implements InterpreterCommands {
                    document.putHiddenProperty("URL",
                                 new ESString("file://<stdin>"));
                } catch (EcmaScriptException ignore) {
+            	// do nothing
                }
           }
       } else {
@@ -896,6 +898,7 @@ public class Interpret implements InterpreterCommands {
             document.putHiddenProperty("URL",
                            new ESString("source://" + source));
           } catch (EcmaScriptException ignore) {
+        	// do nothing
           }
           printStream.println("@@ Executing '" + source + "' . . .");
 
@@ -913,6 +916,7 @@ public class Interpret implements InterpreterCommands {
                document.putHiddenProperty("URL",
                             new ESString("file://<stdin>"));
            } catch (EcmaScriptException ignore) {
+        	// do nothing
            }
       }
       return 0;
@@ -940,7 +944,9 @@ public class Interpret implements InterpreterCommands {
                 document.putHiddenProperty("URL",
                                new ESString("file://" + file.getCanonicalPath()));
               } catch (EcmaScriptException ignore) {
+            	// do nothing
               } catch (IOException ignore) {
+            	// do nothing
               }
               if (interactive)
                   printStream.println("@@ Loading file '" + file.getPath() + "' . . .");
@@ -960,6 +966,7 @@ public class Interpret implements InterpreterCommands {
                          document.putHiddenProperty("URL",
                                 new ESString("file://<stdin>"));
                } catch (EcmaScriptException ignore) {
+            	// do nothing
                }
           }
       } else {
@@ -994,7 +1001,7 @@ public class Interpret implements InterpreterCommands {
         if (interactive) printStream.println("@@ Expanding html file '" +
                                                 file.getPath() + "' . . .");
         boolean inScript = false;
-        StringBuffer script = null;
+        StringBuilder script = null;
         String src = lr.readLine();
         String srclc = src.toLowerCase();
         int lineNumber = 0;
@@ -1004,10 +1011,10 @@ public class Interpret implements InterpreterCommands {
                 inScript = false;
                 evaluator.evaluate(script.toString());
             } else if (inScript) {
-                script.append(src+eol);
+                script.append(src).append(eol);
             } else if (srclc.indexOf("<script>")!=-1) {
                 inScript = true;
-                script = new StringBuffer();
+                script = new StringBuilder();
             } else {
                  printStream.println(src);
             }
@@ -1060,14 +1067,14 @@ public class Interpret implements InterpreterCommands {
 					   new ESString("file://" + file.getAbsolutePath()));
 		printStream.println("@@ Processing test file '" + file.getPath() + "' . . .");
 		String currentTest = null;
-		StringBuffer scriptBuffer = new StringBuffer();
+		StringBuilder scriptBuffer = new StringBuilder();
 		String src = lr.readLine();
 		String srclc = src.toLowerCase();
 		int lineNumber = 0;
 		while (src!= null) {
 			lineNumber ++;
 			if  (srclc.startsWith("@test")) {
-				String scriptString = new String(scriptBuffer);
+				String scriptString = scriptBuffer.toString();
 				if (currentTest != null) {
 					nTests ++;
 					boolean success = testString(currentTest, scriptString, file);
@@ -1076,7 +1083,7 @@ public class Interpret implements InterpreterCommands {
 					// The header part is not protected against errors
 					evaluator.evaluate(scriptString);
 				}
-				scriptBuffer = new StringBuffer();
+				scriptBuffer.setLength(0);
 				currentTest = src;
 			} else {
 				scriptBuffer.append(src);
@@ -1088,7 +1095,7 @@ public class Interpret implements InterpreterCommands {
 
 		if (currentTest != null) {
 			nTests ++;
-    		String scriptString = new String(scriptBuffer);
+    		String scriptString = scriptBuffer.toString();
 			boolean success = testString(currentTest, scriptString, file);
 			if (success) {nSuccess ++;} else { nErrors++; anyError=true;}
 		}
@@ -1107,7 +1114,9 @@ public class Interpret implements InterpreterCommands {
       try {
         document.putHiddenProperty("URL",
                         new ESString("file://<stdin>"));
-      } catch (EcmaScriptException e) {}
+      } catch (EcmaScriptException e) {
+    	// do nothing
+      	}
     }
     printStream.println("@@ " + nTests + " tests, " +
               nSuccess + " successes, " +
@@ -1208,14 +1217,8 @@ public class Interpret implements InterpreterCommands {
    * Reset the evaluator, forgetting all global variables
    */
   protected void resetEvaluator() {
-        try {
            printStream.println("@@ Reseting global object to default values");
            reset();
-        } catch (EcmaScriptException e) {
-            errorStream.println("[[Error during initialization: " +e.getMessage() + "]]");
-            e.printStackTrace();
-           return;
-        }
   }
 
   /**
@@ -1530,7 +1533,6 @@ abstract class Command {
                                String command,
                                String parameter) {
         Vector foundCmds = new Vector();
-        String lcCommand = command.toLowerCase();
         for (Enumeration e = allCommands.elements() ; e.hasMoreElements() ;) {
             Command cmd = (Command) e.nextElement();
             if (cmd.lowerCaseName.equals(command)) {

@@ -78,7 +78,6 @@ public  class LocalClassLoader extends ClassLoader {
     /** The factory.  Make a loader if none exist for the same source */
     synchronized public static LocalClassLoader makeLocalClassLoader(String filename) throws EcmaScriptException{
         LocalClassLoader loader = null;
-        boolean asJar = false;
         File file = new File(filename);
         String fullname = null;
         if (file.isFile()) {
@@ -157,7 +156,9 @@ public  class LocalClassLoader extends ClassLoader {
         // a system class (i.e. from the CLASSPATH) and ignore any errors
         if (c == null) {
           try { c = findSystemClass(classname); }
-          catch (Exception e) {}
+          catch (Exception e) {
+        	// do nothing
+          	}
         }
     
         // If the class wasn't found by either of the above attempts, then
@@ -306,8 +307,6 @@ public  class LocalClassLoader extends ClassLoader {
     private InputStream getLocalResourceAsStream(String name) {
         if (ESLoader.isDebugLoader()) System.out.println(" ** getLocalResourceAsStream,  resource '" + name + "' asked to: " + this);
         if (asJar) {
-            int limit;
-            
             try
             {
                 ZipEntry  zipEntry = zipFile.getEntry(name);

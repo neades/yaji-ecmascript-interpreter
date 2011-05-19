@@ -25,7 +25,7 @@ import FESI.Interpreter.ScopeChain;
  * Implements the prototype and is the class of all Function objects
  */
 public class FunctionPrototype extends ESObject {
-        
+    private static final long serialVersionUID = 5228262867569754052L;
     private String functionName = null;
     private int length = 0;
     
@@ -51,9 +51,8 @@ public class FunctionPrototype extends ESObject {
     public String getFunctionName() {
         if (functionName == null) {
             return "anonymous";
-        } else {
-            return functionName;
         }
+        return functionName;        
     }
     
     /**
@@ -83,7 +82,7 @@ public class FunctionPrototype extends ESObject {
     public ESValue getPropertyInScope(String propertyName, ScopeChain previousScope, int hash) 
                 throws EcmaScriptException {
         if (hash==LENGTHhash && propertyName.equals(LENGTHstring)) {
-             return new ESNumber(length);
+             return ESNumber.valueOf(length);
         }
         return super.getPropertyInScope(propertyName, previousScope, hash);
     }
@@ -92,10 +91,9 @@ public class FunctionPrototype extends ESObject {
     public ESValue getProperty(String propertyName, int hash) 
                             throws EcmaScriptException {
         if (hash==LENGTHhash && propertyName.equals(LENGTHstring)) {
-             return new ESNumber(length);
-         } else {
-             return super.getProperty(propertyName, hash);
+             return ESNumber.valueOf(length);
          }
+         return super.getProperty(propertyName, hash);         
      }
      
     // overrides
@@ -103,9 +101,8 @@ public class FunctionPrototype extends ESObject {
                             throws EcmaScriptException {
         if (hash==LENGTHhash && propertyName.equals(LENGTHstring)) {
              return true;
-         } else {
-             return super.hasProperty(propertyName, hash);
          }
+         return super.hasProperty(propertyName, hash);         
     }
     
     // overrides

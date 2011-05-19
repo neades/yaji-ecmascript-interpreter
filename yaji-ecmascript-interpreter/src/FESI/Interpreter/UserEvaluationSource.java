@@ -21,7 +21,7 @@ package FESI.Interpreter;
  * Describe an arbitrary source provided by a user program.
  */
 public class UserEvaluationSource extends EvaluationSource {
-    
+    private static final long serialVersionUID = 7915836456632791290L;
     private String theDescription;
     
     /**

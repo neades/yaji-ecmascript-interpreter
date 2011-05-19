@@ -22,9 +22,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.Serializable;
 import java.io.StringReader;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
@@ -41,24 +43,20 @@ import FESI.Data.ESUndefined;
 import FESI.Data.ESValue;
 import FESI.Data.ESWrapper;
 import FESI.Data.GlobalObject;
+import FESI.Data.IObjectProfiler;
 import FESI.Data.JSGlobalWrapper;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.EcmaScriptLexicalException;
 import FESI.Exceptions.EcmaScriptParseException;
 import FESI.Extensions.Extension;
-import FESI.Interpreter.EcmaScriptEvaluateVisitor;
-import FESI.Interpreter.EcmaScriptFunctionVisitor;
-import FESI.Interpreter.EcmaScriptVariableVisitor;
-import FESI.Interpreter.EvaluationSource;
-import FESI.Interpreter.FileEvaluationSource;
-import FESI.Interpreter.JarEvaluationSource;
-import FESI.Interpreter.ParsedProgram;
-import FESI.Interpreter.ScopeChain;
-import FESI.Interpreter.StringEvaluationSource;
-import FESI.Interpreter.UserEvaluationSource;
+import FESI.Extensions.FESILog;
+import FESI.Extensions.IFESILog;
 import FESI.Parser.EcmaScript;
 import FESI.Parser.ParseException;
 import FESI.Parser.TokenMgrError;
+import FESI.Util.IAppendable;
+import FESI.Util.IAppendableFactory;
+import FESI.Util.WrappedStringBuilderFactory;
 import FESI.jslib.JSException;
 import FESI.jslib.JSExtension;
 
@@ -69,9 +67,11 @@ import FESI.jslib.JSExtension;
  * on the evaluator, as the inside of the evaluator is not synchronized
  * for speed reasons.
  */
-public class Evaluator {
+public class Evaluator implements Serializable {
+    private static final long serialVersionUID = -7530811329761640032L;
 
   private static String eol = System.getProperty("line.separator", "\n");
+    protected IAppendableFactory appendableFactory = null;
 
   /**
    * Return the version identifier of the interpreter
@@ -109,10 +109,17 @@ public class Evaluator {
   private ESObject datePrototype = null;
   private ESObject packageObject = null;
 
+    private boolean useRepresentationOptimisation = false;
+    private IAppendable representationOutputBuffer = null;
+
   // Current environment
   private ScopeChain theScopeChain = null;
   private ESObject currentVariableObject = null;
   private ESObject currentThisObject = null;
+    private EvaluationSource currentEvaluationSource = null;
+    public EvaluationSource getCurrentEvaluationSource() {
+        return currentEvaluationSource;
+    }
 
   // Visitors used for interpretation
   private EcmaScriptFunctionVisitor functionDeclarationVisitor = null;
@@ -122,26 +129,48 @@ public class Evaluator {
   // List of loaded extensions
   private Hashtable extensions = null;
 
+    private IFESILog log = null;
+
+    private long nextObjectId = 0;
+
   /**
    * Reset the evaluator, forgetting all global definitions and loaded extensions
    */
   protected void reset() {
-       functionDeclarationVisitor =  new EcmaScriptFunctionVisitor(this);
-       varDeclarationVisitor =  new EcmaScriptVariableVisitor(this);
-       // evaluationVisitor = new EcmaScriptEvaluateVisitor(this);
-       globalObject = GlobalObject.makeGlobalObject(this);
-       packageObject = new ESPackages(this);
-
-       extensions = new Hashtable(); // forget extensions
-
+        functionDeclarationVisitor =  new EcmaScriptFunctionVisitor(this);
+        varDeclarationVisitor =  new EcmaScriptVariableVisitor();
+        // evaluationVisitor = new EcmaScriptEvaluateVisitor(this);
+        globalObject = GlobalObject.makeGlobalObject(this);
+        globalScope = new ScopeChain(globalObject,null);
+        packageObject = new ESPackages(this);
+        extensions = new Hashtable(); // forget extensions
+        initFESILog();
   }
 
+
+    // handler for profiling logging
+    private static IProcedureProfiler procedureProfilingCallback = null;
+
+    // allows external callers to provide a handler for profiling logging
+    public static void setProcedureProfilingCallback(IProcedureProfiler pcb) {
+        procedureProfilingCallback = pcb;
+    }
+
+    public static IProcedureProfiler getProcedureProfilingCallback() {
+        return procedureProfilingCallback;
+    }
   /**
    * Create a new empty evaluator
    */
   public Evaluator () {
       reset();
   }
+
+    public Evaluator (boolean useRepresentationOptimisation) {
+        this();
+        this.useRepresentationOptimisation = useRepresentationOptimisation;
+    }
+
 
   /**
    * Get the variable visitor of this evaluator
@@ -164,6 +193,13 @@ public class Evaluator {
   }
 
   /**
+     * Get the super of this object of this evaluator
+     */
+    public ESObject getSuperObject() {
+        return currentThisObject.getPrototype();
+    }
+
+    /**
    * Get the global object of this evaluator
    * @return the global object
    */
@@ -617,6 +653,7 @@ public class Evaluator {
            try {
                fr.close();
            } catch (IOException ignore) {
+                    // do nothing
            }
        }
     }
@@ -694,15 +731,6 @@ public class Evaluator {
             }
             if (!file.exists()) return null;
 
-            // A File is found, load it
-            String cp;
-            try {
-                cp = file.getCanonicalPath();
-            } catch (IOException e) {
-                throw new EcmaScriptException("IO error accessing module " + moduleName +
-                                            " in directory  " + dir, e);
-            }
-            // System.out.println("** File found: " + cp);
             return evaluateLoadFile(file);
 
         } else if (dir.isFile()) {
@@ -760,7 +788,20 @@ public class Evaluator {
         return null;
     }
 
+    /**
+     * Advanced FESI
+     *
+     * GT Added: 13/6/2000
+     * Allows a debug evaluator to be used instead of this
+     * default
+     */
+    protected EcmaScriptEvaluateVisitor newEcmaScriptEvaluateVisitor() {
+        return new EcmaScriptEvaluateVisitor(this);
+    }
 
+    private ScopeChain globalScope;
+
+    private boolean strictMode;
 
   /**
    * subevaluator - Evaluate a function node (inside a program evaluation)
@@ -774,7 +815,7 @@ public class Evaluator {
     public ESValue evaluateFunction(ASTStatementList node,
                           EvaluationSource es,
                           ESObject variableObject,
-                          Vector localVariableNames,
+            List<String> localVariableNames,
                           ESObject thisObject) throws EcmaScriptException {
     ESValue theValue = ESUndefined.theUndefined;
 
@@ -784,16 +825,16 @@ public class Evaluator {
 
     currentVariableObject = variableObject;
     currentThisObject = thisObject;
-    theScopeChain = new ScopeChain(globalObject, null);
-    theScopeChain = new ScopeChain(variableObject, theScopeChain);
-   // EvaluationSource savedEvaluationSource = currentEvaluationSource;
-   // currentEvaluationSource = es;
+        theScopeChain = new ScopeChain(variableObject, globalScope);
+        EvaluationSource savedEvaluationSource = currentEvaluationSource;
+        currentEvaluationSource = es;
     try {
-        for (Enumeration e = localVariableNames.elements() ; e.hasMoreElements() ;) {
-             String variable =(String)(e.nextElement());
+            for (String variable : localVariableNames) {
              createVariable(variable, variable.hashCode());
          }
-         EcmaScriptEvaluateVisitor evaluationVisitor = new EcmaScriptEvaluateVisitor(this);
+
+            EcmaScriptEvaluateVisitor evaluationVisitor = newEcmaScriptEvaluateVisitor();
+            evaluationVisitor.setRepresentationOptimisation(useRepresentationOptimisation, representationOutputBuffer);
         theValue = evaluationVisitor.evaluateFunction(node, es);
         int cc = evaluationVisitor.getCompletionCode();
         if ((cc!= EcmaScriptEvaluateVisitor.C_NORMAL) &&
@@ -806,11 +847,23 @@ public class Evaluator {
         currentVariableObject = savedVariableObject;
         theScopeChain = previousScopeChain;
         currentThisObject = savedThisObject;
-       // currentEvaluationSource = savedEvaluationSource;
+            currentEvaluationSource = savedEvaluationSource;
    }
 
     return theValue;
   }
+
+    public ESValue executeRepresentation(ASTStatementList node,
+            EvaluationSource es,
+            ESObject variableObject,
+            List localVariableNames,
+            ESObject thisObject,
+            IAppendable output) throws EcmaScriptException {
+        representationOutputBuffer = output;
+        ESValue result = evaluateFunction(node, es, variableObject, localVariableNames, thisObject);
+        representationOutputBuffer = null;
+        return result;
+    }
 
   /**
    * Sub evaluator - evaluate a with node (inside a program evaluation)
@@ -858,7 +911,7 @@ public class Evaluator {
     ESObject savedThisObject = currentThisObject;
     ScopeChain previousScopeChain = theScopeChain;
 
-    theScopeChain = new ScopeChain(globalObject, null);
+        theScopeChain = globalScope;
     currentVariableObject = globalObject;
     if (thisObject == null) {
          currentThisObject = globalObject;
@@ -866,7 +919,6 @@ public class Evaluator {
          theScopeChain = new ScopeChain(thisObject, theScopeChain);
          currentThisObject = thisObject;
     }
-
 
     EcmaScriptEvaluateVisitor evaluationVisitor = new EcmaScriptEvaluateVisitor(this);
     try {
@@ -1103,4 +1155,87 @@ public class Evaluator {
     return v;
   }
 
+    public IFESILog getLog() {
+    	return log;
+    }
+
+    protected void initFESILog() {
+    	log = createFESILog();
+    }
+
+    protected IFESILog createFESILog() {
+    	return new FESILog();
+    }
+
+    // log a function element to profile log
+    // delegate to callback
+    public void logFESIProfileElement (String elementStr) {
+        if (procedureProfilingEnabled()) {
+            procedureProfilingCallback.addElement(elementStr);
+        }
+    }
+
+    // log a function start to profile log
+    // delegate to callback
+    public Object[] logFESIProfileFuncStart(String className, String functionName) {
+        if (procedureProfilingEnabled()) {
+            return procedureProfilingCallback.startProcedure(className,functionName);
+        }
+        return null;
+}
+    // log a function end to profile log
+    // delegate to callback
+    public void logFESIProfileFuncEnd(String className, String functionName, Object[] start, long endTime) {
+        if (procedureProfilingEnabled()) {
+            procedureProfilingCallback.endProcedure(className,functionName,start,endTime);
+        }
+    }
+
+    public boolean procedureProfilingEnabled() {
+        return procedureProfilingCallback != null;
+    }
+
+
+    // stop logging
+    @Override
+    public void finalize() {
+        if (procedureProfilingEnabled()) {
+            procedureProfilingCallback.endProfiling();
+        }
+    }
+
+    public IObjectProfiler getObjectProfiler() {
+        return ESObject.getObjectProfiler();
+    }
+
+    public synchronized long generateObjectId() {
+        return nextObjectId++;
+    }
+
+    /**
+     * ONLY USE FOR TESTING. Allows the next object ID to be overridden,
+     * primarily to help with assertions in test cases.
+     */
+    public synchronized void setNextObjectId(long nextObjectId) {
+        this.nextObjectId = nextObjectId;
+    }
+
+    // For building strings.
+    public IAppendable createAppendable(int estimatedNumberOfAppends,
+                                        int estimatedNumberOfCharacters) {
+        if (appendableFactory == null) {
+            appendableFactory = new WrappedStringBuilderFactory();
+        }
+
+        return appendableFactory.create(estimatedNumberOfAppends,
+                                        estimatedNumberOfCharacters);
+    }
+
+    public void setStrictMode(boolean newMode) {
+        strictMode = newMode;
+    }
+    
+    public boolean isStrictMode() {
+        return strictMode;
+    }
 }

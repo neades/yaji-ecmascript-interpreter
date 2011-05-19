@@ -34,8 +34,11 @@ import FESI.Interpreter.Evaluator;
 
 
 public class JavaAccess extends Extension {
-    
+    private static final long serialVersionUID = 1639896019075230024L;
+
+
     class GlobalObjectJavaTypeOf extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1436041700328969737L;
         GlobalObjectJavaTypeOf(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 1);
         }
@@ -53,6 +56,7 @@ public class JavaAccess extends Extension {
     }
     
     class GlobalObjectLoadExtension extends BuiltinFunctionObject {
+        private static final long serialVersionUID = -164035943654712169L;
         GlobalObjectLoadExtension(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 1);
         }
@@ -63,14 +67,12 @@ public class JavaAccess extends Extension {
            Object ext = null;
            if (arguments.length>0) { 
                String pathName = arguments[0].toString();
-               ext = this.evaluator.addExtension(pathName);
+               ext = this.getEvaluator().addExtension(pathName);
            }
            return ESBoolean.makeBoolean(ext!=null);
         }
     }
  
-    private Evaluator evaluator = null;
-    
     public JavaAccess () {
         super();
     }
@@ -78,8 +80,6 @@ public class JavaAccess extends Extension {
         
     public void initializeExtension(Evaluator evaluator) throws EcmaScriptException {
  
-        this.evaluator = evaluator;
-        
         GlobalObject go = evaluator.getGlobalObject();
         FunctionPrototype fp = (FunctionPrototype) evaluator.getFunctionPrototype();
             

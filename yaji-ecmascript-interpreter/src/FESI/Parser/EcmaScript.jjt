@@ -85,7 +85,7 @@ public class EcmaScript {
     {
        Token t = getToken(1);
        if (t!= null) {
-           ((SimpleNode) n).setLineNumber(t.beginLine);
+           ((SimpleNode) n).setLinePosition(t.beginLine, t.beginColumn);
        }
     }
 
@@ -408,7 +408,7 @@ void Identifier() #Identifier :
 void PrimaryExpression() #void :
 {}
 {
-	( ( ( ("this") #ThisReference) ( PrimarySuffix() )* ) #CompositeReference(>1) )
+        ( ( ( (("this") #ThisReference) | (("super") #SuperReference)) ( PrimarySuffix() )* ) #CompositeReference(>1) )
 |   ( ( Identifier() ( PrimarySuffix() )* ) #CompositeReference(>1) )
 |	Literal()
 |	( ( "(" Expression() ")" ( PrimarySuffix() )* ) #CompositeReference(>1) )

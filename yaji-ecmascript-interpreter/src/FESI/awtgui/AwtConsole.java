@@ -111,7 +111,7 @@ public class AwtConsole extends Frame implements Console {
        }
      });
 
-    show();
+     this.setVisible(true);
   }
 
   /**

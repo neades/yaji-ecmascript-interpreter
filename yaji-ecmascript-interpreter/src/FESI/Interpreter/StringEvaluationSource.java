@@ -24,10 +24,10 @@ import java.util.StringTokenizer;
  * to its first significant characters during display.
  */
 public class StringEvaluationSource extends EvaluationSource {
-    
-    private String theString;
-    
-    
+    private static final long serialVersionUID = -5474570662032404125L;
+    private final String theString;
+
+
     /**
      * Create a string source description
      * @param theString Describe the source
@@ -37,16 +37,19 @@ public class StringEvaluationSource extends EvaluationSource {
         super(previousSource);
         this.theString = theString;
     }
-    
+
+    @Override
     protected String getEvaluationSourceText() {
-        String displayString = new String("");
+        String displayString = "";
         // All this to print just first line of string...
         boolean firstLineFound = false;
         boolean moreLinesFound = false;
         StringTokenizer t = new StringTokenizer(theString, "\n\r");
         while (t.hasMoreTokens()) {
             String theLine = t.nextToken();
-            if (theLine.equals("\n") || theLine.equals("\r")) continue;
+            if (theLine.equals("\n") || theLine.equals("\r")) {
+                continue;
+            }
             if (theLine.trim().length()>0) { // Skip any leading empty lines
                if (!firstLineFound) {
                    displayString = theLine;
@@ -59,8 +62,13 @@ public class StringEvaluationSource extends EvaluationSource {
         }
         if (moreLinesFound) {
             return "in string starting with: '" + displayString + "'...";
-        } else {
-            return "in string: '" + displayString + "'";
         }
+        return "in string: '" + displayString + "'";
+
+    }
+
+    public String getLineText(int beginLine) {
+        String[] poList = theString.split("\r|\n|\r\n");
+        return "on line: '" + poList[beginLine-1] +"'";
     }
 }

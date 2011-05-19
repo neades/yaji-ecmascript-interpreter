@@ -18,7 +18,6 @@
 package FESI.Extensions;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -47,8 +46,10 @@ import FESI.Interpreter.Evaluator;
 public class BasicIO extends Extension implements BasicIOInterface {
     
     // Implement the EcmaScript functions
-  
+    private static final long serialVersionUID = 8886886834315148679L;
+
     class GlobalObjectWrite extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 7397963994845332069L;
         GlobalObjectWrite(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 1);
         }
@@ -63,6 +64,7 @@ public class BasicIO extends Extension implements BasicIOInterface {
     }
     
     class GlobalObjectWriteln extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1049266936209327085L;
         GlobalObjectWriteln(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 1);
         }
@@ -78,6 +80,7 @@ public class BasicIO extends Extension implements BasicIOInterface {
     }
     
     class GlobalObjectAlert extends BuiltinFunctionObject {
+        private static final long serialVersionUID = -6826063586063912091L;
         GlobalObjectAlert(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 1);
         }
@@ -94,6 +97,7 @@ public class BasicIO extends Extension implements BasicIOInterface {
     }
     
     class GlobalObjectPrompt extends BuiltinFunctionObject {
+        private static final long serialVersionUID = -2335657696435213349L;
         GlobalObjectPrompt(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 2);
         }
@@ -118,6 +122,7 @@ public class BasicIO extends Extension implements BasicIOInterface {
     }
     
     class GlobalObjectConfirm extends BuiltinFunctionObject {
+        private static final long serialVersionUID = -7656437588299476127L;
         GlobalObjectConfirm(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 2);
         }
@@ -142,6 +147,7 @@ public class BasicIO extends Extension implements BasicIOInterface {
     }
 
     class GlobalObjectExit extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 2847240928500692081L;
         GlobalObjectExit(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 1);
         }
@@ -159,6 +165,7 @@ public class BasicIO extends Extension implements BasicIOInterface {
     }
 
     class GlobalObjectNoop extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 625259366460316597L;
         GlobalObjectNoop(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 0); // 0 = Just some default value
         }
@@ -172,6 +179,7 @@ public class BasicIO extends Extension implements BasicIOInterface {
  
 
     class GlobalObjectLoad extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 7206069117646107995L;
         GlobalObjectLoad(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 1); // 0 = Just some default value
         }
@@ -181,11 +189,9 @@ public class BasicIO extends Extension implements BasicIOInterface {
            String fileName = null;
            if (arguments.length>0) fileName = arguments[0].toString();
            if (fileName == null) throw new EcmaScriptException("Missing file name for load");
-           File file = new File(fileName);
            ESValue value;
-           try {
-               //value = this.evaluator.evaluateLoadFile(file);
-               value = this.evaluator.evaluateLoadModule(fileName);
+           try {           
+               value = this.getEvaluator().evaluateLoadModule(fileName);
            } catch (EcmaScriptParseException e) {
                e.setNeverIncomplete();
                throw e;
@@ -196,8 +202,6 @@ public class BasicIO extends Extension implements BasicIOInterface {
     }
 
 
-    // Instance variables
-    private Evaluator evaluator = null;
     private ESObject document = null;
     private ESObject window = null;
     
@@ -215,8 +219,6 @@ public class BasicIO extends Extension implements BasicIOInterface {
      * Initialize the extension
      */
     public void initializeExtension(Evaluator evaluator) throws EcmaScriptException {
-        
-        this.evaluator = evaluator;
         
         GlobalObject go = evaluator.getGlobalObject();
         document = ObjectObject.createObject(evaluator);

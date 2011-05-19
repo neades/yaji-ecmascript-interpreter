@@ -24,13 +24,14 @@ import FESI.Exceptions.ProgrammingError;
 import FESI.Interpreter.Evaluator;
 import FESI.Interpreter.LocalClassLoader;
 import FESI.Interpreter.ScopeChain;
+import FESI.Util.IAppendable;
 import FESI.jslib.JSFunction;
 
 /**
  * Implements the common functionality of package(object) and beans loaders
  */
 public abstract class ESLoader extends ESObject {
-    
+    private static final long serialVersionUID = -6946722052427701762L;
     // Debug support
     static protected boolean debugJavaAccess = false;
     public static void setDebugJavaAccess(boolean b) {
@@ -56,141 +57,150 @@ public abstract class ESLoader extends ESObject {
     // the non compatible flag
     static private CompatibilityDescriptor nonCompatible =
         new CompatibilityDescriptor(-1, null, null);
-        
-      
+
+
     /**
      * To contruct the Bean or Package object
      */
     public ESLoader(Evaluator evaluator) {
         super(null, evaluator);
     }
-    
+
     /**
-     * To construct a bean or package sub-object (with a specific 
+     * To construct a bean or package sub-object (with a specific
      * partial or complete package name
      * @param packageName The extension of the package name
      * @param previousPackage Represents the higher level package names
      * @param classLoader the class loader to use for this loader
-     * @param evaluator the evaluator    
+     * @param evaluator the evaluator
      */
-    public ESLoader(String packageName, 
+    public ESLoader(String packageName,
                      ESLoader previousPackage,
-                     LocalClassLoader classLoader, 
+                     LocalClassLoader classLoader,
                      Evaluator evaluator) {
         super(null, evaluator);
         this.packageName = packageName;
         this.previousPackage = previousPackage;
         this.classLoader = classLoader;
     }
-	
+
     /**
-     * Build the prefix name of the package, concatenating
-     * all upper level prefix separated by dots
+     * Build the prefix name of the package, concatenating all upper level
+     * prefix separated by dots
+     *
      * @return prefix of the current package name
      */
     protected String buildPrefix() {
-        if (previousPackage == null) {
-            return null;
-        } else {
-            String prefix = previousPackage.buildPrefix();
-            if (prefix == null) {
-                return packageName;
-            } else {
-                return prefix + "." + packageName;
-            }
-        }
+        if (previousPackage == null) { return null; }
+        String prefix = previousPackage.buildPrefix();
+        if (prefix == null) { return packageName; }
+        return prefix + "." + packageName;
     }
-    
+
     // overrides
+    @Override
     public ESObject getPrototype() {
         throw new ProgrammingError("Cannot get prototype of Package");
     }
-    
+
     // overrides
+    @Override
     public int getTypeOf() {
        return EStypeObject;
     }
 
     // overrides
-    public ESValue getPropertyInScope(String propertyName, ScopeChain previousScope, int hash) 
+    @Override
+    public ESValue getPropertyInScope(String propertyName, ScopeChain previousScope, int hash)
                     throws EcmaScriptException {
        throw new EcmaScriptException("A loader object ("+this+") should not be part of a with statement");
     }
 
-    
+
     // overrides
-    public boolean hasProperty(String propertyName, int hash) 
+    @Override
+    public boolean hasProperty(String propertyName, int hash)
                             throws EcmaScriptException {
         return true; // So it can be dereferenced by scopechain
                      // and wont be created
     }
-    
+
     // overrides
+    @Override
     public boolean isHiddenProperty(String propertyName, int hash) {
         return false;
     }
-        
+
     // overrides
-    public void putProperty(String propertyName, ESValue propertyValue, int hash) 
+    @Override
+    public void putProperty(String propertyName, ESValue propertyValue, int hash)
                                 throws EcmaScriptException {
         return; // None can be put by the user
     }
-    
+
     // overrides
-    public void putHiddenProperty(String propertyName, ESValue propertyValue) 
+    @Override
+    public void putHiddenProperty(String propertyName, ESValue propertyValue)
                                 throws EcmaScriptException {
         throw new ProgrammingError("Cannot put hidden property in " + this);
     }
-    
+
     // overrides
-    public boolean deleteProperty(String propertyName, int hash) 
+    @Override
+    public boolean deleteProperty(String propertyName, int hash)
                                 throws EcmaScriptException {
         // all possible package name do potentialy exists and
         // cannot be deleted, as they are recreated at the first
         // reference.
         return false;
     }
-    
+
     // overrides
-    public ESValue getDefaultValue(int hint) 
+    @Override
+    public ESValue getDefaultValue(int hint)
                                 throws EcmaScriptException {
         if (hint == EStypeString) {
             return new ESString(this.toString());
-        } else {
-            throw new EcmaScriptException ("No default value for " + this + 
-                                     " and hint " + hint);
         }
+        throw new EcmaScriptException ("No default value for " + this +
+                                     " and hint " + hint);
+
     }
-    
+
     // overrides
-    public ESValue getDefaultValue() 
+    @Override
+    public ESValue getDefaultValue()
                                 throws EcmaScriptException {
         return this.getDefaultValue(EStypeString);
     }
-        
+
     // overrides
-    public ESObject doConstruct(ESObject thisObject, 
-                                ESValue[] arguments) 
+    @Override
+    public ESObject doConstruct(ESObject thisObject,
+                                ESValue[] arguments)
                                         throws EcmaScriptException {
         throw new EcmaScriptException("No contructor for loader object: " + this);
-    }    
-        
+    }
+
     // overrides
+    @Override
     public double doubleValue() {
         double d = Double.NaN;
         return d;
     }
 
     // overrides
+    @Override
     public boolean booleanValue() {
         return true;
     }
 
     // overrides
+    @Override
     public String toString() {
         return this.toDetailString();
     }
-         
+
     //---------------------------------------------------------------
     // Tools for the java wrapper objects
     //---------------------------------------------------------------
@@ -212,7 +222,7 @@ public abstract class ESLoader extends ESObject {
                cls == Boolean.class ||
                cls == Date.class;
     }
-      
+
     static boolean isPrimitiveNumberClass(Class cls) {
         return cls == Byte.class ||
                cls == Short.class ||
@@ -221,7 +231,7 @@ public abstract class ESLoader extends ESObject {
                cls == Float.class ||
                cls == Double.class;
     }
-      
+
     /**
      * Transform a java object to an EcmaScript value (primitive if possible)
      * @param obj the object to transform
@@ -229,20 +239,22 @@ public abstract class ESLoader extends ESObject {
      * @return the EcmaScript object
      * @exception EcmaScriptException the normalization failed
      */
-    public static ESValue normalizeValue(Object obj, Evaluator evaluator) 
+    public static ESValue normalizeValue(Object obj, Evaluator evaluator)
                                 throws EcmaScriptException  {
         if (obj == null) {
             return ESNull.theNull;
         } else if (obj instanceof String) {
             return new ESString((String) obj);
+        } else if (obj instanceof IAppendable) {
+            return new ESString((IAppendable) obj);
         } else if (isPrimitiveNumberClass(obj.getClass())) {
-            return new ESNumber(((Number) obj).doubleValue());
+            return ESNumber.valueOf(((Number) obj).doubleValue());
         } else if (obj instanceof Boolean) {
             return ESBoolean.makeBoolean(((Boolean) obj).booleanValue());
         } else if (obj instanceof Character) {
-            return new ESNumber(((Character) obj).charValue());
+            return ESNumber.valueOf(((Character) obj).charValue());
         } else if (obj instanceof JSFunction) {
-            return JSWrapper.wrapJSFunction(evaluator, (JSFunction) obj);  
+            return JSWrapper.wrapJSFunction(evaluator, (JSFunction) obj);
         } else if (obj instanceof JSWrapper) {
             return ((JSWrapper)obj).getESObject();
         } else if (obj instanceof Date) {
@@ -256,7 +268,7 @@ public abstract class ESLoader extends ESObject {
         }
         return new ESWrapper(obj, evaluator);
     }
-    
+
     /**
      * Transform a java object to an EcmaScript object (not a primitive)
      * @param obj the object to transform
@@ -264,12 +276,12 @@ public abstract class ESLoader extends ESObject {
      * @return the EcmaScript object
      * @exception EcmaScriptException the normalization failed
      */
-    public static ESObject normalizeObject(Object obj, Evaluator evaluator) 
+    public static ESObject normalizeObject(Object obj, Evaluator evaluator)
                             throws EcmaScriptException {
         ESValue value = normalizeValue(obj, evaluator);
         return (ESObject) value.toESObject(evaluator);
     }
-    
+
      /**
       * Convert the primitive class types to their  corresponding
       * class types. Must be called for primitive classes only.
@@ -299,12 +311,12 @@ public abstract class ESLoader extends ESObject {
             }
         return target;
     }
-    
+
     /**
      * Get a number correlated to the wideness of the class in some lousy sense
      */
     static private int getNumberSize(Class cls) {
-        
+
         if (cls == Byte.class) {
             return 1;
         } else if (cls == Character.class) {
@@ -323,9 +335,9 @@ public abstract class ESLoader extends ESObject {
             throw new ProgrammingError("Unexpected number class");
         }
     }
-    
+
     /**
-     * Check that each object in the paremeter array can be converted 
+     * Check that each object in the paremeter array can be converted
      * to the type specified by the target array and convert them if needed.
      * <P>Even if the parameters are compatible with an EcmaScript value,
      * some may have to be converted to an intermediate type. For example
@@ -333,11 +345,11 @@ public abstract class ESLoader extends ESObject {
      * Character, but some conversion is needed. Arrays need a similar
      * special processing.
      * <P> The parameters have been converted to java Objects by the routine
-     * toJavaObject. Wrapped objects (java objects given to an EcmaScript 
-     * routine and given back as parameters) have been unwrapped, so they 
-     * are their original object again (including arrays), we do therefore 
-     * not have ESWrapped objects as parameters. 
-     * ESObjects have been wrapped in a JSObject,  including Array objects. 
+     * toJavaObject. Wrapped objects (java objects given to an EcmaScript
+     * routine and given back as parameters) have been unwrapped, so they
+     * are their original object again (including arrays), we do therefore
+     * not have ESWrapped objects as parameters.
+     * ESObjects have been wrapped in a JSObject,  including Array objects.
      * The handling of array is more delicate as they
      * could not be converted to a cannonical form - we must know the element
      * type to understand if they are convertible.
@@ -345,7 +357,7 @@ public abstract class ESLoader extends ESObject {
      * object counterpart, as only object can be given as parameter and the
      * invoke mechanism will convert them back to primitive if needed.
      * <P>All the conversion needed are described in the returned
-     * compatibilityDescriptor and will only be applied for the selected 
+     * compatibilityDescriptor and will only be applied for the selected
      * routine.
      * <P>The distance is a metric on how "far" a parameter list is
      * from the immediate value (used currntly only for simple value
@@ -360,7 +372,9 @@ public abstract class ESLoader extends ESObject {
      */
     static CompatibilityDescriptor areParametersCompatible(Class target[], Object params[]) {
         int n = target.length;
-        if (n!=params.length) return nonCompatible; // Ensure we have the same number
+        if (n!=params.length) {
+            return nonCompatible; // Ensure we have the same number
+        }
         boolean [] convertToChar = null; // flag to indicate if conversion to char is needed
         Object [] convertedArrays = null; // Converted array if any needed
         int distance = 0; // For perfect match, something added for widening
@@ -385,20 +399,20 @@ public abstract class ESLoader extends ESObject {
                 // object anyhow. Invoke will convert back if needed.
                 if (targetClass.isPrimitive()) {
                     // To accept long by Long, etc... - must be done after test of assigning null to object
-                     targetClass = convertPrimitive(targetClass); 
-                }  
-                // The simplest case is direct object compatibility              
+                     targetClass = convertPrimitive(targetClass);
+                }
+                // The simplest case is direct object compatibility
                 sourceClass = params[i].getClass();
                 accepted = targetClass.isAssignableFrom(sourceClass);
                 debugInfo = " accepted (subclassing)";
-                
+
                 if (!accepted) {
                     // If we do not have direct object compatibility, we check various
                     // allowed conversions.
-                    
+
                     // Handle number and number widening
                     if ((isPrimitiveNumberClass(sourceClass) ||
-                         sourceClass == Character.class) 
+                         sourceClass == Character.class)
                                  && isPrimitiveNumberClass(targetClass)) {
                         // Can be widened ?
                         int targetSize = getNumberSize(targetClass);
@@ -411,12 +425,12 @@ public abstract class ESLoader extends ESObject {
                         } else {
                             debugInfo = " rejected (not widening numbers)";
                         }
-                    // Handle String of length 1 as a Char, which can be converted to a number    
+                    // Handle String of length 1 as a Char, which can be converted to a number
                     } else if ((targetClass == Character.class ||
-                                targetClass == Integer.class ||          
-                                targetClass == Long.class ||          
-                                targetClass == Float.class ||          
-                                targetClass == Double.class)          
+                                targetClass == Integer.class ||
+                                targetClass == Long.class ||
+                                targetClass == Float.class ||
+                                targetClass == Double.class)
                                               && params[i] instanceof String) {
                         if (((String) params[i]).length()==1) {
                             accepted = true; // will require conversion of parameter
@@ -428,8 +442,8 @@ public abstract class ESLoader extends ESObject {
                         } else {
                             debugInfo = " rejected (String not of length 1)";
                         }
-                    
-                    // Handle array conversion if not from a native java array    
+
+                    // Handle array conversion if not from a native java array
                     } else if (targetClass.isArray()) {
                         if (params[i] instanceof JSWrapper) {
                             ESObject esArray = ((JSWrapper) params[i]).getESObject();
@@ -454,20 +468,24 @@ public abstract class ESLoader extends ESObject {
                         } else {
                             debugInfo = " rejected (only same native array or EcmaScript Array can be assigned to array)";
                         }
-                        
+
                     } else {
                        debugInfo = " rejected (incompatible types)";
                     }
                 } // if ! acccepted
             } // if ! null
-            
-            if (debugJavaAccess) System.out.println (" Assign " + sourceClass + 
-                                    " to " + target[i] +
-                                    debugInfo);
-            if (!accepted) return nonCompatible;
-            
+
+            if (debugJavaAccess) {
+                System.out.println (" Assign " + sourceClass +
+                                        " to " + target[i] +
+                                        debugInfo);
+            }
+            if (!accepted) {
+                return nonCompatible;
+            }
+
         } // for
-        
+
         // Compatible, return appropriate descriptor for future
         // processing of conversion of the "nearest" method
         return new CompatibilityDescriptor(distance,convertToChar,convertedArrays);
@@ -482,6 +500,6 @@ public abstract class ESLoader extends ESObject {
         }
         return t.getName() + brackets;
     }
-    
+
 
 }
