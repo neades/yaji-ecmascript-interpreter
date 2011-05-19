@@ -21,29 +21,32 @@ package FESI.Exceptions;
  * Exception used to signal internal programming error (assert error)
  */
 public class ProgrammingError extends Error {
-    
-   private static String eol = System.getProperty("line.separator", "\n");
 
-   /**
-    * Create an anonymous programming error exception
-    */
-   public ProgrammingError() {
-   }
+    private static final long serialVersionUID = -4921882171772152974L;
+    private static String eol = System.getProperty("line.separator", "\n");
 
-   /**
-    * Create a programming error exception with explanatory test
-    * @param message Reason of the error
-    */
-   public ProgrammingError(String message) {
-      super(message);
-   }
-   
-   /**
-    * Display the internal error asking to contact the author
-    */
-   public String getMessage() {
-       String m = super.getMessage();
-       m += eol + "*** FESI Internal error - contact the author ***";
-       return m;
-   }
+    /**
+     * Create an anonymous programming error exception
+     */
+    public ProgrammingError() {
+    }
+
+    /**
+     * Create a programming error exception with explanatory test
+     * 
+     * @param message
+     *            Reason of the error
+     */
+    public ProgrammingError(String message) {
+        super(message);
+    }
+
+    /**
+     * Display the internal error asking to contact the author
+     */
+    public String getMessage() {
+        String m = super.getMessage();
+        m += eol + "*** FESI Internal error - contact the author ***";
+        return m;
+    }
 }

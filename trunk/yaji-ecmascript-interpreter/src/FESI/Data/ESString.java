@@ -30,23 +30,26 @@ import FESI.Util.IAppendable;
  */
 public final class ESString extends ESPrimitive {
     private static final long serialVersionUID = 2155563970150911900L;
-    
-    // The value is only held in the string until we get an appendBuffer. After we get our
+
+    // The value is only held in the string until we get an appendBuffer. After
+    // we get our
     // appendBuffer, we never go back to storing it in the string.
-    private String      string;
+    private String string;
     private IAppendable appendBuffer;
 
     /**
      * Create a new value from the string parameters
-     *
-     * @param value The immutable value
+     * 
+     * @param value
+     *            The immutable value
      */
     public ESString(String value) {
         this.string = value;
         this.appendBuffer = null;
     }
 
-    // We assume the caller will not modify the appendBuffer after giving it to us.
+    // We assume the caller will not modify the appendBuffer after giving it to
+    // us.
     public ESString(IAppendable appendBuffer) {
         this.string = null;
         this.appendBuffer = appendBuffer;
@@ -70,8 +73,10 @@ public final class ESString extends ESPrimitive {
         return "string";
     }
 
-    // RID 27460: ESString should be immutable and this method is the only one that changes it.
-    // It is only currently used for the "result" string within representations when representation
+    // RID 27460: ESString should be immutable and this method is the only one
+    // that changes it.
+    // It is only currently used for the "result" string within representations
+    // when representation
     // optimisation is enabled.
     public void appendString(ESValue appendage, Evaluator evaluator) {
         if (appendBuffer == null) {
@@ -83,12 +88,12 @@ public final class ESString extends ESPrimitive {
         }
 
         if (appendage instanceof ESString) {
-            IAppendable otherAppendBuffer = ((ESString)appendage).appendBuffer;
+            IAppendable otherAppendBuffer = ((ESString) appendage).appendBuffer;
 
             if (otherAppendBuffer != null) {
                 appendBuffer.append(otherAppendBuffer);
             } else {
-                appendBuffer.append(((ESString)appendage).string);
+                appendBuffer.append(((ESString) appendage).string);
             }
 
             return;
@@ -97,7 +102,8 @@ public final class ESString extends ESPrimitive {
         appendBuffer.append(appendage.toString());
     }
 
-    // We will not give access to our appendBuffer, but we will offer to append it to somebody
+    // We will not give access to our appendBuffer, but we will offer to append
+    // it to somebody
     // else's IAppendable.
     public void appendSelfToAppendable(IAppendable appendable) {
         if (appendBuffer != null) {
@@ -110,16 +116,16 @@ public final class ESString extends ESPrimitive {
     // overrides
     @Override
     public String toString() {
-	if (appendBuffer != null) {
-	    return appendBuffer.toString();
-	}
+        if (appendBuffer != null) {
+            return appendBuffer.toString();
+        }
 
         return string;
     }
 
     /**
      * Returns the length of the string
-     *
+     * 
      * @return the length of the string
      */
     public int getStringLength() {
@@ -135,13 +141,13 @@ public final class ESString extends ESPrimitive {
     public double doubleValue() {
         double value = Double.NaN;
         try {
-           // Will accept leading / trailing spaces, unlike new Integer !
-           value = (Double.valueOf(toString())).doubleValue();
+            // Will accept leading / trailing spaces, unlike new Integer !
+            value = (Double.valueOf(toString())).doubleValue();
         } catch (NumberFormatException e) {
             // do nothing
         }
         return value;
-     }
+    }
 
     // overrides
     @Override
@@ -160,10 +166,10 @@ public final class ESString extends ESPrimitive {
     public ESValue toESObject(Evaluator evaluator) throws EcmaScriptException {
         StringPrototype theObject = null;
         ESObject sp = evaluator.getStringPrototype();
-        theObject= new StringPrototype(sp, evaluator);
+        theObject = new StringPrototype(sp, evaluator);
         theObject.value = this;
         return theObject;
-     }
+    }
 
     // overrides
     @Override
@@ -180,7 +186,7 @@ public final class ESString extends ESPrimitive {
     @Override
     public boolean equals(Object o) {
         // handle the special cases of ESNull and ESUndefined
-        if(o == ESNull.theNull || o == ESUndefined.theUndefined) {
+        if (o == ESNull.theNull || o == ESUndefined.theUndefined) {
             return false;
         }
 
@@ -188,16 +194,17 @@ public final class ESString extends ESPrimitive {
             ESString other = (ESString) ((ESValue) o).toESString();
             String thisString = this.toString();
             String otherString = other == null ? null : other.toString();
-            return thisString == null ? otherString == null : thisString.equals(otherString);
+            return thisString == null ? otherString == null : thisString
+                    .equals(otherString);
         }
 
         return false;
     }
 
     /**
-     * Advanced FESI
-     * GT Modified: 5/10/2004
-     * Support for subtypes (storing values in hashset)
+     * Advanced FESI GT Modified: 5/10/2004 Support for subtypes (storing values
+     * in hashset)
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -214,10 +221,11 @@ public final class ESString extends ESPrimitive {
         return s1.equals(s2);
     }
 
-    private static Map<String, ESString> cache = Collections.synchronizedMap(new HashMap<String, ESString>());
+    private static Map<String, ESString> cache = Collections
+            .synchronizedMap(new HashMap<String, ESString>());
 
     public static ESString valueOf(String value) {
-        if (value == null){
+        if (value == null) {
             return null;
         }
         ESString result = cache.get(value);

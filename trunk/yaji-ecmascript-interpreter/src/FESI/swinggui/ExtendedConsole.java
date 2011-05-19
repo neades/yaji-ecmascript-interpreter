@@ -18,12 +18,13 @@
 package FESI.swinggui;
 
 import FESI.gui.Console;
- 
+
 /**
- * Extend the console interface to allow dialog between JConsoleArea and SwingConsole
+ * Extend the console interface to allow dialog between JConsoleArea and
+ * SwingConsole
  */
-interface ExtendedConsole extends Console  {
-   
-	abstract public void send(String text);
+interface ExtendedConsole extends Console {
+
+    abstract public void send(String text);
 
 }

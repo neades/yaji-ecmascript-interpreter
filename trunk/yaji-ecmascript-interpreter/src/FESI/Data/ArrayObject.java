@@ -32,155 +32,173 @@ public class ArrayObject extends BuiltinFunctionObject {
     static final int LENGTHhash = LENGTHstring.hashCode();
     private static final String ZEROstring = ("0").intern();
     private static final int ZEROhash = ZEROstring.hashCode();
-   
+
     /**
      * Create a new Array object - used by makeArrayObject
-     *
-     * @param prototype Must be an ArrayPrototype
-     * @param evaluator the evaluator
+     * 
+     * @param prototype
+     *            Must be an ArrayPrototype
+     * @param evaluator
+     *            the evaluator
      */
     private ArrayObject(ESObject prototype, Evaluator evaluator) {
         super(prototype, evaluator, "Array", 1);
     }
 
-   
     // overrides
-    public ESValue callFunction(ESObject thisObject,
-                                ESValue[] arguments) 
-                                        throws EcmaScriptException {
+    public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+            throws EcmaScriptException {
         return doConstruct(thisObject, arguments);
-    } 
-    
-       
+    }
+
     // overrides
-    public ESObject doConstruct(ESObject thisObject, 
-                                ESValue[] arguments) 
-                                        throws EcmaScriptException {
+    public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
+            throws EcmaScriptException {
         ESObject ap = getEvaluator().getArrayPrototype();
         ArrayPrototype theArray = new ArrayPrototype(ap, getEvaluator());
         if (arguments.length > 1) {
-            for (int i=0; i<arguments.length; i++) {
-              String iString = Integer.toString(i);
-              theArray.putProperty(iString, arguments[i], iString.hashCode());   
+            for (int i = 0; i < arguments.length; i++) {
+                String iString = Integer.toString(i);
+                theArray.putProperty(iString, arguments[i], iString.hashCode());
             }
         } else if (arguments.length == 1) {
             ESValue firstArg = arguments[0];
             // Not clear in standard:
             if (firstArg.isNumberValue()) {
-                theArray.putProperty(LENGTHstring, firstArg, LENGTHhash);   
+                theArray.putProperty(LENGTHstring, firstArg, LENGTHhash);
             } else {
-                theArray.putProperty(ZEROstring, firstArg, ZEROhash);   
+                theArray.putProperty(ZEROstring, firstArg, ZEROhash);
             }
         }
         return theArray;
-    }    
-   
+    }
 
     /**
      * Utility function to create the single Array object
-     *
-     * @param evaluator the Evaluator
-     * @param objectPrototype The Object prototype attached to the evaluator
-     * @param functionPrototype The Function prototype attached to the evaluator
-     *
+     * 
+     * @param evaluator
+     *            the Evaluator
+     * @param objectPrototype
+     *            The Object prototype attached to the evaluator
+     * @param functionPrototype
+     *            The Function prototype attached to the evaluator
+     * 
      * @return The Array singleton
      */
-     
-    public static ArrayObject makeArrayObject(Evaluator evaluator,
-                                   ObjectPrototype objectPrototype,
-                                   FunctionPrototype functionPrototype) {
 
-       ArrayPrototype arrayPrototype = new ArrayPrototype(objectPrototype, evaluator);
-       ArrayObject arrayObject = new ArrayObject(functionPrototype, evaluator);
+    public static ArrayObject makeArrayObject(Evaluator evaluator,
+            ObjectPrototype objectPrototype, FunctionPrototype functionPrototype) {
+
+        ArrayPrototype arrayPrototype = new ArrayPrototype(objectPrototype,
+                evaluator);
+        ArrayObject arrayObject = new ArrayObject(functionPrototype, evaluator);
 
         try {
             // For arrayPrototype
             class ArrayPrototypeToString extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
-                ArrayPrototypeToString(String name, Evaluator evaluator, FunctionPrototype fp) {
+
+                ArrayPrototypeToString(String name, Evaluator evaluator,
+                        FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
-                public ESValue callFunction(ESObject thisObject, 
-                                        ESValue[] arguments)
-                       throws EcmaScriptException {
-                      BuiltinFunctionObject join = (BuiltinFunctionObject)
-                          thisObject.getProperty(JOINstring, JOINhash);
+
+                public ESValue callFunction(ESObject thisObject,
+                        ESValue[] arguments) throws EcmaScriptException {
+                    BuiltinFunctionObject join = (BuiltinFunctionObject) thisObject
+                            .getProperty(JOINstring, JOINhash);
                     return join.callFunction(thisObject, new ESValue[0]);
                 }
             }
             class ArrayPrototypeJoin extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
-                ArrayPrototypeJoin(String name, Evaluator evaluator, FunctionPrototype fp) {
+
+                ArrayPrototypeJoin(String name, Evaluator evaluator,
+                        FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
-                public ESValue callFunction(ESObject thisObject, 
-                                                ESValue[] arguments)
-                       throws EcmaScriptException { 
-                   StringBuilder buffer = new StringBuilder();
-                   String separator = ",";
-                   if (arguments.length > 0) {
-                       separator = arguments[0].toString();
-                   }
-                   int length = (thisObject.getProperty(ArrayObject.LENGTHstring, ArrayObject.LENGTHhash)).toInt32();
-                   for (int i =0; i<length; i++) {
-                       if (i>0) buffer.append(separator);
-                       String iString = Integer.toString(i);
-                       ESValue value = thisObject.getProperty(iString,iString.hashCode());
-                       if (value!=ESUndefined.theUndefined && value!=ESNull.theNull) {
-                           buffer.append(value.toString());
-                       }
-                   }
-                   return new ESString(buffer.toString());
+
+                public ESValue callFunction(ESObject thisObject,
+                        ESValue[] arguments) throws EcmaScriptException {
+                    StringBuilder buffer = new StringBuilder();
+                    String separator = ",";
+                    if (arguments.length > 0) {
+                        separator = arguments[0].toString();
+                    }
+                    int length = (thisObject.getProperty(
+                            ArrayObject.LENGTHstring, ArrayObject.LENGTHhash))
+                            .toInt32();
+                    for (int i = 0; i < length; i++) {
+                        if (i > 0)
+                            buffer.append(separator);
+                        String iString = Integer.toString(i);
+                        ESValue value = thisObject.getProperty(iString, iString
+                                .hashCode());
+                        if (value != ESUndefined.theUndefined
+                                && value != ESNull.theNull) {
+                            buffer.append(value.toString());
+                        }
+                    }
+                    return new ESString(buffer.toString());
                 }
             }
             class ArrayPrototypeReverse extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
-                ArrayPrototypeReverse(String name, Evaluator evaluator, FunctionPrototype fp) {
+
+                ArrayPrototypeReverse(String name, Evaluator evaluator,
+                        FunctionPrototype fp) {
                     super(fp, evaluator, name, 0);
                 }
-                public ESValue callFunction(ESObject thisObject, 
-                                        ESValue[] arguments)
-                       throws EcmaScriptException {
-                     if (!(thisObject instanceof ArrayPrototype)) {
-                         throw new EcmaScriptException ("reverse only implemented for arrays");
-                     }
-                     return ((ArrayPrototype) thisObject).reverse();
+
+                public ESValue callFunction(ESObject thisObject,
+                        ESValue[] arguments) throws EcmaScriptException {
+                    if (!(thisObject instanceof ArrayPrototype)) {
+                        throw new EcmaScriptException(
+                                "reverse only implemented for arrays");
+                    }
+                    return ((ArrayPrototype) thisObject).reverse();
                 }
             }
             class ArrayPrototypeSort extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
-                ArrayPrototypeSort(String name, Evaluator evaluator, FunctionPrototype fp) {
+
+                ArrayPrototypeSort(String name, Evaluator evaluator,
+                        FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
-                public ESValue callFunction(ESObject thisObject, 
-                                        ESValue[] arguments)
-                       throws EcmaScriptException {
-                     if (!(thisObject instanceof ArrayPrototype)) {
-                         throw new EcmaScriptException ("sort only implemented for arrays");
-                     }
-                     ESValue compareFn = null;
-                     if (arguments.length>0) compareFn = arguments[0];
-                     return ((ArrayPrototype) thisObject).sort(compareFn);
+
+                public ESValue callFunction(ESObject thisObject,
+                        ESValue[] arguments) throws EcmaScriptException {
+                    if (!(thisObject instanceof ArrayPrototype)) {
+                        throw new EcmaScriptException(
+                                "sort only implemented for arrays");
+                    }
+                    ESValue compareFn = null;
+                    if (arguments.length > 0)
+                        compareFn = arguments[0];
+                    return ((ArrayPrototype) thisObject).sort(compareFn);
                 }
             }
 
-            arrayObject.putHiddenProperty("prototype",arrayPrototype);
-            arrayObject.putHiddenProperty(LENGTHstring,ESNumber.valueOf(1));
+            arrayObject.putHiddenProperty("prototype", arrayPrototype);
+            arrayObject.putHiddenProperty(LENGTHstring, ESNumber.valueOf(1));
 
-            arrayPrototype.putHiddenProperty("constructor",arrayObject);
-            arrayPrototype.putHiddenProperty("toString", 
-               new ArrayPrototypeToString("toString", evaluator, functionPrototype));
-            arrayPrototype.putHiddenProperty("join",
-               new ArrayPrototypeJoin("join", evaluator, functionPrototype));
+            arrayPrototype.putHiddenProperty("constructor", arrayObject);
+            arrayPrototype.putHiddenProperty("toString",
+                    new ArrayPrototypeToString("toString", evaluator,
+                            functionPrototype));
+            arrayPrototype.putHiddenProperty("join", new ArrayPrototypeJoin(
+                    "join", evaluator, functionPrototype));
             arrayPrototype.putHiddenProperty("reverse",
-               new ArrayPrototypeReverse("reverse", evaluator, functionPrototype));
-            arrayPrototype.putHiddenProperty("sort",
-               new ArrayPrototypeSort("sort", evaluator, functionPrototype));
+                    new ArrayPrototypeReverse("reverse", evaluator,
+                            functionPrototype));
+            arrayPrototype.putHiddenProperty("sort", new ArrayPrototypeSort(
+                    "sort", evaluator, functionPrototype));
         } catch (EcmaScriptException e) {
             e.printStackTrace();
             throw new ProgrammingError(e.getMessage());
         }
-        
+
         evaluator.setArrayPrototype(arrayPrototype);
 
         return arrayObject;

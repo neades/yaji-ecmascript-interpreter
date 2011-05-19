@@ -17,7 +17,7 @@
 
 package FESI.Data;
 
-import java.util.Vector;
+import java.util.List;
 
 import FESI.AST.ASTFormalParameterList;
 import FESI.AST.ASTStatementList;
@@ -31,123 +31,111 @@ import FESI.Interpreter.StringEvaluationSource;
 import FESI.Parser.EcmaScript;
 import FESI.Parser.ParseException;
 
-
 /**
  * Implements the EcmaScript Function singleton
  */
-public class FunctionObject extends BuiltinFunctionObject
-        implements EcmaScriptTreeConstants {
+public class FunctionObject extends BuiltinFunctionObject implements
+        EcmaScriptTreeConstants {
     private static final long serialVersionUID = 8501827292633127950L;
     static boolean debugParse = false;
 
     FunctionObject(ESObject prototype, Evaluator evaluator) {
         super(prototype, evaluator, "Function", 1);
     }
-    
+
     // overrides
     public String getESClassName() {
         return "Function";
     }
 
     // overrides - call and new have the same effect
-    public ESValue callFunction(ESObject thisObject,
-                                ESValue[] arguments) 
-                                        throws EcmaScriptException {
-       return doConstruct(thisObject, arguments);
-    } 
-    
-       
+    public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+            throws EcmaScriptException {
+        return doConstruct(thisObject, arguments);
+    }
+
     // overrides - build a new function
-    public ESObject doConstruct(ESObject thisObject, 
-                                ESValue[] arguments) 
-                                        throws EcmaScriptException {
-         ConstructedFunctionObject theFunction = null;
-         ASTFormalParameterList fpl = null;
-         ASTStatementList sl = null;
-    
-         StringBuilder parameters = new StringBuilder();
-         int nArgs = arguments.length;
-         int i;
-         for (i=0; i<(nArgs-1); i++) {
-             if (i>0) {parameters.append(",");}
-             String arg = arguments[i].toString();
-             parameters.append(arg);
-         }
-         String body = arguments[i].toString();
-      
-         
-         String trimmedParams = parameters.toString().trim();
-         
-         String fullFunctionText = "function anonymous (" +
-                                    trimmedParams +
-                                    ") {" +
-                                    body.toString() +
-                                    "}";
-         
-         java.io.StringReader is;
-         EcmaScript parser;
-       
-         // Special case for empty parameters
-         if (trimmedParams.length()==0) {
+    public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
+            throws EcmaScriptException {
+        ConstructedFunctionObject theFunction = null;
+        ASTFormalParameterList fpl = null;
+        ASTStatementList sl = null;
+
+        StringBuilder parameters = new StringBuilder();
+        int nArgs = arguments.length;
+        int i;
+        for (i = 0; i < (nArgs - 1); i++) {
+            if (i > 0) {
+                parameters.append(",");
+            }
+            String arg = arguments[i].toString();
+            parameters.append(arg);
+        }
+        String body = arguments[i].toString();
+
+        String trimmedParams = parameters.toString().trim();
+
+        String fullFunctionText = "function anonymous (" + trimmedParams
+                + ") {" + body.toString() + "}";
+
+        java.io.StringReader is;
+        EcmaScript parser;
+
+        // Special case for empty parameters
+        if (trimmedParams.length() == 0) {
             fpl = new ASTFormalParameterList(JJTFORMALPARAMETERLIST);
         } else {
-              is = 
-                    new java.io.StringReader(trimmedParams);
-              parser = new EcmaScript(is);
-              try {
-                  fpl = (ASTFormalParameterList) parser.FormalParameterList();
-                  is.close();
-              } catch (ParseException e) {
-              if (debugParse) {
-                System.out.println("[[PARSING ERROR DETECTED: (debugParse true)]]");
-                System.out.println(e.getMessage());
-                System.out.println("[[BY ROUTINE:]]");
-                e.printStackTrace();
-                System.out.println();
-              }
-              throw new EcmaScriptParseException(e, 
-                 new StringEvaluationSource(fullFunctionText,
-                                    null)
-                 );
-              }
-         }
-          is =  new java.io.StringReader(body.toString());
-          parser = new EcmaScript(is);
-          try {
-               sl = (ASTStatementList) parser.StatementList();
-               is.close();
-          } catch (ParseException e) {
+            is = new java.io.StringReader(trimmedParams);
+            parser = new EcmaScript(is);
+            try {
+                fpl = (ASTFormalParameterList) parser.FormalParameterList();
+                is.close();
+            } catch (ParseException e) {
+                if (debugParse) {
+                    System.out
+                            .println("[[PARSING ERROR DETECTED: (debugParse true)]]");
+                    System.out.println(e.getMessage());
+                    System.out.println("[[BY ROUTINE:]]");
+                    e.printStackTrace();
+                    System.out.println();
+                }
+                throw new EcmaScriptParseException(e,
+                        new StringEvaluationSource(fullFunctionText, null));
+            }
+        }
+        is = new java.io.StringReader(body.toString());
+        parser = new EcmaScript(is);
+        try {
+            sl = (ASTStatementList) parser.StatementList();
+            is.close();
+        } catch (ParseException e) {
             if (debugParse) {
-                System.out.println("[[PARSING ERROR DETECTED: (debugParse true)]]");
+                System.out
+                        .println("[[PARSING ERROR DETECTED: (debugParse true)]]");
                 System.out.println(e.getMessage());
                 System.out.println("[[BY ROUTINE:]]");
                 e.printStackTrace();
                 System.out.println();
             }
-            throw new EcmaScriptParseException(e, 
-                 new StringEvaluationSource(fullFunctionText, null));
-          }
-          
-          FunctionEvaluationSource fes = 
-               new FunctionEvaluationSource(
-                   new StringEvaluationSource(fullFunctionText,null),
-                   "<anonymous function>");
-          EcmaScriptVariableVisitor varDeclarationVisitor = getEvaluator().getVarDeclarationVisitor();
-          Vector variableNames = varDeclarationVisitor.processVariableDeclarations(sl, fes);
-    
-          theFunction = ConstructedFunctionObject.makeNewConstructedFunction(
-                        getEvaluator(), 
-                        "anonymous", 
-                        fes,
-                        fullFunctionText,
-                        fpl.getArguments(),
-                        variableNames, 
-                        sl);
-    
-         return theFunction;
-    }    
-    
-    
+            throw new EcmaScriptParseException(e, new StringEvaluationSource(
+                    fullFunctionText, null));
+        }
+
+        FunctionEvaluationSource fes = new FunctionEvaluationSource(
+                new StringEvaluationSource(fullFunctionText, null),
+                "<anonymous function>");
+        EcmaScriptVariableVisitor varDeclarationVisitor = getEvaluator()
+                .getVarDeclarationVisitor();
+        List<String> variableNames = varDeclarationVisitor
+                .processVariableDeclarations(sl, fes);
+
+        theFunction = ConstructedFunctionObject.makeNewConstructedFunction(
+                getEvaluator(), "anonymous", fes, fullFunctionText, fpl
+                        .getArguments(), variableNames, sl);
+
+        return theFunction;
+    }
+
     // overrides
     public String toString() {
         return "<Function>";

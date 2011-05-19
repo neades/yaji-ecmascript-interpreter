@@ -22,69 +22,81 @@
  * @author Laurence P. G. Cable
  */
 
-
 package FESI.ClassFile;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 
- /**
-  * <p> provides minimal support for FLOAT_CONSTANT CPE </p>
-  */
+/**
+ * <p>
+ * provides minimal support for FLOAT_CONSTANT CPE
+ * </p>
+ */
 
 class FloatConstant extends ConstantPoolEntry {
 
-    private float	floating;
+    private float floating;
 
     /**
-     * <p> construct a CONSTANT_FLOAT </p>
-     *
-     * @param f		the float value
-     * @param cf	the class file
+     * <p>
+     * construct a CONSTANT_FLOAT
+     * </p>
+     * 
+     * @param f
+     *            the float value
+     * @param cf
+     *            the class file
      */
 
     FloatConstant(float f, ClassFile cf) {
-    	super(CONSTANT_FLOAT, cf);
-    
-    	floating = f;
+        super(CONSTANT_FLOAT, cf);
 
-    	addToConstantPool();
+        floating = f;
+
+        addToConstantPool();
     }
 
     /**
-     * <p> write the CONSTANT_FLOAT to the stream </p>
-     *
-     * @param dos 	the output stream
-     *
-     * @throws	IOException
+     * <p>
+     * write the CONSTANT_FLOAT to the stream
+     * </p>
+     * 
+     * @param dos
+     *            the output stream
+     * 
+     * @throws IOException
      */
 
     void write(DataOutputStream dos) throws IOException {
-    	dos.writeByte(getTag());
-    	dos.writeFloat(floating);
+        dos.writeByte(getTag());
+        dos.writeFloat(floating);
     }
 
     /**
-     * <p> return the value of the constant </p>
-     *
+     * <p>
+     * return the value of the constant
+     * </p>
+     * 
      * @return the value of the CONSTANT_FLOAT
      */
 
-    float getValue() { return floating; }
+    float getValue() {
+        return floating;
+    }
 
     /**
      * @return object equality
      */
 
     public boolean equals(Object o) {
-    	if (o instanceof Float) {
-    	    return floating == ((Float)o).floatValue();
-    	} else if (o instanceof FloatConstant) {
-    	    FloatConstant fc = (FloatConstant)o;
+        if (o instanceof Float) {
+            return floating == ((Float) o).floatValue();
+        } else if (o instanceof FloatConstant) {
+            FloatConstant fc = (FloatConstant) o;
 
-    	    return floating == fc.getValue();
-    	}
+            return floating == fc.getValue();
+        }
 
-    	return false;
+        return false;
     }
 }

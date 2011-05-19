@@ -20,16 +20,16 @@ package FESI.Extensions;
 import FESI.Data.ESObject;
 
 /**
- * The interface of all BasicIO extensions, used bu the interpreter
- * to access the document object.
+ * The interface of all BasicIO extensions, used bu the interpreter to access
+ * the document object.
  */
- 
+
 public interface BasicIOInterface {
-  
-   /**
-     * Return an object with the document routines (for compatibility with 
-     * Netscape). This object will be the "document" object and the caller
-     * may add its URL property.
+
+    /**
+     * Return an object with the document routines (for compatibility with
+     * Netscape). This object will be the "document" object and the caller may
+     * add its URL property.
      */
-   abstract public ESObject getDocument();
+    abstract public ESObject getDocument();
 }

@@ -18,53 +18,53 @@
 package FESI.Interpreter;
 
 /**
- * Abstract declaration of an evaluation source. An evaluation
- * source is used to describe the source of a program for
- * error messages and debugging purpose.
+ * Abstract declaration of an evaluation source. An evaluation source is used to
+ * describe the source of a program for error messages and debugging purpose.
  */
 public abstract class EvaluationSource implements java.io.Serializable {
     private static final long serialVersionUID = 2829018186941317355L;
 
-   /**
-    * The end of line string for this machine.
-    */
+    /**
+     * The end of line string for this machine.
+     */
     protected String eol = System.getProperty("line.separator", "\n");
 
     /**
-     * The previous source in case of multi-level evaluation. 
+     * The previous source in case of multi-level evaluation.
      */
     protected EvaluationSource previousSource = null;
-    
+
     /**
-     * Create a evaluation source linked to the previous source 
-     * (which can be null)
+     * Create a evaluation source linked to the previous source (which can be
+     * null)
      */
     public EvaluationSource(EvaluationSource previousSource) {
         super();
         this.previousSource = previousSource;
     }
-   
+
     /**
-     * Return a description of the evaluation source. Must be
-     * implemented for each specific evaluation source.
+     * Return a description of the evaluation source. Must be implemented for
+     * each specific evaluation source.
      */
     abstract protected String getEvaluationSourceText();
- 
+
     /**
      * Display the description of the evaluation source
      */
     public String toString() {
         return getEvaluationSourceText();
     }
-    
+
     /**
      * Return an evaluation source number if defined
+     * 
      * @return -1 if not defined
      */
     public int getLineNumber() {
-       if (previousSource != null) {
-           return previousSource.getLineNumber();
-       } 
-       return -1; // undefined
-    }   
+        if (previousSource != null) {
+            return previousSource.getLineNumber();
+        }
+        return -1; // undefined
+    }
 }

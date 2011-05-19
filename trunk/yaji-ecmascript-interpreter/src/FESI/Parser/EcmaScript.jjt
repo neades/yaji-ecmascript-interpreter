@@ -37,6 +37,7 @@ package FESI.Parser;
 
 import FESI.AST.*;
 
+@SuppressWarnings("all")
 public class EcmaScript {
 
   // Just for test

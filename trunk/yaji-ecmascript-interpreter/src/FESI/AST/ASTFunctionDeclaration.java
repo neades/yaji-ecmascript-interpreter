@@ -5,38 +5,39 @@ package FESI.AST;
 import FESI.Parser.EcmaScript;
 
 public class ASTFunctionDeclaration extends SimpleNode {
-    
-  /**
+
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = -2472394930724874278L;
-private String sourceString  = null;
-  
-  public ASTFunctionDeclaration(int id) {
-    super(id);
-  }
+    private static final long serialVersionUID = -2472394930724874278L;
+    private String sourceString = null;
 
-  public ASTFunctionDeclaration(EcmaScript p, int id) {
-    super(p, id);
-  }
+    public ASTFunctionDeclaration(int id) {
+        super(id);
+    }
 
-  public static Node jjtCreate(int id) {
-      return new ASTFunctionDeclaration(id);
-  }
+    public ASTFunctionDeclaration(EcmaScript p, int id) {
+        super(p, id);
+    }
 
-  public static Node jjtCreate(EcmaScript p, int id) {
-      return new ASTFunctionDeclaration(p, id);
-  }
+    public static Node jjtCreate(int id) {
+        return new ASTFunctionDeclaration(id);
+    }
 
-  /** Accept the visitor. **/
-  public Object jjtAccept(EcmaScriptVisitor visitor, Object data) {
-    return visitor.visit(this, data);
-  }
-  
-  public void setSourceString(String sourceString) {
-      this.sourceString = sourceString;
-  }
-  public String getSourceString() {
-      return sourceString;
-  }
+    public static Node jjtCreate(EcmaScript p, int id) {
+        return new ASTFunctionDeclaration(p, id);
+    }
+
+    /** Accept the visitor. **/
+    public Object jjtAccept(EcmaScriptVisitor visitor, Object data) {
+        return visitor.visit(this, data);
+    }
+
+    public void setSourceString(String sourceString) {
+        this.sourceString = sourceString;
+    }
+
+    public String getSourceString() {
+        return sourceString;
+    }
 }

@@ -29,14 +29,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 public class HtmlPane extends JEditorPane {
-    
+
+    private static final long serialVersionUID = 4108928093410972316L;
     private HelpWindow helpWindow;
     private JPopupMenu popupMenu;
-    
+
     public HtmlPane(HelpWindow helpWindow, URL url) throws IOException {
         super(url);
         this.helpWindow = helpWindow;
-
 
         // Add popup menu
         popupMenu = new JPopupMenu("Help");
@@ -46,7 +46,7 @@ public class HtmlPane extends JEditorPane {
             public void actionPerformed(ActionEvent event) {
                 HtmlPane.this.helpWindow.gotoContentPage();
             }
-        } );
+        });
         popupMenu.add(menuContent);
         JMenuItem menuBack = new JMenuItem("Back");
         menuBack.setMnemonic('B');
@@ -54,20 +54,18 @@ public class HtmlPane extends JEditorPane {
             public void actionPerformed(ActionEvent event) {
                 HtmlPane.this.helpWindow.backHistory();
             }
-        } );
+        });
         popupMenu.add(menuBack);
-        
+
         enableEvents(AWTEvent.MOUSE_EVENT_MASK);
     }
 
- 
     public void processMouseEvent(MouseEvent event) {
         if (event.isPopupTrigger()) {
-            popupMenu.show(event.getComponent(),event.getX(), event.getY());
+            popupMenu.show(event.getComponent(), event.getX(), event.getY());
         } else {
             super.processMouseEvent(event);
         }
     }
-
 
 }

@@ -17,16 +17,15 @@
 
 package FESI.Tests;
 
-
-
 /**
- * File used by the validation suite
- * added to the FESI jar file for convenience of validating the system
+ * File used by the validation suite added to the FESI jar file for convenience
+ * of validating the system
  */
- 
+
 public interface TestSubInterface extends TestInterface {
-    
+
     public int getSubData();
+
     public int getSubData(int value);
 
 }

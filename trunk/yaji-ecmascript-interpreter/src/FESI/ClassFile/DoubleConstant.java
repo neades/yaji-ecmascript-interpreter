@@ -22,67 +22,77 @@
  * @author Laurence P. G. Cable
  */
 
-
 package FESI.ClassFile;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
- * <p> implements a DOUBLE_CONSTANT CPE </p>
+ * <p>
+ * implements a DOUBLE_CONSTANT CPE
+ * </p>
  */
 
 class DoubleConstant extends ConstantPoolEntry {
 
-    private double	doubler;
+    private double doubler;
 
     /**
-     * <p> construct a DOUBLE_CONSTANT CPE </p>
-     *
-     * @param d 	the double constant
-     * @param cf	the class file
+     * <p>
+     * construct a DOUBLE_CONSTANT CPE
+     * </p>
+     * 
+     * @param d
+     *            the double constant
+     * @param cf
+     *            the class file
      */
 
     DoubleConstant(double d, ClassFile cf) {
-    	super(CONSTANT_DOUBLE, cf);
-    
-    	doubler = d;
+        super(CONSTANT_DOUBLE, cf);
 
-    	addToConstantPool();
+        doubler = d;
+
+        addToConstantPool();
     }
 
     /**
-     * <p> write the constant CPE to the stream </p>
-     *
-     * @param dos the stream
-     *
+     * <p>
+     * write the constant CPE to the stream
+     * </p>
+     * 
+     * @param dos
+     *            the stream
+     * 
      * @throws IOException
      */
 
     void write(DataOutputStream dos) throws IOException {
-    	dos.writeByte(getTag());
-    	dos.writeDouble(doubler);
+        dos.writeByte(getTag());
+        dos.writeDouble(doubler);
     }
 
     /**
      * @return the double constant value.
      */
 
-    double getValue() { return doubler; }
+    double getValue() {
+        return doubler;
+    }
 
     /**
      * @return the object's equality.
      */
 
     public boolean equals(Object o) {
-    	if (o instanceof Double) {
-    	    return doubler == ((Double)o).doubleValue();
-    	} else if (o instanceof DoubleConstant) {
-    	    DoubleConstant dc = (DoubleConstant)o;
+        if (o instanceof Double) {
+            return doubler == ((Double) o).doubleValue();
+        } else if (o instanceof DoubleConstant) {
+            DoubleConstant dc = (DoubleConstant) o;
 
-    	    return doubler == dc.getValue();
-    	}
+            return doubler == dc.getValue();
+        }
 
-    	return false;
+        return false;
     }
 }

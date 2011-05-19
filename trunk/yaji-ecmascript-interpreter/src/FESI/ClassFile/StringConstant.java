@@ -22,14 +22,15 @@
  * @author Laurence P. G. Cable
  */
 
-
 package FESI.ClassFile;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
- * <p> this class provides minimal support for CONSTANT_STRING CPE's <p>
+ * <p>
+ * this class provides minimal support for CONSTANT_STRING CPE's
+ * <p>
  */
 
 final class StringConstant extends ConstantPoolEntry {
@@ -37,65 +38,78 @@ final class StringConstant extends ConstantPoolEntry {
     private UTF8Constant string;
 
     /**
-     * <p> construct a CONSTANT_STRING CPE </p>
-     *
-     * @param str	the constant 
-     * @param cf	the class file
+     * <p>
+     * construct a CONSTANT_STRING CPE
+     * </p>
+     * 
+     * @param str
+     *            the constant
+     * @param cf
+     *            the class file
      */
 
     StringConstant(String str, ClassFile cf) {
-    	super(CONSTANT_STRING, cf);
-    
-    	string = new UTF8Constant(str, cf);
+        super(CONSTANT_STRING, cf);
 
-    	addToConstantPool();
+        string = new UTF8Constant(str, cf);
+
+        addToConstantPool();
     }
 
     /**
-     * <p> construct a CONSTANT_STRING CPE </p>
-     *
-     * @param utf8	the utf8 constant 
-     * @param cf	the class file
+     * <p>
+     * construct a CONSTANT_STRING CPE
+     * </p>
+     * 
+     * @param utf8
+     *            the utf8 constant
+     * @param cf
+     *            the class file
      */
 
     StringConstant(UTF8Constant utf8, ClassFile cf) {
-    	super(CONSTANT_STRING, cf);
+        super(CONSTANT_STRING, cf);
 
-	string = utf8;
+        string = utf8;
 
-    	addToConstantPool();
+        addToConstantPool();
     }
 
     /**
-     * <p> write the constant to the stream </p>
-     *
-     * @param dos the output stream
-     *
+     * <p>
+     * write the constant to the stream
+     * </p>
+     * 
+     * @param dos
+     *            the output stream
+     * 
      * @throws IOException
      */
 
     void write(DataOutputStream dos) throws IOException {
-    	dos.writeByte(getTag());
-    	dos.writeShort(string.getConstantPoolIndex());
+        dos.writeByte(getTag());
+        dos.writeShort(string.getConstantPoolIndex());
     }
 
     /**
      * @return the string constant
      */
 
-    String getString() { return string.getString(); }
+    String getString() {
+        return string.getString();
+    }
 
     /**
      * @return object equality
      */
 
     public boolean equals(Object o) {
-    	if (o instanceof String) {
-    	    return string.equals(o);
-    	} else if (o instanceof StringConstant) {
-    	    return string.equals(((StringConstant)o).getString());
-    	} 
+        if (o instanceof String) {
+            return string.equals(o);
+        } else if (o instanceof StringConstant) {
+            return string.equals(((StringConstant) o).getString());
+        }
 
-    	return false;
+        return false;
     }
 }

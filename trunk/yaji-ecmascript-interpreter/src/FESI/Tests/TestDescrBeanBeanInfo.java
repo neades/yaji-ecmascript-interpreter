@@ -24,38 +24,39 @@ import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
 
 /**
- * File used by the validation suite
- * added to the FESI jar file for convenience of validating the system
+ * File used by the validation suite added to the FESI jar file for convenience
+ * of validating the system
  */
- 
+
 public class TestDescrBeanBeanInfo extends SimpleBeanInfo {
-    
+
     public BeanDescriptor getBeanDescriptor() {
-          return new BeanDescriptor(TestDescrBean.class);
+        return new BeanDescriptor(TestDescrBean.class);
     }
 
-    public PropertyDescriptor[] getPropertyDescriptors() { 
-        try  {    
+    public PropertyDescriptor[] getPropertyDescriptors() {
+        try {
             PropertyDescriptor intValue = new PropertyDescriptor("intValue",
-                            TestDescrBean.class, "getAValue","setAValue");
-    
-            IndexedPropertyDescriptor intArray = new IndexedPropertyDescriptor("intArray", 
-               TestDescrBean.class, "getIntArray", "setIntArray", "getIntArrayWithIndex", 
-               "setIntArrayWithIndex");
+                    TestDescrBean.class, "getAValue", "setAValue");
+
+            IndexedPropertyDescriptor intArray = new IndexedPropertyDescriptor(
+                    "intArray", TestDescrBean.class, "getIntArray",
+                    "setIntArray", "getIntArrayWithIndex",
+                    "setIntArrayWithIndex");
             intArray.setBound(false);
             intArray.setConstrained(false);
 
-            IndexedPropertyDescriptor intIndexed = new IndexedPropertyDescriptor("intIndexed", 
-               TestDescrBean.class, null, null, "getIntIndexed", 
-               "setIntIndexed");
+            IndexedPropertyDescriptor intIndexed = new IndexedPropertyDescriptor(
+                    "intIndexed", TestDescrBean.class, null, null,
+                    "getIntIndexed", "setIntIndexed");
             intArray.setBound(false);
             intArray.setConstrained(false);
-    
-            PropertyDescriptor rv[]={intValue, intArray, intIndexed};
+
+            PropertyDescriptor rv[] = { intValue, intArray, intIndexed };
             return rv;
-    
+
         } catch (IntrospectionException e) {
-             throw new Error(e.toString());
+            throw new Error(e.toString());
         }
     }
 

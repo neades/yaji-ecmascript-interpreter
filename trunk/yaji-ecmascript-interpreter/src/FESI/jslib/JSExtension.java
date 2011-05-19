@@ -18,27 +18,26 @@
 package FESI.jslib;
 
 /**
- * Interface used to describe EcmaScript extensions with the
- * jslib package. An extension must implements this interface
- * to be loadable. A new instance of the extension is created
- * by FESI at load time.
- * <P>As there can be multiple extension (possibly in multiple
- * threads) in a single project, an extension should not have
- * shared static properties (unless protected and to share
- * information between various instances).
+ * Interface used to describe EcmaScript extensions with the jslib package. An
+ * extension must implements this interface to be loadable. A new instance of
+ * the extension is created by FESI at load time.
+ * <P>
+ * As there can be multiple extension (possibly in multiple threads) in a single
+ * project, an extension should not have shared static properties (unless
+ * protected and to share information between various instances).
  */
 
 abstract public interface JSExtension {
 
     /**
-     * Called by the FESI interpreter the first time the extension
-     * is loaded in the evaluator.
-     *
-     * @param   globalObject  The global object of this evaluator
-     * @exception   JSException  To be thrown in case of error
+     * Called by the FESI interpreter the first time the extension is loaded in
+     * the evaluator.
+     * 
+     * @param globalObject
+     *            The global object of this evaluator
+     * @exception JSException
+     *                To be thrown in case of error
      */
     abstract public void initializeExtension(JSGlobalObject globalObject)
-           throws JSException;
+            throws JSException;
 }
- 
- 

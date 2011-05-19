@@ -28,9 +28,13 @@ class BooleanPrototype extends ESObject {
     // The value
     protected ESBoolean value = ESBoolean.makeBoolean(false);
 
-    /** Create a new Boolean initialized to false
-     * @param prototype the BooleanPrototype
-     * @param evaluator the evaluator
+    /**
+     * Create a new Boolean initialized to false
+     * 
+     * @param prototype
+     *            the BooleanPrototype
+     * @param evaluator
+     *            the evaluator
      */
     BooleanPrototype(ESObject prototype, Evaluator evaluator) {
         super(prototype, evaluator);
@@ -42,18 +46,16 @@ class BooleanPrototype extends ESObject {
         return "Boolean";
     }
 
-
-
     // overrides
     @Override
     public double doubleValue() throws EcmaScriptException {
-       return value.doubleValue();
+        return value.doubleValue();
     }
 
     // overrides
     @Override
     public ESValue toESBoolean() throws EcmaScriptException {
-       return value;
+        return value;
     }
 
     // overrides
@@ -71,8 +73,8 @@ class BooleanPrototype extends ESObject {
     // overrides
     @Override
     public String toDetailString() {
-        return "ES:[Object: builtin " + this.getClass().getName() + ":" +
-            ((value == null) ? "null" : value.toString()) + "]";
+        return "ES:[Object: builtin " + this.getClass().getName() + ":"
+                + ((value == null) ? "null" : value.toString()) + "]";
     }
 
     // overrides

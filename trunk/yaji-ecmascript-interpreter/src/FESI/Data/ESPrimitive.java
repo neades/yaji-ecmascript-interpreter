@@ -20,48 +20,51 @@ package FESI.Data;
 import FESI.Exceptions.EcmaScriptException;
 
 /**
- * This is the superclass of all primitive values (non object)
- * of FESI. The conversion to a primitive value from a primitive
- * value is always the same value, independently of the hint (9.1).
- * <P>Use the isPrimitive function, so that further primitive could
- * be added without subclassing this class.
+ * This is the superclass of all primitive values (non object) of FESI. The
+ * conversion to a primitive value from a primitive value is always the same
+ * value, independently of the hint (9.1).
+ * <P>
+ * Use the isPrimitive function, so that further primitive could be added
+ * without subclassing this class.
  */
 public abstract class ESPrimitive extends ESValue {
 
+    private static final long serialVersionUID = -5133410448934648056L;
 
     /**
      * Create a new primitive value. Does not add any specific information.
-     *
+     * 
      */
-	public ESPrimitive() {
-		super();
+    public ESPrimitive() {
+        super();
     }
 
-
     /**
-     * Indicate that this value is a primitive value, useful for various
-     * tests in conversions. This avoid testing the type, in case additional
+     * Indicate that this value is a primitive value, useful for various tests
+     * in conversions. This avoid testing the type, in case additional
      * primitives must be created.
-     *
-     * @return  true   
+     * 
+     * @return true
      */
     public final boolean isPrimitive() {
         return true;
     }
-	
+
     /**
      * Return false to indicate that this value is not composite.
-     *
-     * @return     false
+     * 
+     * @return false
      */
-    public boolean isComposite() {return false; }
-
+    public boolean isComposite() {
+        return false;
+    }
 
     /**
      * Convert to a primitive - a NOOP for a primitive.
-     *
-     * @return   this  
-     * @exception   EcmaScriptException not thrown 
+     * 
+     * @return this
+     * @exception EcmaScriptException
+     *                not thrown
      */
     public final ESValue toESPrimitive() throws EcmaScriptException {
         return this;
@@ -69,27 +72,27 @@ public abstract class ESPrimitive extends ESValue {
 
     /**
      * Convert to a primitive - a NOOP for a primitive.
-     *
-     * @param   hint ignored 
-     * @return     this
-     * @exception   EcmaScriptException  not thrown
+     * 
+     * @param hint
+     *            ignored
+     * @return this
+     * @exception EcmaScriptException
+     *                not thrown
      */
     public final ESValue toESPrimitive(int hint) throws EcmaScriptException {
         return this;
     }
-    
-   /**
+
+    /**
      * Returns a full description of the value, with the specified name.
-     *
-     * @param name The name of the value to describe
-     *
-     * @return   the description of this value  
+     * 
+     * @param name
+     *            The name of the value to describe
+     * 
+     * @return the description of this value
      */
     public ValueDescription getDescription(String name) {
-       return new ValueDescription(name,
-                                    "PRIMITIVE",
-                                    this.toString());
+        return new ValueDescription(name, "PRIMITIVE", this.toString());
     }
 
-       
 }

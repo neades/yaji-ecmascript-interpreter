@@ -24,38 +24,42 @@ import FESI.Parser.TokenMgrError;
 /**
  * Exception used to signal lexical error during parsing
  */
-public class EcmaScriptLexicalException extends EcmaScriptException 
-                    implements EcmaScriptConstants {
+public class EcmaScriptLexicalException extends EcmaScriptException implements
+        EcmaScriptConstants {
+
+    private static final long serialVersionUID = -6123060663024792510L;
 
     /** @serial Token creating the error */
     private TokenMgrError tokenMgrError;
-    
+
     /** @serial Identification of source creating the error */
     private EvaluationSource evaluationSource;
-    
+
     /**
      * Create a new lexical exception
-     *
-     * @param e The error from the token manager
-     * @param s The evaluation source location of the error
+     * 
+     * @param e
+     *            The error from the token manager
+     * @param s
+     *            The evaluation source location of the error
      */
     public EcmaScriptLexicalException(TokenMgrError e, EvaluationSource s) {
         super("Lexical error");
         tokenMgrError = e;
         evaluationSource = s;
     }
-  
-   /**
-    * Get the line number of the error if possible
-    */
-   public int getLineNumber() {
-          
-      if (evaluationSource != null) {
-          return evaluationSource.getLineNumber();
-      } else {
-          return -1;
-      }
-   }
+
+    /**
+     * Get the line number of the error if possible
+     */
+    public int getLineNumber() {
+
+        if (evaluationSource != null) {
+            return evaluationSource.getLineNumber();
+        } else {
+            return -1;
+        }
+    }
 
     /**
      * Return the text of the token error and the location
@@ -65,15 +69,14 @@ public class EcmaScriptLexicalException extends EcmaScriptException
         retval += eol + evaluationSource;
         return retval;
     }
-    
+
     /**
-     * Return true in case of unclosed comment, as in this case
-     * the statement is not complete and the user may be prompted
-     * to complete the statement.
+     * Return true in case of unclosed comment, as in this case the statement is
+     * not complete and the user may be prompted to complete the statement.
      */
     public boolean isIncomplete() {
-      String s = tokenMgrError.getMessage();
-      return s.indexOf(".  Probably unclosed comment.")!= -1;
-       // See TokenMgrError
-   }
+        String s = tokenMgrError.getMessage();
+        return s.indexOf(".  Probably unclosed comment.") != -1;
+        // See TokenMgrError
+    }
 }

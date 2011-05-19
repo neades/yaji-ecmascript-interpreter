@@ -5,29 +5,29 @@ package FESI.AST;
 import FESI.Parser.EcmaScript;
 
 public class ASTBinaryExpressionSequence extends SimpleNode {
-  /**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = 4509822808389298023L;
+    private static final long serialVersionUID = 4509822808389298023L;
 
-public ASTBinaryExpressionSequence(int id) {
-    super(id);
-  }
+    public ASTBinaryExpressionSequence(int id) {
+        super(id);
+    }
 
-  public ASTBinaryExpressionSequence(EcmaScript p, int id) {
-    super(p, id);
-  }
+    public ASTBinaryExpressionSequence(EcmaScript p, int id) {
+        super(p, id);
+    }
 
-  public static Node jjtCreate(int id) {
-      return new ASTBinaryExpressionSequence(id);
-  }
+    public static Node jjtCreate(int id) {
+        return new ASTBinaryExpressionSequence(id);
+    }
 
-  public static Node jjtCreate(EcmaScript p, int id) {
-      return new ASTBinaryExpressionSequence(p, id);
-  }
+    public static Node jjtCreate(EcmaScript p, int id) {
+        return new ASTBinaryExpressionSequence(p, id);
+    }
 
-  /** Accept the visitor. **/
-  public Object jjtAccept(EcmaScriptVisitor visitor, Object data) {
-    return visitor.visit(this, data);
-  }
+    /** Accept the visitor. **/
+    public Object jjtAccept(EcmaScriptVisitor visitor, Object data) {
+        return visitor.visit(this, data);
+    }
 }

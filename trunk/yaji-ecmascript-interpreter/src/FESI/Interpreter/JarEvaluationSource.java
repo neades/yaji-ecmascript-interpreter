@@ -17,9 +17,8 @@
 
 package FESI.Interpreter;
 
-    
 /**
- * Describe a jar entry used as a source. 
+ * Describe a jar entry used as a source.
  */
 public class JarEvaluationSource extends EvaluationSource {
     private static final long serialVersionUID = 103223323857901314L;
@@ -28,16 +27,21 @@ public class JarEvaluationSource extends EvaluationSource {
 
     /**
      * Create a jar source description
-     * @param theJarName Describe the source jar
-     * @param theEntryName Describe the source entry in the jar
-     * @param previousSource Describe the calling source
+     * 
+     * @param theJarName
+     *            Describe the source jar
+     * @param theEntryName
+     *            Describe the source entry in the jar
+     * @param previousSource
+     *            Describe the calling source
      */
-    public JarEvaluationSource(String theJarName, String theEntryName, EvaluationSource previousSource) {
+    public JarEvaluationSource(String theJarName, String theEntryName,
+            EvaluationSource previousSource) {
         super(previousSource);
         this.theJarName = theJarName;
         this.theEntryName = theEntryName;
     }
-    
+
     protected String getEvaluationSourceText() {
         return "in entry: '" + theEntryName + "' of jar: '" + theJarName + "'";
     }

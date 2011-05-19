@@ -27,17 +27,20 @@ public class FunctionEvaluationSource extends EvaluationSource {
 
     /**
      * Create a function source description
-     * @param evaluationSource Describe the function name
-     * @param previousSource Describe the calling source
+     * 
+     * @param evaluationSource
+     *            Describe the function name
+     * @param previousSource
+     *            Describe the calling source
      */
-    public FunctionEvaluationSource(
-            EvaluationSource evaluationSource,
+    public FunctionEvaluationSource(EvaluationSource evaluationSource,
             String theFunctionName) {
         super(evaluationSource);
         this.theFunctionName = theFunctionName;
     }
+
     protected String getEvaluationSourceText() {
-        return "of function '" + theFunctionName +"' " +
-            previousSource.getEvaluationSourceText();
+        return "of function '" + theFunctionName + "' "
+                + previousSource.getEvaluationSourceText();
     }
 }

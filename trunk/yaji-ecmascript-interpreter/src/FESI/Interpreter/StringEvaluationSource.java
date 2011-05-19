@@ -20,20 +20,23 @@ package FESI.Interpreter;
 import java.util.StringTokenizer;
 
 /**
- * Describe a string used as a source. The string is trimmed
- * to its first significant characters during display.
+ * Describe a string used as a source. The string is trimmed to its first
+ * significant characters during display.
  */
 public class StringEvaluationSource extends EvaluationSource {
     private static final long serialVersionUID = -5474570662032404125L;
     private final String theString;
 
-
     /**
      * Create a string source description
-     * @param theString Describe the source
-     * @param previousSource Describe the calling source
+     * 
+     * @param theString
+     *            Describe the source
+     * @param previousSource
+     *            Describe the calling source
      */
-    public StringEvaluationSource(String theString, EvaluationSource previousSource) {
+    public StringEvaluationSource(String theString,
+            EvaluationSource previousSource) {
         super(previousSource);
         this.theString = theString;
     }
@@ -50,14 +53,14 @@ public class StringEvaluationSource extends EvaluationSource {
             if (theLine.equals("\n") || theLine.equals("\r")) {
                 continue;
             }
-            if (theLine.trim().length()>0) { // Skip any leading empty lines
-               if (!firstLineFound) {
-                   displayString = theLine;
-                   firstLineFound = true;
-                   continue;
-               }
-               moreLinesFound = true;
-               break;
+            if (theLine.trim().length() > 0) { // Skip any leading empty lines
+                if (!firstLineFound) {
+                    displayString = theLine;
+                    firstLineFound = true;
+                    continue;
+                }
+                moreLinesFound = true;
+                break;
             }
         }
         if (moreLinesFound) {
@@ -69,6 +72,6 @@ public class StringEvaluationSource extends EvaluationSource {
 
     public String getLineText(int beginLine) {
         String[] poList = theString.split("\r|\n|\r\n");
-        return "on line: '" + poList[beginLine-1] +"'";
+        return "on line: '" + poList[beginLine - 1] + "'";
     }
 }

@@ -33,31 +33,36 @@ public class ESBeans extends ESLoader {
 
     /**
      * Create the top level bean loader (object Bean)
-     * @param evaluator the evaluator
+     * 
+     * @param evaluator
+     *            the evaluator
      */
     public ESBeans(Evaluator evaluator) {
         super(evaluator);
     }
-    
+
     /**
      * Create a new bean loader or package prefix
-     * @param packageName The extension of the package name
-     * @param previousPackage Represents the higher level package names
-     * @param classLoader the class loader to use for this loader
-     * @param evaluator the evaluator
+     * 
+     * @param packageName
+     *            The extension of the package name
+     * @param previousPackage
+     *            Represents the higher level package names
+     * @param classLoader
+     *            the class loader to use for this loader
+     * @param evaluator
+     *            the evaluator
      */
-    public ESBeans(String packageName, 
-                     ESBeans previousPackage,
-                     LocalClassLoader classLoader, 
-                     Evaluator evaluator) {
-        super(packageName,previousPackage,classLoader,evaluator);
+    public ESBeans(String packageName, ESBeans previousPackage,
+            LocalClassLoader classLoader, Evaluator evaluator) {
+        super(packageName, previousPackage, classLoader, evaluator);
     }
-	
+
     // overrides
     public ESObject getPrototype() {
         throw new ProgrammingError("Cannot get prototype of Beans");
     }
-    
+
     // overrides
     public String getESClassName() {
         return "Beans";
@@ -65,78 +70,79 @@ public class ESBeans extends ESLoader {
 
     // overrides
     // Getting a property dynamically creates a new Beans prefix object
-    public ESValue getProperty(String propertyName, int hash) 
-                            throws EcmaScriptException {
+    public ESValue getProperty(String propertyName, int hash)
+            throws EcmaScriptException {
         ESValue value = getPropertyMap().get(propertyName, hash);
         if (value == null) {
-           buildPrefix();
-           value = new ESBeans(propertyName, this, classLoader, getEvaluator());
-           getPropertyMap().put(propertyName, hash, false, false, value); // Cache it for faster retrievial
-       } 
-       return value;
+            buildPrefix();
+            value = new ESBeans(propertyName, this, classLoader, getEvaluator());
+            getPropertyMap().put(propertyName, hash, false, false, value); // Cache
+                                                                           // it
+                                                                           // for
+                                                                           // faster
+                                                                           // retrievial
+        }
+        return value;
     }
-    
-    
+
     // overrides
     // Establish a bean classloader
     // The parameter is the directory or jar to load from
-    public ESValue callFunction(ESObject thisObject, 
-                               ESValue[] arguments) 
-                                        throws EcmaScriptException {
-         if (previousPackage == null && classLoader == null) {
-             // This is the Beans object
-             if (arguments.length<1) {
-                 throw new EcmaScriptException("Missing class directory or jar file name");
-             }
-             String directoryOrJar = arguments[0].toString();
-             LocalClassLoader classLoader =     
-                     LocalClassLoader.makeLocalClassLoader(directoryOrJar);
-              return new ESBeans(null, null, classLoader, getEvaluator());
-         }
-         throw new EcmaScriptException("Java class not found: '" + buildPrefix() +"'");
-     }    
-    
-   
+    public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+            throws EcmaScriptException {
+        if (previousPackage == null && classLoader == null) {
+            // This is the Beans object
+            if (arguments.length < 1) {
+                throw new EcmaScriptException(
+                        "Missing class directory or jar file name");
+            }
+            String directoryOrJar = arguments[0].toString();
+            LocalClassLoader classLoader = LocalClassLoader
+                    .makeLocalClassLoader(directoryOrJar);
+            return new ESBeans(null, null, classLoader, getEvaluator());
+        }
+        throw new EcmaScriptException("Java class not found: '" + buildPrefix()
+                + "'");
+    }
+
     // overrides
     // instantiates a bean
-    public ESObject doConstruct(ESObject thisObject, 
-                                ESValue[] arguments) 
-                                        throws EcmaScriptException {
-                                            
-       String beanName = buildPrefix();
-       ESObject value = null; 
-       
-       if (beanName == null) {
-           throw new EcmaScriptException("cannot create beans without a package name");
-       }
-       
-       try {
-           Object bean = Beans.instantiate(classLoader, beanName);
-           if (debugJavaAccess) {
-                System.out.println(" ** Bean '" + beanName + "' created");
-           }
-           value = new ESWrapper(bean, getEvaluator(), true);
-       } catch (ClassNotFoundException e) {
-           throw new EcmaScriptException("Bean '" + beanName + "' not found: " + e);
-       } catch (IOException e) {
-           throw new EcmaScriptException("IOexception loading bean '" + beanName + "': " + e);
-       }
-       return value;
-    }    
+    public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
+            throws EcmaScriptException {
 
+        String beanName = buildPrefix();
+        ESObject value = null;
+
+        if (beanName == null) {
+            throw new EcmaScriptException(
+                    "cannot create beans without a package name");
+        }
+
+        try {
+            Object bean = Beans.instantiate(classLoader, beanName);
+            if (debugJavaAccess) {
+                System.out.println(" ** Bean '" + beanName + "' created");
+            }
+            value = new ESWrapper(bean, getEvaluator(), true);
+        } catch (ClassNotFoundException e) {
+            throw new EcmaScriptException("Bean '" + beanName + "' not found: "
+                    + e);
+        } catch (IOException e) {
+            throw new EcmaScriptException("IOexception loading bean '"
+                    + beanName + "': " + e);
+        }
+        return value;
+    }
 
     // overrides
     public String getTypeofString() {
         return "JavaBeans";
     }
-  
+
     // overrides
     public String toDetailString() {
-        return "ES:<" + getESClassName() + ":'" + buildPrefix() + "'" + 
-            ((classLoader==null) ? "" : (",@" + classLoader)) + ">";
+        return "ES:<" + getESClassName() + ":'" + buildPrefix() + "'"
+                + ((classLoader == null) ? "" : (",@" + classLoader)) + ">";
     }
-    
-    
-    
-    
+
 }

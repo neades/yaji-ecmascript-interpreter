@@ -35,83 +35,89 @@ import FESI.gui.ConfirmationBox;
  * Implementation of a confirmation box
  */
 public class AwtConfirmationBox implements ConfirmationBox {
-    
+
     private boolean waiting = true;
     private boolean response = false;
-    
+
     /**
      * Create a confirmation box
-     * @param title The title string
-     * @param message The message text
+     * 
+     * @param title
+     *            The title string
+     * @param message
+     *            The message text
      */
     public AwtConfirmationBox(String title, String message) {
-        
-      final Frame frame = new Frame(title);
-      frame.setLayout(new BorderLayout(10,10));
-      frame.setBackground(Color.lightGray);
-      //TextArea textArea = new TextArea(message);
-      //textArea.setEditable(false);
-      MultiLineLabel mll = new MultiLineLabel(message,15,15);
-      frame.add("Center", mll);
-      Panel panel = new Panel();
-      panel.setLayout(new FlowLayout(FlowLayout.CENTER,10,10));
-      frame.add("South", panel);
-      Button bYes = new Button("  Yes  ");
-      panel.add(bYes);
-      Button bNo = new Button("  No  ");
-      panel.add(bNo);
-      
-      frame.pack();
-      Dimension    dimScreen = frame.getToolkit ().getScreenSize ();
-      Dimension    dimWindow = frame.getSize (); 
-      frame.setLocation (dimScreen.width/2 - dimWindow.width/2, // Center screen
-                         dimScreen.height/2 - dimWindow.height/2);
-      
-      frame.addWindowListener(new WindowAdapter() {
-          public void windowClosing(WindowEvent e) {
-              frame.setVisible(false); 
-              frame.dispose();
-              response = false;
-              completed();
-          }
-      });
-      bYes.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-              frame.setVisible(false); 
-              frame.dispose();
-              response = true;
-              completed();
-          }
-      });
-      bNo.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-              frame.setVisible(false); 
-              frame.dispose();
-              response = false;
-              completed();
-          }
-      });
-      frame.setVisible(true);
-   }
-   
-   private synchronized void completed() {
-       waiting = false;
-       notifyAll();
-   }
-   
-   /** 
-    * Wait for the answer and return it
-    * @return the answer as a boolean
-    */        
-   public synchronized boolean waitYesOrNo() {
-       while (waiting) {
-           try {
-               wait();
-           } catch (Exception e) {}
+
+        final Frame frame = new Frame(title);
+        frame.setLayout(new BorderLayout(10, 10));
+        frame.setBackground(Color.lightGray);
+        // TextArea textArea = new TextArea(message);
+        // textArea.setEditable(false);
+        MultiLineLabel mll = new MultiLineLabel(message, 15, 15);
+        frame.add("Center", mll);
+        Panel panel = new Panel();
+        panel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        frame.add("South", panel);
+        Button bYes = new Button("  Yes  ");
+        panel.add(bYes);
+        Button bNo = new Button("  No  ");
+        panel.add(bNo);
+
+        frame.pack();
+        Dimension dimScreen = frame.getToolkit().getScreenSize();
+        Dimension dimWindow = frame.getSize();
+        frame.setLocation(dimScreen.width / 2 - dimWindow.width / 2, // Center
+                                                                     // screen
+                dimScreen.height / 2 - dimWindow.height / 2);
+
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                frame.setVisible(false);
+                frame.dispose();
+                response = false;
+                completed();
+            }
+        });
+        bYes.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                frame.setVisible(false);
+                frame.dispose();
+                response = true;
+                completed();
+            }
+        });
+        bNo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                frame.setVisible(false);
+                frame.dispose();
+                response = false;
+                completed();
+            }
+        });
+        frame.setVisible(true);
+    }
+
+    private synchronized void completed() {
+        waiting = false;
+        notifyAll();
+    }
+
+    /**
+     * Wait for the answer and return it
+     * 
+     * @return the answer as a boolean
+     */
+    public synchronized boolean waitYesOrNo() {
+        while (waiting) {
+            try {
+                wait();
+            } catch (Exception e) {
+            }
         }
         return response;
-   }
-       
+    }
+
 }
 
 // This example is from _Java Examples in a Nutshell_. (http://www.oreilly.com)

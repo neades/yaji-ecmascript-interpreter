@@ -17,15 +17,13 @@
 
 package FESI.Tests;
 
-
-
 /**
- * File used by the validation suite
- * added to the FESI jar file for convenience of validating the system
+ * File used by the validation suite added to the FESI jar file for convenience
+ * of validating the system
  */
- 
-public interface TestInterface  {
-    
+
+public interface TestInterface {
+
     public int getData();
 
     // A static class should be accessible
@@ -33,8 +31,9 @@ public interface TestInterface  {
         static public InsideValue create() {
             return new InsideValue();
         }
+
         public int increment(int value) {
-           return value+1;
+            return value + 1;
         }
     }
 }

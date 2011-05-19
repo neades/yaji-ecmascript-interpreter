@@ -28,105 +28,106 @@ public class FunctionPrototype extends ESObject {
     private static final long serialVersionUID = 5228262867569754052L;
     private String functionName = null;
     private int length = 0;
-    
+
     private static final String LENGTHstring = ("length").intern();
     private static final int LENGTHhash = LENGTHstring.hashCode();
- 
-    FunctionPrototype(ESObject prototype, Evaluator evaluator, String functionName, int length) {
+
+    FunctionPrototype(ESObject prototype, Evaluator evaluator,
+            String functionName, int length) {
         super(prototype, evaluator);
         this.functionName = functionName;
         this.length = length;
     }
-    
+
     FunctionPrototype(ESObject prototype, Evaluator evaluator, int length) {
         super(prototype, evaluator);
         this.length = length;
     }
-    
+
     // overrides
     public String getESClassName() {
         return "Function";
     }
-    
+
     public String getFunctionName() {
         if (functionName == null) {
             return "anonymous";
         }
-        return functionName;        
+        return functionName;
     }
-    
+
     /**
      * get the string defining the function
+     * 
      * @return a String indicating that this is the function prototype
      */
     public String getFunctionImplementationString() {
         return "{<FunctionPrototype (" + this.getClass().getName() + ")>}";
     }
-    
+
     /**
      * get the string defining the function
+     * 
      * @return a string indicating that the function prototype has no argument
      */
     public String getFunctionParametersString() {
         return "()";
     }
-    
+
     /**
      * Get the number of arguments property
      */
     public int getLengthProperty() {
         return length;
     }
-    
+
     // overrides
-    public ESValue getPropertyInScope(String propertyName, ScopeChain previousScope, int hash) 
-                throws EcmaScriptException {
-        if (hash==LENGTHhash && propertyName.equals(LENGTHstring)) {
-             return ESNumber.valueOf(length);
+    public ESValue getPropertyInScope(String propertyName,
+            ScopeChain previousScope, int hash) throws EcmaScriptException {
+        if (hash == LENGTHhash && propertyName.equals(LENGTHstring)) {
+            return ESNumber.valueOf(length);
         }
         return super.getPropertyInScope(propertyName, previousScope, hash);
     }
-    
+
     // overrides
-    public ESValue getProperty(String propertyName, int hash) 
-                            throws EcmaScriptException {
-        if (hash==LENGTHhash && propertyName.equals(LENGTHstring)) {
-             return ESNumber.valueOf(length);
-         }
-         return super.getProperty(propertyName, hash);         
-     }
-     
-    // overrides
-     public boolean hasProperty(String propertyName, int hash) 
-                            throws EcmaScriptException {
-        if (hash==LENGTHhash && propertyName.equals(LENGTHstring)) {
-             return true;
-         }
-         return super.hasProperty(propertyName, hash);         
-    }
-    
-    // overrides
-     public void putProperty(String propertyName, ESValue propertyValue, int hash) 
-                                throws EcmaScriptException {
-        if (!(hash==LENGTHhash && propertyName.equals(LENGTHstring))) {
-           super.putProperty(propertyName,propertyValue, hash);
-         } // Allowed via putHiddenProperty, used internally !
+    public ESValue getProperty(String propertyName, int hash)
+            throws EcmaScriptException {
+        if (hash == LENGTHhash && propertyName.equals(LENGTHstring)) {
+            return ESNumber.valueOf(length);
+        }
+        return super.getProperty(propertyName, hash);
     }
 
-    
+    // overrides
+    public boolean hasProperty(String propertyName, int hash)
+            throws EcmaScriptException {
+        if (hash == LENGTHhash && propertyName.equals(LENGTHstring)) {
+            return true;
+        }
+        return super.hasProperty(propertyName, hash);
+    }
+
+    // overrides
+    public void putProperty(String propertyName, ESValue propertyValue, int hash)
+            throws EcmaScriptException {
+        if (!(hash == LENGTHhash && propertyName.equals(LENGTHstring))) {
+            super.putProperty(propertyName, propertyValue, hash);
+        } // Allowed via putHiddenProperty, used internally !
+    }
+
     // overrides
     public String[] getSpecialPropertyNames() {
-        String [] ns = {LENGTHstring};
+        String[] ns = { LENGTHstring };
         return ns;
     }
 
     // overrides
-    public ESValue callFunction(ESObject thisObject, 
-                            ESValue[] arguments)
-           throws EcmaScriptException { 
-       return ESUndefined.theUndefined;
+    public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+            throws EcmaScriptException {
+        return ESUndefined.theUndefined;
     }
-    
+
     // overrides
     public String getTypeofString() {
         return "function";
@@ -134,6 +135,6 @@ public class FunctionPrototype extends ESObject {
 
     // overrides
     public String toString() {
-        return "<" + getESClassName() + ":" + this.getFunctionName() +">";
+        return "<" + getESClassName() + ":" + this.getFunctionName() + ">";
     }
 }

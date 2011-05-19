@@ -18,37 +18,40 @@
 package FESI.gui;
 
 /**
- * Define the interface to the commands of the interpreter which
- * can be called by the gui
+ * Define the interface to the commands of the interpreter which can be called
+ * by the gui
  */
 public interface InterpreterCommands {
-    
+
     /**
      * Exit the interpreter (and EOF was detetected)
      */
     void exit();
-    
+
     /**
-     * Load and execute a file 
+     * Load and execute a file
      */
     void loadFile(String directoryName, String fileName);
-    
+
     /**
      * Execute a string - return the line number of any error or 0
-     * @param text The text to execute
-     * @param source The identification of the source
+     * 
+     * @param text
+     *            The text to execute
+     * @param source
+     *            The identification of the source
      * @return the line number of any error if possible or 0
      */
     int executeString(String text, String source);
-    
-   /**
-    * Display the @about text information
-    */
+
+    /**
+     * Display the @about text information
+     */
     void displayAboutText();
-    
-   /**
-    * Display the @help text information
-    */
+
+    /**
+     * Display the @help text information
+     */
     void displayHelpText();
 
 }

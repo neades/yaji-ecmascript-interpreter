@@ -23,31 +23,32 @@ import FESI.gui.InterpreterCommands;
 import FESI.gui.MessageBox;
 
 /**
- * Factory class to create the GUI elements, used to achieve independence
- * of GUI implementation at compile time.
+ * Factory class to create the GUI elements, used to achieve independence of GUI
+ * implementation at compile time.
  */
 public class SwingGuiFactory extends GuiFactory {
-	
-	/**
-	 * Must have a null constructor so that it can be created by newInstance
-	 */
-	public SwingGuiFactory() {
-		super();
-	}
-	
-  /**
-   * Display an error message using the AWT message box
-   */
-  public MessageBox displayMessageBox(String title, String msg) {
-    
-      return new SwingMessageBox(title, msg);
-  }
 
-	/**
-	 * Create aa new console
-	 */
-	public Console makeConsole(InterpreterCommands itrpParam, String title, int rows, int columns) {
-		return new SwingConsole(itrpParam, title, rows, columns);
-	}
+    /**
+     * Must have a null constructor so that it can be created by newInstance
+     */
+    public SwingGuiFactory() {
+        super();
+    }
+
+    /**
+     * Display an error message using the AWT message box
+     */
+    public MessageBox displayMessageBox(String title, String msg) {
+
+        return new SwingMessageBox(title, msg);
+    }
+
+    /**
+     * Create aa new console
+     */
+    public Console makeConsole(InterpreterCommands itrpParam, String title,
+            int rows, int columns) {
+        return new SwingConsole(itrpParam, title, rows, columns);
+    }
 
 }

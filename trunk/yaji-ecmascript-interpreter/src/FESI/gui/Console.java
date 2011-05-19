@@ -21,57 +21,54 @@ import java.io.InputStream;
 import java.io.PrintStream;
 
 /**
-  * Define the interface of the console interface
-  */    
+ * Define the interface of the console interface
+ */
 public interface Console {
 
-  /**
-   * Get the stream consisting of characters typed by the user
-   */
-  InputStream getConsoleIn();
-  
-  /**
-   * Get the stream to which to print characters to be displayed on the console
-   */
-  PrintStream getConsoleOut();
-  
-  /**
-   * Clear the console content
-   */
-  void clear();
- 
-  /**
-   * Release the console resources
-   */
-  void dispose();
-    
-  /**
-   * Inform if editing is supported
-   */
-  boolean supportsEditing();
-    
-  /**
-   * Create a new editing window for the specified file
-   */
-  void createEditor(String fileName);
-    
-  /**
-   * Display the about information
-   */
-  void displayAbout();
-    
-  /**
-   * Display the @help text information
-   */
-  void displayHelpText();
-    
-    
-  /**
-   * Display the help window
-   */
-  void displayHelpWindow();
-      
+    /**
+     * Get the stream consisting of characters typed by the user
+     */
+    InputStream getConsoleIn();
+
+    /**
+     * Get the stream to which to print characters to be displayed on the
+     * console
+     */
+    PrintStream getConsoleOut();
+
+    /**
+     * Clear the console content
+     */
+    void clear();
+
+    /**
+     * Release the console resources
+     */
+    void dispose();
+
+    /**
+     * Inform if editing is supported
+     */
+    boolean supportsEditing();
+
+    /**
+     * Create a new editing window for the specified file
+     */
+    void createEditor(String fileName);
+
+    /**
+     * Display the about information
+     */
+    void displayAbout();
+
+    /**
+     * Display the @help text information
+     */
+    void displayHelpText();
+
+    /**
+     * Display the help window
+     */
+    void displayHelpWindow();
+
 }
-    
-    
-    

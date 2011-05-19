@@ -18,21 +18,27 @@
 package FESI.Interpreter;
 
 /**
- * Describe a file used as a source. 
+ * Describe a file used as a source.
  */
 public class FileEvaluationSource extends EvaluationSource {
-    
+
+    private static final long serialVersionUID = -6838663105184583256L;
     private String theFileName;
-    
+
     /**
      * Create a file source description
-     * @param theFileName Describe the source file name
-     * @param previousSource Describe the calling source
+     * 
+     * @param theFileName
+     *            Describe the source file name
+     * @param previousSource
+     *            Describe the calling source
      */
-    public FileEvaluationSource(String theFileName, EvaluationSource previousSource) {
+    public FileEvaluationSource(String theFileName,
+            EvaluationSource previousSource) {
         super(previousSource);
         this.theFileName = theFileName;
     }
+
     protected String getEvaluationSourceText() {
         return "in file: '" + theFileName + "'";
     }

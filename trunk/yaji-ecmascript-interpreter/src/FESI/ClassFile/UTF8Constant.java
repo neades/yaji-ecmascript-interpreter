@@ -22,14 +22,15 @@
  * @author Laurence P. G. Cable
  */
 
-
 package FESI.ClassFile;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
- * <p> this class provides minimal support for CONSTANT_UTF8 CPE's </p>
+ * <p>
+ * this class provides minimal support for CONSTANT_UTF8 CPE's
+ * </p>
  */
 
 class UTF8Constant extends ConstantPoolEntry {
@@ -37,50 +38,59 @@ class UTF8Constant extends ConstantPoolEntry {
     private String string;
 
     /**
-     * <p> construct a CONSTANT_UTF8 CPE </p>
-     *
-     * @param s 	the string
-     * @param cf	the class file
+     * <p>
+     * construct a CONSTANT_UTF8 CPE
+     * </p>
+     * 
+     * @param s
+     *            the string
+     * @param cf
+     *            the class file
      */
 
     UTF8Constant(String s, ClassFile cf) {
-    	super(CONSTANT_UTF8, cf);
-    
-    	string = s;
+        super(CONSTANT_UTF8, cf);
 
-    	addToConstantPool();
+        string = s;
+
+        addToConstantPool();
     }
 
     /**
-     * <p> write the CPE to the output stream </p>
-     *
-     * @param dos the output stream
-     *
+     * <p>
+     * write the CPE to the output stream
+     * </p>
+     * 
+     * @param dos
+     *            the output stream
+     * 
      * @throws IOException
      */
 
     void write(DataOutputStream dos) throws IOException {
-    	dos.writeByte(getTag());
-    	dos.writeUTF(string);
+        dos.writeByte(getTag());
+        dos.writeUTF(string);
     }
 
     /**
      * @return the string constant
      */
 
-    String getString() { return string; }
+    String getString() {
+        return string;
+    }
 
     /**
      * @return object equality
      */
 
     public boolean equals(Object o) {
-    	if (o instanceof String) {
-    	    return string.equals((String)o);
-    	} else if (o instanceof UTF8Constant) {
-    	    return string.equals(((UTF8Constant)o).getString());
-    	}
+        if (o instanceof String) {
+            return string.equals((String) o);
+        } else if (o instanceof UTF8Constant) {
+            return string.equals(((UTF8Constant) o).getString());
+        }
 
-    	return false;
+        return false;
     }
 }

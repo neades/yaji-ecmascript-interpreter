@@ -23,17 +23,21 @@ package FESI.Interpreter;
 public class UserEvaluationSource extends EvaluationSource {
     private static final long serialVersionUID = 7915836456632791290L;
     private String theDescription;
-    
+
     /**
      * Create a user described source
-     * @param theDescription Describe the source
-     * @param previousSource Describe the calling source
+     * 
+     * @param theDescription
+     *            Describe the source
+     * @param previousSource
+     *            Describe the calling source
      */
-    public UserEvaluationSource(String theDescription, EvaluationSource previousSource) {
+    public UserEvaluationSource(String theDescription,
+            EvaluationSource previousSource) {
         super(previousSource);
         this.theDescription = theDescription;
     }
-    
+
     protected String getEvaluationSourceText() {
         return "in: '" + theDescription + "'";
     }

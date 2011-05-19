@@ -5,40 +5,40 @@ package FESI.AST;
 import FESI.Parser.EcmaScript;
 
 public class ASTFormalParameterList extends SimpleNode {
-  /**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = -806601260166669485L;
+    private static final long serialVersionUID = -806601260166669485L;
 
-public ASTFormalParameterList(int id) {
-    super(id);
-  }
+    public ASTFormalParameterList(int id) {
+        super(id);
+    }
 
-  public ASTFormalParameterList(EcmaScript p, int id) {
-    super(p, id);
-  }
+    public ASTFormalParameterList(EcmaScript p, int id) {
+        super(p, id);
+    }
 
-  public static Node jjtCreate(int id) {
-      return new ASTFormalParameterList(id);
-  }
+    public static Node jjtCreate(int id) {
+        return new ASTFormalParameterList(id);
+    }
 
-  public static Node jjtCreate(EcmaScript p, int id) {
-      return new ASTFormalParameterList(p, id);
-  }
+    public static Node jjtCreate(EcmaScript p, int id) {
+        return new ASTFormalParameterList(p, id);
+    }
 
-  /** Accept the visitor. **/
-  public Object jjtAccept(EcmaScriptVisitor visitor, Object data) {
-    return visitor.visit(this, data);
-  }
-  
-  // JMCL
-  public String [] getArguments() {
-      int n = jjtGetNumChildren();
-      String [] args = new String[n];
-      for (int i=0; i<n; i++) {
-           ASTIdentifier idNode = (ASTIdentifier) (jjtGetChild(i));
-           args[i]=idNode.getName();
-      }
-      return args;
-  }
+    /** Accept the visitor. **/
+    public Object jjtAccept(EcmaScriptVisitor visitor, Object data) {
+        return visitor.visit(this, data);
+    }
+
+    // JMCL
+    public String[] getArguments() {
+        int n = jjtGetNumChildren();
+        String[] args = new String[n];
+        for (int i = 0; i < n; i++) {
+            ASTIdentifier idNode = (ASTIdentifier) (jjtGetChild(i));
+            args[i] = idNode.getName();
+        }
+        return args;
+    }
 }

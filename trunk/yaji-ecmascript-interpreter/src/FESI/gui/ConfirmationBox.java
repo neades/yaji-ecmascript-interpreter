@@ -21,11 +21,12 @@ package FESI.gui;
  * Interface of a confirmation box
  */
 public interface ConfirmationBox {
-   
-   /** 
-    * Wait for the answer and return it
-    * @return the answer as a boolean
-    */        
-   boolean waitYesOrNo();
-       
+
+    /**
+     * Wait for the answer and return it
+     * 
+     * @return the answer as a boolean
+     */
+    boolean waitYesOrNo();
+
 }
