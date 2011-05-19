@@ -1,5 +1,6 @@
 // ESValue.java
 // FESI Copyright (c) Jean-Marc Lugrin, 1999
+// Advanced FESI Copyright (c) Graham Technology, 2002
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -23,21 +24,30 @@ import FESI.Exceptions.EcmaScriptException;
 import FESI.Interpreter.Evaluator;
 
 /**
-  * All EcmaScript values are subclasses of this class.
-  * The ESValue support many operations which may not be
-  * implemented by all type (and then generate an error),
-  * to simplify type checking.
-  * <P>ESReference are currently not value - see ESReference.
-  */
-public abstract class ESValue {
-
-    // Codes for the getTypeOf, used to implement "=="   
+ * All EcmaScript values are subclasses of this class.
+ * The ESValue support many operations which may not be
+ * implemented by all type (and then generate an error),
+ * to simplify type checking.
+ * <P>ESReference are currently not value - see ESReference.
+ *
+ * Advanced FESI
+ * GT Modified: 5/10/2002
+ *              ESValue objects implement the java.io.Serialization interface
+ */
+public abstract class ESValue implements java.io.Serializable {
+    private static final long serialVersionUID = -6049515361877350479L;
+    // Codes for the getTypeOf, used to implement "=="
     public static final int EStypeUndefined = 1;
     public static final int EStypeNull = 2;
     public static final int EStypeBoolean = 3;
     public static final int EStypeNumber = 4;
     public static final int EStypeString = 5;
     public static final int EStypeObject = 6;
+	static public final int COMPARE_UNDEFINED = 0;
+	// Result of comparison
+	  static public final int COMPARE_TRUE = -1;
+	static public final int COMPARE_FALSE = 1;
+    public static final ESValue[] EMPTY_ARRAY = new ESValue[0];
 
     // The following routines access the value as a primitive type. They are
     // the prefered way to access the value of a primitive type or the default
@@ -47,16 +57,16 @@ public abstract class ESValue {
     //
     // toString() is considered part of these data access routine, however
     // it may never fail. It is implemented as described in 9.8.
-    
+
 
     /**
      * Returns a detailed description of the value, intended for debugging.
      * (toString returns the official string representation, as defined in 9.8).
      *
-     * @return   the detailled information  
+     * @return   the detailled information
      */
-    abstract public String toDetailString(); 
-    
+    abstract public String toDetailString();
+
     /**
      * Return a Java object which is the object to pass to Java routines
      * called by FESI. This may be the corresponding Java object (for
@@ -64,13 +74,13 @@ public abstract class ESValue {
      * a Java routine, an equivallent (but probably not identical) object
      * must be built.
      *
-     * @return   a Java object equivallent to the EcmaScript object. 
+     * @return   a Java object equivallent to the EcmaScript object.
      */
-    public abstract Object toJavaObject();  
-    
+    public abstract Object toJavaObject();
+
 
     /**
-     * Return the double value of this ESValue as defined in 9.3, throw an 
+     * Return the double value of this ESValue as defined in 9.3, throw an
      * exception if not defined.
      *
      * @return     a double
@@ -79,10 +89,10 @@ public abstract class ESValue {
     public double doubleValue() throws EcmaScriptException {
         throw new EcmaScriptException("Conversion to double unsupported by " + this);
     }
-    
+
 
     /**
-     * Return the boolean value of this ESValue as defined in 9.2, throw an 
+     * Return the boolean value of this ESValue as defined in 9.2, throw an
      * exception if not defined.
      *
      * @return     a boolean
@@ -91,7 +101,7 @@ public abstract class ESValue {
     public boolean booleanValue() throws EcmaScriptException {
         throw new EcmaScriptException("Conversion to boolean unsupported by " + this);
     }
-    
+
     /**
      * Return the EcmaScript object of this ESValue as definined in 9.9, throw
      * an exception if not defined.
@@ -103,11 +113,11 @@ public abstract class ESValue {
     public ESValue toESObject(Evaluator evaluator) throws EcmaScriptException {
         throw new EcmaScriptException("Conversion to object unsupported by " + this);
     }
-    
+
     // The following routines are derived from the doubleValue of the
     // ESvalue. They may be overriden for efficiency by classes which
     // contain an integer or other equivallent.
-    
+
 
     /**
      * Return the Integer value, as defined in 9.4.
@@ -119,18 +129,18 @@ public abstract class ESValue {
         double value = this.doubleValue();
         if (Double.isNaN(value)) {
             return 0.0;
-        } else if ((value == 0.0) || 
+        } else if ((value == 0.0) ||
                  Double.isInfinite(value)) {
             return value;
         } else {
-            return (double)((long) value);
+            return ((long) value);
         }
     }
 
     /**
      * Return the 32 bit integer, as defined in 9.5
      *
-     * @return    The signed 32 bit integer 
+     * @return    The signed 32 bit integer
      * @exception   EcmaScriptException  Not thrown
      */
     public int toInt32() throws EcmaScriptException {
@@ -161,12 +171,12 @@ public abstract class ESValue {
         double value = this.toInteger();
         return (short) value;
     }
-   
-   
+
+
     // Convertion to EcmaScript primitive type - rebuild the primitive type based
     // on the convertion to the Java primitive type. May be overriden by a subclass
     // for efficiency purpose (especially if it does not require a conversion).
-    
+
     // In fact on toESNumber is used (to implement the operator +), and this
     // is a very minor performance enhancement - so the routine could be
     // easily supressed
@@ -174,18 +184,18 @@ public abstract class ESValue {
     /**
      * Convert the value to an EcmaScript boolean (9.2) if possible
      *
-     * @return    The EcmaScript boolean value 
+     * @return    The EcmaScript boolean value
      * @exception   EcmaScriptException  Not thrown
      */
     public ESValue toESBoolean() throws EcmaScriptException {
         return ESBoolean.makeBoolean(this.booleanValue());
     }
-    
+
 
     /**
      * Convert the value to an EcmaScript string (9.8) if possible
      *
-     * @return  The EcmaScript string value (there is always one!)   
+     * @return  The EcmaScript string value (there is always one!)
      */
     public ESValue toESString() {
         return new ESString(this.toString());
@@ -194,19 +204,19 @@ public abstract class ESValue {
     /**
      * Convert the value to an EcmaScript number (9.3) if possible
      *
-     * @return    The EcmaScript number value 
+     * @return    The EcmaScript number value
      * @exception   EcmaScriptException  From doubleValue
      */
     public ESValue toESNumber() throws EcmaScriptException {
         double d = this.doubleValue();
-        return new ESNumber(d);
+        return ESNumber.valueOf(d);
     }
 
 
     // Provide support to easily distinguish primitive values from other, and
     // to convert values to primitive value. If the desired type is known
     // the direct conversion routines are prefered.
-    
+
 
     /**
      * Return true if the value is a built-in primitive
@@ -234,66 +244,77 @@ public abstract class ESValue {
 
 
 
-    
-    // [[Call]] support (to ease check of type)
-    public ESValue callFunction(ESObject thisObject, 
-                                ESValue[] arguments) 
+
+    /**
+     *  [[Call]] support (to ease check of type)
+     * @param thisObject
+     * @param arguments
+     * @throws EcmaScriptException
+     */
+    public ESValue callFunction(ESObject thisObject,
+                                ESValue[] arguments)
                             throws EcmaScriptException {
          throw new EcmaScriptException("Function called on non object: " + this);
     }
-        
-    // [[Construct]] support (to ease check of type)
-    public ESObject doConstruct(ESObject thisObject, 
-                                ESValue[] arguments) 
+
+    /**
+     *  [[Construct]] support (to ease check of type)
+     * @param thisObject
+     * @param arguments
+     * @return
+     * @throws EcmaScriptException
+     */
+    public ESObject doConstruct(ESObject thisObject,
+                                ESValue[] arguments)
                             throws EcmaScriptException {
          throw new EcmaScriptException("'new' called on non object: " + this);
-    }    
-    
-    // abstract public ESValue doNewObject();
-    
+    }
 
-    
+    // abstract public ESValue doNewObject();
+
+
+
     /**
      * Information routine to check if a value is a number (for array indexing)
      * if true, must implement conversions to double and int without evaluator.
      * @return true if a number.
      */
     public boolean isNumberValue() {
-        return false; 
+        return false;
     }
- 
-    
+
+
     /**
      * Information routine to check if a value is a string
      * if true, must implement toString without a evaluator.
      * @return true if a String (ESString or StringPrototype).
      */
     public boolean isStringValue() {
-        return false; 
+        return false;
     }
 
-    
+
     /**
      * Information routine to check if a value is a boolean
      * if true, must implement booleanValue without a evaluator.
      * @return true if a boolean (ESBoolean or BooleanPrototype).
      */
     public boolean isBooleanValue() {
-        return false; 
+        return false;
     }
 
     /**
      * Return a code indicating the type of the object for the implementation
      * of the "==" operator.
      *
-     * @return  A type code   
+     * @return  A type code
      */
     public abstract int getTypeOf();
-    
+
     /**
      * Return the name of the type of the object for the typeof operator
      *
-     * @return  The name of the type as a String   
+     * @return  The name of the type as a String
      */
     public abstract String getTypeofString();
 
@@ -321,18 +342,82 @@ public abstract class ESValue {
      *
      * @param name The name of the value to describe
      *
-     * @return   the description of this value  
+     * @return   the description of this value
      */
     abstract public ValueDescription getDescription(String name);
-                                    
+
 
 
     /**
      * Returns a full description of the unnamed value.
      *
-     * @return   the description of this value  
+     * @return   the description of this value
      */
     public ValueDescription getDescription() {
         return getDescription(null);
     }
+
+	public ESValue increment() throws EcmaScriptException {
+		double dv = doubleValue();
+		dv++;
+		return ESNumber.valueOf(dv);
+	}
+
+	public ESValue decrement() throws EcmaScriptException {
+		double dv = doubleValue();
+		dv--;
+		return ESNumber.valueOf(dv);
+	}
+
+	public ESValue addValue(ESValue v2) throws EcmaScriptException {
+		return ESNumber.valueOf(
+		         doubleValue()+v2.doubleValue());
+	}
+
+	public ESValue subtract(ESValue v2) throws EcmaScriptException {
+		return ESNumber.valueOf(
+		    doubleValue()-v2.doubleValue());
+	}
+
+	public ESValue modulo(ESValue v2) throws EcmaScriptException {
+		return ESNumber.valueOf(
+		  doubleValue()%v2.doubleValue());
+	}
+
+	public ESValue divide(ESValue v2) throws EcmaScriptException {
+		return ESNumber.valueOf(
+		  doubleValue()/v2.doubleValue());
+	}
+
+	public ESValue multiply(ESValue v2) throws EcmaScriptException {
+		return ESNumber.valueOf(
+		  doubleValue()*v2.doubleValue());
+	}
+
+	public int compareNumbers(ESValue v2) throws EcmaScriptException {
+		double d1 = doubleValue();
+		double d2 = v2.doubleValue();
+		int c;
+		if (Double.isNaN(d1) || Double.isNaN(d2)) {
+			c = ESValue.COMPARE_UNDEFINED;
+		} else {
+			c = (doubleValue() < v2.doubleValue()) ? ESValue.COMPARE_TRUE : ESValue.COMPARE_FALSE;
+		}
+		return c;
+	}
+
+	/**
+	 * @throws EcmaScriptException
+	 */
+	public boolean equalsSameType(ESValue v2) throws EcmaScriptException {
+		return this == v2;
+	}
+
+	public long longValue() throws EcmaScriptException {
+		return (long)doubleValue();
+	}
+
+	public boolean isIntegerValue() {
+		return false;
+	}
 }

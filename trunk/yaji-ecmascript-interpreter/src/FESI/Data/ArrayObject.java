@@ -25,11 +25,11 @@ import FESI.Interpreter.Evaluator;
  * Implements the Array EcmaScript object. This is a singleton
  */
 public class ArrayObject extends BuiltinFunctionObject {
-       
-    private static final String JOINstring = ("join").intern();
-    private static final int JOINhash = JOINstring.hashCode();
-    private static final String LENGTHstring = ("length").intern();
-    private static final int LENGTHhash = LENGTHstring.hashCode();
+    private static final long serialVersionUID = 1737676943108087235L;
+    static final String JOINstring = ("join").intern();
+    static final int JOINhash = JOINstring.hashCode();
+    static final String LENGTHstring = ("length").intern();
+    static final int LENGTHhash = LENGTHstring.hashCode();
     private static final String ZEROstring = ("0").intern();
     private static final int ZEROhash = ZEROstring.hashCode();
    
@@ -56,8 +56,8 @@ public class ArrayObject extends BuiltinFunctionObject {
     public ESObject doConstruct(ESObject thisObject, 
                                 ESValue[] arguments) 
                                         throws EcmaScriptException {
-        ESObject ap = evaluator.getArrayPrototype();
-        ArrayPrototype theArray = new ArrayPrototype(ap, evaluator);
+        ESObject ap = getEvaluator().getArrayPrototype();
+        ArrayPrototype theArray = new ArrayPrototype(ap, getEvaluator());
         if (arguments.length > 1) {
             for (int i=0; i<arguments.length; i++) {
               String iString = Integer.toString(i);
@@ -67,8 +67,7 @@ public class ArrayObject extends BuiltinFunctionObject {
             ESValue firstArg = arguments[0];
             // Not clear in standard:
             if (firstArg.isNumberValue()) {
-                int length = (int) firstArg.toInt32();
-               theArray.putProperty(LENGTHstring, firstArg, LENGTHhash);   
+                theArray.putProperty(LENGTHstring, firstArg, LENGTHhash);   
             } else {
                 theArray.putProperty(ZEROstring, firstArg, ZEROhash);   
             }
@@ -97,6 +96,7 @@ public class ArrayObject extends BuiltinFunctionObject {
         try {
             // For arrayPrototype
             class ArrayPrototypeToString extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 ArrayPrototypeToString(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
@@ -109,13 +109,14 @@ public class ArrayObject extends BuiltinFunctionObject {
                 }
             }
             class ArrayPrototypeJoin extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 ArrayPrototypeJoin(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
                 public ESValue callFunction(ESObject thisObject, 
                                                 ESValue[] arguments)
                        throws EcmaScriptException { 
-                   StringBuffer buffer = new StringBuffer();
+                   StringBuilder buffer = new StringBuilder();
                    String separator = ",";
                    if (arguments.length > 0) {
                        separator = arguments[0].toString();
@@ -133,6 +134,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                 }
             }
             class ArrayPrototypeReverse extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 ArrayPrototypeReverse(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 0);
                 }
@@ -146,6 +148,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                 }
             }
             class ArrayPrototypeSort extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
                 ArrayPrototypeSort(String name, Evaluator evaluator, FunctionPrototype fp) {
                     super(fp, evaluator, name, 1);
                 }
@@ -162,7 +165,7 @@ public class ArrayObject extends BuiltinFunctionObject {
             }
 
             arrayObject.putHiddenProperty("prototype",arrayPrototype);
-            arrayObject.putHiddenProperty(LENGTHstring,new ESNumber(1));
+            arrayObject.putHiddenProperty(LENGTHstring,ESNumber.valueOf(1));
 
             arrayPrototype.putHiddenProperty("constructor",arrayObject);
             arrayPrototype.putHiddenProperty("toString", 

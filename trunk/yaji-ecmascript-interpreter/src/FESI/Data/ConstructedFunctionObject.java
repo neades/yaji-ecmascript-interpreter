@@ -30,16 +30,16 @@ import FESI.Interpreter.ScopeChain;
  * Implements functions constructed from source text
  */
 public class ConstructedFunctionObject extends FunctionPrototype {
-        
-    private static final String PROTOTYPEstring = new String("prototype").intern();
+    private static final long serialVersionUID = 8665440834402496188L;
+    private static final String PROTOTYPEstring = "prototype".intern();
     private static final int PROTOTYPEhash=PROTOTYPEstring.hashCode();
-    
+
     private ASTStatementList theFunctionAST;
     private String [] theArguments;
     private Vector localVariableNames;
     private EvaluationSource evaluationSource = null;
     private String functionSource = null;
-    
+
     private ESValue currentArguments = ESNull.theNull;
 
     private ConstructedFunctionObject(FunctionPrototype functionPrototype,
@@ -56,21 +56,21 @@ public class ConstructedFunctionObject extends FunctionPrototype {
         theFunctionAST = aFunctionAST;
         theArguments = arguments;
         this.localVariableNames = localVariableNames;
-        
+
         //try {
         //   targetObject.putProperty(functionName, this);
        //} catch (EcmaScriptException e) {
        //    throw new ProgrammingError(e.getMessage());
        //}
     }
-    
+
     /**
      * get the string defining the function
      * @return the source string
      */
     public String getFunctionImplementationString() {
         if (functionSource == null) {
-           StringBuffer str = new StringBuffer();
+           StringBuilder str = new StringBuilder();
            str.append("function ");
            str.append(getFunctionName());
            str.append("(");
@@ -81,11 +81,11 @@ public class ConstructedFunctionObject extends FunctionPrototype {
            str.append(")");
            str.append("function {<internal abstract syntax tree representation>}");
            return str.toString();
-        } else {
+        } 
            return functionSource;
-        }
+        
     }
-    
+
     /**
      * Get the list of local variables of the function as a vector
      * @return the Vector of local variable name strings
@@ -93,14 +93,14 @@ public class ConstructedFunctionObject extends FunctionPrototype {
     public Vector getLocalVariableNames() {
         return localVariableNames;
     }
-    
+
     /**
      * Get the function parameter description as a string
      *
      * @return the function parameter string as (a,b,c)
      */
     public String getFunctionParametersString() {
-       StringBuffer str = new StringBuffer();
+       StringBuilder str = new StringBuilder();
        str.append("(");
        for (int i=0; i<theArguments.length; i++) {
            if (i>0) str.append(",");
@@ -109,53 +109,53 @@ public class ConstructedFunctionObject extends FunctionPrototype {
        str.append(")");
        return str.toString();
     }
-   
+
     // overrides
-    public ESValue callFunction(ESObject thisObject, 
+    public ESValue callFunction(ESObject thisObject,
                             ESValue[] arguments)
            throws EcmaScriptException {
         ESValue value = null;
-        ESArguments args = ESArguments.makeNewESArguments(evaluator,
+        ESArguments args = ESArguments.makeNewESArguments(getEvaluator(),
                              this,
                              theArguments,
-                             arguments); 
+                             arguments);
         ESValue oldArguments = currentArguments;
         currentArguments = args;
         try {
-           value = evaluator.evaluateFunction(theFunctionAST, 
-                            evaluationSource,
-                            args, 
-                            localVariableNames, 
-                            thisObject);
+           value = getEvaluator().evaluateFunction(theFunctionAST,
+					      evaluationSource,
+					      args,
+					      localVariableNames,
+					      thisObject);
         } finally {
             currentArguments = oldArguments;
         }
         return value;
     }
-    
+
     // overrides
-    public ESObject doConstruct(ESObject thisObject, 
+    public ESObject doConstruct(ESObject thisObject,
                             ESValue[] arguments)
-           throws EcmaScriptException { 
+           throws EcmaScriptException {
         ESValue prototype = getProperty(PROTOTYPEstring, PROTOTYPEhash);
-        ESObject op = evaluator.getObjectPrototype();
+        ESObject op = getEvaluator().getObjectPrototype();
         if (!(prototype instanceof ESObject)) prototype = op;
-        ESObject obj = new ObjectPrototype((ESObject) prototype, evaluator);
-        ESValue result = callFunction(obj, arguments);
+        ESObject obj = new ObjectPrototype((ESObject) prototype, getEvaluator());
+        callFunction(obj, arguments);
         // The next line was probably a misinterpretation of // 15.3.2.1 (18)
         // which returned an other object if the function returned an object
         // if (result instanceof ESObject) obj = (ESObject) result;
         return obj;
     }
-    
+
     // overrides
     public String toString () {
        return getFunctionImplementationString();
     }
-   
+
     // overrides
     public String toDetailString() {
-       StringBuffer str = new StringBuffer();
+       StringBuilder str = new StringBuilder();
        str.append("<Function: ");
        str.append(getFunctionName());
        str.append("(");
@@ -166,7 +166,7 @@ public class ConstructedFunctionObject extends FunctionPrototype {
        str.append(")>");
        return str.toString();
     }
-   
+
     /**
      * Utility function to create a function object. Used by the
      * EcmaScript Function function to create new functions
@@ -192,7 +192,7 @@ public class ConstructedFunctionObject extends FunctionPrototype {
         ConstructedFunctionObject theNewFunction = null;
         try {
             FunctionPrototype fp = (FunctionPrototype) evaluator.getFunctionPrototype();
-             
+
             theNewFunction = new ConstructedFunctionObject (
                            fp,
                            evaluator,
@@ -211,45 +211,45 @@ public class ConstructedFunctionObject extends FunctionPrototype {
         }
         return theNewFunction;
     }
-    
+
     // overrides
-    public ESValue getPropertyInScope(String propertyName, ScopeChain previousScope, int hash) 
+    public ESValue getPropertyInScope(String propertyName, ScopeChain previousScope, int hash)
                 throws EcmaScriptException {
        if (propertyName.equals("arguments")) {
           return currentArguments;
-       } else {
-          return super.getPropertyInScope(propertyName, previousScope, hash);
        }
+          return super.getPropertyInScope(propertyName, previousScope, hash);
+       
      }
 
     // overrides
-    public ESValue getProperty(String propertyName, int hash) 
+    public ESValue getProperty(String propertyName, int hash)
                             throws EcmaScriptException {
          if (propertyName.equals("arguments")) {
              return currentArguments;
-         } else {
-             return super.getProperty(propertyName, hash);
          }
+             return super.getProperty(propertyName, hash);
+         
     }
 
     // overrides
-    public boolean hasProperty(String propertyName, int hash) 
+    public boolean hasProperty(String propertyName, int hash)
                           throws EcmaScriptException {
          if (propertyName.equals("arguments")) {
              return true;
-         } else {
+         } 
              return super.hasProperty(propertyName, hash);
-         }
+         
     }
 
     // overrides
-    public void putProperty(String propertyName, ESValue propertyValue, int hash) 
+    public void putProperty(String propertyName, ESValue propertyValue, int hash)
                                 throws EcmaScriptException {
          if (!propertyName.equals("arguments")) {
            super.putProperty(propertyName, propertyValue, hash);
          } // Allowed via putHiddenProperty, used internally !
     }
-    
+
    // public ESValue replaceCurrentArguments(ESObject newArguments) {
    //     ESValue oldArguments = currentArguments;
    //     currentArguments = newArguments;

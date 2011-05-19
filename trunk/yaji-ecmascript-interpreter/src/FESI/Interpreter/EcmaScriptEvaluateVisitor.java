@@ -48,6 +48,7 @@ import FESI.AST.ASTPropertyValueReference;
 import FESI.AST.ASTReturnStatement;
 import FESI.AST.ASTStatement;
 import FESI.AST.ASTStatementList;
+import FESI.AST.ASTSuperReference;
 import FESI.AST.ASTThisReference;
 import FESI.AST.ASTUnaryExpression;
 import FESI.AST.ASTVariableDeclaration;
@@ -69,6 +70,7 @@ import FESI.Data.ESValue;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
 import FESI.Parser.EcmaScriptConstants;
+import FESI.Util.IAppendable;
 
 /**
  * Exception used to package any exception encountered during visiting
@@ -76,6 +78,7 @@ import FESI.Parser.EcmaScriptConstants;
  * JavaCC. Eventually the exception will be unpackaged and reraised.
  */
 class PackagedException extends RuntimeException {
+    private static final long serialVersionUID = -5115990393628214347L;
     EcmaScriptException exception;
     SimpleNode node;
     PackagedException (EcmaScriptException exception, SimpleNode node) {
@@ -107,10 +110,7 @@ public class EcmaScriptEvaluateVisitor
   public static final int C_BREAK = 2;
   public static final int C_CONTINUE = 3;
 
-  // Result of comparison
-  private static final int COMPARE_TRUE = -1;
-  private static final int COMPARE_UNDEFINED = 0;
-  private static final int COMPARE_FALSE = 1;
+  public static final String REPRESENTATION_RESULT_NAME = "result";
   
   private boolean debug = false;
   
@@ -125,6 +125,9 @@ public class EcmaScriptEvaluateVisitor
   // This is the final completion code - mark unused to protect against recursive use
   private int completionCode = -1;
   
+  private boolean useRepresentationOptimisation = false;
+  private IAppendable representationOutputBuffer = null;
+
   /**
    * Create a new visitor
    * @param evaluator On behalf of this evaluator
@@ -152,6 +155,16 @@ public class EcmaScriptEvaluateVisitor
   }
   
   /**
+   * Used to enable string concatenation optimisations when executing a representation
+   * @param value true to enable optimisation
+   */
+  public void setRepresentationOptimisation(boolean value, IAppendable markupHolder) {
+      useRepresentationOptimisation = value;
+      representationOutputBuffer = markupHolder;
+  }
+
+
+  /**
    * Evaluate a tree which represents a main program or the source
    * of an eval function.
    * @param node The parsed tree (annotated for variables)
@@ -161,14 +174,15 @@ public class EcmaScriptEvaluateVisitor
   */
   public ESValue evaluateProgram(ASTProgram node, EvaluationSource es) throws EcmaScriptException {
       
-      EvaluationSource evaluationSource = es;
       if (completionCode != -1) {
           throw new ProgrammingError("Multiple use of evalution visitor");
       }
       completionCode = C_NORMAL; 
       ESValue result = null;
       
-      if (debug) System.out.println("evaluateProgram for: " + node);
+      if (debug) {
+        System.out.println("evaluateProgram for: " + node);
+    }
       
       try {
          result = (ESValue) node.jjtAccept(this, FOR_VALUE); 
@@ -194,7 +208,6 @@ public class EcmaScriptEvaluateVisitor
           throw new ProgrammingError("Multiple use of evaluation visitor");
       }
       completionCode = C_NORMAL; 
-      EvaluationSource evaluationSource = es;
       ESValue result = null;
       if (debug) System.out.println("evaluateFunction for: " + node);
       try {
@@ -251,17 +264,12 @@ public class EcmaScriptEvaluateVisitor
             String s2 =v2.toString();
             int c = s1.compareTo(s2);
             //System.out.println("CS: '"+ s1 + "' " +c+ " '" + s2 + "'");
-            return (c < 0) ? COMPARE_TRUE : COMPARE_FALSE;
-      } else {
-         double d1 = v1.doubleValue();
-         double d2 = v2.doubleValue();
-         if (Double.isNaN(d1) || Double.isNaN(d2)) return COMPARE_UNDEFINED;
-         int c = (v1.doubleValue()<v2.doubleValue()) ?
-                                  COMPARE_TRUE : COMPARE_FALSE;
+            return (c < 0) ? ESValue.COMPARE_TRUE : ESValue.COMPARE_FALSE;
+        }
+        int c = v1.compareNumbers(v2);
          //System.out.println("CN: '"+ d1 + "' " +c+ " '" + d2 + "'");
          return c;
       }
-  }
   
   // EcmaScript standard 11.9.3
   private boolean equal(ESValue v1, ESValue v2) throws EcmaScriptException {
@@ -270,30 +278,16 @@ public class EcmaScriptEvaluateVisitor
       
       if (v1.getTypeOf()==v2.getTypeOf()){
           // Same types
-          if (v1 instanceof ESUndefined) return true;
-          if (v1 instanceof ESNull) return true;
-          if (v1 instanceof ESNumber) {
-              double d1 = v1.doubleValue();
-              double d2 = v2.doubleValue();
-              return (d1==d2);
+          return v1.equalsSameType(v2);
           }
-          if (v1 instanceof ESString) {
-            String s1 =v1.toString();
-            String s2 =v2.toString();
-            return s1.equals(s2);
+
+     if (v1 instanceof ESUndefined && v2 instanceof ESNull) {
+        return true;
           }
-          if (v1 instanceof ESBoolean) {
-            boolean b1 =v1.booleanValue();
-            boolean b2 =v2.booleanValue();
-            return b1==b2;
+     if (v2 instanceof ESUndefined && v1 instanceof ESNull) {
+        return true;
           }
           
-          return v1 == v2;
-      }          
-
-     if (v1 instanceof ESUndefined && v2 instanceof ESNull) return true;
-     if (v2 instanceof ESUndefined && v1 instanceof ESNull) return true;
-     
      if ((v1 instanceof ESNumber && v2 instanceof ESString) ||
          (v2 instanceof ESNumber && v1 instanceof ESString)) {
               double d1 = v1.doubleValue();
@@ -347,7 +341,7 @@ public class EcmaScriptEvaluateVisitor
      // Return ESUndefined for empty statement lists (for 
      // example generated by calling  'function(){}')
      Object result = ESUndefined.theUndefined;
-     for (int i = 0; i < node.jjtGetNumChildren(); i++) {
+     for (int i = 0; i < n; i++) {
          if (completionCode != C_NORMAL) return result;
          Node statement = node.jjtGetChild(i);
          result =  statement.jjtAccept(this,FOR_VALUE);
@@ -393,6 +387,11 @@ public class EcmaScriptEvaluateVisitor
                 throw new ProgrammingError("Value '"+lvo.toString()+"' is not a variable");
             }
             ESValue rv = (ESValue) node.jjtGetChild(1).jjtAccept(this,FOR_VALUE);
+            if (useRepresentationOptimisation && rv instanceof ESString && REPRESENTATION_RESULT_NAME.equals(lv.getPropertyName())) {
+                ESString initialValue = (ESString)rv;
+                rv = new ESString(representationOutputBuffer);
+                ((ESString)rv).appendString(initialValue, evaluator);
+            }
             lv.putValue(null, rv); // null because the variable should be undefined!
             result = rv;
         } catch (EcmaScriptException e) {
@@ -670,6 +669,11 @@ public class EcmaScriptEvaluateVisitor
      return evaluator.getThisObject();
   }
   
+  public Object visit(ASTSuperReference node, Object data) {
+     node.assertNoChildren();
+     return evaluator.getSuperObject();
+  }
+
   /*
    * Attempt to minimize the creation of intermediate ESReferences.
    * This is prettry tricky. The trick is to keep the last result
@@ -884,8 +888,7 @@ public class EcmaScriptEvaluateVisitor
     Object result = null;
     Node idNode = node.jjtGetChild(0);
     if (idNode instanceof ASTIdentifier) {
-        String id = ((ASTIdentifier)idNode).getName();
-        result = new ESString(id);
+        result = ((ASTIdentifier)idNode).getESName();
     } else {
         throw new ProgrammingError("Bad AST");
     }
@@ -896,7 +899,6 @@ public class EcmaScriptEvaluateVisitor
     node.assertTwoChildren();
     ESValue result = null;
     try {
-      int nChildren=node.jjtGetNumChildren();
       Node baseNode = node.jjtGetChild(0);
       // Can be any expression (in fact a a.b.c sequence) [code bizare here]
       ESValue constr = acceptNull(baseNode.jjtAccept(this, FOR_VALUE)); 
@@ -934,16 +936,15 @@ public class EcmaScriptEvaluateVisitor
             throw new EcmaScriptException("Value '"+lvo.toString()+"' is not an assignable object or property");
        }
        int operator = ((ASTOperator)(node.jjtGetChild(1))).getOperator();
-       result = (ESValue) lv.getValue();
-       double dv = result.doubleValue();
+       result = lv.getValue();
+       ESValue vr;
        if (operator == INCR) {
-           dv++;
+           vr = result.increment();
        } else if (operator == DECR) {
-           dv--;
+           vr = result.decrement();
        } else {
             throw new ProgrammingError("Bad operator");
        }
-       ESValue vr = new ESNumber(dv);
        evaluator.putValue(lv, vr);
     } catch (EcmaScriptException e) {
             throw new PackagedException(e,node);
@@ -976,7 +977,7 @@ public class EcmaScriptEvaluateVisitor
            } 
            break;
       case VOID: 
-             r = null;
+             r = ESUndefined.theUndefined;
              break;          
       case TYPEOF: {
             Node n = node.jjtGetChild(1);
@@ -1006,9 +1007,7 @@ public class EcmaScriptEvaluateVisitor
                     throw new EcmaScriptException("Value '"+lvo.toString()+"' is not an assignable object or property");
                }               
                ESValue v = lv.getValue();
-               double dv = v.doubleValue();
-               dv++;
-               r = new ESNumber(dv);
+               r = v.increment();
                evaluator.putValue(lv, r);
            }
            break;
@@ -1021,9 +1020,7 @@ public class EcmaScriptEvaluateVisitor
                     throw new EcmaScriptException("Value '"+lvo.toString()+"' is not an assignable object or property");
                }               
                ESValue v = lv.getValue();
-               double dv = v.doubleValue();
-               dv--;
-               r = new ESNumber(dv);
+               r = v.decrement();
                evaluator.putValue(lv, r);
            }
            break;
@@ -1035,13 +1032,13 @@ public class EcmaScriptEvaluateVisitor
       case MINUS: {
               ESValue v = (ESValue) node.jjtGetChild(1).jjtAccept(this,FOR_VALUE);
               double dv = v.doubleValue();
-              r = new ESNumber(-dv);
+              r = ESNumber.valueOf(-dv);
            }
            break;
       case TILDE: {
               ESValue v = (ESValue) node.jjtGetChild(1).jjtAccept(this,FOR_VALUE);
               int iv = v.toInt32();
-              r = new ESNumber(~iv);
+              r = ESNumber.valueOf(~iv);
            }
            break;
       case BANG: {
@@ -1076,52 +1073,46 @@ public class EcmaScriptEvaluateVisitor
                   if ((v1p instanceof ESString) || (v2p instanceof ESString)) {
                       // Note: Convert v1/2 instead of v1/2p for correct
                       // behaviour of "" + Object;
-                     result = new ESString(
-                        v1.toString() + v2.toString());
+                     result = concatenateStrings(v1, v2);
                   } else {
-                     result = new ESNumber(
-                             v1.doubleValue()+v2.doubleValue());
+                     result = v1.addValue(v2);
                   }
                  }
                break;
           case MINUS: {
-                    result = new ESNumber(
-                        v1.doubleValue()-v2.doubleValue());
+                    result = v1.subtract(v2);
                }
                break;
           case STAR: {
-                    result = new ESNumber(
-                      v1.doubleValue()*v2.doubleValue());
+                    result = v1.multiply(v2);
                }
                break;
           case SLASH: {
-                    result = new ESNumber(
-                      v1.doubleValue()/v2.doubleValue());
+                    result = v1.divide(v2);
                }
                break;
           case REM: {
-                    result = new ESNumber(
-                      v1.doubleValue()%v2.doubleValue());
+                    result = v1.modulo(v2);
                }
                break;
           case LSHIFT: {
-                    result = new ESNumber(
+                    result = ESNumber.valueOf(
                       v1.toInt32()<<v2.toUInt32());
                }
                break;
           case RSIGNEDSHIFT: {
-                    result = new ESNumber(
+                    result = ESNumber.valueOf(
                       v1.toInt32()>>v2.toUInt32());
                }
                break;
           case RUNSIGNEDSHIFT: {
-                    result = new ESNumber(
+                    result = ESNumber.valueOf(
                       v1.toUInt32()>>>v2.toUInt32());
                }
                break;
           case LT: {
                     int compareCode = compare(v1,v2);
-                    if (compareCode ==  COMPARE_TRUE) {
+                    if (compareCode ==  ESValue.COMPARE_TRUE) {
                         result=ESBoolean.makeBoolean(true);
                     } else {
                         result=ESBoolean.makeBoolean(false);
@@ -1130,7 +1121,7 @@ public class EcmaScriptEvaluateVisitor
                break;
           case GT: {
                     int compareCode = compare(v2,v1);
-                    if (compareCode ==  COMPARE_TRUE) {
+                    if (compareCode ==  ESValue.COMPARE_TRUE) {
                         result=ESBoolean.makeBoolean(true);
                     } else {
                         result=ESBoolean.makeBoolean(false);
@@ -1139,7 +1130,7 @@ public class EcmaScriptEvaluateVisitor
                break;
           case LE: {
                     int compareCode = compare(v2,v1);
-                    if (compareCode ==  COMPARE_FALSE) {
+                    if (compareCode ==  ESValue.COMPARE_FALSE) {
                         result=ESBoolean.makeBoolean(true);
                     } else {
                         result=ESBoolean.makeBoolean(false);
@@ -1148,7 +1139,7 @@ public class EcmaScriptEvaluateVisitor
                break;
           case GE: {
                     int compareCode = compare(v1,v2);
-                    if (compareCode ==  COMPARE_FALSE) {
+                    if (compareCode ==  ESValue.COMPARE_FALSE) {
                         result=ESBoolean.makeBoolean(true);
                     } else {
                         result=ESBoolean.makeBoolean(false);
@@ -1166,19 +1157,19 @@ public class EcmaScriptEvaluateVisitor
           case BIT_AND: {
                  int iv1 = v1.toInt32();
                  int iv2 = v2.toInt32();
-                 result = new ESNumber(iv1 & iv2);
+                 result = ESNumber.valueOf(iv1 & iv2);
                 }
                break;
           case BIT_OR: {
                  int iv1 = v1.toInt32();
                  int iv2 = v2.toInt32();
-                 result = new ESNumber(iv1 | iv2);
+                 result = ESNumber.valueOf(iv1 | iv2);
                 }
                break;
           case XOR: {
                  int iv1 = v1.toInt32();
                  int iv2 = v2.toInt32();
-                 result = new ESNumber(iv1 ^ iv2);
+                 result = ESNumber.valueOf(iv1 ^ iv2);
                 }
                break;
            default:
@@ -1280,68 +1271,69 @@ public class EcmaScriptEvaluateVisitor
       case PLUSASSIGN: {
               ESValue v1p = v1.toESPrimitive();
               ESValue v2p = v2.toESPrimitive();
-              // System.out.println("v1p = " + v1 + " v2p = " + v2); 
-              if ((v1p instanceof ESString) || (v2p instanceof ESString)) {
+              if (useRepresentationOptimisation && v1 instanceof ESString && REPRESENTATION_RESULT_NAME.equals(lv.getPropertyName())) {
+                  ((ESString)v1).appendString(v2, evaluator);
+                  result = v1;
+              } else if ((v1p instanceof ESString) || (v2p instanceof ESString)) {
                   // Note: Convert v1/2 instead of v1/2p for correct
                   // behaviour of "" + Object;
-                 result = new ESString(
-                    v1.toString() + v2.toString());
+                 result = concatenateStrings(v1, v2);
               } else {
-                 result = new ESNumber(
+                 result = ESNumber.valueOf(
                          v1.doubleValue()+v2.doubleValue());
               }
              }
            break;
       case MINUSASSIGN: {
-                result = new ESNumber(
+                result = ESNumber.valueOf(
                     v1.doubleValue()-v2.doubleValue());
             }
           break;
       case STARASSIGN: {
-                result = new ESNumber(
+                result = ESNumber.valueOf(
                   v1.doubleValue()*v2.doubleValue());
            }
            break;
       case SLASHASSIGN: {
-                result = new ESNumber(
+                result = ESNumber.valueOf(
                   v1.doubleValue()/v2.doubleValue());
            }
            break;
       case ANDASSIGN: {
              int iv1 = v1.toInt32();
              int iv2 = v2.toInt32();
-             result = new ESNumber(iv1 & iv2);
+             result = ESNumber.valueOf(iv1 & iv2);
            }
            break;
       case ORASSIGN: {
              int iv1 = v1.toInt32();
              int iv2 = v2.toInt32();
-             result = new ESNumber(iv1 | iv2);
+             result = ESNumber.valueOf(iv1 | iv2);
            }
            break;
       case XORASSIGN: {
              int iv1 = v1.toInt32();
              int iv2 = v2.toInt32();
-             result = new ESNumber(iv1 ^ iv2);
+             result = ESNumber.valueOf(iv1 ^ iv2);
            }
            break;
       case REMASSIGN: {
-                result = new ESNumber(
+                result = ESNumber.valueOf(
                   v1.doubleValue()%v2.doubleValue());
            }
            break;
       case LSHIFTASSIGN: {
-                result = new ESNumber(
+                result = ESNumber.valueOf(
                   v1.toInt32()<<v2.toUInt32());
            }
            break;
       case RSIGNEDSHIFTASSIGN: { 
-                result = new ESNumber(
+                result = ESNumber.valueOf(
                   v1.toInt32()>>v2.toUInt32());
            }
            break;
       case RUNSIGNEDSHIFTASSIGN: {
-                result = new ESNumber(
+                result = ESNumber.valueOf(
                   v1.toUInt32()>>>v2.toUInt32());
            }
            break;
@@ -1357,10 +1349,31 @@ public class EcmaScriptEvaluateVisitor
      return result;
   }
   
+    private ESValue concatenateStrings(ESValue v1, ESValue v2) {
+
+        IAppendable appendable = evaluator.createAppendable(16, 1024);
+
+        if (v1 instanceof ESString) {
+            ((ESString)v1).appendSelfToAppendable(appendable);
+        } else {
+            appendable.append(v1.toString());
+        }
+
+        if (v2 instanceof ESString) {
+            ((ESString)v2).appendSelfToAppendable(appendable);
+        } else {
+            appendable.append(v2.toString());
+        }
+
+        return new ESString(appendable);
+    }
+
   public Object visit(ASTExpressionList node, Object data) {
      int n = node.jjtGetNumChildren();
      Object result = null;
-     if (n<=0) throw new ProgrammingError("Empty expression list");
+     if (n<=0) {
+        throw new ProgrammingError("Empty expression list");
+    }
      result = node.jjtGetChild(0).jjtAccept(this, FOR_VALUE);
      for (int i = 1; i < node.jjtGetNumChildren(); i++) {
          Node statement = node.jjtGetChild(i);
@@ -1371,7 +1384,7 @@ public class EcmaScriptEvaluateVisitor
   
   public Object visit(ASTLiteral node, Object data) {
      node.assertNoChildren();
-     return (ESValue) node.getValue();
+     return node.getValue();
   }
   
   public Object visit(ASTIdentifier node, Object forWhat) {

@@ -28,8 +28,8 @@ import FESI.Exceptions.EcmaScriptException;
  */
 
 public class JSException extends Exception {
-
-	/** @serial Original exception which caused the current exception */
+    private static final long serialVersionUID = 7008405077472969406L;
+    /** @serial Original exception which caused the current exception */
     private Throwable originatingException = null;
     
     /**

@@ -48,6 +48,7 @@ import FESI.AST.ASTPropertyValueReference;
 import FESI.AST.ASTReturnStatement;
 import FESI.AST.ASTStatement;
 import FESI.AST.ASTStatementList;
+import FESI.AST.ASTSuperReference;
 import FESI.AST.ASTThisReference;
 import FESI.AST.ASTUnaryExpression;
 import FESI.AST.ASTVariableDeclaration;
@@ -71,9 +72,10 @@ import FESI.Parser.EcmaScriptConstants;
  */
 public class EcmaScriptFunctionVisitor 
             implements EcmaScriptVisitor,
-                       EcmaScriptConstants
+                       EcmaScriptConstants,
+                       java.io.Serializable
 {
-    
+    private static final long serialVersionUID = 4746752174336980575L;
   // The visitor work on behalf on an evaluator
   private Evaluator evaluator = null;
   private boolean debug = false;
@@ -230,6 +232,11 @@ public class EcmaScriptFunctionVisitor
     return data;
   }
   
+  public Object visit(ASTSuperReference node, Object data) {
+    badAST();
+    return data;
+  }
+
   public Object visit(ASTCompositeReference node, Object data) {
     badAST();
     return data;

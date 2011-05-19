@@ -18,6 +18,7 @@
 package FESI.Exceptions;
 
 import FESI.Interpreter.EvaluationSource;
+import FESI.Interpreter.StringEvaluationSource;
 import FESI.Parser.EcmaScriptConstants;
 import FESI.Parser.ParseException;
 import FESI.Parser.Token;
@@ -25,17 +26,17 @@ import FESI.Parser.Token;
 /**
  * Exception used to signal parsing errors
  */
-public class EcmaScriptParseException extends EcmaScriptException 
+public class EcmaScriptParseException extends EcmaScriptException
                     implements EcmaScriptConstants {
-
+    private static final long serialVersionUID = 3037065674594117662L;
     /** @serial Original parse exception */
-    private ParseException parseException;
+    private final ParseException parseException;
     /** @serial Source description */
-    private EvaluationSource evaluationSource;
-    /** @serial true if the synatx error may be that the 
+    private final EvaluationSource evaluationSource;
+    /** @serial true if the synatx error may be that the
         source is not yet complete (for interactive usage) */
     private boolean canBeIncomplete = true;
-    
+
     /**
      * Create a new parsing exception
      *
@@ -47,21 +48,24 @@ public class EcmaScriptParseException extends EcmaScriptException
         parseException = e;
         evaluationSource = s;
     }
-    
+
    /**
     * Get the line number of the error if possible
     */
-   public int getLineNumber() {
-             
+   @Override
+public int getLineNumber() {
+
        Token next = null;
        Token tok = parseException.currentToken;
-       if (tok != null && tok.next != null) next = tok.next; // get offending token
-         
+       if (tok != null && tok.next != null) {
+        next = tok.next; // get offending token
+    }
+
         if (next!=null) {
             return next.beginLine;
-        } else {
-            return -1;
         }
+        return -1;
+
     }
 
 
@@ -69,25 +73,31 @@ public class EcmaScriptParseException extends EcmaScriptException
      * return true if incomplete parse (maybe the user
      * is given a chance to complete it)
      */
+    @Override
     public boolean isIncomplete() {
-        if (!canBeIncomplete) return false; // Some inner error
+        if (!canBeIncomplete) {
+            return false; // Some inner error
+        }
         Token tok = parseException.currentToken;
-        if (tok != null && tok.next != null) tok = tok.next; // get offending token
+        if (tok != null && tok.next != null) {
+            tok = tok.next; // get offending token
+        }
         return (tok.kind == EOF);
     }
-    
+
     /**
      * Indicate that this cannot be a recoverable incomplete error because,
-     * for example, the evaluation source is a string passed as 
+     * for example, the evaluation source is a string passed as
      * a parameter to eval, not a stream read from an user.
      */
     public void setNeverIncomplete() {
         canBeIncomplete = false;
     }
-  
-    /* 
-     * Print the error message with helpfull comments if possible
+
+    /*
+     * Print the error message with helpful comments if possible
      */
+    @Override
     public String getMessage() {
         Token tok = parseException.currentToken;
         Token next = null;
@@ -96,10 +106,12 @@ public class EcmaScriptParseException extends EcmaScriptException
             retval = "Unterminated string constant near line " + tok.beginLine +
                         ", column " + tok.beginColumn;
         } else {
-            if (tok != null && tok.next != null) next = tok.next; // get offending token
+            if (tok != null && tok.next != null) {
+                next = tok.next; // get offending token
+            }
             if (next != null & isForFutureExtension(next.kind)) {
-                retval = "Keyword '" + next.image + 
-                          "' reserved for future extension near line " + 
+                retval = "Keyword '" + next.image +
+                          "' reserved for future extension near line " +
                           next.beginLine +
                             ", column " + next.beginColumn;
             } else {
@@ -110,13 +122,18 @@ public class EcmaScriptParseException extends EcmaScriptException
                 retval += ", after " + parseException.tokenImage[tok.kind];
             }
         }
-        retval += eol + evaluationSource;
+
+        if(evaluationSource instanceof StringEvaluationSource && next != null) {
+            retval += eol + ((StringEvaluationSource) evaluationSource).getLineText(next.beginLine);
+        }else {
+            retval += eol + evaluationSource;
+        }
         return retval;
     }
-    
-    
+
+
     private boolean isForFutureExtension(int k) {
-        return 
+        return
             k==CASE ||
             k==CATCH||
             k==CLASS ||

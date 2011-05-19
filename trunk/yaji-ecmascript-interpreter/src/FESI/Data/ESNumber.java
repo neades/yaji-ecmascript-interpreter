@@ -20,96 +20,294 @@ package FESI.Data;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Interpreter.Evaluator;
 
-/** 
-  * Implements the number primitive value as a double
-  */
-  
-public final class ESNumber extends ESPrimitive {
+/**
+ * Implements the number primitive value as a double
+ *
+ * GT Modification to optimise the handling of integer values. Put in primarily for a Sun Fire T1000
+ * as it only has one FPU shared between multiple cores.
+ */
 
+public final class ESNumber extends ESPrimitive {
+    private static final long serialVersionUID = 3695852528633071467L;
+    public static final ESNumber ZERO;
     // The value
-    private double value;
-	
+    private final double value;
+    private long   longValue;
+    private boolean isLongValue;
+    private static String[] toStringCache = new String[128];
+    private static ESNumber[] cache;
+    private static int maxESNumberCached;
+    static {
+        try {
+            maxESNumberCached = Integer.getInteger("com.gtnet.fesi.esnumcachesize", 128).intValue();
+        }
+        catch (NumberFormatException e) {
+            maxESNumberCached = 128;
+            System.err.println("Property com.gtnet.fesi.esnumcachesize set to invalid value : using 128");
+        }
+        final int low = -128;
+        cache = new ESNumber[(maxESNumberCached - low) + 1];
+        int j = low;
+        for(int k = 0; k < cache.length; k++) {
+            cache[k] = new ESNumber(j++);
+        }
+        ZERO = ESNumber.valueOf(0L);
+    }
+
+
     /**
      * Create a new double with a specific value
      *
      * @param value The (immutable) value
-     */    
-	public ESNumber(double value) {
-		this.value = value;
+     */
+    private ESNumber(double value) {
+        long intValue = (long) value;
+        if (intValue == value) {
+            this.longValue = intValue;
+            this.isLongValue = true;
+        } else {
+            this.isLongValue = false;
+        }
+        this.value = value;
+    }
+
+    public static ESNumber valueOf(long l) {
+        if (l >= -128 && l <= maxESNumberCached) {
+            return cache[(int) l+128];
+        }
+        return new ESNumber(l);
+    }
+
+    public static ESNumber valueOf(double d) {
+        if (d == 0.0) {
+            return ESNumber.ZERO;
+        } else if  ( ((long)d) == d ) {
+            return ESNumber.valueOf((long)d);
+        }
+        return new ESNumber(d);
+    }
+
+    private ESNumber(long value) {
+        this.longValue = value;
+        this.isLongValue = true;
+        this.value = value;
     }
 
     // overrides
+    @Override
     public int getTypeOf() {
         return EStypeNumber;
     }
-    
+
     // overrides
+    @Override
     public String getTypeofString() {
         return "number";
     }
 
     // overrides
+    @Override
     public boolean isNumberValue() {
-        return true; 
+        return true;
     }
-	
-    // overrides
-	public double doubleValue() {
-		return value;
-	}
 
     // overrides
+    @Override
+    public double doubleValue() {
+        return value;
+    }
+
+    // overrides
+    @Override
     public boolean booleanValue() {
+        if (isLongValue) {
+            return !(longValue == 0);
+        }
         return !(Double.isNaN(value) || value==0.0);
     }
 
     // overrides
+    @Override
     public String toString() {
-        long intValue = (long) value;
-        if (((double) intValue) == value) {
-            return Long.toString(intValue);
-        } else {
-            return Double.toString(value);
+        if (isLongValue) {
+            if (longValue < 128 && longValue >= 0) {
+                int intValue = (int)longValue;
+                String stringValue = toStringCache[intValue];
+                if (stringValue == null) {
+                    stringValue = Integer.toString(intValue);
+                    toStringCache[intValue] = stringValue;
+                }
+                return stringValue;
+            }
+            return Long.toString(longValue);
         }
+        return Double.toString(doubleValue());
     }
 
     // overrides
+    @Override
     public ESValue toESObject(Evaluator evaluator) throws EcmaScriptException {
-         NumberPrototype theObject = null;
-         ESObject np = evaluator.getNumberPrototype();
-         theObject = new NumberPrototype(np, evaluator);
-         theObject.value = this;
-         return theObject;
-    }    
+        NumberPrototype theObject = null;
+        ESObject np = evaluator.getNumberPrototype();
+        theObject = new NumberPrototype(np, evaluator);
+        theObject.value = this;
+        return theObject;
+    }
 
     // overrides
+    @Override
     public ESValue toESNumber() {
         return this;
     }
 
+    @Override
+    public int toInt32() throws EcmaScriptException {
+        if (isLongValue) {
+            return (int)longValue;
+        }
+        return super.toInt32();
+    }
+
+    @Override
+    public int toUInt32() throws EcmaScriptException {
+        return toInt32();
+    }
+
     // overrides
+    @Override
     public Object toJavaObject() {
-        long longValue = (long) value;
         Object o = null;
-        if (((double) longValue) == value) {
+        if (isLongValue) {
             if (((byte) longValue) == longValue) {
-                o = new Byte((byte) longValue);
+                o = Byte.valueOf((byte) longValue);
             } else if (((short) longValue) == longValue) {
-                o = new Short((short) longValue);
+                o = Short.valueOf((short) longValue);
             } else if (((int) longValue) == longValue) {
-                o = new Integer((int) longValue);
+                o = Integer.valueOf((int) longValue);
             } else {
-                o = new Long(longValue);
+                o = Long.valueOf(longValue);
             }
         } else {
-            o= new Double(value);
+            o= Double.valueOf(doubleValue());
         }
         return o;
     }
 
     // overrides
+    @Override
     public String toDetailString() {
-        return "ES:#'" + Double.toString(value)+"'";
+        return "ES:#'" + toString()+"'";
     }
-	
+
+    /**
+     * Advanced FESI
+     * GT Modified: 12/10/2004
+     * Support for subtypes (storing values in hashset)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return toString().hashCode();
+    }
+
+    /**
+     * Advanced FESI
+     * GT Modified: 12/10/2004
+     * Support for subtypes (storing values in hashset)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) {
+            return true;
+        }
+        else if(o instanceof ESValue) {
+            // handle the special cases of ESNull and ESUndefined
+            if(o == ESNull.theNull || o == ESUndefined.theUndefined) {
+                return false;
+            }
+
+            try {
+                return doubleValue() == ((ESValue) o).doubleValue();
+            } catch (EcmaScriptException e) {
+                return false;
+            }
+        }
+
+        return false;
+
+    }
+
+    @Override
+    public long longValue() throws EcmaScriptException {
+        if (isLongValue) {
+            return longValue;
+        }
+        return super.longValue();
+    }
+
+    @Override
+    public boolean isIntegerValue() {
+        return isLongValue;
+    }
+
+    @Override
+    public boolean equalsSameType(ESValue v2) throws EcmaScriptException {
+        if (isLongValue && v2.isIntegerValue()) {
+            return longValue == v2.longValue();
+        }
+        double d1 = doubleValue();
+        double d2 = v2.doubleValue();
+        return (d1==d2);
+    }
+
+    @Override
+    public ESValue addValue(ESValue v2) throws EcmaScriptException {
+        if (isLongValue && v2.isIntegerValue()) {
+            return ESNumber.valueOf( longValue + v2.longValue());
+        }
+        return super.addValue(v2);
+    }
+
+    @Override
+    public ESValue subtract(ESValue v2) throws EcmaScriptException {
+        if (isLongValue && v2.isIntegerValue()) {
+            return ESNumber.valueOf( longValue - v2.longValue());
+        }
+        return super.subtract(v2);
+    }
+
+    @Override
+    public ESValue decrement() throws EcmaScriptException {
+        if (isLongValue) {
+            return ESNumber.valueOf( longValue - 1);
+        }
+        return super.decrement();
+    }
+
+    @Override
+    public ESValue increment() throws EcmaScriptException {
+        if (isLongValue) {
+            return ESNumber.valueOf( longValue + 1);
+        }
+        return super.increment();
+    }
+
+    @Override
+    public ESValue multiply(ESValue v2) throws EcmaScriptException {
+        if (isLongValue && v2.isIntegerValue()) {
+            return ESNumber.valueOf( longValue * v2.longValue() );
+        }
+        return super.multiply(v2);
+    }
+
+    @Override
+    public int compareNumbers(ESValue v2) throws EcmaScriptException {
+        if (isLongValue && v2.isIntegerValue()) {
+            return (longValue() < v2.longValue()) ? ESValue.COMPARE_TRUE : ESValue.COMPARE_FALSE;
+        }
+        return super.compareNumbers(v2);
+    }
+
 }

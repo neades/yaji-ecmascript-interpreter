@@ -39,4 +39,5 @@ public interface EcmaScriptVisitor
   public Object visit(ASTFunctionDeclaration node, Object data);
   public Object visit(ASTFormalParameterList node, Object data);
   public Object visit(ASTProgram node, Object data);
+  public Object visit(ASTSuperReference node, Object data);
 }

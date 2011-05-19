@@ -22,7 +22,7 @@ package FESI.Interpreter;
  * Describe a jar entry used as a source. 
  */
 public class JarEvaluationSource extends EvaluationSource {
-    
+    private static final long serialVersionUID = 103223323857901314L;
     private String theJarName;
     private String theEntryName;
 

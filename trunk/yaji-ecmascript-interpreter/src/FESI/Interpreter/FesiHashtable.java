@@ -33,18 +33,23 @@ package FESI.Interpreter;
 import java.util.Enumeration;
 
 import FESI.Data.ESValue;
+import FESI.Exceptions.EcmaScriptException;
+import FESI.Exceptions.TypeError;
 
 /**
  * Hashtable collision list.
  */
-class HashtableEntry {
+class HashtableEntry implements java.io.Serializable {
+    private static final long serialVersionUID = 4541703187276273804L;
     int hash;
     String key;
     ESValue value;
     HashtableEntry next;
     boolean hidden;
     boolean readonly;
+    boolean configurable;
 
+    @Override
     protected Object clone() {
         HashtableEntry entry = new HashtableEntry();
         entry.hash = hash;
@@ -52,6 +57,7 @@ class HashtableEntry {
         entry.value = value;
         entry.hidden = hidden;
         entry.readonly = readonly;
+        entry.configurable = configurable;
         entry.next = (next != null) ? (HashtableEntry)next.clone() : null;
         return entry;
     }
@@ -83,9 +89,9 @@ class HashtableEntry {
  * the numbers as keys: 
  * <p><blockquote><pre>
  *     Hashtable numbers = new Hashtable();
- *     numbers.put("one", new Integer(1));
- *     numbers.put("two", new Integer(2));
- *     numbers.put("three", new Integer(3));
+ *     numbers.put("one", Integer.valueOf(1));
+ *     numbers.put("two", Integer.valueOf(2));
+ *     numbers.put("three", Integer.valueOf(3));
  * </pre></blockquote>
  * <p>
  * To retrieve a number, use the following code: 
@@ -104,16 +110,18 @@ class HashtableEntry {
  * @since   JDK1.0
  */
 public
-class FesiHashtable implements Cloneable {
+class FesiHashtable implements Cloneable, java.io.Serializable {
+    private static final long serialVersionUID = -505893943964068672L;
+
     /**
      * The hash table data.
      */
-    private transient HashtableEntry table[];
+    private HashtableEntry table[];
 
     /**
      * The total number of entries in the hash table.
      */
-    private transient int count;
+    private int count;
 
     /**
      * Rehashes the table when count exceeds this threshold.
@@ -123,7 +131,9 @@ class FesiHashtable implements Cloneable {
     /**
      * The load factor for the hashtable.
      */
-    private float loadFactor;
+    private final float loadFactor;
+
+    private final int initialCapacity;
 
     /**
      * Constructs a new, empty hashtable with the specified initial 
@@ -140,8 +150,9 @@ class FesiHashtable implements Cloneable {
         if ((initialCapacity <= 0) || (loadFactor <= 0.0)) {
             throw new IllegalArgumentException();
         }
+        this.initialCapacity = initialCapacity;
         this.loadFactor = loadFactor;
-        table = new HashtableEntry[initialCapacity];
+        this.table = null;
         threshold = (int)(initialCapacity * loadFactor);
     }
 
@@ -164,6 +175,13 @@ class FesiHashtable implements Cloneable {
      */
     public FesiHashtable() {
         this(27, 0.75f); // a smaller prime than the original 27
+    }
+
+    private HashtableEntry[] getTable() {
+        if (table == null) {
+            table = new HashtableEntry[initialCapacity];
+        }
+        return table;
     }
 
     /**
@@ -196,7 +214,7 @@ class FesiHashtable implements Cloneable {
      * @since   JDK1.0
      */
     public Enumeration keys() {
-        return new HashtableEnumerator(table,true);
+        return new HashtableEnumerator(getTable(),true);
     }
 
     /**
@@ -210,7 +228,7 @@ class FesiHashtable implements Cloneable {
      * @since   JDK1.0
      */
     public Enumeration elements() {
-        return new HashtableEnumerator(table, false);
+        return new HashtableEnumerator(getTable(), false);
     }
 
     /**
@@ -222,7 +240,7 @@ class FesiHashtable implements Cloneable {
      */
 
     public boolean containsKey(String key, int hash) {
-        HashtableEntry tab[] = table;
+        HashtableEntry tab[] = getTable();
         int index = (hash & 0x7FFFFFFF) % tab.length;
         for (HashtableEntry e = tab[index] ; e != null ; e = e.next) {
             if ((e.key==key ) || ((e.hash == hash) && e.key.equals(key))) {
@@ -243,7 +261,7 @@ class FesiHashtable implements Cloneable {
      */
     
     public ESValue get(String key, int hash) {
-        HashtableEntry tab[] = table;
+        HashtableEntry tab[] = getTable();
         int index = (hash & 0x7FFFFFFF) % tab.length;
         for (HashtableEntry e = tab[index] ; e != null ; e = e.next) {
             if ((e.key==key ) || ((e.hash == hash) && e.key.equals(key))) {
@@ -262,7 +280,7 @@ class FesiHashtable implements Cloneable {
      */
     
     public boolean isHidden(String key, int hash) {
-        HashtableEntry tab[] = table;
+        HashtableEntry tab[] = getTable();
         int index = (hash & 0x7FFFFFFF) % tab.length;
         for (HashtableEntry e = tab[index] ; e != null ; e = e.next) {
             if ((e.key==key ) || ((e.hash == hash) && e.key.equals(key))) {
@@ -278,18 +296,19 @@ class FesiHashtable implements Cloneable {
      *
      * @param   key   a key in the hashtable.
      * @param   hash  the key hashtable.
+     * @param extensible 
      * @return  true if hidden.
      */
     
-    public boolean isReadonly(String key, int hash) {
-        HashtableEntry tab[] = table;
+    public boolean isReadonly(String key, int hash, boolean extensible) {
+        HashtableEntry tab[] = getTable();
         int index = (hash & 0x7FFFFFFF) % tab.length;
         for (HashtableEntry e = tab[index] ; e != null ; e = e.next) {
             if ((e.key==key ) || ((e.hash == hash) && e.key.equals(key))) {
                 return e.readonly;
             }
         }
-        return false;
+        return !extensible;
     }
 
     /**
@@ -301,15 +320,17 @@ class FesiHashtable implements Cloneable {
      * @since   JDK1.0
      */
     protected void rehash() {
-        int oldCapacity = table.length;
-        HashtableEntry oldTable[] = table;
+        int oldCapacity = getTable().length;
+        HashtableEntry oldTable[] = getTable();
     
         int newCapacity = oldCapacity * 2 + 1;
-        if (newCapacity<101) newCapacity = 101; // Ensure a prime
+        if (newCapacity<101) {
+            newCapacity = 101; // Ensure a prime
+        }
         HashtableEntry newTable[] = new HashtableEntry[newCapacity];
     
         threshold = (int)(newCapacity * loadFactor);
-        table = newTable;
+        this.table = newTable;
     
         //System.out.println("rehash old=" + oldCapacity + ", new=" + newCapacity + ", thresh=" + threshold + ", count=" + count);
     
@@ -353,7 +374,7 @@ class FesiHashtable implements Cloneable {
         }
     
         // Makes sure the key is not already in the hashtable.
-        HashtableEntry tab[] = table;
+        HashtableEntry tab[] = getTable();
         int index = (hash & 0x7FFFFFFF) % tab.length;
         for (HashtableEntry e = tab[index] ; e != null ; e = e.next) {
             if ((e.hash == hash) && e.key.equals(key)) {
@@ -376,6 +397,7 @@ class FesiHashtable implements Cloneable {
         e.value = value;
         e.hidden = hidden;
         e.readonly = readonly;
+        e.configurable = true;
         e.next = tab[index];
         tab[index] = e;
         count++;
@@ -389,13 +411,15 @@ class FesiHashtable implements Cloneable {
      * @param   key   the key that needs to be removed.
      * @return  the value to which the key had been mapped in this hashtable,
      *          or <code>null</code> if the key did not have a mapping.
+     * @throws EcmaScriptException 
      * @since   JDK1.0
      */
-    public ESValue remove(String key, int hash) {
-        HashtableEntry tab[] = table;
+    public ESValue remove(String key, int hash, boolean throwError) throws EcmaScriptException {
+        HashtableEntry tab[] = getTable();
         int index = (hash & 0x7FFFFFFF) % tab.length;
         for (HashtableEntry e = tab[index], prev = null ; e != null ; prev = e, e = e.next) {
             if ((e.hash == hash) && e.key.equals(key)) {
+                if (e.configurable) {
             if (prev != null) {
                 prev.next = e.next;
             } else {
@@ -403,6 +427,11 @@ class FesiHashtable implements Cloneable {
             }
             count--;
             return e.value;
+            }
+                if (throwError) {
+                    throw new TypeError("Property "+key+" cannot be deleted.");
+                }
+                return null;
             }
         }
         return null;
@@ -414,9 +443,10 @@ class FesiHashtable implements Cloneable {
      * @since   JDK1.0
      */
     public void clear() {
-        HashtableEntry tab[] = table;
-        for (int index = tab.length; --index >= 0; )
+        HashtableEntry tab[] = getTable();
+        for (int index = tab.length; --index >= 0; ) {
             tab[index] = null;
+        }
         count = 0;
     }
 
@@ -428,13 +458,14 @@ class FesiHashtable implements Cloneable {
      * @return  a clone of the hashtable.
      * @since   JDK1.0
      */
+    @Override
     public Object clone() {
         try { 
             FesiHashtable t = (FesiHashtable)super.clone();
-            t.table = new HashtableEntry[table.length];
-            for (int i = table.length ; i-- > 0 ; ) {
-            t.table[i] = (table[i] != null) 
-                ? (HashtableEntry)table[i].clone() : null;
+            t.table = (new HashtableEntry[getTable().length]);
+            for (int i = getTable().length ; i-- > 0 ; ) {
+            t.getTable()[i] = (getTable()[i] != null)
+                ? (HashtableEntry)getTable()[i].clone() : null;
             }
             return t;
         } catch (CloneNotSupportedException e) { 
@@ -449,9 +480,10 @@ class FesiHashtable implements Cloneable {
      * @return  a string representation of this hashtable.
      * @since   JDK1.0
      */
+    @Override
     public String toString() {
         int max = size() - 1;
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder(max > 0 ? max * 16 : 16);
         Enumeration k = keys();
         Enumeration e = elements();
         buf.append("{");
@@ -459,13 +491,36 @@ class FesiHashtable implements Cloneable {
         for (int i = 0; i <= max; i++) {
             String s1 = k.nextElement().toString();
             String s2 = e.nextElement().toString();
-            buf.append(s1 + "=" + s2);
+            buf.append(s1).append("=").append(s2);
             if (i < max) {
             buf.append(", ");
             }
         }
         buf.append("}");
         return buf.toString();
+    }
+
+    public void setAllNonConfigurable(boolean readOnly) {
+        HashtableEntry[] tab = getTable();
+        for (HashtableEntry hashtableEntry : tab) {
+            for(HashtableEntry e = hashtableEntry; e != null; e = e.next) {
+                e.configurable = false;
+                if (readOnly) {
+                    e.readonly = true;
+                }
+            }
+        }
+}
+
+    public boolean isAllReadOnly() {
+        boolean frozen = true;
+        HashtableEntry[] tab = getTable();
+        for (HashtableEntry hashtableEntry : tab) {
+            for(HashtableEntry e = hashtableEntry; e != null && frozen; e = e.next) {
+                frozen = e.readonly;
+            }
+        }
+        return frozen;
     }
 }
 
@@ -474,7 +529,8 @@ class FesiHashtable implements Cloneable {
  * A hashtable enumerator class.  This class should remain opaque 
  * to the client. It will use the Enumeration interface. 
  */
-class HashtableEnumerator implements Enumeration {
+class HashtableEnumerator implements Enumeration, java.io.Serializable {
+    private static final long serialVersionUID = -2020372394289196808L;
     boolean keys;
     int index;
     HashtableEntry table[];
@@ -500,7 +556,9 @@ class HashtableEnumerator implements Enumeration {
 
     public Object nextElement() {
         if (entry == null) {
-            while ((index-- > 0) && ((entry = table[index]) == null));
+            while ((index-- > 0) && ((entry = table[index]) == null)) {
+                // just wait
+            }
         }
         if (entry != null) {
             HashtableEntry e = entry;

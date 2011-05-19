@@ -1,5 +1,6 @@
 // ESNull.java
 // FESI Copyright (c) Jean-Marc Lugrin, 1999
+// Advanced FESI Copyright (c) Graham Technology, 2002
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -17,6 +18,8 @@
 
 package FESI.Data;
 
+import java.io.ObjectStreamException;
+
 /**
  * Implements the NULL EcmaScript primitive value
  * <P> There is only one value of this type which is referenced
@@ -26,47 +29,94 @@ package FESI.Data;
  */
 public final class ESNull extends ESPrimitive {
 
-    /**
-     * the READ-ONLY null value
-     */
-    public static ESNull theNull = new ESNull(); 
-	
-    private ESNull() {
-    }
-    
-    // overrides
+	/**
+	 * the READ-ONLY null value
+	 */
+	public static ESNull theNull = new ESNull();
+
+	private ESNull() {
+		// do nothing
+	}
+
+	// overrides
 	public String toDetailString() {
 		return "ES:<null>";
-    }
+	}
 
-   // overrides
-    public int getTypeOf() {
-        return EStypeNull;
-    }
-    
-   // overrides
-    public String toString() {
-        return "null";
-    }
-    
-   // overrides
-    public String getTypeofString() {
-        return "object";
-    }
+	// overrides
+	public int getTypeOf() {
+		return EStypeNull;
+	}
 
-   // overrides
-    public double doubleValue() {
-        return 0;
-    }
+	// overrides
+	public String toString() {
+		return "null";
+	}
 
-   // overrides
-    public boolean booleanValue() {
-        return false;
-    }
+	// overrides
+	public String getTypeofString() {
+		return "object";
+	}
 
-   // overrides
-    public Object toJavaObject() {
-        return null;
-    }
-    
+	// overrides
+	public double doubleValue() {
+		return 0;
+	}
+
+	// overrides
+	public boolean booleanValue() {
+		return false;
+	}
+
+	// overrides
+	public Object toJavaObject() {
+		return null;
+	}
+
+	/**
+	 * Advanced FESI
+	 * GT Modified: 5/10/2002
+	 *              Serialisation of ESNull objects.
+	 *              writeReplace() and readResolve ensure that
+	 *              the reinstantiated ESNull will be the
+	 *              ESNull.theNull object
+	 *              @throws ObjectStreamException
+	 */
+	public Object writeReplace ()
+	throws ObjectStreamException
+	{
+		return new ESNullReplace();
+	}
+	private static class ESNullReplace implements java.io.Serializable
+	{
+		private static final long serialVersionUID = -3321091467896792116L;
+
+		ESNullReplace ()
+		{
+			// do nothing
+		}
+
+		/**
+		 * @throws ObjectStreamException
+		 */
+		public Object readResolve() throws ObjectStreamException
+		{
+			return ESNull.theNull;
+		}
+	}
+
+	/**
+	 * Advanced FESI
+	 * GT Modified: 12/10/2004
+	 * Support for subtypes (storing values in hashset)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode()
+	{
+		return 0;
+	}
+
+	public boolean equalsSameType(ESValue v2) {
+		return true;
+	}
 }

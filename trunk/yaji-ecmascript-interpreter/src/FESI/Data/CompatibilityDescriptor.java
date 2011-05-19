@@ -64,7 +64,7 @@ class CompatibilityDescriptor {
           for (int i=0; i<n; i++) {
               if (convertToChar[i]) {
                   String s = (String) params[i];
-                  Character c = new Character(s.charAt(0));
+                  Character c = Character.valueOf(s.charAt(0));
                   params[i] = c;
               }
           }

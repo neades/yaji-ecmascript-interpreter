@@ -96,7 +96,7 @@ public class AwtPromptBox implements PromptBox {
               completed();
           }
       });
-      frame.show();
+      frame.setVisible(true);
    }
    
    private synchronized void completed() {

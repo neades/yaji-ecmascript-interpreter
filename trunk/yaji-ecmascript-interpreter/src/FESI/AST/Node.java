@@ -2,11 +2,15 @@
 
 package FESI.AST;
 
-/* All AST nodes must implement this interface.  It provides basic
-   machinery for constructing the parent and child relationships
-   between nodes. */
+/**
+ * All AST nodes must implement this interface.  It provides basic
+ * machinery for constructing the parent and child relationships
+ * between nodes.
+ *
+ *              The Node objects implements the java.io.Serializable
+ */
 
-public interface Node {
+public interface Node extends java.io.Serializable {
 
   /** This method is called after the node has been made the current
     node.  It indicates that child nodes can now be added to it. */

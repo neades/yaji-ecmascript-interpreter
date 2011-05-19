@@ -4,7 +4,6 @@ package FESI.AST;
 
 import FESI.Data.ESBoolean;
 import FESI.Data.ESNull;
-import FESI.Data.ESUndefined;
 import FESI.Data.ESNumber;
 import FESI.Data.ESString;
 import FESI.Data.ESValue;
@@ -13,8 +12,8 @@ import FESI.Parser.EcmaScript;
 
 
 public class ASTLiteral extends SimpleNode {
-
-  private ESValue theValue = null;
+    private static final long serialVersionUID = 628607318343717769L;
+private ESValue theValue = null;
 
   public ASTLiteral(int id) {
     super(id);
@@ -33,10 +32,11 @@ public class ASTLiteral extends SimpleNode {
   }
 
   /** Accept the visitor. **/
-  public Object jjtAccept(EcmaScriptVisitor visitor, Object data) {
+  @Override
+public Object jjtAccept(EcmaScriptVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
-  
+
   // JMCL
   public ESValue getValue() {
       return theValue;
@@ -107,48 +107,30 @@ public class ASTLiteral extends SimpleNode {
           return 6;
        case '7' :
           return 7;
-       case '8' :
-          return 8;
-       case '9' :
-          return 9;
-
-       case 'a' :
-       case 'A' :
-          return 10;
-       case 'b' :
-       case 'B' :
-          return 11;
-       case 'c' :
-       case 'C' :
-          return 12;
-       case 'd' :
-       case 'D' :
-          return 13;
-       case 'e' :
-       case 'E' :
-          return 14;
-       case 'f' :
-       case 'F' :
-          return 15;
     }
 
     throw new ProgrammingError("Illegal octal constant"); // Should never come here
   }
-  
+
   public void setStringValue(String image) {
         int l = image.length();
-        StringBuffer sb = new StringBuffer(l);
+        StringBuilder sb = new StringBuilder(l);
         for (int i=0; i<l; i++) {
             char c = image.charAt(i);
             if ((c == '\\') && (i+1<l)){
                 i++;
                 c = image.charAt(i);
-                if (c=='n') c='\n';
-                else if (c=='b') c = '\b';
-                else if (c=='f') c = '\f';
-                else if (c=='r') c = '\r';
-                else if (c=='t') c = '\t';
-                else if (c =='x') {
+                if (c=='n') {
+                    c='\n';
+                } else if (c=='b') {
+                    c = '\b';
+                } else if (c=='f') {
+                    c = '\f';
+                } else if (c=='r') {
+                    c = '\r';
+                } else if (c=='t') {
+                    c = '\t';
+                } else if (c =='x') {
                    c = (char)(hexval(image.charAt(i+1)) << 4 |
                                        hexval(image.charAt(i+1)));
                    i +=2;
@@ -160,7 +142,7 @@ public class ASTLiteral extends SimpleNode {
                    i +=4;
                } else if (c >='0' && c <= '7') {
                    c = (char)(octval(image.charAt(i)));
-                   if ((image.length()>i) && 
+                   if ((image.length()>i) &&
                            (image.charAt(i+1)>='0') && (image.charAt(i+1)<='7')) {
                       i++;
                       c = (char) ((c<<4) | octval(image.charAt(i)));
@@ -171,35 +153,41 @@ public class ASTLiteral extends SimpleNode {
         }
         theValue = new ESString(sb.toString());
   }
+
   public void setDecimalValue(String image) {
       try {
-        theValue = new ESNumber(Long.parseLong(image));
+        theValue = ESNumber.valueOf(Long.parseLong(image));
      } catch (NumberFormatException e) {
          Double value = new Double(image);
-         theValue = new ESNumber(value.doubleValue());
+         theValue = ESNumber.valueOf(value.doubleValue());
      }
   }
   public void setOctalValue(String image) {
-      try {
-        String imageWithout0 = image.substring(1);          
-        theValue = new ESNumber(Long.parseLong(imageWithout0,8));
-     } catch (NumberFormatException e) {
-         Double value = new Double(image);
-         theValue = new ESNumber(value.doubleValue());
-     }
+      // Parser seems to call this for literal 0 initialisation
+      if ("0".equals(image)) {
+          theValue = ESNumber.ZERO;
+      } else {
+          try {
+              String imageWithout0 = image.substring(1);
+              theValue = ESNumber.valueOf(Long.parseLong(imageWithout0,8));
+          } catch (NumberFormatException e) {
+              Double value = new Double(image);
+              theValue = ESNumber.valueOf(value.doubleValue());
+          }
+      }
   }
   public void setHexValue(String image) {
       try {
         String imageWithout0x = image.substring(2);
-        theValue = new ESNumber(Long.parseLong(imageWithout0x,16));
+        theValue = ESNumber.valueOf(Long.parseLong(imageWithout0x,16));
      } catch (NumberFormatException e) {
          Double value = new Double(image);
-         theValue = new ESNumber(value.doubleValue());
+         theValue = ESNumber.valueOf(value.doubleValue());
      }
   }
   public void setFloatingPointValue(String image) {
         Double value = new Double(image);
-        theValue = new ESNumber(value.doubleValue());
+        theValue = ESNumber.valueOf(value.doubleValue());
   }
   public void setBooleanValue(boolean value) {
         theValue = ESBoolean.makeBoolean(value);
@@ -207,11 +195,9 @@ public class ASTLiteral extends SimpleNode {
   public void setNullValue() {
         theValue = ESNull.theNull;
   }
-  public void setUndefinedValue() {
-        theValue = ESUndefined.theUndefined;
-  }
-  
-  public String toString() {
+
+  @Override
+public String toString() {
       return "[" + theValue.toString() + "]";
   }
 

@@ -181,10 +181,10 @@ public class JavaRegExp extends Extension {
 			boolean result = matcher.find();
 			if (result) {
 				// at least one match
-				ESObject ap = this.evaluator.getArrayPrototype();
-				ArrayPrototype resultArray = new ArrayPrototype(ap, this.evaluator);
+				ESObject ap = this.getEvaluator().getArrayPrototype();
+				ArrayPrototype resultArray = new ArrayPrototype(ap, this.getEvaluator());
                 resultArray.putProperty(INDEXstring,
-                                    new ESNumber(matcher.start()), INDEXhash);
+                                    ESNumber.valueOf(matcher.start()), INDEXhash);
                 resultArray.putProperty(INPUTstring,
                                     new ESString(str), INPUThash);
 				resultArray.setSize(matcher.groupCount() + 1);
@@ -217,7 +217,7 @@ public class JavaRegExp extends Extension {
 				throw new EcmaScriptException("RegExp requires 1 or 2 arguments");
 			} else if (arguments.length == 1) {
 				regExp =
-					new ESJavaRegExp(esRegExpPrototype, this.evaluator, arguments[0].toString());
+					new ESJavaRegExp(esRegExpPrototype, this.getEvaluator(), arguments[0].toString());
 			}
 			return regExp;
 		}
@@ -238,7 +238,7 @@ public class JavaRegExp extends Extension {
 		ESObject globalObjectRegExp = new GlobalObjectRegExp("RegExp", evaluator, fp);
 
 		globalObjectRegExp.putHiddenProperty("prototype", esRegExpPrototype);
-		globalObjectRegExp.putHiddenProperty("length", new ESNumber(1));
+		globalObjectRegExp.putHiddenProperty("length", ESNumber.valueOf(1));
 
 		esRegExpPrototype.putHiddenProperty("constructor", globalObjectRegExp);
 		esRegExpPrototype.putHiddenProperty(
@@ -269,9 +269,9 @@ public class JavaRegExp extends Extension {
 				}
 				Matcher matcher = pattern.getPattern().matcher(str);
 				if (matcher.find()) {
-					return new ESNumber(matcher.start());
+					return ESNumber.valueOf(matcher.start());
 				} else {
-					return new ESNumber(-1);
+					return ESNumber.valueOf(-1);
 				}
 			}
 		}
@@ -324,10 +324,10 @@ public class JavaRegExp extends Extension {
 				boolean result = matcher.find();
 				if (result) {
 					// at least one match
-					ESObject ap = this.evaluator.getArrayPrototype();
-					ArrayPrototype resultArray = new ArrayPrototype(ap, this.evaluator);
+					ESObject ap = this.getEvaluator().getArrayPrototype();
+					ArrayPrototype resultArray = new ArrayPrototype(ap, this.getEvaluator());
                     resultArray.putProperty(INDEXstring,
-                                        new ESNumber(matcher.start()), INDEXhash);
+                                        ESNumber.valueOf(matcher.start()), INDEXhash);
                     resultArray.putProperty(INPUTstring,
                                         new ESString(str), INPUThash);
 					resultArray.setSize(matcher.groupCount() + 1);
@@ -350,8 +350,8 @@ public class JavaRegExp extends Extension {
 			public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
 				throws EcmaScriptException {
 				String str = thisObject.toString();
-				ESObject ap = this.evaluator.getArrayPrototype();
-				ArrayPrototype theArray = new ArrayPrototype(ap, this.evaluator);
+				ESObject ap = this.getEvaluator().getArrayPrototype();
+				ArrayPrototype theArray = new ArrayPrototype(ap, this.getEvaluator());
 				if (arguments.length <= 0) {
 					theArray.setSize(1);
 					theArray.setElementAt(thisObject, 0);

@@ -453,15 +453,15 @@ public class JSWrapper implements JSObject {
                    	 if (arguments[i] instanceof ESWrapper) {
                    	 		jsArguments[i] = ((ESWrapper)arguments[i]).getJavaObject();
                    	 } else if (arguments[i] instanceof ESObject) {
-                   	 		jsArguments[i] = new JSWrapper((ESObject) arguments[i], this.evaluator);
+                            jsArguments[i] = new JSWrapper((ESObject) arguments[i], this.getEvaluator());
                    	 } else {
                    	 		jsArguments[i] = arguments[i].toJavaObject();
                    	 }
                    }
                    try {
                       Object result = theFunction.doCall(
-                      			new JSWrapper(thisObject, this.evaluator), jsArguments);
-                      value = ESLoader.normalizeValue(result, this.evaluator);
+                                  new JSWrapper(thisObject, this.getEvaluator()), jsArguments);
+                      value = ESLoader.normalizeValue(result, this.getEvaluator());
                    } catch (JSException e) {
                        throw new EcmaScriptException(e.getMessage());
                    }  
@@ -476,15 +476,15 @@ public class JSWrapper implements JSObject {
                    	 if (arguments[i] instanceof ESWrapper) {
                    	 		jsArguments[i] = ((ESWrapper)arguments[i]).getJavaObject();
                    	 } else if (arguments[i] instanceof ESObject) {
-                   	 		jsArguments[i] = new JSWrapper((ESObject) arguments[i], this.evaluator);
+                                jsArguments[i] = new JSWrapper((ESObject) arguments[i], this.getEvaluator());
                    	 } else {
                    	 		jsArguments[i] = arguments[i].toJavaObject(); 
                    	 }
                    }
                    try {
                       Object result = theFunction.doNew(
-                      			new JSWrapper(thisObject, this.evaluator), jsArguments);
-                      value = ESLoader.normalizeObject(result, this.evaluator);
+                                  new JSWrapper(thisObject, this.getEvaluator()), jsArguments);
+                      value = ESLoader.normalizeObject(result, this.getEvaluator());
                    } catch (JSException e) {
                        throw new EcmaScriptException(e.getMessage());
                    }  

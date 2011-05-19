@@ -17,8 +17,6 @@
 
 package FESI.Extensions;
 
-import java.io.File;
-
 import FESI.Data.BuiltinFunctionObject;
 import FESI.Data.ESBoolean;
 import FESI.Data.ESObject;
@@ -44,8 +42,10 @@ import FESI.gui.PromptBox;
  * Swing based basic IO for FESI - see BasicIO
  */
 public class BasicIOw extends Extension implements BasicIOInterface {
-    
+    private static final long serialVersionUID = -7708955408111357166L;
+
     class GlobalObjectWrite extends BuiltinFunctionObject {
+        private static final long serialVersionUID = -8234104211270429939L;
         GlobalObjectWrite(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 1);
         }
@@ -60,6 +60,7 @@ public class BasicIOw extends Extension implements BasicIOInterface {
     }
     
     class GlobalObjectWriteln extends BuiltinFunctionObject {
+        private static final long serialVersionUID = -6334722172760492359L;
         GlobalObjectWriteln(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 1);
         }
@@ -75,13 +76,14 @@ public class BasicIOw extends Extension implements BasicIOInterface {
     }
     
     class GlobalObjectAlert extends BuiltinFunctionObject {
+        private static final long serialVersionUID = -8739311199158458285L;
         GlobalObjectAlert(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 1);
         }
         public ESValue callFunction(ESObject thisObject, 
                                         ESValue[] arguments)
                throws EcmaScriptException {
-           StringBuffer sb = new StringBuffer();
+           StringBuilder sb = new StringBuilder();
            for (int i = 0; i<arguments.length; i++) { 
                sb.append(arguments[i].toString());
            }
@@ -92,6 +94,7 @@ public class BasicIOw extends Extension implements BasicIOInterface {
     }
     
     class GlobalObjectPrompt extends BuiltinFunctionObject {
+        private static final long serialVersionUID = -8177478556881845821L;
         GlobalObjectPrompt(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 1);
         }
@@ -107,13 +110,14 @@ public class BasicIOw extends Extension implements BasicIOInterface {
         }
     }
     class GlobalObjectConfirm extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 3155861620125360233L;
         GlobalObjectConfirm(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 1);
         }
         public ESValue callFunction(ESObject thisObject, 
                                         ESValue[] arguments)
                throws EcmaScriptException {
-           StringBuffer sb = new StringBuffer();
+           StringBuilder sb = new StringBuilder();
            for (int i = 0; i<arguments.length; i++) { 
                sb.append(arguments[i].toString());
            }
@@ -124,6 +128,7 @@ public class BasicIOw extends Extension implements BasicIOInterface {
     }
 
     class GlobalObjectExit extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 118183997950826171L;
         GlobalObjectExit(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 1);
         }
@@ -141,6 +146,7 @@ public class BasicIOw extends Extension implements BasicIOInterface {
     }
 
     class GlobalObjectNoop extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 139509156711617391L;
         GlobalObjectNoop(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 0); // 0 = Just some default value
         }
@@ -153,6 +159,7 @@ public class BasicIOw extends Extension implements BasicIOInterface {
     }
 
     class GlobalObjectLoad extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 6217201638463840303L;
         GlobalObjectLoad(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 1); // 0 = Just some default value
         }
@@ -162,11 +169,10 @@ public class BasicIOw extends Extension implements BasicIOInterface {
            String fileName = null;
            if (arguments.length>0) fileName = arguments[0].toString();
            if (fileName == null) throw new EcmaScriptException("Missing file name for load");
-           File file = new File(fileName);
            ESValue value ; 
            try {
                //value = this.evaluator.evaluateLoadFile(file);
-               value = this.evaluator.evaluateLoadModule(fileName);
+               value = this.getEvaluator().evaluateLoadModule(fileName);
            } catch (EcmaScriptParseException e) {
                e.setNeverIncomplete();
                throw e;
@@ -176,7 +182,6 @@ public class BasicIOw extends Extension implements BasicIOInterface {
         }
     }
  
-    private Evaluator evaluator = null;
     private ESObject document = null;
     private ESObject window = null;
     
@@ -189,7 +194,6 @@ public class BasicIOw extends Extension implements BasicIOInterface {
         
     public void initializeExtension(Evaluator evaluator) throws EcmaScriptException {
         
-        this.evaluator = evaluator;
         
         GlobalObject go = evaluator.getGlobalObject();
         document = ObjectObject.createObject(evaluator);

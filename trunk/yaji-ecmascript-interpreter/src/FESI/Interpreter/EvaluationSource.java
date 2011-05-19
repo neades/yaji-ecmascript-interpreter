@@ -22,7 +22,8 @@ package FESI.Interpreter;
  * source is used to describe the source of a program for
  * error messages and debugging purpose.
  */
-public abstract class EvaluationSource {
+public abstract class EvaluationSource implements java.io.Serializable {
+    private static final long serialVersionUID = 2829018186941317355L;
 
    /**
     * The end of line string for this machine.

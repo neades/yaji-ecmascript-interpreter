@@ -25,9 +25,9 @@ import FESI.Interpreter.Evaluator;
  * Implements the prototype and is the class of all Number objects
  */
 class NumberPrototype extends ESObject {
-
+    private static final long serialVersionUID = 5851526384066944881L;
     // The value
-    protected ESNumber value = new ESNumber(0.0);
+    protected ESNumber value = ESNumber.valueOf(0.0);
     
     /**
      * Create a new un-initialzed Number
@@ -58,6 +58,7 @@ class NumberPrototype extends ESObject {
     
     // overrides
     public String toString()  {
+    	if (value==null) return super.toString();
          return value.toString();
     }
         

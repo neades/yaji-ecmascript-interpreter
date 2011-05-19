@@ -24,10 +24,33 @@ import FESI.Interpreter.Evaluator;
  * Implemements the EcmaScript Object singleton.
  */
 public class ObjectObject extends BuiltinFunctionObject {
-        
-    public ObjectObject(ESObject prototype, Evaluator evaluator) {
+    private static final long serialVersionUID = -1936792376718129590L;
+
+    public ObjectObject(ESObject prototype, Evaluator evaluator) throws EcmaScriptException {
         super(prototype, evaluator, "Object", 1);
-        
+        putHiddenProperty("isFrozen", new BuiltinFunctionObject(prototype,evaluator,"isFrozen",1) {
+
+            private static final long serialVersionUID = 1L;
+
+            public ESValue callFunction(ESObject thisObject, ESValue[] arguments) throws EcmaScriptException {
+                if (arguments.length == 0 || !(arguments[0] instanceof ESObject)) {
+                    return ESBoolean.makeBoolean(false);
+                }
+                return ESBoolean.makeBoolean(((ESObject)arguments[0]).isFrozen());
+            }
+        });
+        putHiddenProperty("freeze", new BuiltinFunctionObject(prototype,evaluator,"freeze",1) {
+
+            private static final long serialVersionUID = 1L;
+
+            public ESValue callFunction(ESObject thisObject, ESValue[] arguments) throws EcmaScriptException {
+                if (arguments.length == 0 || !(arguments[0] instanceof ESObject)) {
+                    return ESUndefined.theUndefined;
+                }
+                ((ESObject)arguments[0]).freeze();
+                return arguments[0]; 
+            }
+        });
     }
  
     // overrides
@@ -51,13 +74,13 @@ public class ObjectObject extends BuiltinFunctionObject {
                                         throws EcmaScriptException {
          ESValue theValue;
          if (arguments.length==0) {
-             theValue = createObject(evaluator);
+             theValue = createObject(getEvaluator());
          } else {
              if (arguments[0] == ESNull.theNull || 
                  arguments[0] == ESUndefined.theUndefined) {
-                 theValue = createObject(evaluator);
+                 theValue = createObject(getEvaluator());
              } else {
-                 theValue = arguments[0].toESObject(evaluator);
+                 theValue = arguments[0].toESObject(getEvaluator());
              }
          }
           return (ESObject) theValue;
@@ -69,13 +92,13 @@ public class ObjectObject extends BuiltinFunctionObject {
                                         throws EcmaScriptException {
          ESValue theValue;
          if (arguments.length==0) {
-             theValue = createObject(evaluator);
+             theValue = createObject(getEvaluator());
          } else {
              if (arguments[0] == ESNull.theNull || 
                  arguments[0] == ESUndefined.theUndefined) {
-                 theValue = createObject(evaluator);
+                 theValue = createObject(getEvaluator());
              } else {
-                 theValue = arguments[0].toESObject(evaluator);
+                 theValue = arguments[0].toESObject(getEvaluator());
              }
          }
          return theValue;

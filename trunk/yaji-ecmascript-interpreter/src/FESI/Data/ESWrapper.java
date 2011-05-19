@@ -46,7 +46,7 @@ import FESI.Interpreter.ScopeChain;
  * Wrap a Java Object for use in EcmaScript
  */
 public class ESWrapper extends ESObject {
-
+    private static final long serialVersionUID = 6345193769772917533L;
     // For debugging
     static boolean debugEvent = false;
     public static void setDebugEvent(boolean b) {
@@ -55,23 +55,28 @@ public class ESWrapper extends ESObject {
     static public boolean isDebugEvent() {
         return debugEvent;
     }
-    
 
-    private Object javaObject; // the wrapped object
-    private boolean asBean = false; // true if created as a bean
-    
+
+    /*
+     * 2/5/2006
+     * Graham Technology modification
+     * Made javaObject protected to make sub-classing easier
+     */
+    protected Object javaObject; // the wrapped object
+    boolean asBean = false; // true if created as a bean
+
     // A marker object never returned as a valid property !
-    private static ESObject noPropertyMarker = null;
-    
+    private static ESValue noPropertyMarker = null;
+
     private Hashtable eventHandlers = null;
     private Hashtable eventAdaptors = null;
-    
+
     /**
      * Wrap a java object in an EcmaScript object, use object
      * and beans reflection to access the java object fields.
      * @param javaObject the Java object to wrap
      * @param evaluator the evaluator
-     */       
+     */
     public ESWrapper(Object javaObject, Evaluator evaluator) {
         super(null, evaluator);
         this.javaObject = javaObject;
@@ -80,17 +85,17 @@ public class ESWrapper extends ESObject {
         }
         // This should be done at startup
         if (noPropertyMarker==null) {
-          noPropertyMarker = new ObjectObject(null, evaluator);
+          noPropertyMarker = new ESString("No Property Marker");
         }
     }
-	
+
     /**
      * Wrap a java object in an EcmaScript object, use only
      * beans reflection to access the java object fields if asBean is true.
      * @param javaObject the Java object to wrap
      * @param evaluator the evaluator
      * @param asBean if true always consider the object as a bean
-     */       
+     */
     public ESWrapper(Object javaObject, Evaluator evaluator, boolean asBean) {
         super(null, evaluator);
         this.javaObject = javaObject;
@@ -100,10 +105,10 @@ public class ESWrapper extends ESObject {
         }
         // This should be done at startup
         if (noPropertyMarker==null) {
-          noPropertyMarker = new ObjectObject(null, evaluator);
+          noPropertyMarker =  new ESString("No Property Marker");
         }
     }
-    
+
     /**
      * Return the wraped object
      * @return the wraped object
@@ -111,7 +116,7 @@ public class ESWrapper extends ESObject {
     public Object getJavaObject() {
         return javaObject;
     }
-    
+
     /**
      * Return true if object must be considered as a java bean
      * @return true if bean
@@ -119,12 +124,12 @@ public class ESWrapper extends ESObject {
     public boolean isBean() {
         return asBean;
     }
-    
+
     // overrides
     public ESObject getPrototype() {
         throw new ProgrammingError("Cannot get prototype of Wrapper");
     }
-    
+
     // overrides
     public String getESClassName() {
         return "Java Object";
@@ -137,46 +142,46 @@ public class ESWrapper extends ESObject {
 
     // overrides
     // Get either a bean or an object property - for objects attempt bean access if object access failed
-    public ESValue getPropertyInScope(String propertyName, ScopeChain previousScope, int hash) 
+    public ESValue getPropertyInScope(String propertyName, ScopeChain previousScope, int hash)
                      throws EcmaScriptException {
         ESValue value;
         // if (ESLoader.debugJavaAccess) System.out.println("** Property searched in scope: " + propertyName);
          if (asBean) {
-             value = getBeanProperty(propertyName, hash);
+             value = getBeanProperty(propertyName);
              if (value!= noPropertyMarker) return value; // found
          } else {
-             value = getObjectProperty(propertyName, hash);
-             if (value==noPropertyMarker) value = getBeanProperty(propertyName, hash);
-             if (value==noPropertyMarker) value = getCorbaProperty(propertyName, hash);
+             value = getObjectProperty(propertyName);
+             if (value==noPropertyMarker) value = getBeanProperty(propertyName);
+             if (value==noPropertyMarker) value = getCorbaProperty(propertyName);
          }
          if (value==noPropertyMarker) {
               if (previousScope == null) {
               throw new EcmaScriptException("global variable '" + propertyName + "' does not have a value");
-            } else {
-                value = previousScope.getValue(propertyName, hash);
             }
+            value = previousScope.getValue(propertyName, hash);
+
         }
         return value;
     }
 
     // overrides
     // Get either a bean or an object property - for objects attempt bean access if object access failed
-    public ESValue getProperty(String propertyName, int hash) 
+    public ESValue getProperty(String propertyName, int hash)
                             throws EcmaScriptException {
          ESValue value;
-         
+
          if (asBean) {
              // If declared as bean only examine using bean convention
-             value = getBeanProperty(propertyName, hash);
+             value = getBeanProperty(propertyName);
              if (value == noPropertyMarker) {
-                throw new EcmaScriptException("Property '" + propertyName + 
+                throw new EcmaScriptException("Property '" + propertyName +
                              "' does not exists in bean " + this);
                 //return ESUndefined.theUndefined;
              }
          } else {
              // Otherwise examine as java object, bean, or corba object
-            value = getObjectProperty(propertyName, hash);
-            if (value == noPropertyMarker) value = getBeanProperty(propertyName, hash);
+            value = getObjectProperty(propertyName);
+            if (value == noPropertyMarker) value = getBeanProperty(propertyName);
             if (value == noPropertyMarker && javaObject instanceof Class) {
                 /*
                 THIS CODE HAS BEEN REPLACED BY A HACK USING THE $ FORM OF THE NAME, SEE BELOW
@@ -184,9 +189,9 @@ public class ESWrapper extends ESObject {
                 // System.out.println("***** insideClasses.size: "+insideClasses.length);
                 if (insideClasses.length>0) {
                     throw new EcmaScriptException("Handling of subclasses not implemented - sorry");
-                    // return ESUndefined.theUndefined; 
+                    // return ESUndefined.theUndefined;
                 } else {
-                    throw new EcmaScriptException("Subclass, field or property '" + propertyName + 
+                    throw new EcmaScriptException("Subclass, field or property '" + propertyName +
                          "' does not exists in class " + this + " - Subclass search not implemented in JDK 1.1");
                     //return ESUndefined.theUndefined;
                 }
@@ -198,54 +203,49 @@ public class ESWrapper extends ESObject {
                 try {
                     insideClass = Class.forName(className);
                 } catch (ClassNotFoundException ex) {
-                    throw new EcmaScriptException("Subclass, field or property '" + propertyName + 
+                    throw new EcmaScriptException("Subclass, field or property '" + propertyName +
                          "' does not exists in class " + this);
                     //return ESUndefined.theUndefined;
                 }
-                return new ESWrapper(insideClass, evaluator);
-            }   
-            if (value == noPropertyMarker) value = getCorbaProperty(propertyName, hash);
+                return new ESWrapper(insideClass, getEvaluator());
+            }
+            if (value == noPropertyMarker) value = getCorbaProperty(propertyName);
             if (value == noPropertyMarker) {
-               throw new EcmaScriptException("Field or property '" + propertyName + 
+               throw new EcmaScriptException("Field or property '" + propertyName +
                          "' does not exists in object " + this);
             }
         }
-        
+
         return value;
-    }    
+    }
 
     /**
      * Get a bean property (static property of the class if applied to a Class object)
-     *
      * @param propertyName the name of the property
-     * @param hash its hash value
-     * @return the bean property
-     * @exception  NoSuchFieldException There is no such property
+     *
      * @exception  EcmaScriptException Error accessing the property value
      * @return an EcmaScript value
      */
-     
-    private ESValue getBeanProperty(String propertyName, int hash) 
+
+    private ESValue getBeanProperty(String propertyName)
                             throws EcmaScriptException {
         if (ESLoader.debugJavaAccess) System.out.println("** Bean property searched: " + propertyName);
         Class cls = null;
-        Object theObject = null; // means static
         if (javaObject instanceof Class) {
             cls = (Class) javaObject;
         } else {
-            cls = (Class) javaObject.getClass();
-            theObject = javaObject;
+            cls = javaObject.getClass();
         }
-        
+
         PropertyDescriptor descriptor =  ClassInfo.lookupBeanField(propertyName, cls);
         if (descriptor == null) {
            return noPropertyMarker;
         }
         if (descriptor instanceof IndexedPropertyDescriptor) {
             Class propCls = descriptor.getPropertyType();
-            if (propCls == null) 
-                throw new EcmaScriptException("Bean property '" + propertyName + 
-                                                "' does not have an array access method");          
+            if (propCls == null)
+                throw new EcmaScriptException("Bean property '" + propertyName +
+                                                "' does not have an array access method");
         }
         Method readMethod = descriptor.getReadMethod();
         if (readMethod == null) {
@@ -254,42 +254,39 @@ public class ESWrapper extends ESObject {
         if (ESLoader.debugJavaAccess) System.out.println("** Read method found for: " + propertyName);
         Object obj = null;
         try {
-           obj = readMethod.invoke(javaObject, null);
+           obj = readMethod.invoke(javaObject, (Object[])null);
         } catch (InvocationTargetException e) {
             throw new EcmaScriptException ("Error int the getter for " + propertyName, e.getTargetException());
         } catch (IllegalAccessException e) {
-            throw new EcmaScriptException ("Access error invoking getter for " + propertyName + 
+            throw new EcmaScriptException ("Access error invoking getter for " + propertyName +
                                             ": " + e.getMessage());
         } catch (IllegalArgumentException e) {
-            throw new ProgrammingError ("Inconsistent type of argument for property " + propertyName + 
+            throw new ProgrammingError ("Inconsistent type of argument for property " + propertyName +
                                             ": " + e.getMessage());
         }
-        return ESLoader.normalizeValue(obj, evaluator);
+        return ESLoader.normalizeValue(obj, getEvaluator());
    }
-    
+
 
     /**
      * Get a corba property (use name of property as name of the routine)
-     *
      * @param propertyName the name of the property
-     * @param hash its hash value
-     * @return the bean property
-     * @exception  NoSuchFieldException There is no such property
+     *
      * @exception  EcmaScriptException Error accessing the property value
      * @return an EcmaScript value
      */
-     
-    private ESValue getCorbaProperty(String propertyName, int hash) 
+
+    private ESValue getCorbaProperty(String propertyName)
                             throws EcmaScriptException {
         if (ESLoader.debugJavaAccess) System.out.println("** CORBA property searched: " + propertyName);
-        Class cls = (Class) javaObject.getClass();
+        Class cls = javaObject.getClass();
         Method readMethod = null;
         try {
-          readMethod = cls.getMethod(propertyName, null);
+          readMethod = cls.getMethod(propertyName, (Class[])null);
           if (readMethod==null) {
              return noPropertyMarker;
-          } 
-          Class rt = readMethod.getReturnType();  
+          }
+          Class rt = readMethod.getReturnType();
           if (rt == null ||
              rt == Void.TYPE ||
              readMethod.getParameterTypes().length!=0) {
@@ -299,36 +296,33 @@ public class ESWrapper extends ESObject {
         } catch (NoSuchMethodException ignore) {
              return noPropertyMarker;
         }
-        
+
         if (ESLoader.debugJavaAccess) System.out.println("** CORBA read method found for: " + propertyName);
         Object obj = null;
         try {
-           obj = readMethod.invoke(javaObject, null);
+           obj = readMethod.invoke(javaObject, (Object[])null);
         } catch (InvocationTargetException e) {
             throw new EcmaScriptException ("Error in the CORBA getter function for " + propertyName, e.getTargetException());
         } catch (IllegalAccessException e) {
-            throw new EcmaScriptException ("Access error invoking CORBA getter for " + propertyName + 
+            throw new EcmaScriptException ("Access error invoking CORBA getter for " + propertyName +
                                             ": " + e.getMessage());
         } catch (IllegalArgumentException e) {
-            throw new ProgrammingError ("Inconsistent type of argument for property " + propertyName + 
+            throw new ProgrammingError ("Inconsistent type of argument for property " + propertyName +
                                             ": " + e.getMessage());
         }
-        return ESLoader.normalizeValue(obj, evaluator);
+        return ESLoader.normalizeValue(obj, getEvaluator());
    }
 
 
     /**
-     * Get an object property (static property of the class if applied 
+     * Get an object property (static property of the class if applied
      * to a Class object)
-     *
      * @param propertyName the name of the property
-     * @param hash its hash value
-     * @return the bean property
-     * @exception  NoSuchFieldException There is no such property
+     *
      * @exception  EcmaScriptException Error accessing the property value
      * @return an EcmaScript value
      */
-    private ESValue getObjectProperty(String propertyName, int hash) 
+    private ESValue getObjectProperty(String propertyName)
                             throws EcmaScriptException {
          if (ESLoader.debugJavaAccess) System.out.println("** Java object field searched: " + propertyName);
          try {
@@ -337,7 +331,7 @@ public class ESWrapper extends ESObject {
             if (javaObject instanceof Class) {
                 cls = (Class) javaObject;
             } else {
-                cls = (Class) javaObject.getClass();
+                cls = javaObject.getClass();
                 theObject = javaObject;
             }
             Field fld;
@@ -351,25 +345,27 @@ public class ESWrapper extends ESObject {
                return noPropertyMarker;
             }
             int modifiers = fld.getModifiers();
-//          The commented code below does not seems to be needed, as static fields
-//          can be accessed via their object. Maybe there was a limitation with
-//          a previous version?
-//            if ((theObject == null) != Modifier.isStatic(modifiers)) {
-//                throw new EcmaScriptException("Field mode (static) not correct for "+ propertyName);
-//            }
+
+            /*
+             * 17/5/2006  Graham Technology bug fix
+             * should be allowed to access statics on an instance
+             */
+            if (theObject == null && !Modifier.isStatic(modifiers)) {
+                throw new EcmaScriptException("Field mode (static) not correct for "+ propertyName);
+            }
             if (!Modifier.isPublic(modifiers)) {
                 throw new EcmaScriptException("Field "+ propertyName + " not public");
             }
             Object obj = fld.get(theObject);
-            return ESLoader.normalizeValue(obj, evaluator);
+            return ESLoader.normalizeValue(obj, getEvaluator());
          } catch (IllegalAccessException e) {
-             throw new EcmaScriptException("Cannot access java field " + 
+             throw new EcmaScriptException("Cannot access java field " +
                               propertyName + " in " + this + ", error: " + e.toString());
          }
     }
-    
+
     // overrides
-    public boolean hasProperty(String propertyName, int hash) 
+    public boolean hasProperty(String propertyName, int hash)
                             throws EcmaScriptException {
         // TEST - wont work for functions, just for fields.
         try {
@@ -381,49 +377,48 @@ public class ESWrapper extends ESObject {
                      // and wont be created
                      // See deleteProperty too and 8.6.2 on host objects
     }
-    
+
     // overrides
     public boolean isHiddenProperty(String propertyName, int hash) {
         return false;
     }
-    
+
     // overrides
     // Put either a bean or an object property - for objects attempt bean access if object access failed
-    public void putProperty(String propertyName, ESValue propertyValue, int hash) 
+    public void putProperty(String propertyName, ESValue propertyValue, int hash)
                                 throws EcmaScriptException {
         if (propertyValue == ESUndefined.theUndefined) {
             throw new EcmaScriptException("Cannot set the field or property " +
                 propertyName + " of a non EcmaScript object field to undefined");
         }
-                          
+
         if (asBean) {
-          if (!putBeanProperty(propertyName, propertyValue, hash)) {
-                    throw new EcmaScriptException("Cannot put value in property '" + propertyName + 
+          if (!putBeanProperty(propertyName, propertyValue)) {
+                    throw new EcmaScriptException("Cannot put value in property '" + propertyName +
                              "' which does not exists in Java Bean '" + this +"'");
           }
        } else {
-          if (putObjectProperty(propertyName, propertyValue, hash))  return;
-          if (putBeanProperty(propertyName, propertyValue, hash)) return;
-          if (putCorbaProperty(propertyName, propertyValue, hash)) return;
-             
-          throw new EcmaScriptException("Cannot put value in field or property '" + propertyName + 
+          if (putObjectProperty(propertyName, propertyValue))  return;
+          if (putBeanProperty(propertyName, propertyValue)) return;
+          if (putCorbaProperty(propertyName, propertyValue)) return;
+
+          throw new EcmaScriptException("Cannot put value in field or property '" + propertyName +
                            "' which does not exists in Java or Corba object '" + this +"'");
        }
     }
 
     /**
-     * Put a property using the beans access functions. 
+     * Put a property using the beans access functions.
      * @param propertyName the name of the property
      * @propertyValue the value of the property
      * @hash the hash code of the property name
-     * @exception  NoSuchFieldException There is no such property
      * @exception  EcmaScriptException Error accessing the property value
      */
-    private boolean putBeanProperty(String propertyName, ESValue propertyValue, int hash) 
+    private boolean putBeanProperty(String propertyName, ESValue propertyValue)
                                 throws EcmaScriptException {
         if (ESLoader.debugJavaAccess) System.out.println("** Bean property searched: " + propertyName);
         if (propertyValue == ESUndefined.theUndefined) {
-            throw new ProgrammingError("Cannot set bean property " + 
+            throw new ProgrammingError("Cannot set bean property " +
                               propertyName + " to undefined");
         }
         Class cls = null;
@@ -431,7 +426,7 @@ public class ESWrapper extends ESObject {
         if (javaObject instanceof Class) {
             cls = (Class) javaObject;
         } else {
-            cls = (Class) javaObject.getClass();
+            cls = javaObject.getClass();
             theObject = javaObject;
         }
         PropertyDescriptor descriptor =  ClassInfo.lookupBeanField(propertyName, cls);
@@ -439,14 +434,14 @@ public class ESWrapper extends ESObject {
               // Possibly event ?
               if (theObject != null && propertyName.startsWith("on")) {
                  putEventHandler(propertyName, propertyValue);
-                 return true;    
-              } else {
-                 return false;
+                 return true;
               }
+              return false;
+
         }
         Class propClass = descriptor.getPropertyType();
         if (descriptor instanceof IndexedPropertyDescriptor) {
-            if (propClass == null) throw new EcmaScriptException("Bean property '" + propertyName + "' does not have an array access method");          
+            if (propClass == null) throw new EcmaScriptException("Bean property '" + propertyName + "' does not have an array access method");
         }
         Method writeMethod = descriptor.getWriteMethod();
         if (writeMethod == null) {
@@ -468,37 +463,36 @@ public class ESWrapper extends ESObject {
         } catch (InvocationTargetException e) {
             throw new EcmaScriptException ("Error in the setter for " + propertyName, e.getTargetException());
         } catch (IllegalAccessException e) {
-            throw new EcmaScriptException ("Access error invoking setter for " + propertyName + 
+            throw new EcmaScriptException ("Access error invoking setter for " + propertyName +
                                             ": " + e.getMessage());
         } catch (IllegalArgumentException e) {
-            throw new EcmaScriptException ("Type of argument not suitable for property " + propertyName + 
+            throw new EcmaScriptException ("Type of argument not suitable for property " + propertyName +
                                             ": " + e.getMessage());
         }
         if (ESLoader.debugJavaAccess) System.out.println("** Property set: " + propertyName);
         return true;
     }
-    
+
     /**
-     * Put a property using the CORBA convention. 
+     * Put a property using the CORBA convention.
      * @param propertyName the name of the property
      * @propertyValue the value of the property
      * @hash the hash code of the property name
-     * @exception  NoSuchFieldException There is no such property
      * @exception  EcmaScriptException Error accessing the property value
      */
-    private boolean putCorbaProperty(String propertyName, ESValue propertyValue, int hash) 
+    private boolean putCorbaProperty(String propertyName, ESValue propertyValue)
                                 throws EcmaScriptException {
         if (ESLoader.debugJavaAccess) System.out.println("** Corba property searched: " + propertyName);
         if (propertyValue == ESUndefined.theUndefined) {
-            throw new ProgrammingError("Cannot set non EcmaScript property " + 
+            throw new ProgrammingError("Cannot set non EcmaScript property " +
                               propertyName + " to undefined");
         }
         Object[] params = new Object[1];
         params[0]=propertyValue.toJavaObject();
         Method writeMethod = null;
-         
+
         try {
-          writeMethod = lookupMethod(evaluator, propertyName, params, false);
+          writeMethod = lookupMethod(propertyName, params, false);
           if (writeMethod==null) {
              // If it is not a no argument value returning method, ignore
             return false;
@@ -510,18 +504,18 @@ public class ESWrapper extends ESObject {
         } catch (NoSuchMethodException ignore) {
             return false;
         }
-        
+
         if (ESLoader.debugJavaAccess) System.out.println("** CORBA write method found for: " + propertyName);
-        
+
         try {
            writeMethod.invoke(javaObject, params); // System will check consistency
         } catch (InvocationTargetException e) {
             throw new EcmaScriptException ("Error in the CORBA setter for " + propertyName, e.getTargetException());
         } catch (IllegalAccessException e) {
-            throw new EcmaScriptException ("Access error invoking CORBA setter for " + propertyName + 
+            throw new EcmaScriptException ("Access error invoking CORBA setter for " + propertyName +
                                             ": " + e.getMessage());
         } catch (IllegalArgumentException e) {
-            throw new EcmaScriptException ("Type of argument not suitable for CORBA property " + propertyName + 
+            throw new EcmaScriptException ("Type of argument not suitable for CORBA property " + propertyName +
                                             ": " + e.getMessage());
         }
         if (ESLoader.debugJavaAccess) System.out.println("** Property set: " + propertyName);
@@ -535,14 +529,13 @@ public class ESWrapper extends ESObject {
      * @param propertyName the name of the property
      * @propertyValue the value of the property
      * @hash the hash code of the property name
-     * @exception  NoSuchFieldException There is no such property
      * @exception  EcmaScriptException Error accessing the property value
      */
-    private boolean putObjectProperty(String propertyName, ESValue propertyValue, int hash) 
+    private boolean putObjectProperty(String propertyName, ESValue propertyValue)
                                 throws  EcmaScriptException {
         if (ESLoader.debugJavaAccess) System.out.println("** Object field searched: " + propertyName);
         if (propertyValue == ESUndefined.theUndefined) {
-            throw new ProgrammingError("Cannot set java object field " + 
+            throw new ProgrammingError("Cannot set java object field " +
                               propertyName + " to undefined");
         }
         Object theObject = null; // means static
@@ -550,10 +543,10 @@ public class ESWrapper extends ESObject {
         if (javaObject instanceof Class) {
            cls = (Class) javaObject;
         } else {
-           cls = (Class) javaObject.getClass();
+           cls = javaObject.getClass();
            theObject = javaObject;
         }
-        
+
         Field fld;
         try {
             if (theObject == null) {
@@ -565,25 +558,22 @@ public class ESWrapper extends ESObject {
               // Possibly event ?
               if (theObject != null && propertyName.startsWith("on")) {
                  putEventHandler(propertyName, propertyValue);
-                 return true;    
-              } else {
-                 return false;
+                 return true;
               }
+              return false;
+
         }
-        
+
         int modifiers = fld.getModifiers();
-//      The commented code below does not seems to be needed, as static fields
-//      can be accessed via their object. Maybe there was a limitation with
-//      a previous version?
 //        if ((theObject == null) != Modifier.isStatic(modifiers)) {
 //              throw new EcmaScriptException("Field mode (static) not correct for "+ propertyName);
 //        }
         if (!Modifier.isPublic(modifiers)) {
               throw new EcmaScriptException("Field "+ propertyName + " not public");
         }
-        
+
         try {
-             fld.set(theObject, propertyValue.toJavaObject()); 
+             fld.set(theObject, propertyValue.toJavaObject());
         } catch (IllegalArgumentException e) {
              throw new EcmaScriptException("Field " + propertyName + " of " + this +
                            " cannot be set with " + propertyValue + ", error: " + e.toString());
@@ -593,22 +583,22 @@ public class ESWrapper extends ESObject {
         }
         return true;
     }
-    
+
     // overrides
-    public void putHiddenProperty(String propertyName, ESValue propertyValue) 
+    public void putHiddenProperty(String propertyName, ESValue propertyValue)
                                 throws EcmaScriptException {
         throw new ProgrammingError("Cannot put hidden property in " + this);
     }
 
     // overrides
-    public boolean deleteProperty(String propertyName, int hash) 
+    public boolean deleteProperty(String propertyName, int hash)
                                 throws EcmaScriptException {
         // Well, in fact it should use a hasProperty, but as
         // it is not well implemented...
         return false;
     }
 
-    /** 
+    /**
      * indicates that the getProperties return an enumerator to the
      * value itself rather than to the index.
      *
@@ -617,7 +607,7 @@ public class ESWrapper extends ESObject {
     public boolean isDirectEnumerator() {
         return true;
     }
-    
+
     /**
      * If this is an enumerator, use it directly as an enumerator
      * for "for in" statements. It is a "bizare" enumerator,
@@ -630,7 +620,7 @@ public class ESWrapper extends ESObject {
     public Enumeration getProperties() {
          if (javaObject instanceof Enumeration) {
              return (Enumeration) javaObject;
-         } else {
+         }
             // No visible properties supported - yet
              return new Enumeration() {
                     public boolean hasMoreElements() {
@@ -640,9 +630,9 @@ public class ESWrapper extends ESObject {
                              throw new java.util.NoSuchElementException();
                     }
              };
-         }
+
       }
-    
+
     // No property list supported - yet
     public Enumeration getAllProperties() {
         return getProperties();
@@ -650,7 +640,7 @@ public class ESWrapper extends ESObject {
 
     /**
      * Build an event adaptor for a class, keep them in a cache
-     * @param listenerClass the class to event to listen to
+     * @param listenerType the class to event to listen to
      * @exception EcmaScriptException Unable to build adaptor
      */
     private EventAdaptor getEventAdaptor(Class listenerType) throws EcmaScriptException {
@@ -658,7 +648,7 @@ public class ESWrapper extends ESObject {
         // Check if event adaptor already created
         EventAdaptor adaptor = (EventAdaptor) eventAdaptors.get(listenerType);
         if (adaptor == null) {
-           if (debugEvent) System.out.println("** Creating new adaptor for '" + listenerType.getName() +"'"); 
+           if (debugEvent) System.out.println("** Creating new adaptor for '" + listenerType.getName() +"'");
            try {
               adaptor = EventAdaptor.getEventAdaptor(listenerType, javaObject, this);
             } catch (Exception e) {
@@ -676,13 +666,13 @@ public class ESWrapper extends ESObject {
      * @param propertyName the name of the property (must start with "on")
      * @param handler The value which must be an event handler routine or script
      */
-    private void putEventHandler(String propertyName, 
-                                ESValue handler) 
+    private void putEventHandler(String propertyName,
+                                ESValue handler)
                 throws EcmaScriptException {
         String eventName = propertyName.substring(2);
-        if (debugEvent) System.out.println("** Attempt to set event '" + propertyName +"'"); 
-        
-        
+        if (debugEvent) System.out.println("** Attempt to set event '" + propertyName +"'");
+
+
         // prepare the handler code - if it is not a function,
         // build a function of one argument (the event)
         ESObject eventHandler = null;
@@ -691,7 +681,7 @@ public class ESWrapper extends ESObject {
                 eventHandler = (ESObject) handler;
             } else {
                 ESValue body = handler.toESString();
-                ESObject fo = evaluator.getFunctionObject();
+                ESObject fo = getEvaluator().getFunctionObject();
                 ESValue event = new ESString("event"); // The parameter of the handling routine
                 ESValue [] esArgs = new ESValue [] {event,body};
                 try {
@@ -703,15 +693,15 @@ public class ESWrapper extends ESObject {
                 }
             }
         }
-        
+
         // Find the handler characteristics and key
         Class cls = javaObject.getClass();
         BeanInfo bi;
         try {
              bi = Introspector.getBeanInfo(cls);
         } catch (IntrospectionException e) {
-           throw new EcmaScriptException("BeanInfo not found for java class '" + 
-                   cls + "', error: " +e.getMessage());                        
+           throw new EcmaScriptException("BeanInfo not found for java class '" +
+                   cls + "', error: " +e.getMessage());
         }
         EventSetDescriptor [] eds = bi.getEventSetDescriptors();
         for (int i=0; i<eds.length; i++) {
@@ -724,7 +714,7 @@ public class ESWrapper extends ESObject {
                 // If onXxxx is for an event name, then there must be a single method
                 if (methods.length!=1) {
                     throw new EcmaScriptException("Only 1 listener supported, there are " +
-                            methods.length + " listeners for event '" + eventName + "'");                        
+                            methods.length + " listeners for event '" + eventName + "'");
                 }
                 Class listenerType = thisEvent.getListenerType();
                 String key = listenerType.getName()+":"+methods[0].getName();
@@ -738,76 +728,80 @@ public class ESWrapper extends ESObject {
                     eventHandlers.put(key, eventHandler);
                 }
                 return;
-            } else {
-                // Check if onXxx matches a method of this event
-                Method methods[]  = thisEvent.getListenerMethods();
-                for (int j=0; j<methods.length; j++) {
-                    Method thisMethod = methods[j];
-                    String methodName = thisMethod.getName();
-                    if (methodName.equalsIgnoreCase(eventName)) {   // We could handle casing better
-                        if (debugEvent) System.out.println("** Event method '" + propertyName +"' found");
-                        Class listenerType = thisEvent.getListenerType();
-                        String key = listenerType.getName()+":"+thisMethod.getName();
-                        this.getEventAdaptor(listenerType);
-                        if (eventHandlers==null) eventHandlers = new Hashtable();
-                        if (handler == ESNull.theNull) {
-                            if (debugEvent) System.out.println(" ** Handler removed for key: " + key);
-                            eventHandlers.remove(key);
-                        } else {
-                            if (debugEvent) System.out.println(" ** Handler added for key: " + key);
-                            eventHandlers.put(key, eventHandler);
-                        }
-                        return;
-                    }
-                } // for each method
             }
+            // Check if onXxx matches a method of this event
+            Method methods[] = thisEvent.getListenerMethods();
+            for (int j = 0; j < methods.length; j++) {
+                Method thisMethod = methods[j];
+                String methodName = thisMethod.getName();
+                if (methodName.equalsIgnoreCase(eventName)) { // We could handle
+                                                              // casing better
+                    if (debugEvent) System.out.println("** Event method '" + propertyName + "' found");
+                    Class listenerType = thisEvent.getListenerType();
+                    String key = listenerType.getName() + ":" + thisMethod.getName();
+                    this.getEventAdaptor(listenerType);
+                    if (eventHandlers == null) eventHandlers = new Hashtable();
+                    if (handler == ESNull.theNull) {
+                        if (debugEvent) System.out.println(" ** Handler removed for key: " + key);
+                        eventHandlers.remove(key);
+                    } else {
+                        if (debugEvent) System.out.println(" ** Handler added for key: " + key);
+                        eventHandlers.put(key, eventHandler);
+                    }
+                    return;
+                }
+            } // for each method
+
         } // for each event
-        throw new EcmaScriptException("Event '" + eventName + "' not found for java class " + cls);                        
+        throw new EcmaScriptException("Event '" + eventName + "' not found for java class " + cls);
     }
 
-    
+
     // overrides
-    public ESValue getDefaultValue(int hint) 
+    public ESValue getDefaultValue(int hint)
                                 throws EcmaScriptException {
         if (hint == EStypeString) {
             return new ESString(javaObject.toString());
-        } else {
-          throw new EcmaScriptException ("No default value for " + this + 
-                                     " and hint " + hint);
         }
+          throw new EcmaScriptException ("No default value for " + this +
+                                     " and hint " + hint);
+
     }
-    
+
     // overrides
-    public ESValue getDefaultValue() 
+    public ESValue getDefaultValue()
                                 throws EcmaScriptException {
         return this.getDefaultValue(EStypeString);
     }
-    
-    
-    
+
+
+
+    /*
+     * 2/5/2006
+     * Graham Technology modification
+     * Made method protected to make sub-classing easier
+     */
+
      /**
-      * Find a method 
+      * Find a method
       * <P>If static return null instead of exception in case of not found at all
-      * @param evaluator theEvaluator
-      * @param functionName the name to find
-      * @param params The list of parameters to filter by type
+     * @param functionName the name to find
+     * @param params The list of parameters to filter by type
       * @staticMethod true if looking for a static method
       * @return the method (null if static and not found)
       * @exception NoSuchMethodException instance object and method not found
       * @exception EcmaScriptException various errors
       */
-     private Method lookupMethod(Evaluator evaluator,
-                                 String functionName,
+     protected Method lookupMethod(String functionName,
                                  Object[] params,
-                                  boolean staticMethod) 
+                                 boolean staticMethod)
                  throws EcmaScriptException, NoSuchMethodException {
-                     
+
          int nArgs = params.length;
-         if (ESLoader.debugJavaAccess) System.out.println("** " + (asBean ? "Bean" : "Class") + 
+         if (ESLoader.debugJavaAccess) System.out.println("** " + (asBean ? "Bean" : "Class") +
                        " method lookup: " +
                      (staticMethod ? "static " : "") + functionName);
         Class cls = null;
-        Object theObject = null; // means static
         if (staticMethod) {
            if (javaObject instanceof Class) {
                cls = (Class) javaObject;
@@ -815,8 +809,7 @@ public class ESWrapper extends ESObject {
                throw new ProgrammingError("Cannot lookup for static method if not class");
            }
         } else {
-            cls = (Class) javaObject.getClass();
-            theObject = javaObject;
+            cls = javaObject.getClass();
         }
         Method [] methods = null;
         if (asBean) {
@@ -845,7 +838,7 @@ public class ESWrapper extends ESObject {
             CompatibilityDescriptor cd = ESLoader.areParametersCompatible(paramTypes, params);
             int distance = cd.getDistance();
             if (distance<0) continue; // Method not applicable
-            if (ESLoader.debugJavaAccess) System.out.println("** Method acceptable(" + distance + 
+            if (ESLoader.debugJavaAccess) System.out.println("** Method acceptable(" + distance +
                   " : " + Modifier.toString(modifiers) + " " + methods[i].toString());
             // Optimization - if perfect match return immediately
             // Note that "perfect" match could be wrong if there is
@@ -887,21 +880,21 @@ public class ESWrapper extends ESObject {
         }
         if (atLeastOneFoundWithAttributes) {
             throw new EcmaScriptException("No method '" + functionName + "' matching parameters in "+ this);
-        } else {
+        }
             if (ESLoader.debugJavaAccess) System.out.println("** Method rejected - did not match attribute or parameters");
             if (staticMethod) return null; // A second try will be done
             throw new EcmaScriptException("No method named '" + functionName + "' found in "+ this);
-        }
-    }    
-    
+
+    }
+
     // overrides
     public ESValue doIndirectCall(Evaluator evaluator,
     																 ESObject target,
                                   String functionName,
-                                  ESValue[] arguments) 
+                                  ESValue[] arguments)
                                         throws EcmaScriptException, NoSuchMethodException {
         int nArgs = arguments.length;
-        if (ESLoader.debugJavaAccess) System.out.println("** Method searched: " + functionName + 
+        if (ESLoader.debugJavaAccess) System.out.println("** Method searched: " + functionName +
                                                          " in object of class " + javaObject.getClass());
         Object[] params = new Object[nArgs];
         for (int k = 0; k<nArgs; k++) {
@@ -916,10 +909,10 @@ public class ESWrapper extends ESObject {
            // method found but does not have compatible parameters. This
            // results in more helpful error message if a method is found
            // as static but does not have the expected parameter types.
-           method = lookupMethod(evaluator, functionName, params, true);
+           method = lookupMethod(functionName, params, true);
         }
         if (method==null) {
-           method = lookupMethod(evaluator, functionName, params, false);
+           method = lookupMethod(functionName, params, false);
         }
         Object obj = null;
         Class retCls = method.getReturnType();
@@ -928,10 +921,10 @@ public class ESWrapper extends ESObject {
         } catch (InvocationTargetException e) {
             throw new EcmaScriptException ("Error in java method " + functionName, e.getTargetException());
         } catch (IllegalAccessException e) {
-            throw new EcmaScriptException ("Access error invoking java method " + functionName + 
+            throw new EcmaScriptException ("Access error invoking java method " + functionName +
                                             ": " + e.getMessage());
         } catch (IllegalArgumentException e) {
-            throw new ProgrammingError ("Inconsistent type of argument for method " + functionName + 
+            throw new ProgrammingError ("Inconsistent type of argument for method " + functionName +
                                             ": " + e.getMessage());
         }
         ESValue eobj;
@@ -941,58 +934,56 @@ public class ESWrapper extends ESObject {
            eobj = ESUndefined.theUndefined;
         }
         return eobj;
-    } 
-    
+    }
+
     // overrides
     public ESValue doIndirectCallInScope(Evaluator evaluator,
                                         ScopeChain previousScope,
-                                        ESObject thisObject, 
+                                        ESObject thisObject,
                                         String functionName,
-                                        int hash, 
-                                        ESValue[] arguments) 
+                                        int hash,
+                                        ESValue[] arguments)
                                         throws EcmaScriptException {
         if (ESLoader.debugJavaAccess) System.out.println("** Method searched (indirect): " + functionName);
         try {
-            return doIndirectCall(evaluator, thisObject, functionName, arguments); 
+            return doIndirectCall(evaluator, thisObject, functionName, arguments);
         } catch (NoSuchMethodException e) {
             if (previousScope == null) {
                 throw new EcmaScriptException("no global function named '" + functionName + "'");
-            } else {
-                return previousScope.doIndirectCall(evaluator, thisObject, functionName, hash, arguments);
             }
+                return previousScope.doIndirectCall(evaluator, thisObject, functionName, hash, arguments);
+
         }
     }
- 
- 
+
+
     // overrides
-    public ESValue callFunction(ESObject thisObject, 
-                               ESValue[] arguments) 
+    public ESValue callFunction(ESObject thisObject,
+                               ESValue[] arguments)
                                         throws EcmaScriptException {
-         return constructOrCall(thisObject, arguments, true);
-    } 
-       
+         return constructOrCall(arguments, true);
+    }
+
     // overrides
-    public ESObject doConstruct(ESObject thisObject, 
-                                ESValue[] arguments) 
+    public ESObject doConstruct(ESObject thisObject,
+                                ESValue[] arguments)
                                         throws EcmaScriptException {
-         return constructOrCall(thisObject, arguments, false);
-    }    
-    
-    /** 
+         return constructOrCall(arguments, false);
+    }
+
+    /**
      * Implements both new and function call on class objects (which create a new
      * object). The only difference is that elementary objects are not normalized
      * to EcmaScript objects if 'new' is used, so that the can be operated upon
      * as java object. Mostly useful for String
-     *
-     * @param thisObject the target object of the call
      * @param arguments the arguments
      * @param isCall true if call, false if new
+     *
      * @return the result of the new or call
-     * @exception EmcaScriptException any exception during call
+     * @exception EcmaScriptException any exception during call
      */
-    private  ESObject constructOrCall(ESObject thisObject, 
-                                ESValue[] arguments,
-                                boolean isCall) 
+    private  ESObject constructOrCall(ESValue[] arguments,
+                                boolean isCall)
                                         throws EcmaScriptException {
          if (ESLoader.debugJavaAccess) System.out.println("** Constructor searched for: " + javaObject.toString());
          if (javaObject instanceof Class) {
@@ -1004,7 +995,7 @@ public class ESWrapper extends ESObject {
                 for (int k = 0; k<nArgs; k++) {
                     if (arguments[k] == ESUndefined.theUndefined) {
                         throw new EcmaScriptException(
-                            "Cannot use undefined as parameter for java constructor " + 
+                            "Cannot use undefined as parameter for java constructor " +
                              cls.toString());
                     }
                    params[k] = arguments[k].toJavaObject();
@@ -1027,7 +1018,7 @@ public class ESWrapper extends ESObject {
                     CompatibilityDescriptor cd = ESLoader.areParametersCompatible(paramTypes, params);
                     int distance = cd.getDistance();
                     if (distance<0) continue; // Constructor not applicable
-                    if (ESLoader.debugJavaAccess) System.out.println("** Constructor acceptable(" + distance + 
+                    if (ESLoader.debugJavaAccess) System.out.println("** Constructor acceptable(" + distance +
                           " : " + Modifier.toString(modifiers) + " " + constructors[i].toString());
                     // Optimization - if perfect match return immediately
                     // Note that "perfect" match could be wrong if there is
@@ -1069,64 +1060,66 @@ public class ESWrapper extends ESObject {
                   }
                   descriptorOfNearestConstructorFound.convert(params);
                   if (ESLoader.debugJavaAccess) System.out.println(
-                            "** Contructor called: " + 
+                            "** Contructor called: " +
                             nearestConstructorFound.toString());
                   Object obj = null;
                   try {
                        obj = nearestConstructorFound.newInstance(params);
                   } catch (InvocationTargetException e) {
-                      throw new EcmaScriptException ("Error creating " + javaObject + 
+                      throw new EcmaScriptException ("Error creating " + javaObject +
                                                       ": " + e.getTargetException());
-                  }
-                  if (ESLoader.isBasicClass(cls) && !isCall) {
-                       return new ESWrapper(obj, evaluator); // Do not normalize if new basic class
-                  } else {
-                      return ESLoader.normalizeObject(obj, evaluator);
-                  }
+                    }
+                    if (ESLoader.isBasicClass(cls) && !isCall) { return new ESWrapper(obj, getEvaluator()); // Do
+                                                                                                       // not
+                                                                                                       // normalize
+                                                                                                       // if
+                                                                                                       // new
+                                                                                                       // basic
+                                                                                                       // class
+                    }
+                    return ESLoader.normalizeObject(obj, getEvaluator());
+
                 }
 
-                if (atLeastOneFoundWithAttributes) {
-                    throw new EcmaScriptException("No constructor matching parameters in: "+ this);
-                } else {
-                    throw new EcmaScriptException("No public constructor in: "+ this);
-                }
-             } catch (Exception e) {
-                 throw new EcmaScriptException("Cannot build new " + this + 
-                                 ", error: " + e.toString());
-             }
-         } else {
-             throw new EcmaScriptException("Not a java class: " + this);
+                if (atLeastOneFoundWithAttributes) { throw new EcmaScriptException("No constructor matching parameters in: " + this); }
+                throw new EcmaScriptException("No public constructor in: " + this);
+
+            } catch (Exception e) {
+                throw new EcmaScriptException("Cannot build new " + this + ", error: " + e.toString());
+            }
         }
-    }    
-  
-    
+        throw new EcmaScriptException("Not a java class: " + this);
+
+    }
+
+
     // overrides
     public double doubleValue() {
         double d = Double.NaN; // should check if doubleValue is present
         return d;
     }
-    
+
     // overrides
     public boolean booleanValue() {
         return true;  // Should check if booleanValue is present
     }
-    
+
     // overrides
     public String toString() {
         return (javaObject == null) ? "<?Wrapper to null?>" : javaObject.toString();
     }
-    
+
     // overrides
     public Object toJavaObject() {
         return javaObject;
     }
-     
+
     //public String getTypeofString() {
     //    return "JavaObject";
     //}
-  
-  
-  
+
+
+
     // Routine to handle events
     public void dispatchEvent(Object [] a, Class listener, Method event) {
         if (debugEvent) System.out.println(" ** Dispatch event: " + event.getName() + " for " + listener.getName());
@@ -1137,22 +1130,22 @@ public class ESWrapper extends ESObject {
         if (handlerFunction == null) return; // no handler for this event
         if (debugEvent) System.out.println(" ** Handler found: " + handlerFunction);
         try {
-           evaluator.evaluateEvent(this, handlerFunction, a);
+            getEvaluator().evaluateEvent(this, handlerFunction, a);
        } catch (EcmaScriptException e) {
            System.err.println("Exception in FESI event handler: " + e);
        }
     }
 
-  
-  
+
+
     // Routines to describe this object
-    
+
     // overrides
     public String toDetailString() {
         if (asBean)
             return "ES:[BEAN:" + getESClassName() + ":" + javaObject.toString() + "]";
-        else 
-            return "ES:[OBJ:" + getESClassName() + ":" + javaObject.toString() + "]";
+
+        return "ES:[OBJ:" + getESClassName() + ":" + javaObject.toString() + "]";
     }
 
     static final int stepClass = 0;
@@ -1164,7 +1157,7 @@ public class ESWrapper extends ESObject {
     static final int stepEvents = 6;
     static final int stepNoMore = 7;
 
-    private EventSetDescriptor [] getEvents(Class cls) {
+    EventSetDescriptor [] getEvents(Class cls) {
         EventSetDescriptor [] eds = null;
         BeanInfo bi = null;
         try {
@@ -1178,7 +1171,7 @@ public class ESWrapper extends ESObject {
         }
         return eds;
     }
- 
+
     // overrides
     public Enumeration getAllDescriptions() {
          return new Enumeration() {
@@ -1186,12 +1179,12 @@ public class ESWrapper extends ESObject {
                 int step = stepClass;
                 Constructor [] constructors = clazz.getConstructors();
                 Method [] methods = (asBean ? new Method[0] : clazz.getMethods());
-                Field[] fields = (asBean ? new Field[0] : clazz.getFields()); 
+                Field[] fields = (asBean ? new Field[0] : clazz.getFields());
                 PropertyDescriptor [] beanProperties = getBeanPropertyDescriptors();
                 MethodDescriptor [] beanMethods = getBeanMethodDescriptors();
                 EventSetDescriptor [] events = ESWrapper.this.getEvents(clazz);
                 int index = 0;
-                
+
                 private PropertyDescriptor [] getBeanPropertyDescriptors() {
                     PropertyDescriptor [] bean_properties = new PropertyDescriptor[0];
                     if (ESWrapper.this.asBean) {
@@ -1203,10 +1196,10 @@ public class ESWrapper extends ESObject {
                         }
                     } else {
                         // Only return them if different from fields...
-                        PropertyDescriptor [] properties = null; 
+                        PropertyDescriptor [] properties = null;
                         try {
                             BeanInfo beanInfo = Introspector.getBeanInfo(clazz);
-                            properties = beanInfo.getPropertyDescriptors();                        
+                            properties = beanInfo.getPropertyDescriptors();
                         } catch (Exception e) {
                             // ignore
                         }
@@ -1235,7 +1228,7 @@ public class ESWrapper extends ESObject {
                         }
                     }
                     return bean_properties;
-                }         
+                }
 
                 private MethodDescriptor [] getBeanMethodDescriptors() {
                     MethodDescriptor [] bean_methods = new MethodDescriptor[0];
@@ -1248,7 +1241,7 @@ public class ESWrapper extends ESObject {
                         }
                     }
                     return bean_methods;
-                }         
+                }
 
                 public boolean hasMoreElements() {
                     if (step==stepClass) return true;
@@ -1292,11 +1285,11 @@ public class ESWrapper extends ESObject {
                                if (asBean) {
                                    return new ValueDescription("BEAN",
                                             describe_class_or_interface(clazz));
-                               } else {
+                               }
                                    return new ValueDescription("CLASS",
                                             describe_class_or_interface(clazz));
-                               }
-                           } 
+
+                           }
                     case stepConstructors: {
                                if (asBean) {
                                     String info = "[[error]]";
@@ -1309,36 +1302,36 @@ public class ESWrapper extends ESObject {
                                         // ignore
                                     }
                                    return new ValueDescription("BEANINFO", info);
-                               } else {
-                                   return new ValueDescription("CONSTR",
-                                                describe_method_or_constructor(constructors[index++]));   
                                }
-                           } 
+                                   return new ValueDescription("CONSTR",
+                                                describe_method_or_constructor(constructors[index++]));
+
+                           }
                     case stepMethods: {
                            return new ValueDescription("FUNC",
                                         describe_method_or_constructor(methods[index++]));
-                           } 
+                           }
                     case stepBeanMethods: {
                            return new ValueDescription("METHOD",
                                         describe_bean_method(beanMethods[index++]));
-                           } 
+                           }
                     case stepFields: {
                            return new ValueDescription("FIELD",
                                         describe_field(fields[index++], javaObject));
-                           } 
+                           }
                     case stepBeanProperties: {
                            return new ValueDescription("PROPS",
                                         describe_bean_property(beanProperties[index++], javaObject));
-                           } 
+                           }
                     case stepEvents: {
                            return new ValueDescription("EVENT",
                                         describe_event(events[index++]));
-                           } 
+                           }
                         } // switch
                         throw new ProgrammingError("Inconsistent step");
-                     } else {
-                         throw new java.util.NoSuchElementException();
                      }
+                     throw new java.util.NoSuchElementException();
+
                  }
          };
       }
@@ -1348,14 +1341,14 @@ public class ESWrapper extends ESObject {
      *
      * @param name The name of the value to describe
      *
-     * @return   the description of this value  
+     * @return   the description of this value
      */
     public ValueDescription getDescription(String name) {
        return new ValueDescription(name,
                                     "JAVAOBJ",
                                     this.toString());
     }
-    
+
   /** Return the name of an interface or primitive type, handling arrays. */
   private static String typename(Class t) {
     String brackets = "";
@@ -1369,34 +1362,34 @@ public class ESWrapper extends ESObject {
   /** Return a string version of modifiers, handling spaces nicely. */
   private static String modifiers(int m) {
     if (m == 0) return "";
-    else return Modifier.toString(m) + " ";
+    return Modifier.toString(m) + " ";
   }
-  
-  
+
+
   /** describe the modifiers, type, and name of a field */
-  private static String describe_field(Field f, Object obj) {
+  static String describe_field(Field f, Object obj) {
       String s = modifiers(f.getModifiers()) +
                        typename(f.getType()) + " " + f.getName();
-      try { 
-          Object v = f.get(obj);
           s += " = " + obj.toString();
-      } catch (IllegalAccessException ignore) {
-      }
+
       return s + ";";
   }
 
   /** describe the modifiers, type, and name of a field */
-  private static String describe_bean_property(PropertyDescriptor d, Object obj) {
-      String a =  (d instanceof IndexedPropertyDescriptor) ? "[]" : ""; 
+  static String describe_bean_property(PropertyDescriptor d, Object obj) {
+      String a =  (d instanceof IndexedPropertyDescriptor) ? "[]" : "";
       String s = d.getName() + a + " (" + d.getShortDescription() + ")";
       Method readMethod = d.getReadMethod();
       if (readMethod != null) {
           try {
-             Object v = readMethod.invoke(obj, null);
+             Object v = readMethod.invoke(obj, (Object[])null);
              s += " = " + v.toString();
           } catch (InvocationTargetException ignore) {
+        	// do nothing
           } catch (IllegalAccessException ignore) {
+        	// do nothing
           } catch (IllegalArgumentException ignore) {
+        	// do nothing
           }
       }
       return s + ";";
@@ -1405,9 +1398,9 @@ public class ESWrapper extends ESObject {
   /** Describe the modifiers, return type, name, parameter types and exception
    *  type of a method or constructor.  Note the use of the Member interface
    *  to allow this method to work with both Method and Constructor objects */
-  private static String describe_method_or_constructor(Member member) {
+  static String describe_method_or_constructor(Member member) {
     Class returntype=null, parameters[], exceptions[];
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     if (member instanceof Method) {
       Method m = (Method) member;
       returntype = m.getReturnType();
@@ -1419,9 +1412,11 @@ public class ESWrapper extends ESObject {
       exceptions = c.getExceptionTypes();
     }
 
-    buffer.append("" + modifiers(member.getModifiers()) +
-                     ((returntype!=null)? typename(returntype)+" " : "") +
-                     member.getName() + "(");
+    buffer.append(modifiers(member.getModifiers()));
+    if (returntype != null) {
+        buffer.append(typename(returntype)).append(" ");
+    }
+    buffer.append(member.getName()).append("(");
     for(int i = 0; i < parameters.length; i++) {
       if (i > 0) buffer.append(", ");
       buffer.append(typename(parameters[i]));
@@ -1435,20 +1430,22 @@ public class ESWrapper extends ESObject {
     buffer.append(";");
     return buffer.toString();
   }
-  
+
   /** Describe the modifiers, return type, name, parameter types and exception
    *  type of a bean method */
-  private static String describe_bean_method(MethodDescriptor descriptor) {
+  static String describe_bean_method(MethodDescriptor descriptor) {
     Class returntype=null, parameters[], exceptions[];
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     Method method = descriptor.getMethod();
     returntype = method.getReturnType();
     parameters = method.getParameterTypes();
     exceptions = method.getExceptionTypes();
 
-    buffer.append(descriptor.getName() + ": " + modifiers(method.getModifiers()) +
-                     ((returntype!=null)? typename(returntype)+" " : "") +
-                     method.getName() + "(");
+    buffer.append(descriptor.getName()).append(": ").append(modifiers(method.getModifiers()));
+    if (returntype != null) {
+        buffer.append(typename(returntype)).append(" ");
+    }
+    buffer.append(method.getName()).append("(");
     for(int i = 0; i < parameters.length; i++) {
       if (i > 0) buffer.append(", ");
       buffer.append(typename(parameters[i]));
@@ -1463,21 +1460,20 @@ public class ESWrapper extends ESObject {
     return buffer.toString();
   }
 
-  private static String describe_class_or_interface(Class c) {
-    StringBuffer buffer = new StringBuffer();
+  static String describe_class_or_interface(Class c) {
+    StringBuilder buffer = new StringBuilder();
     // Print modifiers, type (class or interface), name and superclass.
     if (c.isInterface()) {
       // The modifiers will include the "interface" keyword here...
-      buffer.append(Modifier.toString(c.getModifiers()) + " "+c.getName());
+      buffer.append(Modifier.toString(c.getModifiers())).append(" ").append(c.getName());
     }
-    else if (c.getSuperclass() != null)
-      buffer.append(Modifier.toString(c.getModifiers()) + " class " +
-                       c.getName() +
-                       " extends " + c.getSuperclass().getName());
-    else
-      buffer.append(Modifier.toString(c.getModifiers()) + " class " +
-                       c.getName());
-        
+    else if (c.getSuperclass() != null) {
+      buffer.append(Modifier.toString(c.getModifiers())).append(" class ")
+            .append(c.getName()).append(" extends ").append(c.getSuperclass().getName());
+    } else {
+      buffer.append(Modifier.toString(c.getModifiers())).append(" class ").append(c.getName());
+    }
+
     // Print interfaces or super-interfaces of the class or interface.
     Class[] interfaces = c.getInterfaces();
     if ((interfaces != null) && (interfaces.length > 0)) {
@@ -1490,8 +1486,8 @@ public class ESWrapper extends ESObject {
     }
     return buffer.toString();
   }
-  
-  private static String describe_event(EventSetDescriptor event) {
+
+  static String describe_event(EventSetDescriptor event) {
       Class eventClass = event.getListenerType();
       return event.getName() + " " + eventClass.getName();
   }

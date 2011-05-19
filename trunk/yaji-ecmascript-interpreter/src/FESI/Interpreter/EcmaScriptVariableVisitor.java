@@ -48,6 +48,7 @@ import FESI.AST.ASTPropertyValueReference;
 import FESI.AST.ASTReturnStatement;
 import FESI.AST.ASTStatement;
 import FESI.AST.ASTStatementList;
+import FESI.AST.ASTSuperReference;
 import FESI.AST.ASTThisReference;
 import FESI.AST.ASTUnaryExpression;
 import FESI.AST.ASTVariableDeclaration;
@@ -68,21 +69,18 @@ import FESI.Parser.EcmaScriptConstants;
  */
 public class EcmaScriptVariableVisitor 
             implements EcmaScriptVisitor,
-                       EcmaScriptConstants
+                       EcmaScriptConstants,
+                       java.io.Serializable
 {
-    
-  // The visitor work on behalf on an evaluator 
-  private Evaluator evaluator = null;
+    private static final long serialVersionUID = 989146122497439912L;
   private boolean debug = false;
   private Vector variableList = null; 
   
  /**
    * Create a new visitor
-   * @param evaluator On behalf of this evaluator
    */
-  public EcmaScriptVariableVisitor(Evaluator evaluator) {
+  public EcmaScriptVariableVisitor() {
       super();
-      this.evaluator = evaluator;
   }
   
   /**
@@ -141,7 +139,7 @@ public class EcmaScriptVariableVisitor
   }
   
   public Object visit(ASTFunctionDeclaration node, Object data) {
-    ; // ignore function declarations in this mode
+    // ignore function declarations in this mode
     return data;
   }
   
@@ -178,7 +176,7 @@ public class EcmaScriptVariableVisitor
   }
 
   public Object visit(ASTContinueStatement node, Object data) {
-    ; // no internal variable declarations possible
+    // no internal variable declarations possible
     return data;
   }
 
@@ -206,11 +204,11 @@ public class EcmaScriptVariableVisitor
     return data;
   }
   public Object visit(ASTBreakStatement node, Object data) {
-    ; // no internal variable declarations possible
+    // no internal variable declarations possible
     return data;
   }
   public Object visit(ASTReturnStatement node, Object data) {
-    ; // no internal variable declarations possible
+    // no internal variable declarations possible
     return data;
   }
   public Object visit(ASTWithStatement node, Object data) {
@@ -220,30 +218,35 @@ public class EcmaScriptVariableVisitor
   }
   
   public Object visit(ASTThisReference node, Object data) {
-    ; // no internal variable declarations possible
+    // no internal variable declarations possible
+    return data;
+  }
+
+  public Object visit(ASTSuperReference node, Object data) {
+    // no internal variable declarations possible
     return data;
   }
   
   public Object visit(ASTCompositeReference node, Object data) {
-    ; // no internal variable declarations possible
+    // no internal variable declarations possible
     return data;
   }
   
   public Object visit(ASTFunctionCallParameters node, Object data) {
-    ; // no internal variable declarations possible
+    // no internal variable declarations possible
     return data;
   }
   
   public Object visit(ASTPropertyValueReference node, Object data) {
-    ; // no internal variable declarations possible
+    // no internal variable declarations possible
     return data;
   }
   public Object visit(ASTPropertyIdentifierReference node, Object data) {
-    ; // no internal variable declarations possible
+    // no internal variable declarations possible
     return data;
   }
   public Object visit(ASTAllocationExpression node, Object data) {
-    ; // no internal variable declarations possible
+    // no internal variable declarations possible
     return data;
   }
   public Object visit(ASTOperator node, Object data) {
@@ -251,58 +254,58 @@ public class EcmaScriptVariableVisitor
     return data;
   }
   public Object visit(ASTPostfixExpression node, Object data) {
-    ; // no internal variable declarations possible
+    // no internal variable declarations possible
     return data;
   }
   
   public Object visit(ASTUnaryExpression node, Object data) {
-    ; // no internal variable declarations possible
+    // no internal variable declarations possible
     return data;
   }
   
   public Object visit(ASTBinaryExpressionSequence node, Object data) {
-    ; // no internal variable declarations possible
+    // no internal variable declarations possible
     return data;
   }
   
   public Object visit(ASTAndExpressionSequence node, Object data) {
-    ; // no internal variable declarations possible
+    // no internal variable declarations possible
     return data;
   }
   
   public Object visit(ASTOrExpressionSequence node, Object data) {
-    ; // no internal variable declarations possible
+    // no internal variable declarations possible
     return data;
   }
   
   public Object visit(ASTConditionalExpression node, Object data) {
-    ; // no internal variable declarations possible
+    // no internal variable declarations possible
     return data;
   }
   
   // Can we really have a cascade ?
   public Object visit(ASTAssignmentExpression node, Object data) {
-    ; // no internal variable declarations possible
+    // no internal variable declarations possible
     return data;
   }
   
   public Object visit(ASTExpressionList node, Object data) {
-    ; // no internal variable declarations possible
+    // no internal variable declarations possible
     return data;
   }
   
   public Object visit(ASTEmptyExpression node, Object data) {
-    ; // no internal variable declarations possible
+    // no internal variable declarations possible
     return data;
   }
   
   public Object visit(ASTLiteral node, Object data) {
-    ; // no internal variable declarations possible
+    // no internal variable declarations possible
     return data;
   }
   
   public Object visit(ASTIdentifier node, Object data) {
-    ; // no internal variable declarations possible
+    // no internal variable declarations possible
     return data;
   }
 
