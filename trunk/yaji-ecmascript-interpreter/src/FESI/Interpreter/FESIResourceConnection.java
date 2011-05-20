@@ -29,7 +29,7 @@ public class FESIResourceConnection extends URLConnection {
     private Object resource; // the resource we are fetching
     private String cookie; // identification of the loader instance to use
     private String name; // name of the resource
-    private final String prefix = LocalClassLoader.urlPrefix;
+    private static final String prefix = LocalClassLoader.urlPrefix;
     private final int prefixLength = prefix.length();
 
     public FESIResourceConnection(URL url) throws MalformedURLException,

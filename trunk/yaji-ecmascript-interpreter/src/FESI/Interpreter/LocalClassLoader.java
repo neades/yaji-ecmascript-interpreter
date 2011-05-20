@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
@@ -87,7 +89,7 @@ public class LocalClassLoader extends ClassLoader {
     synchronized public static LocalClassLoader makeLocalClassLoader(
             String filename) throws EcmaScriptException {
         LocalClassLoader loader = null;
-        File file = new File(filename);
+        final File file = new File(filename);
         String fullname = null;
         if (file.isFile()) {
             try {
@@ -97,15 +99,19 @@ public class LocalClassLoader extends ClassLoader {
             }
             loader = loadersByFilename.get(fullname);
             if (loader == null) {
-                ZipFile zipFile = null;
                 try {
-                    zipFile = new ZipFile(fullname);
+                    final ZipFile zipFile = new ZipFile(fullname);
+                    loader = AccessController.doPrivileged(new PrivilegedAction<LocalClassLoader>() {
+
+                        public LocalClassLoader run() {
+                            return new LocalClassLoader(zipFile);
+                        }
+                    });
+                    loadersByFilename.put(fullname, loader);
                 } catch (IOException e) {
                     throw new EcmaScriptException("IO Error opening zip file '"
                             + fullname + "' : " + e);
                 }
-                loader = new LocalClassLoader(zipFile);
-                loadersByFilename.put(fullname, loader);
             } else {
                 if (ESLoader.isDebugLoader())
                     System.out.println(" ** loader in cache: " + loader);
@@ -118,7 +124,11 @@ public class LocalClassLoader extends ClassLoader {
             }
             loader = loadersByFilename.get(fullname);
             if (loader == null) {
-                loader = new LocalClassLoader(file);
+                loader = AccessController.doPrivileged(new PrivilegedAction<LocalClassLoader>() {
+                    public LocalClassLoader run() {
+                        return new LocalClassLoader(file);
+                    }
+                });
                 loadersByFilename.put(fullname, loader);
             } else {
                 if (ESLoader.isDebugLoader())
@@ -248,7 +258,8 @@ public class LocalClassLoader extends ClassLoader {
                 System.out.println(" ** URL found as " + url);
         } catch (MalformedURLException e) {
             if (ESLoader.isDebugLoader())
-                System.out.println(" ** Bad URL " + url + " " + e);
+                System.out.println(" ** Bad URL " + "/" + urlPrefix + myCookie
+                        + "/+/" + name + " " + e);
         }
         return url;
     }

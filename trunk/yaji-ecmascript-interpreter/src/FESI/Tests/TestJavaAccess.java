@@ -40,7 +40,7 @@ public class TestJavaAccess implements Runnable {
     private static int counter = 0;
     private int corbaValue = 0;
 
-    class ImageClass {
+    static class ImageClass {
         private int n;
 
         public ImageClass() {
@@ -203,11 +203,13 @@ public class TestJavaAccess implements Runnable {
             // This crashed in version 0.6
             Object noRes = o.eval("function dummy() { writeln(1234) };");
             if (noRes != null)
-                return new Boolean(false);
+                return Boolean.valueOf(false);
 
             // This function takes the "separator" attribute of the object,
             // and use it to surround the string value of the first parameter
             JSFunction jsf = new JSFunctionAdapter() {
+                private static final long serialVersionUID = -4070423414417723904L;
+
                 public Object doCall(JSObject thisObject, Object args[])
                         throws JSException {
                     String sep = thisObject.getMember("separator").toString();
@@ -241,7 +243,7 @@ public class TestJavaAccess implements Runnable {
 
             // test Function on an object
             String[] names1 = { "p1", "p2" };
-            Object[] values1 = { new Integer(3), "intField" };
+            Object[] values1 = { Integer.valueOf(3), "intField" };
             js.evalAsFunction("this[p2]=p1;", names1, values1);
             if (jac.intField != 3) {
                 throw new Exception("evalAsFunction 1 failed, intField = "
@@ -259,7 +261,7 @@ public class TestJavaAccess implements Runnable {
                         "Script 'var myo = new Object(); myo.test=321; return myo' did not return an object");
             }
             String[] names2 = { "p1", "p2" };
-            Object[] values2 = { new Integer(4), jBound };
+            Object[] values2 = { Integer.valueOf(4), jBound };
             js.evalAsFunction("this.intField=p2.test+p1;", names2, values2);
             if (jac.intField != 325) {
                 throw new Exception("evalAsFunction 2 failed, intField = "
@@ -279,9 +281,9 @@ public class TestJavaAccess implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Error: " + e.toString());
-            return new Boolean(false);
+            return Boolean.valueOf(false);
         }
-        return new Boolean(ok);
+        return Boolean.valueOf(ok);
     }
 
     // To check that access of an interface routine is possible

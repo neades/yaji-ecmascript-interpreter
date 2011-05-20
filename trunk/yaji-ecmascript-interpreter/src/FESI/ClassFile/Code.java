@@ -527,7 +527,7 @@ final class Code extends Attribute {
      */
 
     public boolean equals(Object o) {
-        return ((Object) this).equals(o);
+        return this == o;
     }
 
     /**
@@ -590,7 +590,7 @@ final class Code extends Attribute {
      */
 
     void addOp(byte opCode) {
-        byteCodes.addElement(new Byte(opCode));
+        byteCodes.addElement(Byte.valueOf(opCode));
         currentPC++;
         length++;
     }
@@ -602,8 +602,8 @@ final class Code extends Attribute {
      */
 
     void addOp1(byte opCode, byte op1) {
-        byteCodes.addElement(new Byte(opCode));
-        byteCodes.addElement(new Byte(op1));
+        byteCodes.addElement(Byte.valueOf(opCode));
+        byteCodes.addElement(Byte.valueOf(op1));
         currentPC += 2;
         length += 2;
     }
@@ -615,9 +615,9 @@ final class Code extends Attribute {
      */
 
     void addOp2(byte opCode, byte op1, byte op2) {
-        byteCodes.addElement(new Byte(opCode));
-        byteCodes.addElement(new Byte(op1));
-        byteCodes.addElement(new Byte(op2));
+        byteCodes.addElement(Byte.valueOf(opCode));
+        byteCodes.addElement(Byte.valueOf(op1));
+        byteCodes.addElement(Byte.valueOf(op2));
         currentPC += 3;
         length += 3;
     }
@@ -629,11 +629,11 @@ final class Code extends Attribute {
      */
 
     void addOp4(byte opCode, byte op1, byte op2, byte op3, byte op4) {
-        byteCodes.addElement(new Byte(opCode));
-        byteCodes.addElement(new Byte(op1));
-        byteCodes.addElement(new Byte(op2));
-        byteCodes.addElement(new Byte(op3));
-        byteCodes.addElement(new Byte(op4));
+        byteCodes.addElement(Byte.valueOf(opCode));
+        byteCodes.addElement(Byte.valueOf(op1));
+        byteCodes.addElement(Byte.valueOf(op2));
+        byteCodes.addElement(Byte.valueOf(op3));
+        byteCodes.addElement(Byte.valueOf(op4));
         currentPC += 5;
         length += 5;
 

@@ -43,23 +43,23 @@ public class BSFTest {
 
             // Check simple direct call
             Object result = mgr.eval("ecmascript", "testString", 0, 0, "2+32");
-            checkResult(result, new Byte((byte) 34));
+            checkResult(result, Byte.valueOf((byte) 34));
 
             // Check call with return
             result = mgr.apply("ecmascript", "testString", 0, 0, "return 4+6",
                     null, null);
-            checkResult(result, new Byte((byte) 10));
+            checkResult(result, Byte.valueOf((byte) 10));
 
             // Check call as a function with arguments
             Vector<String> argNames = new Vector<String>();
             argNames.add("arg_1");
             argNames.add("arg_2");
             Vector<Object> argValues = new Vector<Object>();
-            argValues.add(new Integer(12));
-            argValues.add(new Integer(14));
+            argValues.add(Integer.valueOf(12));
+            argValues.add(Integer.valueOf(14));
             result = mgr.apply("ecmascript", "testString", 0, 0,
                     "return arg_1 + arg_2", argNames, argValues);
-            checkResult(result, new Byte((byte) 26));
+            checkResult(result, Byte.valueOf((byte) 26));
 
             // Register a bean
             BsfTestBean testBean = new BsfTestBean();

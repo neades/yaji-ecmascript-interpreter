@@ -111,16 +111,15 @@ public class EcmaScriptException extends Exception {
      * If cause by another exception displays its callback chain
      */
     public String getMessage() {
-        String msg = "Runtime error " + super.getMessage();
+        StringBuilder msg = new StringBuilder("Runtime error " + super.getMessage());
         if (originatingException != null) {
-            msg += eol + "Caused by exception: " + eol + "  "
-                    + originatingException.getMessage();
+            msg.append(eol).append("Caused by exception: ").append(eol).append("  ").append(originatingException.getMessage());
         }
         if (originatingException != null) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             originatingException.printStackTrace(pw);
-            msg += eol;
+            msg.append(eol);
             pw.close();
             /*
              * // THIS WAS NOT NEEDED AND IS AN INCOMPATIBILITY // BETWEEN JDK
@@ -128,13 +127,13 @@ public class EcmaScriptException extends Exception {
              * to make JDK 1.1 Happy } catch (IOException ignore) { ; // To make
              * JDK 1.2 happy }
              */
-            msg += sw.toString();
+            msg.append(sw.toString());
         }
         for (int i = 0; i < evaluationSources.size(); i++) {
             EvaluationSource es = evaluationSources.elementAt(i);
-            msg += eol + (i == 0 ? "detected " : "called ") + es;
+            msg.append(eol).append((i == 0 ? "detected " : "called ")).append(es);
         }
-        return msg;
+        return msg.toString();
     }
 
     /**

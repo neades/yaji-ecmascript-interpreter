@@ -52,9 +52,9 @@ public class AwtConsole extends Frame implements Console {
 
     /** @serial The text area used to represent the console text */
     private TextArea theTextArea;
-    private static InputStream consoleIn;
-    private static PrintStream consoleOut;
-    private static FESI.gui.InterpreterCommands itrp = null;
+    private transient InputStream consoleIn;
+    private PrintStream consoleOut;
+    private FESI.gui.InterpreterCommands itrp = null;
 
     /**
      * Get the stream consisting of characters typed by the user
@@ -103,7 +103,6 @@ public class AwtConsole extends Frame implements Console {
         setLocation((scrwidth - conwidth) / 2, (scrheight - conheight) / 2);
 
         consoleIn = new LineInputStream(new TextAreaInputStream(theTextArea));
-        // USE DEPRECATED ROUTINE AS DEFAULT IO STREAMS USE DEPRECATED STREAMS
         consoleOut = new PrintStream(new TextAreaOutputStream(theTextArea),
                 true);
 
@@ -185,7 +184,7 @@ public class AwtConsole extends Frame implements Console {
      * everything is passed along. If backspace (ch = 8) is received then the
      * last character in the buffer is removed.
      */
-    public class LineInputStream extends FilterInputStream {
+    public static class LineInputStream extends FilterInputStream {
         // OutputStream out;
         byte byteArray[];
         int arrayOffset;
@@ -302,7 +301,7 @@ public class AwtConsole extends Frame implements Console {
      * The output is *appended* to the text in the TextArea, because it will
      * only be used like a console output.
      */
-    public class TextAreaOutputStream extends OutputStream {
+    public static class TextAreaOutputStream extends OutputStream {
         TextArea theTextArea;
         String buffer;
 

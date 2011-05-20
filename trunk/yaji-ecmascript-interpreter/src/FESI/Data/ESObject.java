@@ -853,14 +853,12 @@ public abstract class ESObject extends ESValue {
                 // Loop on special properties first
                 if (specialEnumerator < specialProperties.length) {
                     currentKey = specialProperties[specialEnumerator];
-                    currentKey.hashCode();
                     specialEnumerator++;
                     return true;
                 }
                 // Otherwise check in current enumeration
                 while (props != null && props.hasMoreElements()) {
                     currentKey = props.nextElement();
-                    currentKey.hashCode();
                     return true;
                 }
                 return false;
@@ -902,7 +900,6 @@ public abstract class ESObject extends ESValue {
                 // Loop on special properties first
                 if (specialEnumerator < specialProperties.length) {
                     currentKey = specialProperties[specialEnumerator];
-                    currentKey.hashCode();
                     specialEnumerator++;
                     return true;
                 }
@@ -910,7 +907,6 @@ public abstract class ESObject extends ESValue {
                 // Otherwise check in current enumeration
                 while (props != null && props.hasMoreElements()) {
                     currentKey = (String) props.nextElement();
-                    currentKey.hashCode();
                     // if (inside) {
                     // if (properties.containsKey(currentKey, currentHash))
                     // continue;
@@ -928,7 +924,6 @@ public abstract class ESObject extends ESValue {
                     proto = proto.getPrototype();
                     while (props.hasMoreElements()) {
                         currentKey = (String) props.nextElement();
-                        currentKey.hashCode();
                         // if (properties.containsKey(currentKey, currentHash))
                         // continue;
                         return true;

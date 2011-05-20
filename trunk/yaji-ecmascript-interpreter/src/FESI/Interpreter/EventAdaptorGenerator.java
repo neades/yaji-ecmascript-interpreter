@@ -27,6 +27,8 @@ package FESI.Interpreter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 import FESI.ClassFile.EventAdaptorClassFile;
 
@@ -67,7 +69,12 @@ public final class EventAdaptorGenerator extends ClassLoader {
      * one instance of the Generator ...
      */
 
-    private static EventAdaptorGenerator generator = new EventAdaptorGenerator();
+    private static EventAdaptorGenerator generator = AccessController.doPrivileged(new PrivilegedAction<EventAdaptorGenerator>() {
+        public EventAdaptorGenerator run() {
+            return new EventAdaptorGenerator();
+        }
+    });
+    
 
     /**
      * constructs a generator

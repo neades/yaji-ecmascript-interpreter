@@ -4,7 +4,9 @@
 
 package FESI.Util;
 
-public interface IAppendableFactory {
+import java.io.Serializable;
+
+public interface IAppendableFactory extends Serializable {
     public IAppendable create(int estimatedNumberOfAppends,
             int estimatedNumberOfCharacters);
 }

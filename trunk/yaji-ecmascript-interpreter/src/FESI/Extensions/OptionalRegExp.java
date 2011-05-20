@@ -40,7 +40,7 @@ public class OptionalRegExp extends Extension {
     /**
      * A dummy object used if no regular expression tool can be found
      */
-    class GlobalObjectRegExp extends BuiltinFunctionObject {
+    static class GlobalObjectRegExp extends BuiltinFunctionObject {
         private static final long serialVersionUID = -7255607264431360564L;
 
         GlobalObjectRegExp(String name, Evaluator evaluator,
@@ -79,16 +79,6 @@ public class OptionalRegExp extends Extension {
 
         // First try jdk 1.4 regexp
         regExp = evaluator.addExtension("FESI.Extensions.JavaRegExp");
-
-        if (regExp == null) {
-            // Then attempt using ORO
-            regExp = evaluator.addExtension("FESI.Extensions.ORORegExp");
-        }
-
-        if (regExp == null) {
-            // Then attempt using GNU (as it is LGPL)
-            regExp = evaluator.addExtension("FESI.Extensions.GNURegExp");
-        }
 
         // If neither is present, make a dummy object which will generate an
         // error

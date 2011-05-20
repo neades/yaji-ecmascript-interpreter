@@ -1,3 +1,4 @@
+// $codepro.audit.disable debuggingCode
 package FESI.AST;
 
 public class EcmaScriptDumpVisitor implements EcmaScriptVisitor {

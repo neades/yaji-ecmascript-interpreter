@@ -34,7 +34,7 @@ import FESI.Interpreter.Evaluator;
 public class JavaAccess extends Extension {
     private static final long serialVersionUID = 1639896019075230024L;
 
-    class GlobalObjectJavaTypeOf extends BuiltinFunctionObject {
+    static class GlobalObjectJavaTypeOf extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1436041700328969737L;
 
         GlobalObjectJavaTypeOf(String name, Evaluator evaluator,
@@ -55,7 +55,7 @@ public class JavaAccess extends Extension {
         }
     }
 
-    class GlobalObjectLoadExtension extends BuiltinFunctionObject {
+    static class GlobalObjectLoadExtension extends BuiltinFunctionObject {
         private static final long serialVersionUID = -164035943654712169L;
 
         GlobalObjectLoadExtension(String name, Evaluator evaluator,

@@ -69,7 +69,7 @@ public class Editor extends JPanel {
     protected FileDialog fileDialog;
     private SwingConsole mainConsole;
 
-    private DocumentListener theDocumentListener = new DocumentListener() {
+    private transient DocumentListener theDocumentListener = new DocumentListener() {
         public void changedUpdate(DocumentEvent e) {
             dirty = true;
             refreshTitle();
@@ -562,26 +562,29 @@ public class Editor extends JPanel {
 
                 // try to start reading
                 Reader in = new FileReader(f);
-                char[] buff = new char[4096];
-                int nch;
-                while ((nch = in.read(buff, 0, buff.length)) != -1) {
-                    doc.insertString(doc.getLength(), new String(buff, 0, nch),
-                            null);
-                    // progress.setValue(progress.getValue() + nch);
+                try {
+                    char[] buff = new char[4096];
+                    int nch;
+                    while ((nch = in.read(buff, 0, buff.length)) != -1) {
+                        doc.insertString(doc.getLength(), new String(buff, 0, nch),
+                                null);
+                        // progress.setValue(progress.getValue() + nch);
+                    }
+                    // we are done... get rid of progressbar
+                    // status.removeAll();
+                    // status.revalidate();
+
+                    // Listen to any change
+                    doc.addDocumentListener(theDocumentListener);
+
+                } catch (BadLocationException e) {
+                    System.err.println(e.getMessage());
+                } finally {
+                    in.close();
                 }
-
-                // we are done... get rid of progressbar
-                // status.removeAll();
-                // status.revalidate();
-
-                // Listen to any change
-                doc.addDocumentListener(theDocumentListener);
-
             } catch (IOException e) {
                 System.err.println(e.toString());
-            } catch (BadLocationException e) {
-                System.err.println(e.getMessage());
-            }
+            } 
         }
 
         Document doc;

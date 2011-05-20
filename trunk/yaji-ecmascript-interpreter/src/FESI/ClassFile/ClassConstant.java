@@ -91,6 +91,11 @@ class ClassConstant extends ConstantPoolEntry {
         return Class.forName(name.getString());
     }
 
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+    
     /**
      * <p>
      * compare the object, by name or value.

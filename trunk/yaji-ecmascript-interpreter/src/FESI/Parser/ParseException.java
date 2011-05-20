@@ -91,42 +91,41 @@ public class ParseException extends Exception {
         if (!specialConstructor) {
             return super.getMessage();
         }
-        String expected = "";
         int maxSize = 0;
         for (int i = 0; i < expectedTokenSequences.length; i++) {
             if (maxSize < expectedTokenSequences[i].length) {
                 maxSize = expectedTokenSequences[i].length;
             }
-            for (int j = 0; j < expectedTokenSequences[i].length; j++) {
-                expected += tokenImage[expectedTokenSequences[i][j]] + " ";
-            }
-            if (expectedTokenSequences[i][expectedTokenSequences[i].length - 1] != 0) {
-                expected += "...";
-            }
-            expected += eol + "    ";
         }
-        String retval = "Encountered \"";
+        StringBuilder retval = new StringBuilder("Encountered \"");
         Token tok = currentToken.next;
         for (int i = 0; i < maxSize; i++) {
             if (i != 0)
-                retval += " ";
+                retval.append(" ");
             if (tok.kind == 0) {
-                retval += tokenImage[0];
+                retval.append(tokenImage[0]);
                 break;
             }
-            retval += add_escapes(tok.image);
+            retval.append(add_escapes(tok.image));
             tok = tok.next;
         }
-        retval += "\" at line " + currentToken.next.beginLine + ", column "
-                + currentToken.next.beginColumn;
-        retval += "." + eol;
+        retval.append("\" at line ").append(currentToken.next.beginLine).append(", column ").append(currentToken.next.beginColumn);
+        retval.append(".").append(eol);
         if (expectedTokenSequences.length == 1) {
-            retval += "Was expecting:" + eol + "    ";
+            retval.append("Was expecting:").append(eol).append("    ");
         } else {
-            retval += "Was expecting one of:" + eol + "    ";
+            retval.append("Was expecting one of:").append(eol).append("    ");
         }
-        retval += expected;
-        return retval;
+        for (int i = 0; i < expectedTokenSequences.length; i++) {
+            for (int j = 0; j < expectedTokenSequences[i].length; j++) {
+                retval.append(tokenImage[expectedTokenSequences[i][j]]).append(" ");
+            }
+            if (expectedTokenSequences[i][expectedTokenSequences[i].length - 1] != 0) {
+                retval.append("...");
+            }
+            retval.append(eol).append("    ");
+        }
+        return retval.toString();
     }
 
     /**
