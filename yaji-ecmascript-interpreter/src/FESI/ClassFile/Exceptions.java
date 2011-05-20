@@ -108,6 +108,12 @@ class Exceptions extends Attribute {
             dos.writeShort(0);
     }
 
+    @Override
+    public int hashCode() {
+        assert false;
+        return 42;
+    }
+    
     /**
      * @return the Object's equality
      */

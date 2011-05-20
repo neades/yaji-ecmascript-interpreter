@@ -801,12 +801,12 @@ public class Interpret implements InterpreterCommands {
                             break;
 
                     } else if (!line.equals("")) { // Real evaluation
-
+                        StringBuilder completeText = new StringBuilder(line);
                         while (true) {
                             lastResult = null;
                             try {
                                 startTime = System.currentTimeMillis();
-                                theValue = evaluator.evaluate(line);
+                                theValue = evaluator.evaluate(completeText.toString());
                                 timeOfEval = System.currentTimeMillis()
                                         - startTime;
                                 lastResult = theValue;
@@ -833,7 +833,7 @@ public class Interpret implements InterpreterCommands {
                                                     .println("[[Command and script ignored]]");
                                             break;
                                         }
-                                        line = line + eol + moreLine;
+                                        completeText.append(eol).append(moreLine);
                                         // printStream.println();
                                         continue;
                                     }
@@ -1131,9 +1131,9 @@ public class Interpret implements InterpreterCommands {
             boolean inScript = false;
             StringBuilder script = null;
             String src = lr.readLine();
-            String srclc = src.toLowerCase();
             int lineNumber = 0;
             while (src != null) {
+                String srclc = src.toLowerCase();
                 lineNumber++;
                 if (inScript && srclc.indexOf("</script>") != -1) {
                     inScript = false;
@@ -1147,7 +1147,6 @@ public class Interpret implements InterpreterCommands {
                     printStream.println(src);
                 }
                 src = lr.readLine();
-                srclc = (src == null) ? null : src.toLowerCase();
             }
 
             if (inScript) {
@@ -1209,9 +1208,9 @@ public class Interpret implements InterpreterCommands {
             String currentTest = null;
             StringBuilder scriptBuffer = new StringBuilder();
             String src = lr.readLine();
-            String srclc = src.toLowerCase();
             int lineNumber = 0;
             while (src != null) {
+                String srclc = src.toLowerCase();
                 lineNumber++;
                 if (srclc.startsWith("@test")) {
                     String scriptString = scriptBuffer.toString();
@@ -1236,7 +1235,6 @@ public class Interpret implements InterpreterCommands {
                     scriptBuffer.append("\n");
                 }
                 src = lr.readLine();
-                srclc = (src == null) ? null : src.toLowerCase();
             }
 
             if (currentTest != null) {

@@ -475,13 +475,14 @@ public class JSWrapper implements JSObject {
      */
     static public ESObject wrapJSFunction(Evaluator evaluator, JSFunction jsf) {
         synchronized (evaluator) {
-            final JSFunction theFunction = jsf;
             class WrapedJSFunction extends BuiltinFunctionObject {
                 private static final long serialVersionUID = -8475555514443747634L;
+                private final JSFunction theFunction;
 
                 WrapedJSFunction(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp, JSFunction theFunction) {
                     super(fp, evaluator, name, 1);
+                    this.theFunction = theFunction;
                 }
 
                 public ESValue callFunction(ESObject thisObject,
@@ -539,7 +540,7 @@ public class JSWrapper implements JSObject {
                 }
             }
             return new WrapedJSFunction(jsf.toString(), evaluator,
-                    (FunctionPrototype) evaluator.getFunctionPrototype());
+                    (FunctionPrototype) evaluator.getFunctionPrototype(),jsf);
         }
     }
 

@@ -1234,15 +1234,10 @@ public class ESWrapper extends ESObject {
                     } catch (InvocationTargetException e) {
                         throw new EcmaScriptException("Error creating "
                                 + javaObject + ": " + e.getTargetException());
-                    }
+                    } 
                     if (ESLoader.isBasicClass(cls) && !isCall) {
-                        return new ESWrapper(obj, getEvaluator()); // Do
-                        // not
-                        // normalize
-                        // if
-                        // new
-                        // basic
-                        // class
+                        // Do not normalize if new basic class
+                        return new ESWrapper(obj, getEvaluator()); 
                     }
                     return ESLoader.normalizeObject(obj, getEvaluator());
 
@@ -1255,13 +1250,22 @@ public class ESWrapper extends ESObject {
                 throw new EcmaScriptException("No public constructor in: "
                         + this);
 
-            } catch (Exception e) {
-                throw new EcmaScriptException("Cannot build new " + this
-                        + ", error: " + e.toString());
+            } catch (IllegalArgumentException e) {
+                throwError(e);
+            } catch (InstantiationException e) {
+                throwError(e);
+            } catch (IllegalAccessException e) {
+                throwError(e);
             }
         }
         throw new EcmaScriptException("Not a java class: " + this);
 
+    }
+
+    private void throwError(Exception e)
+            throws EcmaScriptException {
+        throw new EcmaScriptException("Cannot build new " + this
+                + ", error: " + e.toString());
     }
 
     // overrides
@@ -1490,7 +1494,7 @@ public class ESWrapper extends ESObject {
                                         + beanDescriptor.getShortDescription()
                                         + ")";
                             } catch (Exception e) {
-                                // ignore
+                                info += e.getMessage();
                             }
                             return new ValueDescription("BEANINFO", info);
                         }
@@ -1544,9 +1548,9 @@ public class ESWrapper extends ESObject {
 
     /** Return the name of an interface or primitive type, handling arrays. */
     private static String typename(Class<?> t) {
-        String brackets = "";
+        StringBuilder brackets = new StringBuilder("");
         while (t.isArray()) {
-            brackets += "[]";
+            brackets.append("[]");
             t = t.getComponentType();
         }
         return t.getName() + brackets;

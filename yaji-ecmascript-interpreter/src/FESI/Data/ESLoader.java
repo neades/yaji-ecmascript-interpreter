@@ -529,12 +529,12 @@ public abstract class ESLoader extends ESObject {
 
     // overrides
     static public String typeName(Class<?> t) {
-        String brackets = "";
+        StringBuilder brackets = new StringBuilder();
         while (t.isArray()) {
-            brackets += "[]";
+            brackets.append("[]");
             t = t.getComponentType();
         }
-        return t.getName() + brackets;
+        return t.getName() + brackets.toString();
     }
 
 }

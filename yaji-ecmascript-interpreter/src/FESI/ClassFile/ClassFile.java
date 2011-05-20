@@ -406,7 +406,7 @@ final class ClassFile {
 
     public IntegerConstant addIntegerConstant(int iConstant) {
         IntegerConstant c = (IntegerConstant) match(
-                ConstantPoolEntry.CONSTANT_INTEGER, new Integer(iConstant));
+                ConstantPoolEntry.CONSTANT_INTEGER, Integer.valueOf(iConstant));
 
         if (c == null) {
             c = new IntegerConstant(iConstant, this);

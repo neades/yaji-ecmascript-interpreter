@@ -51,7 +51,6 @@ import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.WindowConstants;
 
-import FESI.Exceptions.ProgrammingError;
 import FESI.gui.InterpreterCommands;
 
 // Inspired by JConsole v0.9 of Henrik Bengtsson
@@ -72,9 +71,9 @@ public class SwingConsole extends JFrame implements ExtendedConsole {
     private HelpWindow helpWindow = null;
 
     // There should be only one console in the system
-    private static InputStream consoleIn;
-    private static PrintStream consoleOut;
-    private static FESI.gui.InterpreterCommands itrp = null;
+    private transient InputStream consoleIn;
+    private PrintStream consoleOut;
+    private FESI.gui.InterpreterCommands itrp = null;
 
     TextAreaInputStream textAreaInputStream = null;
 
@@ -115,10 +114,6 @@ public class SwingConsole extends JFrame implements ExtendedConsole {
             int columns) {
         super(title);
 
-        if (itrp != null) {
-            throw new ProgrammingError(
-                    "Only a single console is allowed in an executable");
-        }
         itrp = itrpParam;
 
         this.getContentPane().setLayout(new BorderLayout());
@@ -539,7 +534,7 @@ public class SwingConsole extends JFrame implements ExtendedConsole {
      * everything is passed along. If backspace (ch = 8) is received then the
      * last character in the buffer is removed.
      */
-    public class LineInputStream extends FilterInputStream {
+    public static class LineInputStream extends FilterInputStream {
         // OutputStream out;
         byte byteArray[];
         int arrayOffset;
@@ -656,7 +651,7 @@ public class SwingConsole extends JFrame implements ExtendedConsole {
      * The output is *appended* to the text in the TextArea, because it will
      * only be used like a console output.
      */
-    public class TextAreaOutputStream extends OutputStream {
+    public static class TextAreaOutputStream extends OutputStream {
         JConsoleArea theConsoleArea;
         String buffer;
 
@@ -691,14 +686,12 @@ public class SwingConsole extends JFrame implements ExtendedConsole {
         }
     }
 
-    public class TextAreaInputStream extends PipedInputStream {
-        JConsoleArea theConsoleArea;
+    public static class TextAreaInputStream extends PipedInputStream {
         OutputStream out;
         int nbrOfKeyTyped;
 
         public TextAreaInputStream(JConsoleArea newTextArea) {
             try {
-                theConsoleArea = newTextArea;
                 out = new PipedOutputStream(this);
                 nbrOfKeyTyped = 0;
             } catch (IOException e) {

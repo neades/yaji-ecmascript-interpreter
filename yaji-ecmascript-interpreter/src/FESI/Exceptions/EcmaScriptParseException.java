@@ -85,7 +85,7 @@ public class EcmaScriptParseException extends EcmaScriptException implements
         if (tok != null && tok.next != null) {
             tok = tok.next; // get offending token
         }
-        return (tok.kind == EOF);
+        return (tok == null || tok.kind == EOF);
     }
 
     /**
@@ -112,13 +112,15 @@ public class EcmaScriptParseException extends EcmaScriptException implements
             if (tok != null && tok.next != null) {
                 next = tok.next; // get offending token
             }
-            if (next != null & isForFutureExtension(next.kind)) {
+            if (next != null && isForFutureExtension(next.kind)) {
                 retval = "Keyword '" + next.image
                         + "' reserved for future extension near line "
                         + next.beginLine + ", column " + next.beginColumn;
             } else {
-                retval = "Syntax error detected near line " + next.beginLine
-                        + ", column " + next.beginColumn;
+                retval = "Syntax error detected";
+                if (next != null) {
+                    retval += " near line " + next.beginLine + ", column " + next.beginColumn;
+                }
             }
             if (tok != null) {
                 retval += ", after " + parseException.tokenImage[tok.kind];

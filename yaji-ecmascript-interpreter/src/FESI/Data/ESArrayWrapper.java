@@ -247,7 +247,6 @@ public class ESArrayWrapper extends ESObject {
                     }
                     if (nextIndex < length) {
                         currentKey = Integer.toString(nextIndex);
-                        currentKey.hashCode();
                         nextIndex++;
                         return true;
                     }
@@ -255,14 +254,12 @@ public class ESArrayWrapper extends ESObject {
                 // Loop on special properties first
                 if (specialEnumerator < specialProperties.length) {
                     currentKey = specialProperties[specialEnumerator];
-                    currentKey.hashCode();
                     specialEnumerator++;
                     return true;
                 }
                 // loop on standard or prototype properties
                 if (props.hasMoreElements()) {
                     currentKey = (String) props.nextElement();
-                    currentKey.hashCode();
                     return true;
                 }
                 return false;

@@ -55,7 +55,7 @@ class ESDatabase extends ESObject {
     private transient DatabaseMetaData databaseMetaData = null;
     private transient String driverName = null;
     private transient ClassLoader driverLoader = null;
-    private transient Exception lastError = null;
+    private Exception lastError = null;
     private transient ESObject esRowSetPrototype = null;
     private transient boolean driverOK = false;
 
@@ -780,7 +780,7 @@ public class Database extends Extension {
 
     }
 
-    class DatabaseGetLastError extends BuiltinFunctionObject {
+    static class DatabaseGetLastError extends BuiltinFunctionObject {
         private static final long serialVersionUID = -817855141956128587L;
 
         DatabaseGetLastError(String name, Evaluator evaluator,
@@ -795,7 +795,7 @@ public class Database extends Extension {
         }
     }
 
-    class DatabaseRelease extends BuiltinFunctionObject {
+    static class DatabaseRelease extends BuiltinFunctionObject {
         private static final long serialVersionUID = -2788460251115154264L;
 
         DatabaseRelease(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -809,7 +809,7 @@ public class Database extends Extension {
         }
     }
 
-    class DatabaseConnect extends BuiltinFunctionObject {
+    static class DatabaseConnect extends BuiltinFunctionObject {
         private static final long serialVersionUID = -160119919076836632L;
 
         DatabaseConnect(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -823,7 +823,7 @@ public class Database extends Extension {
         }
     }
 
-    class DatabaseDisconnect extends BuiltinFunctionObject {
+    static class DatabaseDisconnect extends BuiltinFunctionObject {
         private static final long serialVersionUID = -2124435785806562065L;
 
         DatabaseDisconnect(String name, Evaluator evaluator,
@@ -838,7 +838,7 @@ public class Database extends Extension {
         }
     }
 
-    class DatabaseExecuteRetrieval extends BuiltinFunctionObject {
+    static class DatabaseExecuteRetrieval extends BuiltinFunctionObject {
         private static final long serialVersionUID = 553887088268457954L;
 
         DatabaseExecuteRetrieval(String name, Evaluator evaluator,
@@ -853,7 +853,7 @@ public class Database extends Extension {
         }
     }
 
-    class DatabaseExecuteCommand extends BuiltinFunctionObject {
+    static class DatabaseExecuteCommand extends BuiltinFunctionObject {
         private static final long serialVersionUID = 7421773759587066619L;
 
         DatabaseExecuteCommand(String name, Evaluator evaluator,
@@ -868,7 +868,7 @@ public class Database extends Extension {
         }
     }
 
-    class DatabaseGetMetaData extends BuiltinFunctionObject {
+    static class DatabaseGetMetaData extends BuiltinFunctionObject {
         private static final long serialVersionUID = 8387083082824146713L;
 
         DatabaseGetMetaData(String name, Evaluator evaluator,
@@ -883,7 +883,7 @@ public class Database extends Extension {
         }
     }
 
-    class RowSetRelease extends BuiltinFunctionObject {
+    static class RowSetRelease extends BuiltinFunctionObject {
         private static final long serialVersionUID = -6169075232727703900L;
 
         RowSetRelease(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -897,7 +897,7 @@ public class Database extends Extension {
         }
     }
 
-    class RowSetNext extends BuiltinFunctionObject {
+    static class RowSetNext extends BuiltinFunctionObject {
         private static final long serialVersionUID = -2799372218763475297L;
 
         RowSetNext(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -911,7 +911,7 @@ public class Database extends Extension {
         }
     }
 
-    class RowSetGetColumnCount extends BuiltinFunctionObject {
+    static class RowSetGetColumnCount extends BuiltinFunctionObject {
         private static final long serialVersionUID = -7034764698384513090L;
 
         RowSetGetColumnCount(String name, Evaluator evaluator,
@@ -926,7 +926,7 @@ public class Database extends Extension {
         }
     }
 
-    class RowSetGetColumnName extends BuiltinFunctionObject {
+    static class RowSetGetColumnName extends BuiltinFunctionObject {
         private static final long serialVersionUID = -5955002519715567919L;
 
         RowSetGetColumnName(String name, Evaluator evaluator,
@@ -951,7 +951,7 @@ public class Database extends Extension {
         }
     }
 
-    class RowSetGetColumnItem extends BuiltinFunctionObject {
+    static class RowSetGetColumnItem extends BuiltinFunctionObject {
         private static final long serialVersionUID = -8695359080807943092L;
 
         RowSetGetColumnItem(String name, Evaluator evaluator,
@@ -971,7 +971,7 @@ public class Database extends Extension {
         }
     }
 
-    class RowSetGetColumnDatatypeNumber extends BuiltinFunctionObject {
+    static class RowSetGetColumnDatatypeNumber extends BuiltinFunctionObject {
         private static final long serialVersionUID = -1921386817405372093L;
 
         RowSetGetColumnDatatypeNumber(String name, Evaluator evaluator,
@@ -991,7 +991,7 @@ public class Database extends Extension {
         }
     }
 
-    class RowSetGetColumnDatatypeName extends BuiltinFunctionObject {
+    static class RowSetGetColumnDatatypeName extends BuiltinFunctionObject {
         private static final long serialVersionUID = -5178877749779743085L;
 
         RowSetGetColumnDatatypeName(String name, Evaluator evaluator,
@@ -1018,7 +1018,7 @@ public class Database extends Extension {
         }
     }
 
-    class RowSetHasMoreRows extends BuiltinFunctionObject {
+    static class RowSetHasMoreRows extends BuiltinFunctionObject {
         private static final long serialVersionUID = -1322566915756923713L;
 
         RowSetHasMoreRows(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -1032,7 +1032,7 @@ public class Database extends Extension {
         }
     }
 
-    class RowSetGetMetaData extends BuiltinFunctionObject {
+    static class RowSetGetMetaData extends BuiltinFunctionObject {
         private static final long serialVersionUID = 3826426631039858729L;
 
         RowSetGetMetaData(String name, Evaluator evaluator, FunctionPrototype fp) {

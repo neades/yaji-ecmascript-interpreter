@@ -80,6 +80,10 @@ class DoubleConstant extends ConstantPoolEntry {
         return doubler;
     }
 
+    @Override
+    public int hashCode() {
+        return (int)doubler;
+    }
     /**
      * @return the object's equality.
      */

@@ -71,15 +71,15 @@ public class ConstructedFunctionObject extends FunctionPrototype {
             StringBuilder str = new StringBuilder();
             str.append("function ");
             str.append(getFunctionName());
-            str.append("(");
+            str.append('(');
             for (int i = 0; i < theArguments.length; i++) {
-                if (i > 0)
-                    str.append(",");
+                if (i > 0) {
+                    str.append(',');
+                }
                 str.append(theArguments[i]);
             }
-            str.append(")");
-            str
-                    .append("function {<internal abstract syntax tree representation>}");
+            str.append(')');
+            str.append("function {<internal abstract syntax tree representation>}");
             return str.toString();
         }
         return functionSource;
@@ -102,7 +102,7 @@ public class ConstructedFunctionObject extends FunctionPrototype {
      */
     public String getFunctionParametersString() {
         StringBuilder str = new StringBuilder();
-        str.append("(");
+        str.append('(');
         for (int i = 0; i < theArguments.length; i++) {
             if (i > 0)
                 str.append(",");

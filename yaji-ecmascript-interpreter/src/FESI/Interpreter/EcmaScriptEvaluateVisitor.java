@@ -1018,7 +1018,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
                 ESValue[] arguments = (ESValue[]) fc.jjtAccept(this, FOR_VALUE);
                 result = (ESValue) constr.doConstruct(
                         evaluator.getThisObject(), arguments);
-                if (!(result instanceof ESObject)) {
+                if (result == null) {
                     throw new EcmaScriptException("new " + compositor
                             + " did not return an object");
                 }
@@ -1469,7 +1469,6 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
                     throw new ProgrammingError("Unimplemented assign operator");
                 } // switch
                 evaluator.putValue(lv, result);
-                v2 = result;
             }
         } catch (EcmaScriptException e) {
             throw new PackagedException(e, node);

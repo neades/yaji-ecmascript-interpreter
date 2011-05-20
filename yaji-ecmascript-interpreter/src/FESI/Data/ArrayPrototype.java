@@ -189,7 +189,7 @@ public class ArrayPrototype extends ESObject {
                     o = element.toJavaObject();
                 }
                 if (o == null) {
-                    Array.set(array, i, o);
+                    Array.set(array, i, null);
                 } else {
                     Class<? extends Object> sourceClass = o.getClass();
                     if (componentType.isAssignableFrom(sourceClass)) {

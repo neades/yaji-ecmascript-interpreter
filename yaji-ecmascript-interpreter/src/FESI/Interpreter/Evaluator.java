@@ -130,7 +130,7 @@ public class Evaluator implements Serializable {
     // List of loaded extensions
     private Hashtable<String, Object> extensions = null;
 
-    private IFESILog log = null;
+    private transient IFESILog log = null;
 
     private long nextObjectId = 0;
 
@@ -807,26 +807,26 @@ public class Evaluator implements Serializable {
                 e.setNeverIncomplete();
                 throw e;
             }
-        }
-        String lcModuleName = moduleName.toLowerCase();
-        boolean hasSuffix = lcModuleName.endsWith(".es")
-                || lcModuleName.endsWith(".esw")
-                || lcModuleName.endsWith(".js");
-        String separator = System.getProperty("path.separator", ";");
-        StringTokenizer st = new StringTokenizer(path, separator);
-        while (st.hasMoreTokens()) {
-            String tryPath = st.nextToken();
-            value = tryLoad(tryPath, moduleName, hasSuffix);
-            if (value != null)
-                break; // Found
-        }
+        } else {
+            String lcModuleName = moduleName.toLowerCase();
+            boolean hasSuffix = lcModuleName.endsWith(".es")
+            || lcModuleName.endsWith(".esw")
+            || lcModuleName.endsWith(".js");
+            String separator = System.getProperty("path.separator", ";");
+            StringTokenizer st = new StringTokenizer(path, separator);
+            while (st.hasMoreTokens()) {
+                String tryPath = st.nextToken();
+                value = tryLoad(tryPath, moduleName, hasSuffix);
+                if (value != null)
+                    break; // Found
+            }
 
-        if (value == null) {
-            // Not found
-            throw new EcmaScriptException("Module " + moduleName
-                    + " not found in " + path);
+            if (value == null) {
+                // Not found
+                throw new EcmaScriptException("Module " + moduleName
+                        + " not found in " + path);
+            }
         }
-
         return value;
     }
 

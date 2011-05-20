@@ -22,6 +22,8 @@ package FESI.jslib;
  */
 public class JSFunctionAdapter implements JSFunction {
 
+    private static final long serialVersionUID = -8740674361991957351L;
+
     /**
      * Call the specified EcmaScript method of this object
      * 

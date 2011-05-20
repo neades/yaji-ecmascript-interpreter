@@ -202,15 +202,15 @@ public abstract class EventAdaptor {
      * @return the event source object that this instance is adapting.
      */
 
-    public synchronized Object getSource() {
+    public Object getSource() {
         return source;
     }
 
-    public synchronized ESWrapper getWarepper() {
+    public ESWrapper getWarepper() {
         return wrapper;
     }
 
-    public synchronized void setWrapper(ESWrapper w) {
+    public void setWrapper(ESWrapper w) {
         wrapper = w;
     }
 
@@ -247,7 +247,7 @@ public abstract class EventAdaptor {
      *                If any other error
      */
 
-    public synchronized void setSource(Object s) throws IntrospectionException,
+    public void setSource(Object s) throws IntrospectionException,
             Exception {
 
         if (source != null && s != null && source.equals(s))

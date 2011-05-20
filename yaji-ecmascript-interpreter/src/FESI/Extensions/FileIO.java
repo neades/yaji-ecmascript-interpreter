@@ -686,7 +686,7 @@ public class FileIO extends Extension {
 
     } // class GlobalObjectFile
 
-    class FileWriteln extends BuiltinFunctionObject {
+    static class FileWriteln extends BuiltinFunctionObject {
         private static final long serialVersionUID = -1212940361346379188L;
 
         FileWriteln(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -700,7 +700,7 @@ public class FileIO extends Extension {
         }
     }
 
-    class FileReadln extends BuiltinFunctionObject {
+    static class FileReadln extends BuiltinFunctionObject {
         private static final long serialVersionUID = -6563844058409689916L;
 
         FileReadln(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -719,7 +719,7 @@ public class FileIO extends Extension {
         }
     }
 
-    class FileEof extends BuiltinFunctionObject {
+    static class FileEof extends BuiltinFunctionObject {
         private static final long serialVersionUID = -4173944880733445209L;
 
         FileEof(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -733,7 +733,7 @@ public class FileIO extends Extension {
         }
     }
 
-    class FileExists extends BuiltinFunctionObject {
+    static class FileExists extends BuiltinFunctionObject {
         private static final long serialVersionUID = 7326672957348254206L;
 
         FileExists(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -747,7 +747,7 @@ public class FileIO extends Extension {
         }
     }
 
-    class FileIsOpened extends BuiltinFunctionObject {
+    static class FileIsOpened extends BuiltinFunctionObject {
         private static final long serialVersionUID = 8354315134724021693L;
 
         FileIsOpened(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -761,7 +761,7 @@ public class FileIO extends Extension {
         }
     }
 
-    class FileIsAbsolute extends BuiltinFunctionObject {
+    static class FileIsAbsolute extends BuiltinFunctionObject {
         private static final long serialVersionUID = 686656951279531101L;
 
         FileIsAbsolute(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -775,7 +775,7 @@ public class FileIO extends Extension {
         }
     }
 
-    class FileIsFile extends BuiltinFunctionObject {
+    static class FileIsFile extends BuiltinFunctionObject {
         private static final long serialVersionUID = 9013756116339087947L;
 
         FileIsFile(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -789,7 +789,7 @@ public class FileIO extends Extension {
         }
     }
 
-    class FileIsDirectory extends BuiltinFunctionObject {
+    static class FileIsDirectory extends BuiltinFunctionObject {
         private static final long serialVersionUID = 353394458055715978L;
 
         FileIsDirectory(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -803,7 +803,7 @@ public class FileIO extends Extension {
         }
     }
 
-    class FileWrite extends BuiltinFunctionObject {
+    static class FileWrite extends BuiltinFunctionObject {
         private static final long serialVersionUID = 5761934263495777587L;
 
         FileWrite(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -817,7 +817,7 @@ public class FileIO extends Extension {
         }
     }
 
-    class FileOpen extends BuiltinFunctionObject {
+    static class FileOpen extends BuiltinFunctionObject {
         private static final long serialVersionUID = 3197833025539110487L;
 
         FileOpen(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -832,7 +832,7 @@ public class FileIO extends Extension {
         }
     }
 
-    class FileClose extends BuiltinFunctionObject {
+    static class FileClose extends BuiltinFunctionObject {
         private static final long serialVersionUID = -8172955647017598492L;
 
         FileClose(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -846,7 +846,7 @@ public class FileIO extends Extension {
         }
     }
 
-    class FileFlush extends BuiltinFunctionObject {
+    static class FileFlush extends BuiltinFunctionObject {
         private static final long serialVersionUID = -6292904766666156870L;
 
         FileFlush(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -860,7 +860,7 @@ public class FileIO extends Extension {
         }
     }
 
-    class FileGetLength extends BuiltinFunctionObject {
+    static class FileGetLength extends BuiltinFunctionObject {
         private static final long serialVersionUID = -5649442104693910207L;
 
         FileGetLength(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -874,7 +874,7 @@ public class FileIO extends Extension {
         }
     }
 
-    class FileLastModified extends BuiltinFunctionObject {
+    static class FileLastModified extends BuiltinFunctionObject {
         private static final long serialVersionUID = 6586666475850937489L;
 
         FileLastModified(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -891,7 +891,7 @@ public class FileIO extends Extension {
         }
     }
 
-    class FileError extends BuiltinFunctionObject {
+    static class FileError extends BuiltinFunctionObject {
         private static final long serialVersionUID = -2034139369850182826L;
 
         FileError(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -905,7 +905,7 @@ public class FileIO extends Extension {
         }
     }
 
-    class FileClearError extends BuiltinFunctionObject {
+    static class FileClearError extends BuiltinFunctionObject {
         private static final long serialVersionUID = 8499703287448417367L;
 
         FileClearError(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -920,7 +920,7 @@ public class FileIO extends Extension {
         }
     }
 
-    class FileRemove extends BuiltinFunctionObject {
+    static class FileRemove extends BuiltinFunctionObject {
         private static final long serialVersionUID = 2926292978390363433L;
 
         FileRemove(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -957,7 +957,7 @@ public class FileIO extends Extension {
         }
     }
 
-    class FileCanWrite extends BuiltinFunctionObject {
+    static class FileCanWrite extends BuiltinFunctionObject {
         private static final long serialVersionUID = 6165625127683518191L;
 
         FileCanWrite(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -971,7 +971,7 @@ public class FileIO extends Extension {
         }
     }
 
-    class FileCanRead extends BuiltinFunctionObject {
+    static class FileCanRead extends BuiltinFunctionObject {
         private static final long serialVersionUID = -1390115713208254039L;
 
         FileCanRead(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -985,7 +985,7 @@ public class FileIO extends Extension {
         }
     }
 
-    class FileGetName extends BuiltinFunctionObject {
+    static class FileGetName extends BuiltinFunctionObject {
         private static final long serialVersionUID = 5290629150488957956L;
 
         FileGetName(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -999,7 +999,7 @@ public class FileIO extends Extension {
         }
     }
 
-    class FileGetParent extends BuiltinFunctionObject {
+    static class FileGetParent extends BuiltinFunctionObject {
         private static final long serialVersionUID = 5056689866244089478L;
 
         FileGetParent(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -1014,7 +1014,7 @@ public class FileIO extends Extension {
     }
 
     // Equivallent to toString
-    class FileGetPath extends BuiltinFunctionObject {
+    static class FileGetPath extends BuiltinFunctionObject {
         private static final long serialVersionUID = -5427120519594023452L;
 
         FileGetPath(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -1028,7 +1028,7 @@ public class FileIO extends Extension {
         }
     }
 
-    class FileGetAbsolutePath extends BuiltinFunctionObject {
+    static class FileGetAbsolutePath extends BuiltinFunctionObject {
         private static final long serialVersionUID = -6901269335876770825L;
 
         FileGetAbsolutePath(String name, Evaluator evaluator,
@@ -1043,7 +1043,7 @@ public class FileIO extends Extension {
         }
     }
 
-    class FileMkdir extends BuiltinFunctionObject {
+    static class FileMkdir extends BuiltinFunctionObject {
         private static final long serialVersionUID = 2139015631181199033L;
 
         FileMkdir(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -1057,7 +1057,7 @@ public class FileIO extends Extension {
         }
     }
 
-    class FileList extends BuiltinFunctionObject {
+    static class FileList extends BuiltinFunctionObject {
         private static final long serialVersionUID = 41287224913507091L;
 
         FileList(String name, Evaluator evaluator, FunctionPrototype fp) {
@@ -1083,7 +1083,7 @@ public class FileIO extends Extension {
         }
     }
 
-    class FileReadAll extends BuiltinFunctionObject {
+    static class FileReadAll extends BuiltinFunctionObject {
         private static final long serialVersionUID = 778630085159043813L;
 
         FileReadAll(String name, Evaluator evaluator, FunctionPrototype fp) {

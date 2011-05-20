@@ -17,6 +17,8 @@
 
 package FESI.jslib;
 
+import java.io.Serializable;
+
 /**
  * Interface that an object must implement to be considered an EcmaScript
  * function.
@@ -37,7 +39,7 @@ package FESI.jslib;
  * 
  * @see FESI.jslib.JSFunctionAdapter
  */
-public interface JSFunction {
+public interface JSFunction extends Serializable{
 
     /**
      * Call the specified EcmaScript method of this object

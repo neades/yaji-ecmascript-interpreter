@@ -84,6 +84,11 @@ class FloatConstant extends ConstantPoolEntry {
         return floating;
     }
 
+    @Override
+    public int hashCode() {
+        return (int)floating;
+    }
+    
     /**
      * @return object equality
      */

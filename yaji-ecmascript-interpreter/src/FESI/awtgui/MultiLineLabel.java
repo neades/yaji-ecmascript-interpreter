@@ -184,7 +184,7 @@ class MultiLineLabel extends Canvas {
      * This internal method breaks a specified label up into an array of lines.
      * It uses the StringTokenizer utility class.
      */
-    protected synchronized void newLabel() {
+    protected void newLabel() {
         StringTokenizer t = new StringTokenizer(label, "\n");
         num_lines = t.countTokens();
         lines = new String[num_lines];
@@ -197,7 +197,7 @@ class MultiLineLabel extends Canvas {
      * This internal method figures out how the font is, and how wide each line
      * of the label is, and how wide the widest line is.
      */
-    protected synchronized void measure() {
+    protected void measure() {
         FontMetrics fm = getGraphics().getFontMetrics();
         line_height = fm.getHeight();
         line_ascent = fm.getAscent();

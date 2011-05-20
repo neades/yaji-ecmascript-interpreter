@@ -153,7 +153,7 @@ public class JavaRegExp extends Extension {
 
     private ESObject esRegExpPrototype;
 
-    class ESRegExpPrototypeTest extends BuiltinFunctionObject {
+    static class ESRegExpPrototypeTest extends BuiltinFunctionObject {
         private static final long serialVersionUID = -1530678844987141170L;
 
         ESRegExpPrototypeTest(String name, Evaluator evaluator,
@@ -173,7 +173,7 @@ public class JavaRegExp extends Extension {
         }
     }
 
-    class ESRegExpPrototypeExec extends BuiltinFunctionObject {
+    static class ESRegExpPrototypeExec extends BuiltinFunctionObject {
         private static final long serialVersionUID = 6552738494467189408L;
 
         ESRegExpPrototypeExec(String name, Evaluator evaluator,
