@@ -1,87 +1,92 @@
 <project name="YAJI" default="jars" basedir="..">
-    <description>
+	<description>
         Build YAJI
     </description>
-    
-   <property name="version.level" value="1.1.8"/>
-   <property name="version.date" value="29-Sep-2003"/>
-    
-    
-  <!-- Referenced libraries -->
-  <property name="javaccdir" location = "${basedir}/external/javacc-5.0/bin/lib/javacc.jar"/>
-  
-  <property name="bsfdir" location = "${basedir}/external/bsf-2.4.0/lib/bsf.jar"/>
-  <property name="commons-logging" location = "${basedir}/external/commons-logging-1.1.1/commons-logging-1.1.1.jar"/>
-  
-  <!-- Source content directory structure -->
-  <property name="src" location="src"/>
-  <property name="src.parser" location="${src}/FESI/Parser"/>
-  <property name="src.AST" location="${src}/FESI/AST"/>
-  <property name="src.Interpreter" location="${src}/FESI/Interpreter"/>
-  <property name="doc.html" location="./doc/html"/>
-  <property name="doc.design" location="./doc/design"/>
-  
-  <!-- Directory for temporay data (deleted by clean !) -->
-  <property name="build" location="classes"/>
-  <property name="lib" location="./lib"/>
-  <property name="site" location="./site"/>
-  <property name="doc.api" location="./doc/api"/>
-  <property name="tmp.doc.html" location="./tmp/doc/html"/>
-  
-  <!-- Class path for compile and tests -->
-  <path id="javacc.class.path">
-       <pathelement location="${javaccdir}"/>
-       <pathelement path="${classpath}"/>
-  </path>
-  
-  <path id="project.compile.class.path">
-        <pathelement location="${bsfdir}"/>
-        <pathelement path="${classpath}"/>
-  </path>
-  
-  <path id="project.execute.class.path">
-        <pathelement location="${build}"/>
-        <pathelement path="${classpath}"/>
-  </path>
-  
-  
-  <target name="init">
-    <!-- Create the time stamp -->
-    <tstamp/>
-    <!-- Create the build directory structure used by compile -->
-    <mkdir dir="${build}"/>
-    <mkdir dir="${lib}"/>
-    <mkdir dir="${doc.api}"/>
-    <mkdir dir="${site}"/>
-    <mkdir dir="${tmp.doc.html}"/>
-   </target>
 
- <target name="clean"
-        description="clean up" >
-    <!-- Delete the ${build} directory and other generated files -->
-    <delete dir="${build}"/>
-    <delete dir="${lib}"/>
-    <delete dir="${doc.api}"/>
-    <delete dir="${site}"/>
-    <delete dir="${tmp.doc.html}"/>
-    <delete file="${src.Interpreter}/Version.java"/>
-  </target>
- 
+	<property name="version.level" value="1.1.8" />
+	<property name="version.date" value="29-Sep-2003" />
 
- <target name="configure"
- 	 description="Configure the versions">
- 	 <copy file="${src.Interpreter}/Version.in" tofile="${src.Interpreter}/Version.java"/>	 
- 	 <replace 
-    		file="${src.Interpreter}/Version.java"
-    		token="@VERSION.LEVEL@" value="${version.level}"/>
- 	 <replace 
-    		file="${src.Interpreter}/Version.java"
-    		token="@VERSION.DATE@" value="${version.date}"/>
- 	 </target>
- 	 
-<!-- Compile the grammar and tree structure -->
 
-<!-- Does not work with current javacc
+	<!-- Referenced libraries -->
+	<property name="javaccdir" location="${basedir}/external/javacc-5.0/bin/lib/javacc.jar" />
+
+	<property name="bsfdir" location="${basedir}/external/bsf-2.4.0/lib/bsf.jar" />
+	<property name="commons-logging" location="${basedir}/external/commons-logging-1.1.1/commons-logging-1.1.1.jar" />
+
+	<!-- Source content directory structure -->
+	<property name="src" location="src" />
+	<property name="src.parser" location="${src}/FESI/Parser" />
+	<property name="src.AST" location="${src}/FESI/AST" />
+	<property name="src.Interpreter" location="${src}/FESI/Interpreter" />
+	<property name="doc.html" location="./doc/html" />
+	<property name="doc.design" location="./doc/design" />
+
+	<!-- Directory for temporay data (deleted by clean !) -->
+	<property name="classes" location="build/classes" />
+	<property name="test-classes" location="build/test-classes" />
+	<property name="reports" location="build/reports" />
+	<property name="lib" location="./lib" />
+	<property name="site" location="./site" />
+	<property name="doc.api" location="./doc/api" />
+	<property name="tmp.doc.html" location="./tmp/doc/html" />
+
+	<!-- Class path for compile and tests -->
+	<path id="javacc.class.path">
+		<pathelement location="${javaccdir}" />
+		<pathelement path="${classpath}" />
+	</path>
+
+	<path id="project.compile.class.path">
+		<pathelement location="${bsfdir}" />
+		<pathelement path="${classpath}" />
+	</path>
+
+	<path id="project.execute.class.path">
+		<pathelement location="${classes}" />
+		<pathelement path="${classpath}" />
+	</path>
+
+	<path id="project.test.class.path">
+		<pathelement location="${classes}" />
+		<pathelement location="${test-classes}" />
+		<pathelement path="${classpath}" />
+		<pathelement location="external/junit-4.9b2/junit-4.9b2.jar"/>
+	</path>
+
+
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp />
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${classes}" />
+		<mkdir dir="${test-classes}" />
+		<mkdir dir="${reports}" />
+		<mkdir dir="${lib}" />
+		<mkdir dir="${doc.api}" />
+		<mkdir dir="${site}" />
+		<mkdir dir="${tmp.doc.html}" />
+	</target>
+
+	<target name="clean" description="clean up">
+		<!-- Delete the ${classes} directory and other generated files -->
+		<delete dir="build" />
+		<delete dir="${lib}" />
+		<delete dir="${doc.api}" />
+		<delete dir="${site}" />
+		<delete dir="${tmp.doc.html}" />
+		<delete file="${src.Interpreter}/Version.java" />
+	</target>
+
+
+	<target name="configure" description="Configure the versions">
+		<copy file="${src.Interpreter}/Version.in" tofile="${src.Interpreter}/Version.java" />
+		<replace file="${src.Interpreter}/Version.java" token="@VERSION.LEVEL@" value="${version.level}" />
+		<replace file="${src.Interpreter}/Version.java" token="@VERSION.DATE@" value="${version.date}" />
+	</target>
+
+	<!-- Compile the grammar and tree structure -->
+
+	<!-- Does not work with current javacc
  <target name="grammar" depends="init"
         description="compile the grammar " >
         
@@ -98,216 +103,213 @@
 	/>
   </target> 
   -->
-  
- <target name="grammar" depends="init"
-        description="compile the grammar " >
-        
-   <java classname="jjtree" fork="yes" dir="${src.parser}" failonerror="true">
-    	<arg file="${src}/FESI/Parser/EcmaScript.jjt"/> 	
-       <classpath refid="javacc.class.path"/>
-    </java>
-    
-   <copy file="${src.parser}/EcmaScriptTreeConstants.java" todir="${src.AST}"/>
-   
-   <delete file="${src.parser}/EcmaScriptTreeConstants.java" verbose="true"/>
-   <delete file="${src.parser}/JJTEcmaScriptState.java" verbose="true"/>
-   <delete file="${src.parser}/Node.java" verbose="true"/>
-   <delete file="${src.parser}/EcmaScriptVisitor.java" verbose="true"/>
-    
-    
-   <java classname="javacc" fork="yes" dir="${src.parser}" failonerror="true">
-    	<arg file="${src}/FESI/Parser/EcmaScript.jj"/> 	
-       <classpath refid="javacc.class.path"/>
-    </java>
-  </target>
+
+	<target name="grammar" depends="init" description="compile the grammar ">
+
+		<java classname="jjtree" fork="yes" dir="${src.parser}" failonerror="true">
+			<arg file="${src}/FESI/Parser/EcmaScript.jjt" />
+			<classpath refid="javacc.class.path" />
+		</java>
+
+		<copy file="${src.parser}/EcmaScriptTreeConstants.java" todir="${src.AST}" />
+
+		<delete file="${src.parser}/EcmaScriptTreeConstants.java" verbose="true" />
+		<delete file="${src.parser}/JJTEcmaScriptState.java" verbose="true" />
+		<delete file="${src.parser}/Node.java" verbose="true" />
+		<delete file="${src.parser}/EcmaScriptVisitor.java" verbose="true" />
 
 
-   <!-- Compile the java code from ${src} into ${build} -->
-  <target name="compile" depends="init"
-        description="compile the source " >
-     <javac srcdir="${src}" destdir="${build}" debug="true">
-       <classpath refid="project.compile.class.path"/>
-    </javac>
-  </target>
-
- 
-
-  <!-- Create the jar file in the ${lib} directory -->
-  <target name="jars" depends="compile,test"
-        description="generate the jar file(s)" >
-    <jar jarfile="${lib}/fesi.jar" basedir="${build}"/>
-  </target>
+		<java classname="javacc" fork="yes" dir="${src.parser}" failonerror="true">
+			<arg file="${src}/FESI/Parser/EcmaScript.jj" />
+			<classpath refid="javacc.class.path" />
+		</java>
+	</target>
 
 
-  <!-- Create the complete javadoc of FESI in ${doc.api} -->
-  <target name="docs" depends="init"
-        description="generate the javadoc" >
- <javadoc packagenames="FESI.*"
-           sourcepath="${src}"
-           destdir="${doc.api}"
-           author="false"
-           version="false"
-           use="true"
-           windowtitle="FESI">
-    <doctitle><![CDATA[<h1>Test</h1>]]></doctitle>
-    <bottom><![CDATA[<i>Copyright &#169; 2003 Jean-Marc Lugrin. All Rights Reserved. Licensed under LGPL</i>]]></bottom>
-    <link href="http://java.sun.com/j2se/1.4.2/docs/api/"/>
-  </javadoc>
-  </target>
+	<!-- Compile the java code from ${src} into ${classes} -->
+	<target name="compile" depends="init" description="compile the source ">
+		<javac srcdir="${src}" destdir="${classes}" debug="true">
+			<classpath refid="project.compile.class.path" />
+		</javac>
+	</target>
 
-  <target name="configure.doc" depends="init"
-  	description="Generate the configured documentation directory">
-   
-     <delete>
-        <fileset dir="${tmp.doc.html}" includes="**/*"/>
-     </delete>
-  
- 	<copy todir="${tmp.doc.html}">
-      <fileset dir="./doc/html" includes="*.html"/>
-      <fileset dir="./doc/html" includes="*.txt"/>
-      <fileset dir="./doc/html" includes="*.gif"/>
- 	</copy>
- 	
- 	<!-- Update the version number -->
- 	<replace 
-    		file="${tmp.doc.html}/index.html"
-    		token="@VERSION.LEVEL@" value="${version.level}"/>
- 	 <replace 
-    		file="${tmp.doc.html}/index.html"
-    		token="@VERSION.DATE@" value="${version.date}"/>
- 	<replace 
-    		file="${tmp.doc.html}/download.html"
-    		token="@VERSION.LEVEL@" value="${version.level}"/>
- 	 <replace 
-    		file="${tmp.doc.html}/download.html"
-    		token="@VERSION.DATE@" value="${version.date}"/>
- 	<replace 
-    		file="${tmp.doc.html}/install.html"
-    		token="@VERSION.LEVEL@" value="${version.level}"/>
- 	 <replace 
-    		file="${tmp.doc.html}/install.html"
-    		token="@VERSION.DATE@" value="${version.date}"/>	
-  </target>
+	<target name="compile-tests" depends="init" description="compile the test source ">
+		<javac srcdir="test" destdir="${test-classes}" debug="true">
+			<classpath refid="project.test.class.path" />
+		</javac>
+	</target>
 
-  <target name="test"
-        description="run the test suite"  
-		depends="basic,global,expr,objfunc,names,array,boolnmb,string,date,math,fileio,ja,regexp,BSFTest"/>
-		
-  <target name="basic" >
-    <java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
-    	<arg value="-T"/> 
-    	<arg file="validation/basic.estest"/> 	
-       <classpath refid="project.execute.class.path"/>
-    </java>
-   </target>
-  <target name="global" >
-    <java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
-    	<arg value="-T"/> 
-    	<arg file="validation/global.estest"/> 	
-       <classpath refid="project.execute.class.path"/>
-    </java>
-   </target>
-  <target name="expr" >
 
-    <java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
-    	<arg value="-T"/> 
-    	<arg file="validation/expr.estest"/> 	
-       <classpath refid="project.execute.class.path"/>
-    </java>
-    
-    <java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
-    	<arg value="-T"/> 
-    	<arg file="validation/stmt.estest"/> 	
-       <classpath refid="project.execute.class.path"/>
-    </java>
-   </target>
-  <target name="objfunc" >
 
-    <java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
-    	<arg value="-T"/> 
-    	<arg file="validation/objfunc.estest"/> 	
-       <classpath refid="project.execute.class.path"/>
-    </java>
-   </target>
-  <target name="names" >
+	<!-- Create the jar file in the ${lib} directory -->
+	<target name="jars" depends="compile,test" description="generate the jar file(s)">
+		<jar jarfile="${lib}/fesi.jar" basedir="${classes}" />
+	</target>
 
-    <java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
-    	<arg value="-T"/> 
-    	<arg file="validation/names.estest"/> 	
-       <classpath refid="project.execute.class.path"/>
-    </java>
-   </target>
-  <target name="array" >
 
-    <java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
-    	<arg value="-T"/> 
-    	<arg file="validation/array.estest"/> 	
-       <classpath refid="project.execute.class.path"/>
-    </java>
-   </target>
-  <target name="boolnmb" >
-    <java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
-    	<arg value="-T"/> 
-    	<arg file="validation/boolnmb.estest"/> 	
-       <classpath refid="project.execute.class.path"/>
-    </java>
-   </target>
-  <target name="string" >
-    <java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
-    	<arg value="-T"/> 
-    	<arg file="validation/string.estest"/> 	
-       <classpath refid="project.execute.class.path"/>
-    </java>
-   </target>
-  <target name="date" >
-    <java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
-    	<arg value="-T"/> 
-    	<arg file="validation/date.estest"/> 	
-       <classpath refid="project.execute.class.path"/>
-    </java>
-   </target>
-  <target name="math" >
-    <java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
-    	<arg value="-T"/> 
-    	<arg file="validation/math.estest"/> 	
-       <classpath refid="project.execute.class.path"/>
-    </java>
-    </target>
-  <target name="fileio" >
-   <java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
-    	<arg value="-T"/> 
-    	<arg file="validation/fileio.estest"/> 	
-       <classpath refid="project.execute.class.path"/>
-    </java>
-   </target>
-  <target name="ja" >
-   <java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
-    	<arg value="-T"/> 
-    	<arg file="validation/ja.estest"/> 	
-       <classpath refid="project.execute.class.path"/>
-    </java>
-   </target>
-  <target name="regexp" >
-   <java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
-    	<arg value="-T"/> 
-    	<arg file="validation/regexp.estest"/> 	
-       <classpath>
-       	<path refid="project.execute.class.path"/>
-        </classpath>
-    </java>
-   </target>
-  <target name="BSFTest" >
-   <java classname="FESI.Tests.BSFTest" fork="true" failonerror="true">
-       <classpath>
-       	<path refid="project.execute.class.path"/>
-        <pathelement location="${bsfdir}"/>
-        <pathelement location="${commons-logging}"/>
-        </classpath>
-    </java>
-    
-  </target>
+	<!-- Create the complete javadoc of FESI in ${doc.api} -->
+	<target name="docs" depends="init" description="generate the javadoc">
+		<javadoc packagenames="FESI.*" sourcepath="${src}" destdir="${doc.api}" author="false" version="false" use="true" windowtitle="FESI">
+			<doctitle>
+				<![CDATA[<h1>Test</h1>]]></doctitle>
+		<bottom>
+			<![CDATA[<i>Copyright &#169; 2003 Jean-Marc Lugrin. All Rights Reserved. Licensed under LGPL</i>]]></bottom>
+	<link href="http://java.sun.com/j2se/1.4.2/docs/api/" />
+</javadoc>
+</target>
 
-  
+<target name="configure.doc" depends="init" description="Generate the configured documentation directory">
+
+<delete>
+	<fileset dir="${tmp.doc.html}" includes="**/*" />
+</delete>
+
+<copy todir="${tmp.doc.html}">
+	<fileset dir="./doc/html" includes="*.html" />
+	<fileset dir="./doc/html" includes="*.txt" />
+	<fileset dir="./doc/html" includes="*.gif" />
+</copy>
+
+<!-- Update the version number -->
+<replace file="${tmp.doc.html}/index.html" token="@VERSION.LEVEL@" value="${version.level}" />
+<replace file="${tmp.doc.html}/index.html" token="@VERSION.DATE@" value="${version.date}" />
+<replace file="${tmp.doc.html}/download.html" token="@VERSION.LEVEL@" value="${version.level}" />
+<replace file="${tmp.doc.html}/download.html" token="@VERSION.DATE@" value="${version.date}" />
+<replace file="${tmp.doc.html}/install.html" token="@VERSION.LEVEL@" value="${version.level}" />
+<replace file="${tmp.doc.html}/install.html" token="@VERSION.DATE@" value="${version.date}" />
+</target>
+
+<target name="test" depends="junit-tests,basic-validation" />
+
+<target name="junit-tests" depends="compile-tests">
+	  <junit fork="yes" printsummary="no" haltonfailure="no">
+	    <batchtest fork="yes" todir="${reports}" >
+	      <fileset dir="${test-classes}">
+	        <include name="**/*Test.class" />
+	      </fileset>
+	    </batchtest>
+	    <formatter type="xml" />
+	    <classpath refid="project.test.class.path" />
+	  </junit>
+</target>
+
+<target name="basic-validation" description="run the test suite" depends="basic,global,expr,objfunc,names,array,boolnmb,string,date,math,fileio,ja,regexp,BSFTest" />
+
+<target name="basic">
+<java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
+	<arg value="-T" />
+	<arg file="validation/basic.estest" />
+	<classpath refid="project.execute.class.path" />
+</java>
+</target>
+<target name="global">
+<java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
+	<arg value="-T" />
+	<arg file="validation/global.estest" />
+	<classpath refid="project.execute.class.path" />
+</java>
+</target>
+<target name="expr">
+
+<java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
+	<arg value="-T" />
+	<arg file="validation/expr.estest" />
+	<classpath refid="project.execute.class.path" />
+</java>
+
+<java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
+	<arg value="-T" />
+	<arg file="validation/stmt.estest" />
+	<classpath refid="project.execute.class.path" />
+</java>
+</target>
+<target name="objfunc">
+
+<java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
+	<arg value="-T" />
+	<arg file="validation/objfunc.estest" />
+	<classpath refid="project.execute.class.path" />
+</java>
+</target>
+<target name="names">
+
+<java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
+	<arg value="-T" />
+	<arg file="validation/names.estest" />
+	<classpath refid="project.execute.class.path" />
+</java>
+</target>
+<target name="array">
+
+<java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
+	<arg value="-T" />
+	<arg file="validation/array.estest" />
+	<classpath refid="project.execute.class.path" />
+</java>
+</target>
+<target name="boolnmb">
+<java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
+	<arg value="-T" />
+	<arg file="validation/boolnmb.estest" />
+	<classpath refid="project.execute.class.path" />
+</java>
+</target>
+<target name="string">
+<java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
+	<arg value="-T" />
+	<arg file="validation/string.estest" />
+	<classpath refid="project.execute.class.path" />
+</java>
+</target>
+<target name="date">
+<java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
+	<arg value="-T" />
+	<arg file="validation/date.estest" />
+	<classpath refid="project.execute.class.path" />
+</java>
+</target>
+<target name="math">
+<java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
+	<arg value="-T" />
+	<arg file="validation/math.estest" />
+	<classpath refid="project.execute.class.path" />
+</java>
+</target>
+<target name="fileio">
+<java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
+	<arg value="-T" />
+	<arg file="validation/fileio.estest" />
+	<classpath refid="project.execute.class.path" />
+</java>
+</target>
+<target name="ja">
+<java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
+	<arg value="-T" />
+	<arg file="validation/ja.estest" />
+	<classpath refid="project.execute.class.path" />
+</java>
+</target>
+<target name="regexp">
+<java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
+	<arg value="-T" />
+	<arg file="validation/regexp.estest" />
+	<classpath>
+		<path refid="project.execute.class.path" />
+	</classpath>
+</java>
+</target>
+<target name="BSFTest">
+<java classname="FESI.Tests.BSFTest" fork="true" failonerror="true">
+	<classpath>
+		<path refid="project.execute.class.path" />
+		<pathelement location="${bsfdir}" />
+		<pathelement location="${commons-logging}" />
+	</classpath>
+</java>
+
+</target>
+
+
 </project>
 
 
