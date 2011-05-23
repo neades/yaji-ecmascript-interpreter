@@ -7,3 +7,5 @@
   # Introduce most important new constructs to allow running of validation suite.
     * {} object instantiation
   # Try to run validation suite at http://es5conform.codeplex.com/
+  # Remove all the ClassFile stuff - either remove functionality or use bcel or some better library.
+  # Change vectors to arraylists
