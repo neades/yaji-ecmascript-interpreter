@@ -2,6 +2,7 @@
 
 package FESI.AST;
 
+
 public interface EcmaScriptVisitor {
     public Object visit(SimpleNode node, Object data);
 
@@ -74,4 +75,8 @@ public interface EcmaScriptVisitor {
     public Object visit(ASTProgram node, Object data);
 
     public Object visit(ASTSuperReference node, Object data);
+    
+    public Object visit(ASTObjectLiteral node, Object data);
+    
+    public Object visit(ASTPropertyNameAndValue node, Object data);
 }

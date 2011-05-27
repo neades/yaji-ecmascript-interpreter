@@ -336,11 +336,12 @@ TOKEN :
 
 
 
-void Literal() #Literal :
+void NumericLiteral() #Literal :
 {
   Token t;
 }
-{  t = <DECIMAL_LITERAL>
+{
+  t = <DECIMAL_LITERAL>
   {
     jjtThis.setDecimalValue(t.image);
   }
@@ -359,12 +360,13 @@ void Literal() #Literal :
   {
     jjtThis.setFloatingPointValue(t.image);
   }
-|
-  t = <STRING_LITERAL>
-  {
-    jjtThis.setStringValue(t.image.substring(1,t.image.length()-1));
-  }
-|
+}
+
+void BooleanLiteral() #Literal :
+{
+  Token t;
+}
+{
   t = <TRUE>
   {
     jjtThis.setBooleanValue(true);
@@ -374,11 +376,31 @@ void Literal() #Literal :
   {
     jjtThis.setBooleanValue(false);
   }
-|
+}
+
+void NullLiteral() #Literal :
+{
+  Token t;
+}
+{
   t = <NULL>
   {
     jjtThis.setNullValue();
   }
+}
+
+void Literal() #void :
+{
+  Token t;
+}
+{
+  NumericLiteral()
+|
+  StringLiteral()
+|
+  BooleanLiteral()
+|
+  NullLiteral()
 |
   t = <UNTERMINATED_STRING_LITERAL>
   {
@@ -409,7 +431,14 @@ void Identifier() #Identifier :
 void PrimaryExpression() #void :
 {}
 {
-        ( ( ( (("this") #ThisReference) | (("super") #SuperReference)) ( PrimarySuffix() )* ) #CompositeReference(>1) )
+    PrimaryExpressionInES() 
+|   ObjectLiteral()
+}
+
+void PrimaryExpressionInES() #void :
+{}
+{
+    ( ( ( (("this") #ThisReference) | (("super") #SuperReference)) ( PrimarySuffix() )* ) #CompositeReference(>1) )
 |   ( ( Identifier() ( PrimarySuffix() )* ) #CompositeReference(>1) )
 |	Literal()
 |	( ( "(" Expression() ")" ( PrimarySuffix() )* ) #CompositeReference(>1) )
@@ -450,13 +479,63 @@ void AllocationExpression() #AllocationExpression :
 {
     // "new"  Identifier()  ( ( Arguments() ) #FunctionCallParameters )
     // "new"  PrimaryExpression() 
-    LOOKAHEAD(2)
-    "new" ( ( ( ("this") #ThisReference) ( NewSuffix() )* ) #CompositeReference(>1) ) ( ( Arguments() )? #FunctionCallParameters )
+    "new" ( ( ( ( ("this") #ThisReference) ( NewSuffix() )* ) #CompositeReference(>1) ) ( ( Arguments() )? #FunctionCallParameters )
 
-|   "new" ( ( Identifier() ( NewSuffix() )* ) #CompositeReference(>1) ) ( ( Arguments() )? #FunctionCallParameters )
-
+          | ( ( Identifier() ( NewSuffix() )* ) #CompositeReference(>1) ) ( ( Arguments() )? #FunctionCallParameters ) )
+  
 }
 
+// ES5 -11.1.5 Object Initializer
+
+void ObjectLiteral() #ObjectLiteral :
+{
+}
+{
+    "{"
+	( PropertyNameAndValueList() )?
+	"}"
+}
+
+void PropertyNameAndValueList() #void :
+{
+}
+{
+	PropertyAssignment() [ "," [ PropertyNameAndValueList() ] ] 
+}
+
+//void MorePropertyNameAndValueList() #void :
+//{
+//}
+//{
+//	"," PropertyAssignment() ( MorePropertyNameAndValueList() )?
+//}
+
+void PropertyAssignment() #PropertyNameAndValue :
+{
+}
+{
+	PropertyName() ":" AssignmentExpression()
+}
+
+void PropertyName() #void :
+{
+}
+{
+	( Identifier()
+	| StringLiteral()
+	| NumericLiteral() )
+}
+
+void StringLiteral() #Literal : 
+{
+  Token t;
+}
+{
+  t = <STRING_LITERAL>
+  {
+    jjtThis.setStringValue(t.image.substring(1,t.image.length()-1));
+  }
+}
 
 // Expressions - 11.3 -11.13
 
@@ -477,6 +556,13 @@ void PostfixExpression() #PostfixExpression(>1) :
 }
 
 
+void PostfixExpressionInES() #PostfixExpression(>1) :
+{}
+{
+	PrimaryExpressionInES()  [ PostfixOp() ] 
+}
+
+
 void UnaryOp() #Operator :
 {
   Token t;
@@ -491,6 +577,13 @@ void UnaryExpression() #UnaryExpression(>1) :
 {}
 { 
 	PostfixExpression()
+|	UnaryOp() UnaryExpression()
+}
+
+void UnaryExpressionInES() #UnaryExpression(>1) :
+{}
+{ 
+	PostfixExpressionInES()
 |	UnaryOp() UnaryExpression()
 }
 
@@ -513,6 +606,12 @@ void MultiplicativeExpression() #BinaryExpressionSequence(>1) :
 	UnaryExpression() (MulOp() UnaryExpression() )*
 } 
 
+void MultiplicativeExpressionInES() #BinaryExpressionSequence(>1) :
+{}
+{  
+	UnaryExpressionInES() (MulOp() UnaryExpression() )*
+} 
+
 
 void AddOp() #Operator :
 {
@@ -529,6 +628,12 @@ void AdditiveExpression() #BinaryExpressionSequence(>1) :
 {}
 {
 	MultiplicativeExpression()( AddOp() MultiplicativeExpression() )*
+} 
+
+void AdditiveExpressionInES() #BinaryExpressionSequence(>1) :
+{}
+{
+	MultiplicativeExpressionInES()( AddOp() MultiplicativeExpression() )*
 } 
 
 
@@ -549,6 +654,12 @@ void ShiftExpression() #BinaryExpressionSequence(>1) :
 	AdditiveExpression()( ShiftOp() AdditiveExpression() )*
 }
 
+void ShiftExpressionInES() #BinaryExpressionSequence(>1) :
+{}
+{
+	AdditiveExpressionInES()( ShiftOp() AdditiveExpression() )*
+}
+
 
 
 void RelOp() #Operator :
@@ -565,6 +676,12 @@ void RelationalExpression() #BinaryExpressionSequence(>1) :
 {}
 {
 	ShiftExpression() ( RelOp() ShiftExpression() )*
+}
+
+void RelationalExpressionInES() #BinaryExpressionSequence(>1) :
+{}
+{
+	ShiftExpressionInES() ( RelOp() ShiftExpression() )*
 }
 
 
@@ -585,6 +702,12 @@ void EqualityExpression() #BinaryExpressionSequence(>1) :
 	RelationalExpression() ( EqualOp() RelationalExpression() )*  
 }
 
+void EqualityExpressionInES() #BinaryExpressionSequence(>1) :
+{}
+{
+	RelationalExpressionInES() ( EqualOp() RelationalExpression() )*  
+}
+
 
 
 void BitwiseANDOp() #Operator :
@@ -601,6 +724,12 @@ void BitwiseANDExpression() #BinaryExpressionSequence(>1) :
 {}
 {
 	EqualityExpression() ( BitwiseANDOp() EqualityExpression() )*
+}
+
+void BitwiseANDExpressionInES() #BinaryExpressionSequence(>1) :
+{}
+{
+	EqualityExpressionInES() ( BitwiseANDOp() EqualityExpression() )*
 }
 
 
@@ -622,6 +751,13 @@ void BitwiseXORExpression() #BinaryExpressionSequence(>1) :
 }
 
 
+void BitwiseXORExpressionInES() #BinaryExpressionSequence(>1) :
+{}
+{
+	BitwiseANDExpressionInES() ( BitwiseXOROp() BitwiseANDExpression() )*
+}
+
+
 
 void BitwiseOROp() #Operator :
 {
@@ -639,6 +775,12 @@ void BitwiseORExpression() #BinaryExpressionSequence(>1) :
 	BitwiseXORExpression() ( BitwiseOROp() BitwiseXORExpression() )*
 }
 
+void BitwiseORExpressionInES() #BinaryExpressionSequence(>1) :
+{}
+{
+	BitwiseXORExpressionInES() ( BitwiseOROp() BitwiseXORExpression() )*
+}
+
 
 
 
@@ -646,6 +788,12 @@ void LogicalANDExpression() #AndExpressionSequence(>1) :
 {}
 {
 	BitwiseORExpression() ( "&&" BitwiseORExpression() )*
+}
+
+void LogicalANDExpressionInES() #AndExpressionSequence(>1) :
+{}
+{
+	BitwiseORExpressionInES() ( "&&" BitwiseORExpression() )*
 }
 
 
@@ -656,12 +804,24 @@ void LogicalORExpression() #OrExpressionSequence(>1) :
 	LogicalANDExpression() ( "||" LogicalANDExpression() )*
 }
 
+void LogicalORExpressionInES() #OrExpressionSequence(>1) :
+{}
+{
+	LogicalANDExpressionInES() ( "||" LogicalANDExpression() )*
+}
+
 
 
 void ConditionalExpression() #ConditionalExpression(>1) :
 {}
 {
 	LogicalORExpression() [ "?" Expression() ":" ConditionalExpression() ]
+}
+
+void ConditionalExpressionInES() #ConditionalExpression(>1) :
+{}
+{
+	LogicalORExpressionInES() [ "?" Expression() ":" ConditionalExpression() ]
 }
 
 // Must check that ConditionalExpression is an LVALUE if assignement used
@@ -685,11 +845,28 @@ void AssignmentExpression() #AssignmentExpression(>1) :
 	]
 }
 
+void AssignmentExpressionInES() #AssignmentExpression(>1) :
+{}
+{
+	ConditionalExpressionInES() 
+	[
+	    AssignementOperator() AssignmentExpression()
+	]
+}
+
 // Check that priority is ok, check with assigment
 void Expression() #ExpressionList(>1) :
 {}
 {
 	AssignmentExpression() ( "," AssignmentExpression() )*
+	// AssignmentExpression() 
+}		
+
+// Check that priority is ok, check with assigment
+void ExpressionInES() #ExpressionList(>1) :
+{}
+{
+	AssignmentExpressionInES() ( "," AssignmentExpression() )*
 	// AssignmentExpression() 
 }		
 
@@ -719,7 +896,8 @@ void Expression() #ExpressionList(>1) :
  void Block() #void :
  {}
  {
-   LOOKAHEAD(3) "{" "}" #StatementList
+   LOOKAHEAD(3) 
+   "{" "}" #StatementList
  | "{" [ StatementList() ] "}"
  }
  
@@ -760,7 +938,8 @@ void Expression() #ExpressionList(>1) :
  void ExpressionStatement() #void :
  {}
  {
- 	Expression() Sc() 
+ 	//LOOKAHEAD( { getToken(1).kind != LBRACE } )
+ 	ExpressionInES() Sc() 
  }
  
  JAVACODE
