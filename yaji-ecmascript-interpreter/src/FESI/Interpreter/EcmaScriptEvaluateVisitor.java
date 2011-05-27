@@ -39,11 +39,13 @@ import FESI.AST.ASTFunctionDeclaration;
 import FESI.AST.ASTIdentifier;
 import FESI.AST.ASTIfStatement;
 import FESI.AST.ASTLiteral;
+import FESI.AST.ASTObjectLiteral;
 import FESI.AST.ASTOperator;
 import FESI.AST.ASTOrExpressionSequence;
 import FESI.AST.ASTPostfixExpression;
 import FESI.AST.ASTProgram;
 import FESI.AST.ASTPropertyIdentifierReference;
+import FESI.AST.ASTPropertyNameAndValue;
 import FESI.AST.ASTPropertyValueReference;
 import FESI.AST.ASTReturnStatement;
 import FESI.AST.ASTStatement;
@@ -67,6 +69,7 @@ import FESI.Data.ESReference;
 import FESI.Data.ESString;
 import FESI.Data.ESUndefined;
 import FESI.Data.ESValue;
+import FESI.Data.ObjectObject;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
 import FESI.Parser.EcmaScriptConstants;
@@ -116,7 +119,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
     private boolean debug = false;
 
     // Indicator for the data to be returned by the accept
-    private static final Object FOR_VALUE = new Object();
+    static final Object FOR_VALUE = new Object();
     private static final Object FOR_REFERENCE = new Object();
 
     // The visitor work on behalf on an evaluator which provide
@@ -403,10 +406,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
 
     public Object visit(ASTVariableDeclaration node, Object data) {
         Object result = null;
-        int nChildren = node.jjtGetNumChildren();
-        if (nChildren < 1 || nChildren > 2) {
-            throw new ProgrammingError("Bad AST in variable declaration");
-        }
+        int nChildren = assertInRange(node, 1, 2, "variable declaration");
         if (nChildren == 2) {
             try {
                 Object lvo = node.jjtGetChild(0).jjtAccept(this, FOR_REFERENCE);
@@ -440,10 +440,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
 
     public Object visit(ASTIfStatement node, Object data) {
         Object result = null;
-        int nChildren = node.jjtGetNumChildren();
-        if (nChildren < 2 || nChildren > 3) {
-            throw new ProgrammingError("Bad AST in IF statement");
-        }
+        int nChildren = assertInRange(node, 2, 3, "IF statement");
         try {
             ESValue testValue = acceptNull(node.jjtGetChild(0).jjtAccept(this,
                     FOR_VALUE));
@@ -459,6 +456,15 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
             throw new PackagedException(e, node);
         }
         return result;
+    }
+
+    private int assertInRange(SimpleNode node, int start, int end,
+            String location) throws ProgrammingError {
+        int nChildren = node.jjtGetNumChildren();
+        if (nChildren < start || nChildren > end) {
+            throw new ProgrammingError("Bad AST in "+location);
+        }
+        return nChildren;
     }
 
     public Object visit(ASTWhileStatement node, Object data) {
@@ -1552,5 +1558,34 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
             // Take advantage to convert...
             return (ESValue) v;
         }
+    }
+
+    public Object visit(ASTObjectLiteral node, Object data) {
+        ESObject result = ObjectObject.createObject(evaluator);
+        int numChildren = node.jjtGetNumChildren();
+        for (int i=0; i<numChildren; i++) {
+            node.jjtGetChild(i).jjtAccept(this, result);
+        }
+        return result;
+    }
+
+    public Object visit(ASTPropertyNameAndValue node, Object data) {
+        ESObject object = (ESObject) data;
+        node.assertTwoChildren();
+        Node nameNode = node.jjtGetChild(0);
+        String propertyName = nameNode.toString();
+        if (nameNode instanceof ASTIdentifier) {
+            ASTIdentifier identifier = (ASTIdentifier)nameNode;
+            propertyName = identifier.getName();
+        } else {
+            propertyName = nameNode.jjtAccept(this, FOR_VALUE).toString();
+        }
+        ESValue value = (ESValue) node.jjtGetChild(1).jjtAccept(this, FOR_VALUE);
+        try {
+            object.putProperty(propertyName, value, propertyName.hashCode());
+        } catch (EcmaScriptException e) {
+            throw new PackagedException(e, node);
+        }
+        return object;
     }
 }

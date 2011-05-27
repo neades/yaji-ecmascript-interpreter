@@ -70,6 +70,17 @@ o9 = new String;
 o9+='aa;'
 o9=='aa;'
 
+@test object.10
+o7 = {};
+o7.a="aa";
+o8 = o7.valueOf();
+o7==o8;
+
+@test object.11
+o1 = {};
+o2 = {};
+o1!=o2 && o1.constructor == Object && typeof(o2)=="object";
+
 // 15.2.5.
 @test function.1
 f1 = Function("x","x+1");

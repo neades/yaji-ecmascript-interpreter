@@ -39,11 +39,13 @@ import FESI.AST.ASTFunctionDeclaration;
 import FESI.AST.ASTIdentifier;
 import FESI.AST.ASTIfStatement;
 import FESI.AST.ASTLiteral;
+import FESI.AST.ASTObjectLiteral;
 import FESI.AST.ASTOperator;
 import FESI.AST.ASTOrExpressionSequence;
 import FESI.AST.ASTPostfixExpression;
 import FESI.AST.ASTProgram;
 import FESI.AST.ASTPropertyIdentifierReference;
+import FESI.AST.ASTPropertyNameAndValue;
 import FESI.AST.ASTPropertyValueReference;
 import FESI.AST.ASTReturnStatement;
 import FESI.AST.ASTStatement;
@@ -332,6 +334,16 @@ public class EcmaScriptFunctionVisitor implements EcmaScriptVisitor,
     public Object visit(ASTIdentifier node, Object data) {
         badAST();
         return data;
+    }
+
+    public Object visit(ASTObjectLiteral node, Object data) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public Object visit(ASTPropertyNameAndValue node, Object data) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
