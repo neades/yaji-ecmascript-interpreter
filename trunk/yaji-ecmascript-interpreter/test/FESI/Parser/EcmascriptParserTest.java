@@ -61,6 +61,25 @@ public class EcmascriptParserTest {
                     + "    PropertyNameAndValue" + eol 
                     + "     [z]" + eol
                     + "     ObjectLiteral" + eol
+                },
+                // Simple function expression
+                { "var func = function () {};", "Program" + eol 
+                        + " Statement" + eol
+                        + "  VariableDeclaration" + eol
+                        + "   <func>" + eol
+                        + "   FunctionExpression" + eol 
+                        + "    FormalParameterList" + eol
+                        + "    StatementList" + eol 
+                },
+                // Named function expression
+                { "var func = function namedFunction () {};", "Program" + eol 
+                        + " Statement" + eol
+                        + "  VariableDeclaration" + eol
+                        + "   <func>" + eol
+                        + "   FunctionExpression" + eol
+                        + "    <namedFunction>" + eol
+                        + "    FormalParameterList" + eol
+                        + "    StatementList" + eol 
                 }
             });
     }
@@ -91,6 +110,6 @@ public class EcmascriptParserTest {
         dumper.visit(es.Program(),null);
         
         String result = new String(baos.toByteArray());
-        assertEquals(expected,result);
+        assertEquals("Parsing "+source,expected,result);
     }
 }

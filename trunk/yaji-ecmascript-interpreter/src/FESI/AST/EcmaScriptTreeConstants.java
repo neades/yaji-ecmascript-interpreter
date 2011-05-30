@@ -10,38 +10,39 @@ public interface EcmaScriptTreeConstants
   public int JJTTHISREFERENCE = 3;
   public int JJTSUPERREFERENCE = 4;
   public int JJTCOMPOSITEREFERENCE = 5;
-  public int JJTFUNCTIONCALLPARAMETERS = 6;
-  public int JJTPROPERTYVALUEREFERENCE = 7;
-  public int JJTPROPERTYIDENTIFIERREFERENCE = 8;
-  public int JJTALLOCATIONEXPRESSION = 9;
-  public int JJTOBJECTLITERAL = 10;
-  public int JJTPROPERTYNAMEANDVALUE = 11;
-  public int JJTOPERATOR = 12;
-  public int JJTPOSTFIXEXPRESSION = 13;
-  public int JJTUNARYEXPRESSION = 14;
-  public int JJTBINARYEXPRESSIONSEQUENCE = 15;
-  public int JJTANDEXPRESSIONSEQUENCE = 16;
-  public int JJTOREXPRESSIONSEQUENCE = 17;
-  public int JJTCONDITIONALEXPRESSION = 18;
-  public int JJTASSIGNMENTEXPRESSION = 19;
-  public int JJTEXPRESSIONLIST = 20;
-  public int JJTSTATEMENT = 21;
-  public int JJTSTATEMENTLIST = 22;
-  public int JJTVARIABLEDECLARATION = 23;
-  public int JJTIFSTATEMENT = 24;
-  public int JJTWHILESTATEMENT = 25;
-  public int JJTFORSTATEMENT = 26;
-  public int JJTEMPTYEXPRESSION = 27;
-  public int JJTFORVARSTATEMENT = 28;
-  public int JJTFORINSTATEMENT = 29;
-  public int JJTFORVARINSTATEMENT = 30;
-  public int JJTCONTINUESTATEMENT = 31;
-  public int JJTBREAKSTATEMENT = 32;
-  public int JJTRETURNSTATEMENT = 33;
-  public int JJTWITHSTATEMENT = 34;
-  public int JJTFUNCTIONDECLARATION = 35;
-  public int JJTFORMALPARAMETERLIST = 36;
-  public int JJTPROGRAM = 37;
+  public int JJTFUNCTIONEXPRESSION = 6;
+  public int JJTFORMALPARAMETERLIST = 7;
+  public int JJTFUNCTIONCALLPARAMETERS = 8;
+  public int JJTPROPERTYVALUEREFERENCE = 9;
+  public int JJTPROPERTYIDENTIFIERREFERENCE = 10;
+  public int JJTALLOCATIONEXPRESSION = 11;
+  public int JJTOBJECTLITERAL = 12;
+  public int JJTPROPERTYNAMEANDVALUE = 13;
+  public int JJTOPERATOR = 14;
+  public int JJTPOSTFIXEXPRESSION = 15;
+  public int JJTUNARYEXPRESSION = 16;
+  public int JJTBINARYEXPRESSIONSEQUENCE = 17;
+  public int JJTANDEXPRESSIONSEQUENCE = 18;
+  public int JJTOREXPRESSIONSEQUENCE = 19;
+  public int JJTCONDITIONALEXPRESSION = 20;
+  public int JJTASSIGNMENTEXPRESSION = 21;
+  public int JJTEXPRESSIONLIST = 22;
+  public int JJTSTATEMENT = 23;
+  public int JJTSTATEMENTLIST = 24;
+  public int JJTVARIABLEDECLARATION = 25;
+  public int JJTIFSTATEMENT = 26;
+  public int JJTWHILESTATEMENT = 27;
+  public int JJTFORSTATEMENT = 28;
+  public int JJTEMPTYEXPRESSION = 29;
+  public int JJTFORVARSTATEMENT = 30;
+  public int JJTFORINSTATEMENT = 31;
+  public int JJTFORVARINSTATEMENT = 32;
+  public int JJTCONTINUESTATEMENT = 33;
+  public int JJTBREAKSTATEMENT = 34;
+  public int JJTRETURNSTATEMENT = 35;
+  public int JJTWITHSTATEMENT = 36;
+  public int JJTFUNCTIONDECLARATION = 37;
+  public int JJTPROGRAM = 38;
 
 
   public String[] jjtNodeName = {
@@ -51,6 +52,8 @@ public interface EcmaScriptTreeConstants
     "ThisReference",
     "SuperReference",
     "CompositeReference",
+    "FunctionExpression",
+    "FormalParameterList",
     "FunctionCallParameters",
     "PropertyValueReference",
     "PropertyIdentifierReference",
@@ -81,8 +84,7 @@ public interface EcmaScriptTreeConstants
     "ReturnStatement",
     "WithStatement",
     "FunctionDeclaration",
-    "FormalParameterList",
     "Program",
   };
 }
-/* JavaCC - OriginalChecksum=ab7b2c4e53ea85951a660fd034bcd21b (do not edit this line) */
+/* JavaCC - OriginalChecksum=18129b56ff1497909d15829cd879d6aa (do not edit this line) */

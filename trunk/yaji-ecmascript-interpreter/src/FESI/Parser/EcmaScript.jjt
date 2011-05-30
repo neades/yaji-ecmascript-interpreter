@@ -433,6 +433,7 @@ void PrimaryExpression() #void :
 {
     PrimaryExpressionInES() 
 |   ObjectLiteral()
+|   FunctionExpression()
 }
 
 void PrimaryExpressionInES() #void :
@@ -443,6 +444,37 @@ void PrimaryExpressionInES() #void :
 |	Literal()
 |	( ( "(" Expression() ")" ( PrimarySuffix() )* ) #CompositeReference(>1) )
 |	AllocationExpression()  
+}
+
+void FunctionExpression() #FunctionExpression :
+{
+   Token t1 = getToken(1); // 0 is the last matched token, so use 1 to get
+                           // the next one.
+   Token t2;
+}
+{
+   try {
+    "function" [ Identifier() ]  ( "(" [ FormalParameterList() ] ")" ) #FormalParameterList(jjtree.nodeArity()==0) Block()
+   }
+   finally {
+      t2 = getToken(0);
+      StringBuffer sourceString = new StringBuffer("");
+
+      // test special case for empty production
+      if (t2.next != t1) { // Something consumed.
+    
+          for(; t1 != t2; t1 = t1.next)
+          {
+             if (t1.specialToken != null) {
+                 sourceString.append(t1.specialToken.image); // last special token
+             }
+             sourceString.append(t1.image);
+             sourceString.append(" ");
+          }
+      }
+      sourceString.append(t2.image);
+      jjtThis.setSourceString(sourceString.toString());
+   }
 }
 
 void PrimarySuffix() #void :
@@ -502,13 +534,6 @@ void PropertyNameAndValueList() #void :
 {
 	PropertyAssignment() [ "," [ PropertyNameAndValueList() ] ] 
 }
-
-//void MorePropertyNameAndValueList() #void :
-//{
-//}
-//{
-//	"," PropertyAssignment() ( MorePropertyNameAndValueList() )?
-//}
 
 void PropertyAssignment() #PropertyNameAndValue :
 {
@@ -1059,10 +1084,6 @@ void ExpressionInES() #ExpressionList(>1) :
 // as it is an entry point to parse the parameter list
 // of Function.
 void FunctionDeclaration() #FunctionDeclaration :
-//{}
-//{
-//  "function" Identifier()  ( "(" [ FormalParameterList() ] ")" ) #FormalParameterList(jjtree.nodeArity()==0) Block()
-//}
 {
    Token t1 = getToken(1); // 0 is the last matched token, so use 1 to get
                            // the next one.

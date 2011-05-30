@@ -79,4 +79,6 @@ public interface EcmaScriptVisitor {
     public Object visit(ASTObjectLiteral node, Object data);
     
     public Object visit(ASTPropertyNameAndValue node, Object data);
+    
+    public Object visit(ASTFunctionExpression node, Object data);
 }
