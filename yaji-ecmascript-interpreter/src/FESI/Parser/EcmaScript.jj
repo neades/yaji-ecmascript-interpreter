@@ -543,6 +543,7 @@ void PrimaryExpression()       :
 {
     PrimaryExpressionInES() 
 |   ObjectLiteral()
+|   FunctionExpression()
 }
 
 void PrimaryExpressionInES()       :
@@ -670,6 +671,94 @@ void PrimaryExpressionInES()       :
           }
 /*@egen*/                         )
 |	AllocationExpression()  
+}
+
+void FunctionExpression()                     :
+{/*@bgen(jjtree) FunctionExpression */
+   ASTFunctionExpression jjtn000 = new ASTFunctionExpression(JJTFUNCTIONEXPRESSION);
+   boolean jjtc000 = true;
+   jjtree.openNodeScope(jjtn000);
+   jjtreeOpenNodeScope(jjtn000);
+/*@egen*/
+   Token t1 = getToken(1); // 0 is the last matched token, so use 1 to get
+                           // the next one.
+   Token t2;
+}
+{/*@bgen(jjtree) FunctionExpression */
+   try {
+/*@egen*/
+   try {
+    "function" [ Identifier() ]/*@bgen(jjtree) #FormalParameterList( jjtree . nodeArity ( ) == 0) */
+                                 {
+                                   ASTFormalParameterList jjtn001 = new ASTFormalParameterList(JJTFORMALPARAMETERLIST);
+                                   boolean jjtc001 = true;
+                                   jjtree.openNodeScope(jjtn001);
+                                   jjtreeOpenNodeScope(jjtn001);
+                                 }
+                                 try {
+/*@egen*/  ( "(" [ FormalParameterList() ] ")" )/*@bgen(jjtree)*/
+                                 } catch (Throwable jjte001) {
+                                   if (jjtc001) {
+                                     jjtree.clearNodeScope(jjtn001);
+                                     jjtc001 = false;
+                                   } else {
+                                     jjtree.popNode();
+                                   }
+                                   if (jjte001 instanceof RuntimeException) {
+                                     throw (RuntimeException)jjte001;
+                                   }
+                                   if (jjte001 instanceof ParseException) {
+                                     throw (ParseException)jjte001;
+                                   }
+                                   throw (Error)jjte001;
+                                 } finally {
+                                   if (jjtc001) {
+                                     jjtree.closeNodeScope(jjtn001,  jjtree . nodeArity ( ) == 0);
+                                     jjtreeCloseNodeScope(jjtn001);
+                                   }
+                                 }
+/*@egen*/                                             Block()
+   }
+   finally {
+      t2 = getToken(0);
+      StringBuffer sourceString = new StringBuffer("");
+
+      // test special case for empty production
+      if (t2.next != t1) { // Something consumed.
+    
+          for(; t1 != t2; t1 = t1.next)
+          {
+             if (t1.specialToken != null) {
+                 sourceString.append(t1.specialToken.image); // last special token
+             }
+             sourceString.append(t1.image);
+             sourceString.append(" ");
+          }
+      }
+      sourceString.append(t2.image);
+      jjtn000.setSourceString(sourceString.toString());
+   }/*@bgen(jjtree)*/
+   } catch (Throwable jjte000) {
+     if (jjtc000) {
+       jjtree.clearNodeScope(jjtn000);
+       jjtc000 = false;
+     } else {
+       jjtree.popNode();
+     }
+     if (jjte000 instanceof RuntimeException) {
+       throw (RuntimeException)jjte000;
+     }
+     if (jjte000 instanceof ParseException) {
+       throw (ParseException)jjte000;
+     }
+     throw (Error)jjte000;
+   } finally {
+     if (jjtc000) {
+       jjtree.closeNodeScope(jjtn000, true);
+       jjtreeCloseNodeScope(jjtn000);
+     }
+   }
+/*@egen*/
 }
 
 void PrimarySuffix()       :
@@ -1032,13 +1121,6 @@ void PropertyNameAndValueList()       :
 {
 	PropertyAssignment() [ "," [ PropertyNameAndValueList() ] ] 
 }
-
-//void MorePropertyNameAndValueList() #void :
-//{
-//}
-//{
-//	"," PropertyAssignment() ( MorePropertyNameAndValueList() )?
-//}
 
 void PropertyAssignment()                       :
 {/*@bgen(jjtree) PropertyNameAndValue */
@@ -3251,10 +3333,6 @@ void ExpressionInES()                     :
 // as it is an entry point to parse the parameter list
 // of Function.
 void FunctionDeclaration()                      :
-//{}
-//{
-//  "function" Identifier()  ( "(" [ FormalParameterList() ] ")" ) #FormalParameterList(jjtree.nodeArity()==0) Block()
-//}
 {/*@bgen(jjtree) FunctionDeclaration */
    ASTFunctionDeclaration jjtn000 = new ASTFunctionDeclaration(JJTFUNCTIONDECLARATION);
    boolean jjtc000 = true;

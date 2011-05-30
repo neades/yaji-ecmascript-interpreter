@@ -36,6 +36,7 @@ import FESI.AST.ASTForVarStatement;
 import FESI.AST.ASTFormalParameterList;
 import FESI.AST.ASTFunctionCallParameters;
 import FESI.AST.ASTFunctionDeclaration;
+import FESI.AST.ASTFunctionExpression;
 import FESI.AST.ASTIdentifier;
 import FESI.AST.ASTIfStatement;
 import FESI.AST.ASTLiteral;
@@ -342,6 +343,11 @@ public class EcmaScriptFunctionVisitor implements EcmaScriptVisitor,
     }
 
     public Object visit(ASTPropertyNameAndValue node, Object data) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public Object visit(ASTFunctionExpression node, Object data) {
         // TODO Auto-generated method stub
         return null;
     }

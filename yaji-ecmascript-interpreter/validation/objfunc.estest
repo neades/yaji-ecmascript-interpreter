@@ -165,6 +165,13 @@ String.prototype.tag = new Function('x',"'<'+x+'>'+this+'</'+x+'>'");
 s1 = new String("hello");
 s1.tag('B')=='<B>hello</B>';
 
+@test prototype.1.1
+String.prototype.tag1 = function (x) {
+  return '<'+x+'>'+this+'</'+x+'>';
+}
+s1 = new String("hello");
+s1.tag1('B')=='<B>hello</B>';
+
 @test prototype.2
 ("title").tag("H1")=='<H1>title</H1>';
 

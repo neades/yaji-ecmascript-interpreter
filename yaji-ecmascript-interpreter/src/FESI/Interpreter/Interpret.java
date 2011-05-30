@@ -685,10 +685,11 @@ public class Interpret implements InterpreterCommands {
                         continue OUTTHREE;
 
                     } else if (c == 'T') {
-                        String fileName = args[++i];
+                        String[] fileNames = args[++i].split(System.getProperty("path.separator"));
+                        for (String fileName : fileNames) {
+                            doTest(fileName);
+                        }
                         someFileLoaded = true; // So it exit without reading
-                                               // stdin not not -i
-                        doTest(fileName);
                         anyMainTest = true;
                         continue OUTTHREE;
 

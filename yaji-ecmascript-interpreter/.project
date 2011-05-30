@@ -2,14 +2,22 @@
 <projectDescription>
 	<name>yaji-ecmascript-interpreter</name>
 	<comment></comment>
+	<projects>
+	</projects>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
+		<buildCommand>
+			<name>com.instantiations.assist.eclipse.coverage.instrumentationBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>com.instantiations.assist.eclipse.coverage.codeCoverageNature</nature>
 	</natures>
 </projectDescription>

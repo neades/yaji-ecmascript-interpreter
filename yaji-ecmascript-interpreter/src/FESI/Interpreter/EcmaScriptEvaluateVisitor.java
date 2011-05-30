@@ -18,6 +18,7 @@
 package FESI.Interpreter;
 
 import java.util.Enumeration;
+import java.util.List;
 
 import FESI.AST.ASTAllocationExpression;
 import FESI.AST.ASTAndExpressionSequence;
@@ -36,6 +37,7 @@ import FESI.AST.ASTForVarStatement;
 import FESI.AST.ASTFormalParameterList;
 import FESI.AST.ASTFunctionCallParameters;
 import FESI.AST.ASTFunctionDeclaration;
+import FESI.AST.ASTFunctionExpression;
 import FESI.AST.ASTIdentifier;
 import FESI.AST.ASTIfStatement;
 import FESI.AST.ASTLiteral;
@@ -59,6 +61,7 @@ import FESI.AST.ASTWithStatement;
 import FESI.AST.EcmaScriptVisitor;
 import FESI.AST.Node;
 import FESI.AST.SimpleNode;
+import FESI.Data.ConstructedFunctionObject;
 import FESI.Data.ESArguments;
 import FESI.Data.ESBoolean;
 import FESI.Data.ESLoader;
@@ -132,6 +135,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
 
     private boolean useRepresentationOptimisation = false;
     private IAppendable representationOutputBuffer = null;
+    private EvaluationSource evaluationSource;
 
     /**
      * Create a new visitor
@@ -191,6 +195,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
     public ESValue evaluateProgram(ASTProgram node, EvaluationSource es)
             throws EcmaScriptException {
 
+        evaluationSource = es;
         if (completionCode != -1) {
             throw new ProgrammingError("Multiple use of evalution visitor");
         }
@@ -227,6 +232,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
      */
     public ESValue evaluateFunction(ASTStatementList node, EvaluationSource es)
             throws EcmaScriptException {
+        this.evaluationSource = es;
         if (completionCode != -1) {
             throw new ProgrammingError("Multiple use of evaluation visitor");
         }
@@ -261,6 +267,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
      */
     public ESValue evaluateWith(ASTStatement node, EvaluationSource es)
             throws EcmaScriptException {
+        evaluationSource = es;
         if (completionCode != -1) {
             throw new ProgrammingError("Multiple use of evalution visitor");
         }
@@ -1587,5 +1594,33 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
             throw new PackagedException(e, node);
         }
         return object;
+    }
+
+    public Object visit(ASTFunctionExpression node, Object data) {
+        int nChildren = node.jjtGetNumChildren();
+        if (nChildren != 2 && nChildren != 3) {
+            throw new ProgrammingError("Bad AST in function expression");
+        }
+
+        int child = 0;
+        String procName = "<anonymous>";
+        if (nChildren == 3) {
+            ASTIdentifier idNode = (ASTIdentifier) (node.jjtGetChild(child++));
+            procName = idNode.getName();
+        }
+        FunctionEvaluationSource fes = new FunctionEvaluationSource(
+                evaluationSource, procName);
+
+        ASTFormalParameterList fpl = (ASTFormalParameterList) (node
+                .jjtGetChild(child));
+        ASTStatementList sl = (ASTStatementList) (node.jjtGetChild(child+1));
+        EcmaScriptVariableVisitor varDeclarationVisitor = evaluator.getVarDeclarationVisitor();
+        List<String> variableNames = varDeclarationVisitor.processVariableDeclarations(sl, fes);
+
+        ConstructedFunctionObject func = ConstructedFunctionObject
+        .makeNewConstructedFunction(evaluator, procName,
+                fes, "", fpl.getArguments(),
+                variableNames, sl);
+        return func;
     }
 }
