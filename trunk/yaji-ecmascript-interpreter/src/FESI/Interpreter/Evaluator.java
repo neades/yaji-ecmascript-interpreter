@@ -958,6 +958,13 @@ public class Evaluator implements Serializable {
     public ESValue evaluateFunction(ASTStatementList node, EvaluationSource es,
             ESObject variableObject, List<String> localVariableNames,
             ESObject thisObject) throws EcmaScriptException {
+        return evaluateFunctionInScope(node,es, variableObject,
+                localVariableNames, thisObject, null);
+    }
+    public ESValue evaluateFunctionInScope(ASTStatementList node,
+                EvaluationSource es, ESObject variableObject,
+                List<String> localVariableNames, ESObject thisObject,
+                ScopeChain scopeChain) throws EcmaScriptException {
         ESValue theValue = ESUndefined.theUndefined;
 
         ESObject savedVariableObject = currentVariableObject;
@@ -966,7 +973,7 @@ public class Evaluator implements Serializable {
 
         currentVariableObject = variableObject;
         currentThisObject = thisObject;
-        theScopeChain = new ScopeChain(variableObject, globalScope);
+        theScopeChain = new ScopeChain(variableObject, (scopeChain != null) ? scopeChain : globalScope);
         EvaluationSource savedEvaluationSource = currentEvaluationSource;
         currentEvaluationSource = es;
         try {
@@ -1432,4 +1439,9 @@ public class Evaluator implements Serializable {
     public boolean isStrictMode() {
         return strictMode;
     }
+
+    public ScopeChain getScopeChain() {
+        return theScopeChain;
+    }
+
 }
