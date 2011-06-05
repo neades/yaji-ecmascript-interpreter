@@ -1620,7 +1620,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
         ConstructedFunctionObject func = ConstructedFunctionObject
         .makeNewConstructedFunction(evaluator, procName,
                 fes, "", fpl.getArguments(),
-                variableNames, sl);
+                variableNames, sl, evaluator.getScopeChain());
         return func;
     }
 }

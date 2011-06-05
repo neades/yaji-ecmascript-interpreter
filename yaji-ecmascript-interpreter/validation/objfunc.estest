@@ -81,6 +81,12 @@ o1 = {};
 o2 = {};
 o1!=o2 && o1.constructor == Object && typeof(o2)=="object";
 
+@test object.12
+o1 = { f1 : 1 + 1,
+       f2 : "mmm",
+       "sp ace" : 3 };
+o1.f1 == 2 && "mmm" == o1.f2 && o1["sp ace"] == 3;
+
 // 15.2.5.
 @test function.1
 f1 = Function("x","x+1");
@@ -100,6 +106,12 @@ f4(3,4)==8;
 
 @test function.5
 f5 = new Function("x ","  y ", "x+y+1");
+f5(3,4)==8;
+
+@test function.5.1
+f5 = function f51(x,y) {
+  x+y+1
+};
 f5(3,4)==8;
 
 @test function.6
@@ -139,6 +151,12 @@ f13.toString().indexOf("anonymous")>6;
 // Just test proper parsing of empty functions
 function e(){}
 true;
+
+@test function.15
+f15 = function f_15(x) {
+  return function f_15_1() { return x + x; }
+};
+f15(6)() == 12;
 
 @test arguments.1
 String(f7.arguments)=="null";

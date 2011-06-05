@@ -166,7 +166,7 @@ public class EcmaScriptFunctionVisitor implements EcmaScriptVisitor,
             ConstructedFunctionObject func = ConstructedFunctionObject
                     .makeNewConstructedFunction(evaluator, idNode.getName(),
                             fes, node.getSourceString(), fpl.getArguments(),
-                            variableNames, sl);
+                            variableNames, sl, null);
             evaluator.putValue(newVar, func);
         } catch (EcmaScriptException e) {
             e.printStackTrace();

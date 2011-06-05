@@ -50,7 +50,7 @@
 		<pathelement location="${classes}" />
 		<pathelement location="${test-classes}" />
 		<pathelement path="${classpath}" />
-		<pathelement location="external/junit-4.9b2/junit-4.9b2.jar"/>
+		<pathelement location="external/junit-4.9b2/junit-4.9b2.jar" />
 	</path>
 
 
@@ -182,15 +182,15 @@
 <target name="test" depends="junit-tests,basic-validation" />
 
 <target name="junit-tests" depends="compile-tests">
-	  <junit fork="yes" printsummary="no" haltonfailure="no">
-	    <batchtest fork="yes" todir="${reports}" >
-	      <fileset dir="${test-classes}">
-	        <include name="**/*Test.class" />
-	      </fileset>
-	    </batchtest>
-	    <formatter type="xml" />
-	    <classpath refid="project.test.class.path" />
-	  </junit>
+<junit fork="yes" printsummary="no" haltonfailure="no">
+	<batchtest fork="yes" todir="${reports}">
+		<fileset dir="${test-classes}">
+			<include name="**/*Test.class" />
+		</fileset>
+	</batchtest>
+	<formatter type="xml" />
+	<classpath refid="project.test.class.path" />
+</junit>
 </target>
 
 <target name="basic-validation" description="run the test suite" depends="basic,global,expr,objfunc,names,array,boolnmb,string,date,math,fileio,ja,regexp,BSFTest" />

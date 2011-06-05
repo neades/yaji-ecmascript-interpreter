@@ -131,7 +131,7 @@ public class FunctionObject extends BuiltinFunctionObject implements
 
         theFunction = ConstructedFunctionObject.makeNewConstructedFunction(
                 getEvaluator(), "anonymous", fes, fullFunctionText, fpl
-                        .getArguments(), variableNames, sl);
+                        .getArguments(), variableNames, sl, null);
 
         return theFunction;
     }

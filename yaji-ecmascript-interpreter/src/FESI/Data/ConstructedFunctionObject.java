@@ -41,18 +41,20 @@ public class ConstructedFunctionObject extends FunctionPrototype {
     private String functionSource = null;
 
     private ESValue currentArguments = ESNull.theNull;
+    private final ScopeChain scopeChain;
 
     private ConstructedFunctionObject(FunctionPrototype functionPrototype,
             Evaluator evaluator, String functionName,
             EvaluationSource evaluationSource, String functionSource,
             String[] arguments, List<String> localVariableNames,
-            ASTStatementList aFunctionAST) {
+            ASTStatementList aFunctionAST, ScopeChain scopeChain) {
         super(functionPrototype, evaluator, functionName, arguments.length);
         this.evaluationSource = evaluationSource;
         this.functionSource = functionSource;
         theFunctionAST = aFunctionAST;
         theArguments = arguments;
         this.localVariableNames = localVariableNames;
+        this.scopeChain = scopeChain;
 
         // try {
         // targetObject.putProperty(functionName, this);
@@ -121,8 +123,8 @@ public class ConstructedFunctionObject extends FunctionPrototype {
         ESValue oldArguments = currentArguments;
         currentArguments = args;
         try {
-            value = getEvaluator().evaluateFunction(theFunctionAST,
-                    evaluationSource, args, localVariableNames, thisObject);
+            value = getEvaluator().evaluateFunctionInScope(theFunctionAST,
+                    evaluationSource, args, localVariableNames, thisObject, scopeChain);
         } finally {
             currentArguments = oldArguments;
         }
@@ -182,14 +184,16 @@ public class ConstructedFunctionObject extends FunctionPrototype {
      *            the list of local variable declared by var
      * @param aFunctionAST
      *            the parsed function
-     * 
+     * @param scopeChain 
+     *            the current Scope Chain for Function Expressions - null for Function Declarations
      * @return A new function object
      */
     public static ConstructedFunctionObject makeNewConstructedFunction(
             Evaluator evaluator, String functionName,
             EvaluationSource evaluationSource, String sourceString,
             String[] arguments, List<String> localVariableNames,
-            ASTStatementList aFunctionAST) {
+            ASTStatementList aFunctionAST, ScopeChain scopeChain) {
+
         ConstructedFunctionObject theNewFunction = null;
         try {
             FunctionPrototype fp = (FunctionPrototype) evaluator
@@ -197,7 +201,7 @@ public class ConstructedFunctionObject extends FunctionPrototype {
 
             theNewFunction = new ConstructedFunctionObject(fp, evaluator,
                     functionName, evaluationSource, sourceString, arguments,
-                    localVariableNames, aFunctionAST);
+                    localVariableNames, aFunctionAST, scopeChain);
             ObjectPrototype thePrototype = ObjectObject.createObject(evaluator);
             theNewFunction.putHiddenProperty("prototype", thePrototype);
             thePrototype.putHiddenProperty("constructor", theNewFunction);
