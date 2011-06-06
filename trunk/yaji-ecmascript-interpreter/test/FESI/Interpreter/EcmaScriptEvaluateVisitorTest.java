@@ -10,15 +10,18 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import FESI.AST.ASTBinaryExpressionSequence;
 import FESI.AST.ASTFunctionExpression;
 import FESI.AST.ASTObjectLiteral;
 import FESI.AST.ASTStatement;
 import FESI.AST.ASTVariableDeclaration;
+import FESI.Data.ESBoolean;
 import FESI.Data.ESNumber;
 import FESI.Data.ESObject;
 import FESI.Data.ESString;
 import FESI.Data.ESValue;
 import FESI.Parser.EcmaScript;
+import FESI.Parser.ParseException;
 
 
 public class EcmaScriptEvaluateVisitorTest {
@@ -73,4 +76,69 @@ public class EcmaScriptEvaluateVisitorTest {
         assertEquals(ESNumber.valueOf(123), result);
     }
 
+    @Test
+    public void shouldEvaluateStrictEquality_Equals() throws Exception {
+        ESValue result = evaluateBinaryExpression("1 === 1");
+        
+        assertEquals(ESBoolean.makeBoolean(true), result);
+    }
+
+    @Test
+    public void shouldEvaluateStrictEquality_UnequalType() throws Exception {
+        ESValue result = evaluateBinaryExpression("'1' === 1");
+        
+        assertEquals(ESBoolean.makeBoolean(false), result);
+    }
+
+    @Test
+    public void shouldEvaluateStrictEquality_UndefinedEquals() throws Exception {
+        ESValue result = evaluateBinaryExpression("undefined === undefined");
+        
+        assertEquals(ESBoolean.makeBoolean(true), result);
+    }
+
+    @Test
+    public void shouldEvaluateStrictEquality_NullEquals() throws Exception {
+        ESValue result = evaluateBinaryExpression("null === null");
+        
+        assertEquals(ESBoolean.makeBoolean(true), result);
+    }
+
+    @Test
+    public void shouldEvaluateStrictEquality_NanNotEquals() throws Exception {
+        ESValue result = evaluateBinaryExpression("NaN === NaN");
+        
+        assertEquals(ESBoolean.makeBoolean(false), result);
+    }
+
+    @Test
+    public void shouldEvaluateStrictEquality_NanNotEquals1() throws Exception {
+        ESValue result = evaluateBinaryExpression("1 === NaN");
+        
+        assertEquals(ESBoolean.makeBoolean(false), result);
+    }
+
+    @Test
+    public void shouldEvaluateStrictEquality_1NotEqualsNaN() throws Exception {
+        ESValue result = evaluateBinaryExpression("NaN === 1");
+        
+        assertEquals(ESBoolean.makeBoolean(false), result);
+    }
+
+    private ESValue evaluateBinaryExpression(String sourceText)
+            throws ParseException {
+        EcmaScript es = new EcmaScript(new StringReader(sourceText));
+        
+        ASTStatement statement = (ASTStatement) es.Program().jjtGetChild(0);
+        ASTBinaryExpressionSequence expression = (ASTBinaryExpressionSequence) statement.jjtGetChild(0);
+
+        EcmaScriptEvaluateVisitor visitor = new EcmaScriptEvaluateVisitor(new Evaluator() {
+            private static final long serialVersionUID = -7746833632204914424L;
+            {
+                theScopeChain = globalScope;
+            }
+        });
+        ESValue result = (ESValue) visitor.visit(expression,EcmaScriptEvaluateVisitor.FOR_VALUE);
+        return result;
+    }
 }

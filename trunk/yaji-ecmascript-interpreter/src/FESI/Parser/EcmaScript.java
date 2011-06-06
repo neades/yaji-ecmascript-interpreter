@@ -1855,6 +1855,9 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
       case NE:
         jj_consume_token(NE);
         break;
+      case STRICT_EQ:
+        jj_consume_token(STRICT_EQ);
+        break;
       default:
         jj_la1[41] = jj_gen;
         jj_consume_token(-1);
@@ -1883,6 +1886,7 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
       label_15:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case STRICT_EQ:
         case EQ:
         case NE:
           ;
@@ -1927,6 +1931,7 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
       label_16:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case STRICT_EQ:
         case EQ:
         case NE:
           ;
@@ -4188,14 +4193,14 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     finally { jj_save(5, xla); }
   }
 
-  private boolean jj_3R_141() {
-    if (jj_scan_token(FALSE)) return true;
-    return false;
-  }
-
   private boolean jj_3R_62() {
     if (jj_3R_66()) return true;
     if (jj_3R_61()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_141() {
+    if (jj_scan_token(FALSE)) return true;
     return false;
   }
 
@@ -4316,9 +4321,12 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
   private boolean jj_3R_66() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(73)) {
+    if (jj_scan_token(74)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(76)) return true;
+    if (jj_scan_token(77)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(73)) return true;
+    }
     }
     return false;
   }
@@ -4373,9 +4381,9 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     jj_scanpos = xsp;
     if (jj_scan_token(67)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(74)) {
+    if (jj_scan_token(75)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(75)) return true;
+    if (jj_scan_token(76)) return true;
     }
     }
     }
@@ -4440,11 +4448,11 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
   private boolean jj_3R_72() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(89)) {
-    jj_scanpos = xsp;
     if (jj_scan_token(90)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(91)) return true;
+    if (jj_scan_token(91)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(92)) return true;
     }
     }
     return false;
@@ -4565,9 +4573,9 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
   private boolean jj_3R_75() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(81)) {
+    if (jj_scan_token(82)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(82)) return true;
+    if (jj_scan_token(83)) return true;
     }
     return false;
   }
@@ -4670,11 +4678,11 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
   private boolean jj_3R_78() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(83)) {
-    jj_scanpos = xsp;
     if (jj_scan_token(84)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(88)) return true;
+    if (jj_scan_token(85)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(89)) return true;
     }
     }
     return false;
@@ -4785,13 +4793,13 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     jj_scanpos = xsp;
     if (jj_scan_token(22)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(79)) {
-    jj_scanpos = xsp;
     if (jj_scan_token(80)) {
     jj_scanpos = xsp;
     if (jj_scan_token(81)) {
     jj_scanpos = xsp;
     if (jj_scan_token(82)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(83)) {
     jj_scanpos = xsp;
     if (jj_scan_token(70)) {
     jj_scanpos = xsp;
@@ -4848,9 +4856,9 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
   private boolean jj_3R_86() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(79)) {
+    if (jj_scan_token(80)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(80)) return true;
+    if (jj_scan_token(81)) return true;
     }
     return false;
   }
@@ -5289,27 +5297,27 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     xsp = jj_scanpos;
     if (jj_scan_token(66)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(94)) {
-    jj_scanpos = xsp;
     if (jj_scan_token(95)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(99)) {
+    if (jj_scan_token(96)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(92)) {
+    if (jj_scan_token(100)) {
     jj_scanpos = xsp;
     if (jj_scan_token(93)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(100)) {
+    if (jj_scan_token(94)) {
     jj_scanpos = xsp;
     if (jj_scan_token(101)) {
     jj_scanpos = xsp;
     if (jj_scan_token(102)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(96)) {
+    if (jj_scan_token(103)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(98)) {
+    if (jj_scan_token(97)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(97)) return true;
+    if (jj_scan_token(99)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(98)) return true;
     }
     }
     }
@@ -5719,10 +5727,10 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
       jj_la1_1 = new int[] {0x3c000,0x1800,0x2bf800,0xa6bf880,0x80,0x22000000,0x22000000,0x22000000,0x26bf880,0x400000,0x400000,0x22000000,0xa6bf880,0x0,0x0,0x2000000,0x0,0x2000000,0x400000,0x4bc000,0x4bc000,0x0,0x4bc000,0x0,0x0,0x0,0x0,0xa6bf880,0x26bf880,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x8a6bf880,0x8a6bf880,0x8000000,0x0,0x0,0x0,0x0,0xa6bf880,0xa6bf880,0xa6bf880,0xa6bf880,0xa6bf880,0x0,0xa6bf880,0x400000,0x0,0x8a6bf880,0x8a6bf880,0x8a6bf880,};
    }
    private static void jj_la1_init_2() {
-      jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x2,0x2,0x2,0x0,0x0,0x0,0x2,0x78060,0x1,0x2,0x0,0x2,0x0,0x0,0x0,0x0,0x1,0x0,0x18000,0x18000,0x18000,0x78060,0x78060,0x78060,0x1180000,0x1180000,0x1180000,0x60000,0x60000,0x60000,0xe000000,0xe000000,0xe000000,0xc18,0xc18,0xc18,0x1200,0x1200,0x1200,0x200000,0x200000,0x800000,0x800000,0x400000,0x400000,0x4000,0x4000,0x2000,0x2000,0x80,0x80,0xf0000004,0xf0000004,0xf0000004,0x1,0x1,0x78060,0x78060,0x0,0x1,0x4,0x0,0x0,0x78060,0x78060,0x78060,0x78060,0x78060,0x4,0x78060,0x0,0x1,0x78060,0x78060,0x78060,};
+      jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x2,0x2,0x2,0x0,0x0,0x0,0x2,0xf0060,0x1,0x2,0x0,0x2,0x0,0x0,0x0,0x0,0x1,0x0,0x30000,0x30000,0x30000,0xf0060,0xf0060,0xf0060,0x2300000,0x2300000,0x2300000,0xc0000,0xc0000,0xc0000,0x1c000000,0x1c000000,0x1c000000,0x1818,0x1818,0x1818,0x2600,0x2600,0x2600,0x400000,0x400000,0x1000000,0x1000000,0x800000,0x800000,0x8000,0x8000,0x4000,0x4000,0x80,0x80,0xe0000004,0xe0000004,0xe0000004,0x1,0x1,0xf0060,0xf0060,0x0,0x1,0x4,0x0,0x0,0xf0060,0xf0060,0xf0060,0xf0060,0xf0060,0x4,0xf0060,0x0,0x1,0xf0060,0xf0060,0xf0060,};
    }
    private static void jj_la1_init_3() {
-      jj_la1_3 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x7f,0x7f,0x7f,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_3 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xff,0xff,0xff,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[6];
   private boolean jj_rescan = false;
@@ -5911,7 +5919,7 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[103];
+    boolean[] la1tokens = new boolean[104];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -5934,7 +5942,7 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
         }
       }
     }
-    for (int i = 0; i < 103; i++) {
+    for (int i = 0; i < 104; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

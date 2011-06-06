@@ -308,6 +308,7 @@ TOKEN :
 | < TILDE: "~" >
 | < HOOK: "?" >
 | < COLON: ":" >
+| < STRICT_EQ: "===" >
 | < EQ: "==" >
 | < LE: "<=" >
 | < GE: ">=" >
@@ -1814,7 +1815,7 @@ void EqualOp()           :
 {/*@bgen(jjtree) Operator */
   try {
 /*@egen*/
-  ( "==" | "!=" )/*@bgen(jjtree)*/
+  ( "==" | "!=" | <STRICT_EQ> )/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;

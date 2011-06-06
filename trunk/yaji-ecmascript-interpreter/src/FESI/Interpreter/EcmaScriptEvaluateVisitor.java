@@ -311,6 +311,15 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
         return c;
     }
 
+    // ES5 11.9.6
+    private boolean strictEqual(ESValue v1, ESValue v2) throws EcmaScriptException {
+        if (v1.getTypeOf() == v2.getTypeOf()) {
+            return v1.equalsSameType(v2);
+        }
+        return false;
+    }
+
+
     // EcmaScript standard 11.9.3
     private boolean equal(ESValue v1, ESValue v2) throws EcmaScriptException {
 
@@ -1305,6 +1314,10 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
                     int iv1 = v1.toInt32();
                     int iv2 = v2.toInt32();
                     result = ESNumber.valueOf(iv1 ^ iv2);
+                }
+                    break;
+                case STRICT_EQ: {
+                    result = ESBoolean.makeBoolean(strictEqual(v1, v2));
                 }
                     break;
                 default:
