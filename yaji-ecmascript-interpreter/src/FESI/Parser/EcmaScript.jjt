@@ -302,6 +302,7 @@ TOKEN :
 | < TILDE: "~" >
 | < HOOK: "?" >
 | < COLON: ":" >
+| < STRICT_EQ: "===" >
 | < EQ: "==" >
 | < LE: "<=" >
 | < GE: ">=" >
@@ -716,7 +717,7 @@ void EqualOp() #Operator :
   Token t;
 }
 {
-  ( "==" | "!=" )
+  ( <EQ> | <NE> | <STRICT_EQ> )
   {
     jjtThis.setOperator(getToken(0).kind);
   }

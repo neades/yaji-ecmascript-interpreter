@@ -141,65 +141,67 @@ public interface EcmaScriptConstants {
   /** RegularExpression Id. */
   int COLON = 72;
   /** RegularExpression Id. */
-  int EQ = 73;
+  int STRICT_EQ = 73;
   /** RegularExpression Id. */
-  int LE = 74;
+  int EQ = 74;
   /** RegularExpression Id. */
-  int GE = 75;
+  int LE = 75;
   /** RegularExpression Id. */
-  int NE = 76;
+  int GE = 76;
   /** RegularExpression Id. */
-  int SC_OR = 77;
+  int NE = 77;
   /** RegularExpression Id. */
-  int SC_AND = 78;
+  int SC_OR = 78;
   /** RegularExpression Id. */
-  int INCR = 79;
+  int SC_AND = 79;
   /** RegularExpression Id. */
-  int DECR = 80;
+  int INCR = 80;
   /** RegularExpression Id. */
-  int PLUS = 81;
+  int DECR = 81;
   /** RegularExpression Id. */
-  int MINUS = 82;
+  int PLUS = 82;
   /** RegularExpression Id. */
-  int STAR = 83;
+  int MINUS = 83;
   /** RegularExpression Id. */
-  int SLASH = 84;
+  int STAR = 84;
   /** RegularExpression Id. */
-  int BIT_AND = 85;
+  int SLASH = 85;
   /** RegularExpression Id. */
-  int BIT_OR = 86;
+  int BIT_AND = 86;
   /** RegularExpression Id. */
-  int XOR = 87;
+  int BIT_OR = 87;
   /** RegularExpression Id. */
-  int REM = 88;
+  int XOR = 88;
   /** RegularExpression Id. */
-  int LSHIFT = 89;
+  int REM = 89;
   /** RegularExpression Id. */
-  int RSIGNEDSHIFT = 90;
+  int LSHIFT = 90;
   /** RegularExpression Id. */
-  int RUNSIGNEDSHIFT = 91;
+  int RSIGNEDSHIFT = 91;
   /** RegularExpression Id. */
-  int PLUSASSIGN = 92;
+  int RUNSIGNEDSHIFT = 92;
   /** RegularExpression Id. */
-  int MINUSASSIGN = 93;
+  int PLUSASSIGN = 93;
   /** RegularExpression Id. */
-  int STARASSIGN = 94;
+  int MINUSASSIGN = 94;
   /** RegularExpression Id. */
-  int SLASHASSIGN = 95;
+  int STARASSIGN = 95;
   /** RegularExpression Id. */
-  int ANDASSIGN = 96;
+  int SLASHASSIGN = 96;
   /** RegularExpression Id. */
-  int ORASSIGN = 97;
+  int ANDASSIGN = 97;
   /** RegularExpression Id. */
-  int XORASSIGN = 98;
+  int ORASSIGN = 98;
   /** RegularExpression Id. */
-  int REMASSIGN = 99;
+  int XORASSIGN = 99;
   /** RegularExpression Id. */
-  int LSHIFTASSIGN = 100;
+  int REMASSIGN = 100;
   /** RegularExpression Id. */
-  int RSIGNEDSHIFTASSIGN = 101;
+  int LSHIFTASSIGN = 101;
   /** RegularExpression Id. */
-  int RUNSIGNEDSHIFTASSIGN = 102;
+  int RSIGNEDSHIFTASSIGN = 102;
+  /** RegularExpression Id. */
+  int RUNSIGNEDSHIFTASSIGN = 103;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -283,6 +285,7 @@ public interface EcmaScriptConstants {
     "\"~\"",
     "\"?\"",
     "\":\"",
+    "\"===\"",
     "\"==\"",
     "\"<=\"",
     "\">=\"",

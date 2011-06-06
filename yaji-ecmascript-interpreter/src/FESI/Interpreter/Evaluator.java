@@ -113,7 +113,7 @@ public class Evaluator implements Serializable {
     private IAppendable representationOutputBuffer = null;
 
     // Current environment
-    private ScopeChain theScopeChain = null;
+    protected ScopeChain theScopeChain = null;
     private ESObject currentVariableObject = null;
     private ESObject currentThisObject = null;
     private EvaluationSource currentEvaluationSource = null;
@@ -936,7 +936,7 @@ public class Evaluator implements Serializable {
         return new EcmaScriptEvaluateVisitor(this);
     }
 
-    private ScopeChain globalScope;
+    protected ScopeChain globalScope;
 
     private boolean strictMode;
 

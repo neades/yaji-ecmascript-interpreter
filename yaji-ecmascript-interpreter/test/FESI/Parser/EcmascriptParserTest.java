@@ -80,6 +80,16 @@ public class EcmascriptParserTest {
                         + "    <namedFunction>" + eol
                         + "    FormalParameterList" + eol
                         + "    StatementList" + eol 
+                },
+                // Strict equals
+                { "var result = '1' === 1;", "Program" + eol 
+                        + " Statement" + eol
+                        + "  VariableDeclaration" + eol
+                        + "   <result>" + eol
+                        + "   BinaryExpressionSequence" + eol
+                        + "    [1]" + eol
+                        + "    <\"===\">" + eol
+                        + "    [1]" + eol
                 }
             });
     }

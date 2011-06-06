@@ -545,6 +545,7 @@ public class GlobalObject extends ObjectPrototype {
             go.putHiddenProperty("Date", dateObject);
 
             go.putHiddenProperty("NaN", ESNumber.valueOf(Double.NaN));
+            go.putHiddenProperty("undefined", ESUndefined.theUndefined);
             go.putHiddenProperty("Infinity", ESNumber
                     .valueOf(Double.POSITIVE_INFINITY));
             go.putHiddenProperty("Array", ArrayObject.makeArrayObject(

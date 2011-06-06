@@ -53,7 +53,11 @@ false!=true;
 @test add
 1+2 == 3;
 
+@test strictEq.1.1
+1 === 1;
 
+@test coerce.eq
+'1' == 1;
 @test string
 "test"=="test"
 
