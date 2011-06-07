@@ -1,0 +1,11 @@
+#summary Developing YAJI
+
+= Introduction =
+
+YAJI is being developed using the following tools:
+
+  * [http://www.eclipse.org/downloads/ Eclipse]
+  * [http://code.google.com/javadevtools/download-codepro.html CodePro AnalytiX]
+  * [http://javacc.java.net/ JavaCC]
+  * [http://findbugs.sourceforge.net/ FindBugs]
+
