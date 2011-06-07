@@ -12,4 +12,4 @@ We have created this fork as we are heavily dependent of FESI, it would be diffi
 
 As development of FESI appears to have ceased (the last release was 29-Sep-2003), the best way for us to bring our core engine was to do it ourselves, and as the code is LGPL, the best way of doing that was to create this Open Source project.
 
-To get us started there is a list of CurrentTasks
+To get us started there is a list of CurrentTasks and some notes on DevelopingYaji
