@@ -22,6 +22,7 @@ import java.util.Vector;
 
 import FESI.AST.ASTAllocationExpression;
 import FESI.AST.ASTAndExpressionSequence;
+import FESI.AST.ASTArrayLiteral;
 import FESI.AST.ASTAssignmentExpression;
 import FESI.AST.ASTBinaryExpressionSequence;
 import FESI.AST.ASTBreakStatement;
@@ -342,4 +343,8 @@ public class EcmaScriptVariableVisitor implements EcmaScriptVisitor,
         return data;
     }
 
+    public Object visit(ASTArrayLiteral node, Object data) {
+        // no internal variable declarations possible
+        return data;
+    }
 }

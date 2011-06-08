@@ -181,7 +181,7 @@ public class ArrayObject extends BuiltinFunctionObject {
             }
 
             arrayObject.putHiddenProperty("prototype", arrayPrototype);
-            arrayObject.putHiddenProperty(LENGTHstring, ESNumber.valueOf(1));
+//            arrayObject.putHiddenProperty(LENGTHstring, ESNumber.valueOf(1));
 
             arrayPrototype.putHiddenProperty("constructor", arrayObject);
             arrayPrototype.putHiddenProperty("toString",
