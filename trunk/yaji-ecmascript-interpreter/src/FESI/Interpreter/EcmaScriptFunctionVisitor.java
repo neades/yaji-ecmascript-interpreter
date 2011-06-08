@@ -21,6 +21,7 @@ import java.util.List;
 
 import FESI.AST.ASTAllocationExpression;
 import FESI.AST.ASTAndExpressionSequence;
+import FESI.AST.ASTArrayLiteral;
 import FESI.AST.ASTAssignmentExpression;
 import FESI.AST.ASTBinaryExpressionSequence;
 import FESI.AST.ASTBreakStatement;
@@ -338,18 +339,22 @@ public class EcmaScriptFunctionVisitor implements EcmaScriptVisitor,
     }
 
     public Object visit(ASTObjectLiteral node, Object data) {
-        // TODO Auto-generated method stub
-        return null;
+        badAST();
+        return data;
     }
 
     public Object visit(ASTPropertyNameAndValue node, Object data) {
-        // TODO Auto-generated method stub
-        return null;
+        badAST();
+        return data;
     }
 
     public Object visit(ASTFunctionExpression node, Object data) {
-        // TODO Auto-generated method stub
-        return null;
+        badAST();
+        return data;
     }
 
+    public Object visit(ASTArrayLiteral node, Object data) {
+        badAST();
+        return data;
+    }
 }

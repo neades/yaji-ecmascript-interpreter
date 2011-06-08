@@ -22,6 +22,7 @@ import java.util.List;
 
 import FESI.AST.ASTAllocationExpression;
 import FESI.AST.ASTAndExpressionSequence;
+import FESI.AST.ASTArrayLiteral;
 import FESI.AST.ASTAssignmentExpression;
 import FESI.AST.ASTBinaryExpressionSequence;
 import FESI.AST.ASTBreakStatement;
@@ -76,6 +77,7 @@ import FESI.Data.ObjectObject;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
 import FESI.Parser.EcmaScriptConstants;
+import FESI.Parser.Token;
 import FESI.Util.IAppendable;
 
 /**
@@ -1635,5 +1637,36 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
                 fes, "", fpl.getArguments(),
                 variableNames, sl, evaluator.getScopeChain());
         return func;
+    }
+
+    public Object visit(ASTArrayLiteral node, Object data) {
+        ESObject result = evaluator.getArrayPrototype();
+        try {
+            int length = evaluateElision(node.getStartToken().next, 0);
+            for (int i = 0; i < length; i++) {
+                result.putProperty(i, ESUndefined.theUndefined);
+            }
+
+            for (int i = 0; i < node.jjtGetNumChildren(); i++) {
+                Node child = node.jjtGetChild(i);
+                result.putProperty(length++,
+                        (ESValue) child.jjtAccept(this, FOR_VALUE));
+
+                Token next = ((SimpleNode) child).getEndToken().next;
+                if (next.kind != EcmaScriptConstants.RBRACKET) {
+                    for (int j = 0; j < evaluateElision(next.next, 0); j++) {
+                        result.putProperty(length++, ESUndefined.theUndefined);
+                    }
+                }
+            }
+        } catch (EcmaScriptException e) {
+            throw new PackagedException(e, node);
+        }
+        return result;
+    }
+
+    private int evaluateElision(Token token, int pad) {
+        return token != null && token.kind == EcmaScriptConstants.COMMA ? 
+                evaluateElision(token.next, ++pad) : pad;
     }
 }

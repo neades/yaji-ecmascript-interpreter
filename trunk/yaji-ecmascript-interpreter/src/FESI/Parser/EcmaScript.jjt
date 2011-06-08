@@ -85,8 +85,9 @@ public class EcmaScript {
    void jjtreeOpenNodeScope(Node n)
     {
        Token t = getToken(1);
-       if (t!= null) {
+       if (t != null) {
            ((SimpleNode) n).setLinePosition(t.beginLine, t.beginColumn);
+           ((SimpleNode) n).setStartToken(t);
        }
     }
 
@@ -95,6 +96,10 @@ public class EcmaScript {
     */
     void jjtreeCloseNodeScope(Node n)
     {
+    	Token t = getToken(0);
+		if (t != null){
+			((SimpleNode) n).setEndToken(t);
+		}
     }
 
 }
@@ -435,6 +440,7 @@ void PrimaryExpression() #void :
     PrimaryExpressionInES() 
 |   ObjectLiteral()
 |   FunctionExpression()
+|   ArrayLiteral()
 }
 
 void PrimaryExpressionInES() #void :
@@ -516,6 +522,19 @@ void AllocationExpression() #AllocationExpression :
 
           | ( ( Identifier() ( NewSuffix() )* ) #CompositeReference(>1) ) ( ( Arguments() )? #FunctionCallParameters ) )
   
+}
+	
+// ES5 -11.1.4 Array Initialiser
+void ArrayLiteral() #ArrayLiteral : 
+{
+}
+{
+ 	"[" 
+  	( 
+  		LOOKAHEAD(2) "]"
+ 		| 
+ 		[ AssignmentExpression() ] ( "," [ AssignmentExpression() ] )* "]"
+ 	)
 }
 
 // ES5 -11.1.5 Object Initializer

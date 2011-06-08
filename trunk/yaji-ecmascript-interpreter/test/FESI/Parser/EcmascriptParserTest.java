@@ -90,6 +90,29 @@ public class EcmascriptParserTest {
                         + "    [1]" + eol
                         + "    <\"===\">" + eol
                         + "    [1]" + eol
+                },
+                // A simple array literal
+                { "var array = [1];", "Program" + eol
+                    + " Statement" + eol
+                    + "  VariableDeclaration" + eol
+                    + "   <array>" + eol
+                    + "   ArrayLiteral" + eol
+                    + "    [1]" + eol
+                },
+                // More complete array literal
+                { "var array = ['a', ,1,Math.round(3.14159),,];", "Program" + eol
+                    + " Statement" + eol
+                    + "  VariableDeclaration" + eol
+                    + "   <array>" + eol
+                    + "   ArrayLiteral" + eol
+                    + "    [a]" + eol
+                    + "    [1]" + eol
+                    + "    CompositeReference" + eol
+                    + "     <Math>" + eol
+                    + "     PropertyIdentifierReference" + eol
+                    + "      <round>" + eol
+                    + "     FunctionCallParameters" + eol
+                    + "      [3.14159]" + eol
                 }
             });
     }

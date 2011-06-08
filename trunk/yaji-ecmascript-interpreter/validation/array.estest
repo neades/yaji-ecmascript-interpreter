@@ -73,3 +73,31 @@ a.join("$")=="1$12.5$aa$";
 a = new Array (2433,54,44,434);
 f = new Function ("a, b", "if (a < b) return -1; if (a == b) return 0; return 1;");
 a.sort(f).join()=="44,54,434,2433";
+
+@test array.15
+a = [];
+a.length==0;
+
+@test array.16
+a = [,];
+a.length==1;
+
+@test array.17
+a = [,,];
+a.length==2;
+
+@test array.18
+a = [1,2]
+a.length==2 && String(a) == "1,2"
+
+@test array.19
+a = [1,2,3,4];
+a.length==4 && a[2]==3
+
+@test array.20
+a = [,,,4,5,,,8,9,];
+a.length==9 && a.reverse().toString()=="9,8,,,5,4,,,";
+
+@test array.21
+a = ['a', ,1,Math.round(3.14159),,,];
+a[3] == 3

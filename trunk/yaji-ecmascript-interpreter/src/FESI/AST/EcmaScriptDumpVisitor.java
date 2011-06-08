@@ -194,4 +194,7 @@ public class EcmaScriptDumpVisitor implements EcmaScriptVisitor {
         return dump(node, data);
     }
 
+    public Object visit(ASTArrayLiteral node, Object data) {
+        return dump(node, data);
+    }
 }

@@ -1357,6 +1357,7 @@ private int jjMoveNfa_1(int startState, int curPos)
       }
       else if (curChar < 128)
       {
+         long l = 1L << (curChar & 077);
          do
          {
             switch(jjstateSet[--i])
@@ -1367,6 +1368,8 @@ private int jjMoveNfa_1(int startState, int curPos)
       }
       else
       {
+         int i2 = (curChar & 0xff) >> 6;
+         long l2 = 1L << (curChar & 077);
          do
          {
             switch(jjstateSet[--i])
@@ -1448,6 +1451,7 @@ private final int[] jjstateSet = new int[172];
 private final StringBuilder jjimage = new StringBuilder();
 private StringBuilder image = jjimage;
 private int jjimageLen;
+private int lengthOfMatch;
 protected char curChar;
 /** Constructor. */
 public EcmaScriptTokenManager(SimpleCharStream stream){
