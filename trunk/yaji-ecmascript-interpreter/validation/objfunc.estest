@@ -200,3 +200,23 @@ function n1() {
 }
 nn = new n1();
 nn.a==1;
+
+@test objectaccessor.1
+var o = {a: 7, get b() {return this.a + 1;}, set c(x) {this.a = x / 2}};
+o.c = 100;
+o.b == 51 && o.a == 50 && o.c == void 0;
+
+@test objectaccessor.2
+var o = {v: 'value1', get value() {return this.v;}, set value(param) {this.v = param;}};
+o.value = 'value2'
+o.value == 'value2' && o.v == 'value2'
+
+@test objectaccessor.3
+var o = {v: 'value1', set value(param) {this.v = param;}};
+o.value = 'value2'
+o.v == 'value2'
+
+@test objectaccessor.4
+var o = {v: 'value1', get value() {return this.v;}};
+o.v = 'value2'
+o.value == 'value2'

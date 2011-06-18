@@ -194,7 +194,7 @@ public abstract class ESObject extends ESValue {
      *                if not found in any scope
      */
     public ESValue getPropertyInScope(String propertyName,
-            ScopeChain previousScope, int hash) throws EcmaScriptException {
+            ScopeChain previousScope, int hash) throws EcmaScriptException {        
         ESValue value = hasNoPropertyMap() ? null : getPropertyMap().get(
                 propertyName, hash);
         if (value == null) {
@@ -227,16 +227,27 @@ public abstract class ESObject extends ESValue {
      */
     public ESValue getProperty(String propertyName, int hash)
             throws EcmaScriptException {
-        ESValue value = hasNoPropertyMap() ? null : getPropertyMap().get(
-                propertyName, hash);
-        if (value == null) {
-            if (prototype == null) {
-                value = ESUndefined.theUndefined;
-            } else {
-                value = prototype.getProperty(propertyName, hash);
-            }
+        ESValue value = hasNoPropertyMap() ? ESUndefined.theUndefined
+                : getOwnProperty(propertyName, hash);
+        
+        if (value == ESUndefined.theUndefined) {
+            return prototype == null ? value : prototype.getProperty(
+                    propertyName, hash);
         }
+
+        if (isAccessorDescriptor(value)) {
+            ESValue getter = value.get;
+            return getter == ESUndefined.theUndefined ? getter : getter
+                    .callFunction(this, EMPTY_ARRAY);
+        }
+
         return value;
+    }
+    
+    public ESValue getOwnProperty(String propertyName, int hash)
+            throws EcmaScriptException {
+        ESValue property = getPropertyMap().get(propertyName, hash);
+        return property == null ? ESUndefined.theUndefined : property;
     }
 
     /**
@@ -441,8 +452,16 @@ public abstract class ESObject extends ESValue {
                         + " cannot be modified");
             }
         } else {
-            getPropertyMap().put(propertyName, hash, false, false,
+            ESValue desc = getOwnProperty(propertyName, hash);
+            if (hasSetAccessorDescriptor(desc)) {
+                ESValue setter = desc.set;
+                if (setter != ESUndefined.theUndefined) {
+                    setter.callFunction(this, new ESValue[] {propertyValue});
+                }
+            } else {
+                getPropertyMap().put(propertyName, hash, false, false,
                     propertyValue);
+            }
         }
     }
 
