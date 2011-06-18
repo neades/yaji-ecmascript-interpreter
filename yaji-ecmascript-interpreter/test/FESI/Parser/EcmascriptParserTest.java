@@ -91,6 +91,18 @@ public class EcmascriptParserTest {
                         + "    <\"===\">" + eol
                         + "    [1]" + eol
                 },
+                // Strict not equals
+                { "var result = null !== void 0", "Program" + eol 
+                	 + " Statement" + eol
+                     + "  VariableDeclaration" + eol
+                     + "   <result>" + eol
+                	 + "   BinaryExpressionSequence" + eol
+                	 + "    [null]" + eol
+                	 + "    <\"!==\">" + eol
+                	 + "    UnaryExpression" + eol
+                	 + "     <\"void\">" + eol
+                	 + "     [0]" + eol
+                },
                 // A simple array literal
                 { "var array = [1];", "Program" + eol
                     + " Statement" + eol
