@@ -100,4 +100,9 @@ n.toString(16).toLowerCase()=="f";
 vn = n.valueOf();
 vn == 15 && typeof(vn)=="number";
 
+@test number.15
+1/0 === Infinity && Number.POSITIVE_INFINITY && 0.2e309
+
+@test number.16
+1/-0 === -Infinity && Number.NEGATIVE_INFINITY && 0.2e309
 

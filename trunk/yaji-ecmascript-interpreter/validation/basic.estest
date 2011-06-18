@@ -56,6 +56,9 @@ false!=true;
 @test strictEq.1.1
 1 === 1;
 
+@test strictNeq
+null !== void 0
+
 @test coerce.eq
 '1' == 1;
 @test string
