@@ -29,6 +29,7 @@ import FESI.AST.ASTBreakStatement;
 import FESI.AST.ASTCompositeReference;
 import FESI.AST.ASTConditionalExpression;
 import FESI.AST.ASTContinueStatement;
+import FESI.AST.ASTElision;
 import FESI.AST.ASTEmptyExpression;
 import FESI.AST.ASTExpressionList;
 import FESI.AST.ASTForInStatement;
@@ -39,6 +40,7 @@ import FESI.AST.ASTFormalParameterList;
 import FESI.AST.ASTFunctionCallParameters;
 import FESI.AST.ASTFunctionDeclaration;
 import FESI.AST.ASTFunctionExpression;
+import FESI.AST.ASTGetAccessor;
 import FESI.AST.ASTIdentifier;
 import FESI.AST.ASTIfStatement;
 import FESI.AST.ASTLiteral;
@@ -51,6 +53,7 @@ import FESI.AST.ASTPropertyIdentifierReference;
 import FESI.AST.ASTPropertyNameAndValue;
 import FESI.AST.ASTPropertyValueReference;
 import FESI.AST.ASTReturnStatement;
+import FESI.AST.ASTSetAccessor;
 import FESI.AST.ASTStatement;
 import FESI.AST.ASTStatementList;
 import FESI.AST.ASTSuperReference;
@@ -344,6 +347,21 @@ public class EcmaScriptVariableVisitor implements EcmaScriptVisitor,
     }
 
     public Object visit(ASTArrayLiteral node, Object data) {
+        // no internal variable declarations possible
+        return data;
+    }
+
+    public Object visit(ASTElision node, Object data) {
+        // no internal variable declarations possible
+        return data;
+    }
+    
+    public Object visit(ASTGetAccessor node, Object data) {
+        // no internal variable declarations possible
+        return data;
+    }
+    
+    public Object visit(ASTSetAccessor node, Object data) {
         // no internal variable declarations possible
         return data;
     }

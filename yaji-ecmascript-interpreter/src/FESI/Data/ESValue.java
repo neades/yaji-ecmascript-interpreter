@@ -47,7 +47,11 @@ public abstract class ESValue implements java.io.Serializable {
     static public final int COMPARE_TRUE = -1;
     static public final int COMPARE_FALSE = 1;
     public static final ESValue[] EMPTY_ARRAY = new ESValue[0];
-
+    
+    // Object literal get and set
+    protected ESValue get = ESUndefined.theUndefined;
+    protected ESValue set = ESUndefined.theUndefined;
+    
     // The following routines access the value as a primitive type. They are
     // the prefered way to access the value of a primitive type or the default
     // value of an object if its type is known.
@@ -420,5 +424,33 @@ public abstract class ESValue implements java.io.Serializable {
 
     public boolean isIntegerValue() {
         return false;
+    }
+    
+    public ESValue getGetAccessorDescriptor() {
+        return get;
+    }
+
+    public void setGetAccessorDescriptor(ESValue get) {
+        this.get = get;
+    }
+
+    public ESValue getSetAccessorDescriptor() {
+        return set;
+    }
+
+    public void setSetAccessorDescriptor(ESValue set) {
+        this.set = set;
+    }
+
+    public static boolean isAccessorDescriptor(ESValue desc) {
+        return hasSetAccessorDescriptor(desc) || hasGetAccessorDescriptor(desc);
+    }
+    
+    public static boolean hasSetAccessorDescriptor(ESValue desc) {
+        return desc != null && desc.set != null && desc.set != ESUndefined.theUndefined;
+    }
+    
+    public static boolean hasGetAccessorDescriptor(ESValue desc) {
+        return desc != null && desc.get != null && desc.get != ESUndefined.theUndefined;
     }
 }

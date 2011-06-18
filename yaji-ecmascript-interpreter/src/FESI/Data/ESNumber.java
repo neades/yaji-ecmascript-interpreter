@@ -30,6 +30,10 @@ import FESI.Interpreter.Evaluator;
 public final class ESNumber extends ESPrimitive {
     private static final long serialVersionUID = 3695852528633071467L;
     public static final ESNumber ZERO;
+    public static final ESNumber NEGATIVE_ZERO;
+    public static final Double DOUBLE_ZERO;
+    public static final Double DOUBLE_NEGATIVE_ZERO;
+    
     // The value
     private final double value;
     private long longValue;
@@ -52,7 +56,12 @@ public final class ESNumber extends ESPrimitive {
         for (int k = 0; k < cache.length; k++) {
             cache[k] = new ESNumber(j++);
         }
-        ZERO = ESNumber.valueOf(0L);
+        
+        DOUBLE_ZERO = Double.valueOf(0.0);
+        DOUBLE_NEGATIVE_ZERO = Double.valueOf(-0.0);
+        
+        ZERO = ESNumber.valueOf(DOUBLE_ZERO.longValue());
+        NEGATIVE_ZERO = new ESNumber(DOUBLE_NEGATIVE_ZERO.doubleValue());
     }
 
     /**
@@ -80,8 +89,11 @@ public final class ESNumber extends ESPrimitive {
     }
 
     public static ESNumber valueOf(double d) {
-        if (d == 0.0) {
+        if (DOUBLE_ZERO.equals(d)) {
             return ESNumber.ZERO;
+        }
+        else if (DOUBLE_NEGATIVE_ZERO.equals(d)) {
+            return ESNumber.NEGATIVE_ZERO;
         } else if (((long) d) == d) {
             return ESNumber.valueOf((long) d);
         }

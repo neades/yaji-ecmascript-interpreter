@@ -5,7 +5,6 @@ package FESI.AST;
 import FESI.Exceptions.ProgrammingError;
 import FESI.Parser.EcmaScript;
 import FESI.Parser.EcmaScriptConstants;
-import FESI.Parser.Token;
 
 public abstract class SimpleNode implements Node, EcmaScriptConstants {
     private static final long serialVersionUID = -6168608763891131314L;
@@ -15,8 +14,6 @@ public abstract class SimpleNode implements Node, EcmaScriptConstants {
     protected EcmaScript parser;
     private int line;
     private int column;
-    private Token startToken;
-    private Token endToken;
 
     public SimpleNode(int i) {
         id = i;
@@ -124,22 +121,6 @@ public abstract class SimpleNode implements Node, EcmaScriptConstants {
     public int getColumnNumber() {
         return column;
     }
-    
-    public Token getStartToken() {
-        return startToken;
-    }
-
-    public void setStartToken(Token startToken) {
-        this.startToken = startToken;
-    }
-
-    public Token getEndToken() {
-        return endToken;
-    }
-
-    public void setEndToken(Token endToken) {
-        this.endToken = endToken;
-    }
 
     public void assertNoChildren() {
         if (jjtGetNumChildren() > 0) {
@@ -170,4 +151,5 @@ public abstract class SimpleNode implements Node, EcmaScriptConstants {
             throw new ProgrammingError("AST Should have 4 children");
         }
     }
+
 }

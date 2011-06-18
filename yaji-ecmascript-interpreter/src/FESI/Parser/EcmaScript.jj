@@ -91,7 +91,7 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants/*@ege
    void jjtreeOpenNodeScope(Node n)
     {
        Token t = getToken(1);
-       if (t!= null) {
+       if (t != null) {
            ((SimpleNode) n).setLinePosition(t.beginLine, t.beginColumn);
        }
     }
@@ -545,6 +545,7 @@ void PrimaryExpression()       :
     PrimaryExpressionInES() 
 |   ObjectLiteral()
 |   FunctionExpression()
+|   ArrayLiteral()
 }
 
 void PrimaryExpressionInES()       :
@@ -1075,6 +1076,102 @@ void AllocationExpression()                       :
     }
 /*@egen*/
   
+}
+	
+// ES5 -11.1.4 Array Initialiser
+void ArrayLiteral()               : 
+{/*@bgen(jjtree) ArrayLiteral */
+  ASTArrayLiteral jjtn000 = new ASTArrayLiteral(JJTARRAYLITERAL);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/
+}
+{/*@bgen(jjtree) ArrayLiteral */
+   try {
+/*@egen*/
+   "["/*@bgen(jjtree) #Elision( jjtree . nodeArity ( ) == 0) */
+     {
+       ASTElision jjtn001 = new ASTElision(JJTELISION);
+       boolean jjtc001 = true;
+       jjtree.openNodeScope(jjtn001);
+       jjtreeOpenNodeScope(jjtn001);
+     }
+     try {
+/*@egen*/
+     [ AssignmentExpression() ]/*@bgen(jjtree)*/
+     } catch (Throwable jjte001) {
+       if (jjtc001) {
+         jjtree.clearNodeScope(jjtn001);
+         jjtc001 = false;
+       } else {
+         jjtree.popNode();
+       }
+       if (jjte001 instanceof RuntimeException) {
+         throw (RuntimeException)jjte001;
+       }
+       if (jjte001 instanceof ParseException) {
+         throw (ParseException)jjte001;
+       }
+       throw (Error)jjte001;
+     } finally {
+       if (jjtc001) {
+         jjtree.closeNodeScope(jjtn001,  jjtree . nodeArity ( ) == 0);
+         jjtreeCloseNodeScope(jjtn001);
+       }
+     }
+/*@egen*/                                       ( ","/*@bgen(jjtree) #Elision( jjtree . nodeArity ( ) == 0) */
+                                                                            {
+                                                                              ASTElision jjtn002 = new ASTElision(JJTELISION);
+                                                                              boolean jjtc002 = true;
+                                                                              jjtree.openNodeScope(jjtn002);
+                                                                              jjtreeOpenNodeScope(jjtn002);
+                                                                            }
+                                                                            try {
+/*@egen*/ [ AssignmentExpression() ]/*@bgen(jjtree)*/
+                                                                            } catch (Throwable jjte002) {
+                                                                              if (jjtc002) {
+                                                                                jjtree.clearNodeScope(jjtn002);
+                                                                                jjtc002 = false;
+                                                                              } else {
+                                                                                jjtree.popNode();
+                                                                              }
+                                                                              if (jjte002 instanceof RuntimeException) {
+                                                                                throw (RuntimeException)jjte002;
+                                                                              }
+                                                                              if (jjte002 instanceof ParseException) {
+                                                                                throw (ParseException)jjte002;
+                                                                              }
+                                                                              throw (Error)jjte002;
+                                                                            } finally {
+                                                                              if (jjtc002) {
+                                                                                jjtree.closeNodeScope(jjtn002,  jjtree . nodeArity ( ) == 0);
+                                                                                jjtreeCloseNodeScope(jjtn002);
+                                                                              }
+                                                                            }
+/*@egen*/                                     )*
+   "]"/*@bgen(jjtree)*/
+   } catch (Throwable jjte000) {
+     if (jjtc000) {
+       jjtree.clearNodeScope(jjtn000);
+       jjtc000 = false;
+     } else {
+       jjtree.popNode();
+     }
+     if (jjte000 instanceof RuntimeException) {
+       throw (RuntimeException)jjte000;
+     }
+     if (jjte000 instanceof ParseException) {
+       throw (ParseException)jjte000;
+     }
+     throw (Error)jjte000;
+   } finally {
+     if (jjtc000) {
+       jjtree.closeNodeScope(jjtn000, true);
+       jjtreeCloseNodeScope(jjtn000);
+     }
+   }
+/*@egen*/
 }
 
 // ES5 -11.1.5 Object Initializer
@@ -1815,7 +1912,7 @@ void EqualOp()           :
 {/*@bgen(jjtree) Operator */
   try {
 /*@egen*/
-  ( "==" | "!=" | <STRICT_EQ> )/*@bgen(jjtree)*/
+  ( <EQ> | <NE> | <STRICT_EQ> )/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;

@@ -29,6 +29,7 @@ import FESI.AST.ASTBreakStatement;
 import FESI.AST.ASTCompositeReference;
 import FESI.AST.ASTConditionalExpression;
 import FESI.AST.ASTContinueStatement;
+import FESI.AST.ASTElision;
 import FESI.AST.ASTEmptyExpression;
 import FESI.AST.ASTExpressionList;
 import FESI.AST.ASTForInStatement;
@@ -39,6 +40,7 @@ import FESI.AST.ASTFormalParameterList;
 import FESI.AST.ASTFunctionCallParameters;
 import FESI.AST.ASTFunctionDeclaration;
 import FESI.AST.ASTFunctionExpression;
+import FESI.AST.ASTGetAccessor;
 import FESI.AST.ASTIdentifier;
 import FESI.AST.ASTIfStatement;
 import FESI.AST.ASTLiteral;
@@ -51,6 +53,7 @@ import FESI.AST.ASTPropertyIdentifierReference;
 import FESI.AST.ASTPropertyNameAndValue;
 import FESI.AST.ASTPropertyValueReference;
 import FESI.AST.ASTReturnStatement;
+import FESI.AST.ASTSetAccessor;
 import FESI.AST.ASTStatement;
 import FESI.AST.ASTStatementList;
 import FESI.AST.ASTSuperReference;
@@ -77,8 +80,11 @@ import FESI.Data.ObjectObject;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
 import FESI.Parser.EcmaScriptConstants;
-import FESI.Parser.Token;
 import FESI.Util.IAppendable;
+
+import static FESI.Data.ESValue.hasGetAccessorDescriptor;
+import static FESI.Data.ESValue.hasSetAccessorDescriptor;
+import static FESI.Data.ESValue.isAccessorDescriptor;
 
 /**
  * Exception used to package any exception encountered during visiting to an
@@ -1322,6 +1328,10 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
                     result = ESBoolean.makeBoolean(strictEqual(v1, v2));
                 }
                     break;
+                case STRICT_NEQ: {
+                    result = ESBoolean.makeBoolean(!strictEqual(v1, v2));
+                }
+                    break;
                 default:
                     throw new ProgrammingError("Unimplemented binary");
                 } // switch
@@ -1592,23 +1602,89 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
     }
 
     public Object visit(ASTPropertyNameAndValue node, Object data) {
-        ESObject object = (ESObject) data;
-        node.assertTwoChildren();
         Node nameNode = node.jjtGetChild(0);
-        String propertyName = nameNode.toString();
-        if (nameNode instanceof ASTIdentifier) {
-            ASTIdentifier identifier = (ASTIdentifier)nameNode;
-            propertyName = identifier.getName();
-        } else {
-            propertyName = nameNode.jjtAccept(this, FOR_VALUE).toString();
+        if (nameNode == null) {
+            throw new ProgrammingError("Bad AST in function expression");
         }
-        ESValue value = (ESValue) node.jjtGetChild(1).jjtAccept(this, FOR_VALUE);
+
+        String property;
+        ESValue value;
+        if (nameNode instanceof ASTGetAccessor) {
+            node.assertThreeChildren();
+            
+            property = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+            FunctionEvaluationSource fes = new FunctionEvaluationSource(
+                    evaluationSource, property);
+            ASTStatementList sl = (ASTStatementList) (node.jjtGetChild(2));
+            List<String> variableNames = evaluator.getVarDeclarationVisitor()
+                    .processVariableDeclarations(sl, fes);
+            ConstructedFunctionObject cfo = ConstructedFunctionObject
+                    .makeNewConstructedFunction(evaluator, property, fes, "",
+                            new String[0], variableNames, sl,
+                            evaluator.getScopeChain());
+            
+            value = ObjectObject.createObject(evaluator);
+            value.setGetAccessorDescriptor(cfo);
+        } else if (nameNode instanceof ASTSetAccessor) {
+            node.assertFourChildren();
+          
+            property = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+            FunctionEvaluationSource fes = new FunctionEvaluationSource(
+                    evaluationSource, property);
+            ASTStatementList sl = (ASTStatementList) (node.jjtGetChild(3));
+            List<String> variableNames = evaluator.getVarDeclarationVisitor()
+                    .processVariableDeclarations(sl, fes);
+            ConstructedFunctionObject cfo = ConstructedFunctionObject
+                    .makeNewConstructedFunction(evaluator, property, fes, "",
+                            new String[] { ((ASTIdentifier) node.jjtGetChild(2))
+                            .getName() }, variableNames, sl, evaluator.getScopeChain());
+
+            value = ObjectObject.createObject(evaluator);
+            value.setSetAccessorDescriptor(cfo);
+        } else {
+            node.assertTwoChildren();
+            property = nameNode.toString();
+            if (nameNode instanceof ASTIdentifier) {
+                ASTIdentifier identifier = (ASTIdentifier) nameNode;
+                property = identifier.getName();
+            } else {
+                property = nameNode.jjtAccept(this, FOR_VALUE).toString();
+            }
+            value = (ESValue) node.jjtGetChild(1).jjtAccept(this, FOR_VALUE);
+        }
+        
         try {
-            object.putProperty(propertyName, value, propertyName.hashCode());
+            ESObject object = (ESObject) data;
+            
+            ESValue previous = object.getOwnProperty(property, property.hashCode());
+            if (previous != ESUndefined.theUndefined) {
+                if ((!isAccessorDescriptor(previous) && isAccessorDescriptor(value))
+                        || (isAccessorDescriptor(previous) && !isAccessorDescriptor(value))) {
+                    throw new EcmaScriptException(
+                            "Object literal may not have data and accessor property with the same name");
+                }
+
+                if (isAccessorDescriptor(previous) && isAccessorDescriptor(value)
+                        && (hasGetAccessorDescriptor(previous) && hasGetAccessorDescriptor(value))
+                        || (hasSetAccessorDescriptor(previous) && hasSetAccessorDescriptor(value))) {
+                    throw new EcmaScriptException(
+                            "Object literal may not have multiple get/set accessors with the same name");
+                }
+                
+                if (hasSetAccessorDescriptor(previous)) {
+                    value.setSetAccessorDescriptor(previous.getSetAccessorDescriptor());
+                }
+                
+                if (hasGetAccessorDescriptor(previous)) {
+                    value.setGetAccessorDescriptor(previous.getGetAccessorDescriptor());
+                }
+            }
+            
+            object.putProperty(property, value, property.hashCode());
+            return object;
         } catch (EcmaScriptException e) {
             throw new PackagedException(e, node);
         }
-        return object;
     }
 
     public Object visit(ASTFunctionExpression node, Object data) {
@@ -1639,24 +1715,22 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
         return func;
     }
 
+    public Object visit(ASTGetAccessor node, Object data) {
+        return ESUndefined.theUndefined;
+    }
+    
+    public Object visit(ASTSetAccessor node, Object data) {
+        return ESUndefined.theUndefined;
+    }
+
     public Object visit(ASTArrayLiteral node, Object data) {
         ESObject result = evaluator.getArrayPrototype();
         try {
-            int length = evaluateElision(node.getStartToken().next, 0);
+            int length = node.jjtGetNumChildren();
             for (int i = 0; i < length; i++) {
-                result.putProperty(i, ESUndefined.theUndefined);
-            }
-
-            for (int i = 0; i < node.jjtGetNumChildren(); i++) {
                 Node child = node.jjtGetChild(i);
-                result.putProperty(length++,
-                        (ESValue) child.jjtAccept(this, FOR_VALUE));
-
-                Token next = ((SimpleNode) child).getEndToken().next;
-                if (next.kind != EcmaScriptConstants.RBRACKET) {
-                    for (int j = 0; j < evaluateElision(next.next, 0); j++) {
-                        result.putProperty(length++, ESUndefined.theUndefined);
-                    }
+                if (!(i == length - 1 &&  child instanceof ASTElision)) {
+                    result.putProperty(i,(ESValue) child.jjtAccept(this, FOR_VALUE));
                 }
             }
         } catch (EcmaScriptException e) {
@@ -1665,8 +1739,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
         return result;
     }
 
-    private int evaluateElision(Token token, int pad) {
-        return token != null && token.kind == EcmaScriptConstants.COMMA ? 
-                evaluateElision(token.next, ++pad) : pad;
+    public Object visit(ASTElision node, Object data) {
+        return ESUndefined.theUndefined;
     }
 }

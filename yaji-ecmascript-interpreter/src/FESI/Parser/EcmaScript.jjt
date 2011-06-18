@@ -87,7 +87,6 @@ public class EcmaScript {
        Token t = getToken(1);
        if (t != null) {
            ((SimpleNode) n).setLinePosition(t.beginLine, t.beginColumn);
-           ((SimpleNode) n).setStartToken(t);
        }
     }
 
@@ -96,10 +95,6 @@ public class EcmaScript {
     */
     void jjtreeCloseNodeScope(Node n)
     {
-    	Token t = getToken(0);
-		if (t != null){
-			((SimpleNode) n).setEndToken(t);
-		}
     }
 
 }
@@ -197,8 +192,8 @@ TOKEN :
 | < TRUE: "true" >
 | < FALSE: "false" >
 | < NULL: "null" >
-
-
+| < GET: "get" >
+| < SET: "set" >
 }
 
 /* LITERALS EcmaScript 7.7 
@@ -308,6 +303,7 @@ TOKEN :
 | < HOOK: "?" >
 | < COLON: ":" >
 | < STRICT_EQ: "===" >
+| < STRICT_NEQ: "!==" >
 | < EQ: "==" >
 | < LE: "<=" >
 | < GE: ">=" >
@@ -529,12 +525,9 @@ void ArrayLiteral() #ArrayLiteral :
 {
 }
 {
- 	"[" 
-  	( 
-  		LOOKAHEAD(2) "]"
- 		| 
- 		[ AssignmentExpression() ] ( "," [ AssignmentExpression() ] )* "]"
- 	)
+   "["
+     [ AssignmentExpression() ] #Elision( jjtree.nodeArity() == 0 )   ( "," [ AssignmentExpression() ] #Elision( jjtree.nodeArity() == 0 ) )*
+   "]"
 }
 
 // ES5 -11.1.5 Object Initializer
@@ -560,6 +553,8 @@ void PropertyAssignment() #PropertyNameAndValue :
 }
 {
 	PropertyName() ":" AssignmentExpression()
+	| LOOKAHEAD("get") "get" #GetAccessor PropertyName() "(" ")" Block()
+	| LOOKAHEAD("set") "set" #SetAccessor PropertyName() "(" Identifier() ")" Block()
 }
 
 void PropertyName() #void :
@@ -736,7 +731,7 @@ void EqualOp() #Operator :
   Token t;
 }
 {
-  ( <EQ> | <NE> | <STRICT_EQ> )
+  ( <EQ> | <NE> | <STRICT_EQ> | <STRICT_NEQ> )
   {
     jjtThis.setOperator(getToken(0).kind);
   }
@@ -1176,5 +1171,4 @@ SimpleNode StatementList() #StatementList :
 {
 	( Statement() )+
       { return jjtThis; }
-
 }
