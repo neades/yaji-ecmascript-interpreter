@@ -47,5 +47,8 @@ public interface EcmaScriptVisitor
   public Object visit(ASTWithStatement node, Object data);
   public Object visit(ASTFunctionDeclaration node, Object data);
   public Object visit(ASTProgram node, Object data);
+  public Object visit(ASTTryStatement node, Object data);
+  public Object visit(ASTCatch node, Object data);
+  public Object visit(ASTFinally node, Object data);
 }
 /* JavaCC - OriginalChecksum=812fdecff22152963bf5b8db5ac260b9 (do not edit this line) */

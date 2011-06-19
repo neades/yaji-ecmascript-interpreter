@@ -19,9 +19,12 @@ package FESI.Exceptions;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Vector;
+import java.util.ArrayList;
 
+import FESI.Data.ESString;
+import FESI.Data.ESValue;
 import FESI.Interpreter.EvaluationSource;
+import FESI.Interpreter.Evaluator;
 
 /**
  * Superclass of all common exceptions used by the FESI system
@@ -40,13 +43,15 @@ public class EcmaScriptException extends Exception {
      * 
      * @serial EcmaScritp sources callback
      */
-    protected Vector<EvaluationSource> evaluationSources = new Vector<EvaluationSource>();
+    protected ArrayList<EvaluationSource> evaluationSources = new ArrayList<EvaluationSource>();
 
     /**
      * @serial The original exception which trigerred this exception
      */
     private Throwable originatingException = null; // If the exception package
-                                                   // another one
+    // another one
+
+    private final String errorObject;
 
     /**
      * Create a generic exception with cause "reason"
@@ -56,6 +61,7 @@ public class EcmaScriptException extends Exception {
      */
     public EcmaScriptException(String reason) {
         super(reason);
+        this.errorObject = "Error";
     }
 
     /**
@@ -68,8 +74,34 @@ public class EcmaScriptException extends Exception {
      *            the original exception creating this exception
      */
     public EcmaScriptException(String reason, Throwable originatingException) {
+        this(reason);
+        this.originatingException = originatingException;
+    }
+
+    /**
+     * Create a generic exception with cause "reason"
+     * 
+     * @param reason
+     *            the reason of the exception
+     */
+    public EcmaScriptException(String reason, String errorObject) {
+        super(reason);
+        this.errorObject = errorObject;
+    }
+
+    /**
+     * Create a generic exception with cause "reason", originially caused by the
+     * originatingException
+     * 
+     * @param reason
+     *            the reason of the exception
+     * @param originatingException
+     *            the original exception creating this exception
+     */
+    public EcmaScriptException(String reason, Throwable originatingException, String errorObject) {
         super(reason);
         this.originatingException = originatingException;
+        this.errorObject = errorObject;
     }
 
     /**
@@ -88,7 +120,7 @@ public class EcmaScriptException extends Exception {
      *            The evaluation source to add
      */
     public void appendEvaluationSource(EvaluationSource es) {
-        evaluationSources.addElement(es);
+        evaluationSources.add(es);
     }
 
     /**
@@ -97,7 +129,7 @@ public class EcmaScriptException extends Exception {
     public int getLineNumber() {
 
         if (evaluationSources.size() > 0) {
-            EvaluationSource es = evaluationSources.elementAt(0);
+            EvaluationSource es = evaluationSources.get(0);
             return es.getLineNumber();
         } else {
             return -1;
@@ -130,7 +162,7 @@ public class EcmaScriptException extends Exception {
             msg.append(sw.toString());
         }
         for (int i = 0; i < evaluationSources.size(); i++) {
-            EvaluationSource es = evaluationSources.elementAt(i);
+            EvaluationSource es = evaluationSources.get(i);
             msg.append(eol).append((i == 0 ? "detected " : "called ")).append(es);
         }
         return msg.toString();
@@ -186,4 +218,7 @@ public class EcmaScriptException extends Exception {
         w.flush();
     }
 
+    public ESValue getErrorObject(Evaluator evaluator) throws EcmaScriptException {
+        return evaluator.newError(errorObject, new ESString(super.getMessage()));
+    }
 }

@@ -143,7 +143,11 @@
 
 	<!-- Create the jar file in the ${lib} directory -->
 	<target name="jars" depends="compile,test" description="generate the jar file(s)">
-		<jar jarfile="${lib}/fesi.jar" basedir="${classes}" />
+		<jar jarfile="${lib}/fesi.jar" basedir="${classes}">
+			<manifest>
+				<attribute name="Main-Class" value="FESI.Interpreter.Interpret"/>
+			</manifest>
+		</jar>
 	</target>
 
 
@@ -193,7 +197,7 @@
 </junit>
 </target>
 
-<target name="basic-validation" description="run the test suite" depends="basic,global,expr,objfunc,names,array,boolnmb,string,date,math,fileio,ja,regexp,BSFTest" />
+<target name="basic-validation" description="run the test suite" depends="basic,global,expr,objfunc,names,array,boolnmb,string,date,math,fileio,ja,regexp,BSFTest,error" />
 
 <target name="basic">
 <java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
@@ -202,13 +206,20 @@
 	<classpath refid="project.execute.class.path" />
 </java>
 </target>
-<target name="global">
-<java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
-	<arg value="-T" />
-	<arg file="validation/global.estest" />
-	<classpath refid="project.execute.class.path" />
-</java>
-</target>
+	<target name="global">
+	<java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
+		<arg value="-T" />
+		<arg file="validation/global.estest" />
+		<classpath refid="project.execute.class.path" />
+	</java>
+	</target>
+	<target name="error">
+	<java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
+		<arg value="-T" />
+		<arg file="validation/error.estest" />
+		<classpath refid="project.execute.class.path" />
+	</java>
+	</target>
 <target name="expr">
 
 <java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">

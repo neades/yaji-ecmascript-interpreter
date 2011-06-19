@@ -931,6 +931,7 @@ void ExpressionInES() #ExpressionList(>1) :
  |	BreakStatement()
  |	ReturnStatement()
  |	WithStatement()
+ |  TryStatement()
  }
  
  void Block() #void :
@@ -1081,6 +1082,25 @@ void ExpressionInES() #ExpressionList(>1) :
  	"with" "(" Expression() ")" Statement()
  }
  
+ void TryStatement() #TryStatement :
+ {}
+ {
+ 	<TRY> Block() 
+ 	[ Catch() ]
+ 	[ Finally() ]
+ }
+
+void Catch() #Catch :
+{}
+{
+    <CATCH> "(" Identifier() ")" Block()
+}
+
+void Finally() #Finally :
+{}
+{
+	<FINALLY> Block()
+}
 
 /*
  * Function definition - 13

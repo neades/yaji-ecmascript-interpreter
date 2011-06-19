@@ -93,7 +93,7 @@ public class ESReference {
     public ESValue getValue() throws EcmaScriptException {
         if (base == null) {
             throw new EcmaScriptException("global variable '" + propertyName
-                    + "' does not have a value");
+                    + "' does not have a value", NativeErrorObject.REFERENCE_ERROR);
         }
         return base.getProperty(propertyName, hash);
     }

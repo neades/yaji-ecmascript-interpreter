@@ -17,6 +17,7 @@
 
 package FESI.Interpreter;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -26,12 +27,14 @@ import FESI.AST.ASTArrayLiteral;
 import FESI.AST.ASTAssignmentExpression;
 import FESI.AST.ASTBinaryExpressionSequence;
 import FESI.AST.ASTBreakStatement;
+import FESI.AST.ASTCatch;
 import FESI.AST.ASTCompositeReference;
 import FESI.AST.ASTConditionalExpression;
 import FESI.AST.ASTContinueStatement;
 import FESI.AST.ASTElision;
 import FESI.AST.ASTEmptyExpression;
 import FESI.AST.ASTExpressionList;
+import FESI.AST.ASTFinally;
 import FESI.AST.ASTForInStatement;
 import FESI.AST.ASTForStatement;
 import FESI.AST.ASTForVarInStatement;
@@ -58,6 +61,7 @@ import FESI.AST.ASTStatement;
 import FESI.AST.ASTStatementList;
 import FESI.AST.ASTSuperReference;
 import FESI.AST.ASTThisReference;
+import FESI.AST.ASTTryStatement;
 import FESI.AST.ASTUnaryExpression;
 import FESI.AST.ASTVariableDeclaration;
 import FESI.AST.ASTWhileStatement;
@@ -139,7 +143,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
 
     // This is the final completion code - mark unused to protect against
     // recursive use
-    private int completionCode = -1;
+    protected int completionCode = -1;
 
     private boolean useRepresentationOptimisation = false;
     private IAppendable representationOutputBuffer = null;
@@ -1657,7 +1661,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
             ESObject object = (ESObject) data;
             
             ESValue previous = object.getOwnProperty(property, property.hashCode());
-            if (previous != ESUndefined.theUndefined) {
+            if (previous != null) {
                 if ((!isAccessorDescriptor(previous) && isAccessorDescriptor(value))
                         || (isAccessorDescriptor(previous) && !isAccessorDescriptor(value))) {
                     throw new EcmaScriptException(
@@ -1741,5 +1745,75 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
 
     public Object visit(ASTElision node, Object data) {
         return ESUndefined.theUndefined;
+    }
+    
+    public Object visit(ASTTryStatement node, Object data) {
+        ASTCatch catchStatement = null;
+        ASTFinally finallyStatement = null;
+        int nChildren = node.jjtGetNumChildren();
+        if (nChildren == 0) {
+            throw new ProgrammingError("Bad AST in function expression");
+        } else if (nChildren == 3){
+            catchStatement = (ASTCatch) node.jjtGetChild(1);
+            finallyStatement = (ASTFinally) node.jjtGetChild(2);
+        } else if (nChildren == 2){
+            Node child = node.jjtGetChild(1);
+            if (child instanceof ASTCatch) {
+                catchStatement = (ASTCatch) child;
+            } else {
+                finallyStatement = (ASTFinally) child;
+            }
+        }
+        Object B,C,F;
+        try {
+            B = node.jjtGetChild(0).jjtAccept(this, data);
+            data = B;
+        } catch ( PackagedException e ) {
+            if (catchStatement != null) {
+                try {
+                    C = catchStatement.jjtAccept(this, e.exception.getErrorObject(evaluator));
+                } catch (EcmaScriptException eInCatch) {
+                    throw new PackagedException(eInCatch, catchStatement);
+                }
+                data = C;
+            }
+        } finally {
+            if (finallyStatement != null) {
+                int blockCompletionCode = completionCode;
+                completionCode = C_NORMAL;
+                F = finallyStatement.jjtAccept(this, data);
+                if (completionCode != C_NORMAL) {
+                    data = F;
+                } else {
+                    completionCode = blockCompletionCode;
+                }
+            }
+        }
+        return data;
+    }
+    
+    public Object visit(ASTCatch node, Object data) {
+        node.assertTwoChildren();
+        ESValue result = null;
+        try {
+            EvaluationSource es = (EvaluationSource) node.getEvaluationSource();
+            ASTIdentifier id = (ASTIdentifier) node.jjtGetChild(0);
+            String propertyName = id.getName();
+            ASTStatementList statementNode = (ASTStatementList) (node.jjtGetChild(1));
+            
+            ESObject scopeObject = ObjectObject.createObject(evaluator);
+            List<String> lvn = new ArrayList<String>();
+            scopeObject.putProperty(propertyName, (ESValue) data, propertyName.hashCode());
+            
+            result = evaluator.evaluateFunctionInScope(statementNode, es, scopeObject, lvn, evaluator.getThisObject(),evaluator.getScopeChain());
+        } catch (EcmaScriptException e) {
+            throw new PackagedException(e, node);
+        }
+        return result;
+    }
+    
+    public Object visit(ASTFinally node, Object data) {
+        node.assertOneChild();
+        return node.jjtGetChild(0).jjtAccept(this, data);
     }
 }

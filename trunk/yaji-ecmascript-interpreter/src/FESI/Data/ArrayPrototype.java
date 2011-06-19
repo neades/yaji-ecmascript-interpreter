@@ -22,6 +22,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import FESI.Exceptions.EcmaScriptException;
+import FESI.Exceptions.ReferenceError;
 import FESI.Interpreter.Evaluator;
 import FESI.Interpreter.ScopeChain;
 
@@ -413,7 +414,7 @@ public class ArrayPrototype extends ESObject {
             return getProperty(propertyName, hash);
         }
         if (previousScope == null) {
-            throw new EcmaScriptException("global variable '" + propertyName
+            throw new ReferenceError("global variable '" + propertyName
                     + "' does not have a value");
         }
         return previousScope.getValue(propertyName, hash);

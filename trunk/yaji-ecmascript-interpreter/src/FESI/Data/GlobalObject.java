@@ -510,7 +510,10 @@ public class GlobalObject extends ObjectPrototype {
 
             functionObject.putHiddenProperty("prototype", functionPrototype);
             functionObject.putHiddenProperty("length", ESNumber.valueOf(1));
-
+            
+            ErrorObject errorObject = ErrorObject.make(evaluator, objectPrototype, functionPrototype);
+            ErrorPrototype errorPrototype = errorObject.getPrototypeProperty();
+            
             // Save system object so that they can be quickly found
             evaluator.setObjectPrototype(objectPrototype);
             evaluator.setFunctionPrototype(functionPrototype);
@@ -543,6 +546,14 @@ public class GlobalObject extends ObjectPrototype {
             go.putHiddenProperty("Boolean", booleanObject);
             go.putHiddenProperty("Array", arrayObject);
             go.putHiddenProperty("Date", dateObject);
+            
+            go.putHiddenProperty("Error", errorObject);
+            go.putHiddenProperty(NativeErrorObject.EVAL_ERROR,NativeErrorObject.make(NativeErrorObject.EVAL_ERROR,evaluator,errorPrototype,functionPrototype));
+            go.putHiddenProperty(NativeErrorObject.RANGE_ERROR,NativeErrorObject.make(NativeErrorObject.RANGE_ERROR,evaluator,errorPrototype,functionPrototype));
+            go.putHiddenProperty(NativeErrorObject.REFERENCE_ERROR,NativeErrorObject.make(NativeErrorObject.REFERENCE_ERROR,evaluator,errorPrototype,functionPrototype));
+            go.putHiddenProperty(NativeErrorObject.SYNTAX_ERROR,NativeErrorObject.make(NativeErrorObject.SYNTAX_ERROR,evaluator,errorPrototype,functionPrototype));
+            go.putHiddenProperty(NativeErrorObject.TYPE_ERROR,NativeErrorObject.make(NativeErrorObject.TYPE_ERROR,evaluator,errorPrototype,functionPrototype));
+            go.putHiddenProperty(NativeErrorObject.URI_ERROR,NativeErrorObject.make(NativeErrorObject.URI_ERROR,evaluator,errorPrototype,functionPrototype));
 
             go.putHiddenProperty("NaN", ESNumber.valueOf(Double.NaN));
             go.putHiddenProperty("undefined", ESUndefined.theUndefined);
