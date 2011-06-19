@@ -1,0 +1,249 @@
+writeln ("// " + document.URL);
+writeln ("// " + Date());
+writeln ("// Test errors");
+writeln();
+
+@test error.1 ES5 15.11.1.1
+var error = Error();
+error.message === '' && error.name === 'Error';
+
+@test error.2 ES5 15.11.2.1
+var error = new Error();
+error.message === '' && error.name === 'Error';
+
+@test error.3 ES5 15.11.1.1
+var error = Error('this is my message');
+error.message === 'this is my message' && error.name === 'Error';
+
+@test error.3 ES5 15.11.2.1
+var error = new Error('15.11.2.1');
+error.message === '15.11.2.1' && error.name === 'Error';
+
+@test error.4 ES5 15.11.3
+Error.length === 1;
+
+@test error.5 ES5 15.11.4.1
+Error.prototype.constructor === Error;
+
+@test error.6 ES5 15.11.4.2
+Error.prototype.name === 'Error';
+
+@test error.7 ES5 15.11.4.3
+Error.prototype.message === '';
+
+@test error.8 ES5 15.11.4.4
+Error.prototype.toString() === 'Error: ';
+
+@test error.9 ES5 15.11.4.4
+var error = Error('x');
+error.toString() === 'Error: x';
+
+@test error.9 ES5 15.11.4.4
+var error = Error('x');
+error.message = undefined;
+error.toString() === undefined;
+
+
+@test evalerror.1 ES5 15.11.7.2
+EvalError('xx').message === 'xx';
+
+@test evalerror.2 ES5 15.11.7.4
+(new EvalError('xx')).message === 'xx' && (new EvalError()).message === '';
+
+@test evalerror.3 ES5 15.11.7.5
+EvalError.length === 1;
+
+@test evalerror.4 ES5 15.11.7.8
+EvalError.prototype.constructor === EvalError;
+
+@test evalerror.5 ES5 15.11.7.9
+EvalError.prototype.name === 'EvalError';
+
+@test evalerror.6 ES5 15.11.7.10
+EvalError.prototype.message === '';
+
+@test evalerror.7 ES5 15.11.7.10
+EvalError.prototype.toString() === 'EvalError: ';
+
+@test evalerror.8 ES5 15.11.7.10
+var error = EvalError('x');
+error.toString() === 'EvalError: x';
+
+@test syntaxerror.1 ES5 15.11.7.2
+RangeError('xx').message === 'xx';
+
+@test rangerror.2 ES5 15.11.7.4
+(new RangeError('xx')).message === 'xx' && (new RangeError()).message === '';
+
+@test rangerror.3 ES5 15.11.7.5
+RangeError.length === 1;
+
+@test rangerror.4 ES5 15.11.7.8
+RangeError.prototype.constructor === RangeError;
+
+@test rangerror.5 ES5 15.11.7.9
+RangeError.prototype.name === 'RangeError';
+
+@test rangerror.6 ES5 15.11.7.10
+RangeError.prototype.message === '';
+
+@test rangerror.7 ES5 15.11.7.10
+RangeError.prototype.toString() === 'RangeError: ';
+
+@test rangerror.8 ES5 15.11.7.10
+var error = RangeError('x');
+error.toString() === 'RangeError: x';
+
+@test referenceerror.1 ES5 15.11.7.2
+ReferenceError('xx').message === 'xx';
+
+@test referenceerror.2 ES5 15.11.7.4
+(new ReferenceError('xx')).message === 'xx' && (new ReferenceError()).message === '';
+
+@test referenceerror.3 ES5 15.11.7.5
+ReferenceError.length === 1;
+
+@test referenceerror.4 ES5 15.11.7.8
+ReferenceError.prototype.constructor === ReferenceError;
+
+@test referenceerror.5 ES5 15.11.7.9
+ReferenceError.prototype.name === 'ReferenceError';
+
+@test referenceerror.6 ES5 15.11.7.10
+ReferenceError.prototype.message === '';
+
+@test referenceerror.7 ES5 15.11.7.10
+ReferenceError.prototype.toString() === 'ReferenceError: ';
+
+@test referenceerror.8 ES5 15.11.7.10
+var error = ReferenceError('x');
+error.toString() === 'ReferenceError: x';
+
+
+@test syntaxerror.1 ES5 15.11.7.2
+SyntaxError('xx').message === 'xx';
+
+@test syntaxerror.2 ES5 15.11.7.4
+(new SyntaxError('xx')).message === 'xx' && (new SyntaxError()).message === '';
+
+@test syntaxerror.3 ES5 15.11.7.5
+SyntaxError.length === 1;
+
+@test syntaxerror.4 ES5 15.11.7.8
+SyntaxError.prototype.constructor === SyntaxError;
+
+@test syntaxerror.5 ES5 15.11.7.9
+SyntaxError.prototype.name === 'SyntaxError';
+
+@test syntaxerror.6 ES5 15.11.7.10
+SyntaxError.prototype.message === '';
+
+@test syntaxerror.7 ES5 15.11.7.10
+SyntaxError.prototype.toString() === 'SyntaxError: ';
+
+@test syntaxerror.8 ES5 15.11.7.10
+var error = SyntaxError('x');
+error.toString() === 'SyntaxError: x';
+
+
+@test typeerror.1 ES5 15.11.7.2
+TypeError('xx').message === 'xx';
+
+@test typeerror.2 ES5 15.11.7.4
+(new TypeError('xx')).message === 'xx' && (new TypeError()).message === '';
+
+@test typeerror.3 ES5 15.11.7.5
+TypeError.length === 1;
+
+@test typeerror.4 ES5 15.11.7.8
+TypeError.prototype.constructor === TypeError;
+
+@test typeerror.5 ES5 15.11.7.9
+TypeError.prototype.name === 'TypeError';
+
+@test typeerror.6 ES5 15.11.7.10
+TypeError.prototype.message === '';
+
+@test typeerror.7 ES5 15.11.7.10
+TypeError.prototype.toString() === 'TypeError: ';
+
+@test typeerror.8 ES5 15.11.7.10
+var error = TypeError('x');
+error.toString() === 'TypeError: x';
+
+
+@test urierror.1 ES5 15.11.7.2
+URIError('xx').message === 'xx';
+
+@test urierror.2 ES5 15.11.7.4
+(new URIError('xx')).message === 'xx' && (new URIError()).message === '';
+
+@test urierror.3 ES5 15.11.7.5
+URIError.length === 1;
+
+@test urierror.4 ES5 15.11.7.8
+URIError.prototype.constructor === URIError;
+
+@test urierror.5 ES5 15.11.7.9
+URIError.prototype.name === 'URIError';
+
+@test urierror.6 ES5 15.11.7.10
+URIError.prototype.message === '';
+
+@test urierror.7 ES5 15.11.7.10
+URIError.prototype.toString() === 'URIError: ';
+
+@test urierror.8 ES5 15.11.7.10
+var error = URIError('x');
+error.toString() === 'URIError: x';
+
+@test urierror.8 ES5 15.11.4.4
+var error = URIError('x');
+error.name = undefined;
+error.toString() === 'Error: x';
+
+@test try.1 ES5 12.14
+try {
+  true;
+} catch (e) {
+  false;
+}
+
+@test try.2 ES5 12.14
+try {
+  not.defined;
+} catch (e) {
+  true;
+}
+
+@test try.3 ES5 12.14
+try {
+  true;
+} finally {
+  false;
+}
+
+@test try.4 ES5 12.14
+var f = function() {
+	try {
+	  false;
+	} finally {
+	  return true;
+	}
+};
+f();
+
+@test try.5 ES5 12.14
+try {
+  not.defined;
+} catch (ex) {
+  typeof ex === 'object';
+}
+typeof ex === 'undefined';
+
+@test try.6 ES5 12.14
+try {
+  not.defined;
+} catch (ex) {
+  typeof ex === 'object';
+}

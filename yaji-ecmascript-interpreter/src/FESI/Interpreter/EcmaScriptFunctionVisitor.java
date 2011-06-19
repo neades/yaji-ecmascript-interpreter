@@ -25,12 +25,14 @@ import FESI.AST.ASTArrayLiteral;
 import FESI.AST.ASTAssignmentExpression;
 import FESI.AST.ASTBinaryExpressionSequence;
 import FESI.AST.ASTBreakStatement;
+import FESI.AST.ASTCatch;
 import FESI.AST.ASTCompositeReference;
 import FESI.AST.ASTConditionalExpression;
 import FESI.AST.ASTContinueStatement;
 import FESI.AST.ASTElision;
 import FESI.AST.ASTEmptyExpression;
 import FESI.AST.ASTExpressionList;
+import FESI.AST.ASTFinally;
 import FESI.AST.ASTForInStatement;
 import FESI.AST.ASTForStatement;
 import FESI.AST.ASTForVarInStatement;
@@ -57,6 +59,7 @@ import FESI.AST.ASTStatement;
 import FESI.AST.ASTStatementList;
 import FESI.AST.ASTSuperReference;
 import FESI.AST.ASTThisReference;
+import FESI.AST.ASTTryStatement;
 import FESI.AST.ASTUnaryExpression;
 import FESI.AST.ASTVariableDeclaration;
 import FESI.AST.ASTWhileStatement;
@@ -360,6 +363,21 @@ public class EcmaScriptFunctionVisitor implements EcmaScriptVisitor,
         badAST();
         return data;
     }
+    
+    public Object visit(ASTTryStatement node, Object data) {
+        badAST();
+        return data;
+    }
+
+    public Object visit(ASTCatch node, Object data) {
+        badAST();
+        return data;
+    }
+
+    public Object visit(ASTFinally node, Object data) {
+        badAST();
+        return data;
+   }
 
     public Object visit(ASTElision node, Object data) {
         badAST();

@@ -195,13 +195,12 @@ public abstract class ESObject extends ESValue {
      */
     public ESValue getPropertyInScope(String propertyName,
             ScopeChain previousScope, int hash) throws EcmaScriptException {        
-        ESValue value = hasNoPropertyMap() ? null : getPropertyMap().get(
-                propertyName, hash);
+        ESValue value = getOwnProperty(propertyName, hash);
         if (value == null) {
             if (prototype == null) {
                 if (previousScope == null) {
                     throw new EcmaScriptException("global variable '"
-                            + propertyName + "' does not have a value");
+                            + propertyName + "' does not have a value","ReferenceError");
                 }
                 value = previousScope.getValue(propertyName, hash);
             } else {
@@ -227,12 +226,12 @@ public abstract class ESObject extends ESValue {
      */
     public ESValue getProperty(String propertyName, int hash)
             throws EcmaScriptException {
-        ESValue value = hasNoPropertyMap() ? ESUndefined.theUndefined
-                : getOwnProperty(propertyName, hash);
+        ESValue value = getOwnProperty(propertyName, hash);
         
-        if (value == ESUndefined.theUndefined) {
-            return prototype == null ? value : prototype.getProperty(
-                    propertyName, hash);
+        if (value == null) {
+            return prototype == null 
+                    ? ESUndefined.theUndefined 
+                    : prototype.getProperty(propertyName, hash);
         }
 
         if (isAccessorDescriptor(value)) {
@@ -246,8 +245,8 @@ public abstract class ESObject extends ESValue {
     
     public ESValue getOwnProperty(String propertyName, int hash)
             throws EcmaScriptException {
-        ESValue property = getPropertyMap().get(propertyName, hash);
-        return property == null ? ESUndefined.theUndefined : property;
+        ESValue property = hasNoPropertyMap() ? null : getPropertyMap().get(propertyName, hash);
+        return property;
     }
 
     /**

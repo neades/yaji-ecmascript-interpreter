@@ -216,6 +216,7 @@ a[2] = 3;
 a[4] = 5;
 v = 0;
 for (i in a)  v += a[i];
+writeln(v);
 v == 8;
 
 @test forin.3

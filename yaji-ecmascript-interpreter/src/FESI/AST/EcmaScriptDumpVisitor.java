@@ -197,6 +197,18 @@ public class EcmaScriptDumpVisitor implements EcmaScriptVisitor {
     public Object visit(ASTArrayLiteral node, Object data) {
         return dump(node, data);
     }
+
+    public Object visit(ASTTryStatement node, Object data) {
+        return dump(node, data);
+    }
+    
+    public Object visit(ASTCatch node, Object data) {
+        return dump(node, data);
+    }
+
+    public Object visit(ASTFinally node, Object data) {
+        return dump(node, data);
+    }
     
     public Object visit(ASTElision node, Object data) {
         return dump(node, data);

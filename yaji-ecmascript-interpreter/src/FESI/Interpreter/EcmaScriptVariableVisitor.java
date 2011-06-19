@@ -26,12 +26,14 @@ import FESI.AST.ASTArrayLiteral;
 import FESI.AST.ASTAssignmentExpression;
 import FESI.AST.ASTBinaryExpressionSequence;
 import FESI.AST.ASTBreakStatement;
+import FESI.AST.ASTCatch;
 import FESI.AST.ASTCompositeReference;
 import FESI.AST.ASTConditionalExpression;
 import FESI.AST.ASTContinueStatement;
 import FESI.AST.ASTElision;
 import FESI.AST.ASTEmptyExpression;
 import FESI.AST.ASTExpressionList;
+import FESI.AST.ASTFinally;
 import FESI.AST.ASTForInStatement;
 import FESI.AST.ASTForStatement;
 import FESI.AST.ASTForVarInStatement;
@@ -58,6 +60,7 @@ import FESI.AST.ASTStatement;
 import FESI.AST.ASTStatementList;
 import FESI.AST.ASTSuperReference;
 import FESI.AST.ASTThisReference;
+import FESI.AST.ASTTryStatement;
 import FESI.AST.ASTUnaryExpression;
 import FESI.AST.ASTVariableDeclaration;
 import FESI.AST.ASTWhileStatement;
@@ -348,6 +351,23 @@ public class EcmaScriptVariableVisitor implements EcmaScriptVisitor,
 
     public Object visit(ASTArrayLiteral node, Object data) {
         // no internal variable declarations possible
+        return data;
+    }
+    
+    public Object visit(ASTTryStatement node, Object data) {
+        data = node.childrenAccept(this, data);
+        return data;
+    }
+    
+    public Object visit(ASTCatch node, Object data) {
+        node.setEvaluationSource(data);
+        data = node.childrenAccept(this, data);
+        return data;
+    }
+    
+    public Object visit(ASTFinally node, Object data) {
+        node.setEvaluationSource(data);
+        data = node.childrenAccept(this, data);
         return data;
     }
 

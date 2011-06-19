@@ -34,10 +34,12 @@ import java.util.zip.ZipFile;
 import FESI.AST.ASTProgram;
 import FESI.AST.ASTStatement;
 import FESI.AST.ASTStatementList;
+import FESI.Data.BuiltinFunctionObject;
 import FESI.Data.ESLoader;
 import FESI.Data.ESObject;
 import FESI.Data.ESPackages;
 import FESI.Data.ESReference;
+import FESI.Data.ESString;
 import FESI.Data.ESUndefined;
 import FESI.Data.ESValue;
 import FESI.Data.ESWrapper;
@@ -1030,7 +1032,7 @@ public class Evaluator implements Serializable {
             EvaluationSource es) throws EcmaScriptException {
         ESValue theValue = ESUndefined.theUndefined;
 
-        theScopeChain = new ScopeChain(scopeObject, theScopeChain);
+        theScopeChain = new ScopeChain(scopeObject, theScopeChain == null ? globalScope : theScopeChain);
         try {
             EcmaScriptEvaluateVisitor evaluationVisitor = new EcmaScriptEvaluateVisitor(
                     this);
@@ -1442,6 +1444,14 @@ public class Evaluator implements Serializable {
 
     public ScopeChain getScopeChain() {
         return theScopeChain;
+    }
+
+    public ESValue newError(String errorType, ESString esString) throws EcmaScriptException {
+        ESValue errorObject = globalObject.getProperty(errorType, errorType.hashCode());
+        if (errorObject instanceof BuiltinFunctionObject) {
+            return errorObject.doConstruct((ESObject) errorObject, new ESValue[] { esString });
+        }
+        return ESUndefined.theUndefined;
     }
 
 }

@@ -28,6 +28,38 @@ public class EcmascriptParserTest {
     @Parameters
     public static Collection<String[]> data() {
         return Arrays.asList(new String[][] {
+                // try/catch
+                { "try { true; } catch( e ) { false; }", 
+                    "Program" + eol
+                    + " Statement" + eol 
+                    + "  TryStatement" + eol 
+                    + "   StatementList" +  eol
+                    + "    Statement" +  eol
+                    + "     [true]" +  eol
+                    + "   Catch" +  eol
+                    + "    <e>" +  eol
+                    + "    StatementList" +  eol
+                    + "     Statement" + eol 
+                    + "      [false]" + eol
+                },
+                // try/catch/finally
+                { "try { true; } catch( e ) { false; } finally { true; }", 
+                    "Program" + eol
+                    + " Statement" + eol 
+                    + "  TryStatement" + eol 
+                    + "   StatementList" +  eol
+                    + "    Statement" +  eol
+                    + "     [true]" +  eol
+                    + "   Catch" +  eol
+                    + "    <e>" +  eol
+                    + "    StatementList" +  eol
+                    + "     Statement" + eol 
+                    + "      [false]" + eol
+                    + "   Finally" + eol
+                    + "    StatementList" +  eol
+                    + "     Statement" + eol 
+                    + "      [true]" + eol
+                },
                 // Simple test of parsing a program
                 { "true;", "Program" + eol
                     + " Statement" + eol

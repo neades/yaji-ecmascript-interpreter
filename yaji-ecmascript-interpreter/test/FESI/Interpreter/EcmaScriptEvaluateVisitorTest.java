@@ -27,6 +27,7 @@ import FESI.Parser.ParseException;
 public class EcmaScriptEvaluateVisitorTest {
 
     private PrintStream out;
+    private Evaluator evaluator;
 
     @Before
     public void setUp() {
@@ -123,6 +124,80 @@ public class EcmaScriptEvaluateVisitorTest {
         ESValue result = evaluateBinaryExpression("NaN === 1");
         
         assertEquals(ESBoolean.makeBoolean(false), result);
+    }
+    
+    @Test
+    public void shouldCatchThrownMessage() throws Exception {
+        String sourceText = "try { var t = does.not.exist; } catch ( e ) { return true; } return false;";
+        EcmaScript es = new EcmaScript(new StringReader(sourceText));
+        
+        ASTStatement statement = (ASTStatement) es.Program().jjtGetChild(0);
+        
+        EcmaScriptEvaluateVisitor visitor = createVisitor();
+        ESValue result = (ESValue) visitor.visit(statement,EcmaScriptEvaluateVisitor.FOR_VALUE);
+        assertEquals(ESBoolean.makeBoolean(true),result);
+    }
+
+    @Test
+    public void shouldExecuteFinallyAfterException() throws Exception {
+        String sourceText = "try { var t = does.not.exist; } catch ( e ) { return true; } finally { global = true; } return false;";
+        EcmaScript es = new EcmaScript(new StringReader(sourceText));
+        
+        ASTStatement statement = (ASTStatement) es.Program().jjtGetChild(0);
+        
+        EcmaScriptEvaluateVisitor visitor = createVisitor();
+        ESValue result = (ESValue) visitor.visit(statement,EcmaScriptEvaluateVisitor.FOR_VALUE);
+        assertEquals(ESBoolean.makeBoolean(true),result);
+        assertEquals(ESBoolean.makeBoolean(true),evaluator.getGlobalObject().getProperty("global", "global".hashCode()));
+    }
+
+    @Test
+    public void shouldExecuteFinallyWithoutException() throws Exception {
+        String sourceText = "try { 2; } catch ( e ) { return true; } finally { global = true; }";
+        EcmaScript es = new EcmaScript(new StringReader(sourceText));
+        
+        ASTStatement statement = (ASTStatement) es.Program().jjtGetChild(0);
+        
+        EcmaScriptEvaluateVisitor visitor = createVisitor();
+        ESValue result = (ESValue) visitor.visit(statement,EcmaScriptEvaluateVisitor.FOR_VALUE);
+        assertEquals(ESNumber.valueOf(2),result);
+        assertEquals(ESBoolean.makeBoolean(true),evaluator.getGlobalObject().getProperty("global", "global".hashCode()));
+    }
+
+    @Test
+    public void shouldExecuteFinallyWithoutExceptionAndReturnValue() throws Exception {
+        String sourceText = "try { 2; } catch ( e ) { return true; } finally { return 4; }";
+        EcmaScript es = new EcmaScript(new StringReader(sourceText));
+        
+        ASTStatement statement = (ASTStatement) es.Program().jjtGetChild(0);
+        
+        EcmaScriptEvaluateVisitor visitor = createVisitor();
+        ESValue result = (ESValue) visitor.visit(statement,EcmaScriptEvaluateVisitor.FOR_VALUE);
+        assertEquals(ESNumber.valueOf(4),result);
+    }
+
+    @Test
+    public void shouldPassError() throws Exception {
+        String sourceText = "try { var error = does.not.exist; } catch ( e ) { return e.name === 'ReferenceError'; }";
+        EcmaScript es = new EcmaScript(new StringReader(sourceText));
+        
+        ASTStatement statement = (ASTStatement) es.Program().jjtGetChild(0);
+        
+        EcmaScriptEvaluateVisitor visitor = createVisitor();
+        ESValue result = (ESValue) visitor.visit(statement,EcmaScriptEvaluateVisitor.FOR_VALUE);
+        assertEquals(ESBoolean.makeBoolean(true),result);
+    }
+
+    private EcmaScriptEvaluateVisitor createVisitor() {
+        evaluator = new Evaluator() {
+            private static final long serialVersionUID = -7746833632204914424L;
+            {
+                theScopeChain = globalScope;
+            }
+        };
+        return new EcmaScriptEvaluateVisitor(evaluator) { {
+            completionCode = C_NORMAL;
+        } };
     }
 
     private ESValue evaluateBinaryExpression(String sourceText)

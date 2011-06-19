@@ -45,7 +45,7 @@ public class LineEvaluationSource extends EvaluationSource {
      */
     protected String getEvaluationSourceText() {
         return "at line " + theLineNumber + " "
-                + previousSource.getEvaluationSourceText();
+                + (previousSource == null ? "" :previousSource.getEvaluationSourceText());
     }
 
     /**
