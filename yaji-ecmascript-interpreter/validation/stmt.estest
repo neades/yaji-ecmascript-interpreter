@@ -375,7 +375,33 @@ var scb = new scNewObject();
 sca.test = 1;
 with(scb) {test==1}
 
+@test semicolon.insertion.1
+{ 1
+2 } 3
 
+@test semicolon.insertion.2
+var syntax = false;
+try {
+  eval("for( i=0; i<10\ni++);");
+} catch(e) {
+  syntax = true;
+}
+syntax;
+
+@test semicolon.insertion.3
+var f = function() {
+  return
+     false; // this should be true
+}
+!f();
+
+@test semicolon.insertion.4
+var a = 1;
+var b = 2;
+var c = 3;
+a = b ; // shouldn't need this semicolon
+++c
+a == 2 && c == 4;
 
 
 
