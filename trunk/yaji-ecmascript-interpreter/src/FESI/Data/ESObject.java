@@ -708,7 +708,7 @@ public abstract class ESObject extends ESValue {
     @Override
     public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
             throws EcmaScriptException {
-        throw new EcmaScriptException("No constructor defined on: " + this);
+        throw new TypeError("No constructor defined on: " + this);
     }
 
     /**

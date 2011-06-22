@@ -21,6 +21,7 @@ package FESI.Data;
 import java.util.Enumeration;
 
 import FESI.Exceptions.EcmaScriptException;
+import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
 
 /**
@@ -276,7 +277,7 @@ public abstract class ESValue implements java.io.Serializable {
      */
     public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
             throws EcmaScriptException {
-        throw new EcmaScriptException("'new' called on non object: " + this);
+        throw new TypeError("'new' called on non object: " + this);
     }
 
     // abstract public ESValue doNewObject();
