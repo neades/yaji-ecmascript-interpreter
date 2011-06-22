@@ -403,6 +403,16 @@ a = b ; // shouldn't need this semicolon
 ++c
 a == 2 && c == 4;
 
-
+@test semicolon.insertion.5
+var a=1;
+var b= { print : function() { return false; } };
+var error = false;
+try {
+	var c = a
+	(b).print();
+} catch(e) {
+    error=true;
+}
+error;
 
 
