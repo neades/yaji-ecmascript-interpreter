@@ -18,6 +18,7 @@
 package FESI.Data;
 
 import FESI.Exceptions.EcmaScriptException;
+import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
 
 /**
@@ -38,7 +39,7 @@ public class ObjectObject extends BuiltinFunctionObject {
                     throws EcmaScriptException {
                 if (arguments.length == 0
                         || !(arguments[0] instanceof ESObject)) {
-                    return ESBoolean.makeBoolean(false);
+                    throw new TypeError("Object.isFrozen() should be passed an Object");
                 }
                 return ESBoolean.makeBoolean(((ESObject) arguments[0])
                         .isFrozen());
@@ -53,7 +54,7 @@ public class ObjectObject extends BuiltinFunctionObject {
                     throws EcmaScriptException {
                 if (arguments.length == 0
                         || !(arguments[0] instanceof ESObject)) {
-                    return ESUndefined.theUndefined;
+                    throw new TypeError("Object.freeze() should be passed an Object");
                 }
                 ((ESObject) arguments[0]).freeze();
                 return arguments[0];
