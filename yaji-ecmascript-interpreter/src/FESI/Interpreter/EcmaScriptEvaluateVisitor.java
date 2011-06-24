@@ -1728,8 +1728,11 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
     }
 
     public Object visit(ASTArrayLiteral node, Object data) {
-        ESObject result = evaluator.getArrayPrototype();
+        ESObject result = null;
         try {
+            result = evaluator.getValue("Array").doConstruct(
+                    evaluator.getThisObject(), ESValue.EMPTY_ARRAY);
+            
             int length = node.jjtGetNumChildren();
             for (int i = 0; i < length; i++) {
                 Node child = node.jjtGetChild(i);
@@ -1740,7 +1743,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
         } catch (EcmaScriptException e) {
             throw new PackagedException(e, node);
         }
-        return result;
+        return result != null ? result : ESUndefined.theUndefined;
     }
 
     public Object visit(ASTElision node, Object data) {
