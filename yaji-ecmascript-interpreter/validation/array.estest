@@ -101,3 +101,122 @@ a.length==9 && a.reverse().toString()=="9,8,,,5,4,,,";
 @test array.21
 a = ['a', ,1,Math.round(3.14159),,,];
 a[3] == 3
+
+@test array.22
+a = [1,2,3,4]
+b = a.slice(2,4);
+b[0] == 3 && b[1] == 4;
+
+@test array.prototype.push.1
+a = [1,2,3,4]
+a.push(5);
+a.length == 5 && a[4] == 5
+
+@test array.prototype.pop.1
+a = [1,2,3,4]
+b = a.pop()
+a.length == 3 && b == 4
+
+@test array.prototype.shift.1
+a = [1,2,3,4]
+b = a.shift()
+a.length == 3 && b == 1
+
+@test array.prototype.unshift.1
+a = [1,2,3,4]
+b = a.unshift(-1,null,0);
+a.length == 7 && b == a.length && a[0] == -1
+
+@test array.prototype.slice.1
+a = [1,2,3,4]
+b = a.slice(2,4)
+a.length == 4 && b.length == 2 && b[0] == 3 && b[1] == 4
+
+@test array.splice.1
+a = [1,2,3,4]
+a.splice(2, 0, 99)
+a.length == 5 && a[2] == 99
+
+@test array.splice.2
+a = [1,2,3,4]
+b = a.splice(2, 1, 99)
+a.length == 4 && a[2] == 99 && b == 3
+
+@test array.splice.3
+a = [1,2,3,4]
+b = a.splice(0, 4)
+a.length == 0 && b.length == 4 && b == "1,2,3,4"
+
+@test array.prototype.indexOf.1
+a = [1,2,3,4,3,4,2]
+b = a.indexOf(4)
+b == 3
+
+@test array.prototype.lastIndexOf.1
+a = [1,2,3,4,3,4,2]
+b = a.lastIndexOf(4)
+b == 5
+
+@test array.isArray.1
+a = [1,2,3,4]
+Array.isArray(a)
+
+@test array.concat.1
+a = ['one',2]
+b = a.concat(3,4)
+c = [5,6,7]
+d = b.concat(c, 8, 9, 10)
+d.length == 10 && d[9] == 10 && d[0] == 'one'
+
+@test array.reduce.1
+a = [0,1,2,3]
+b = a.reduce(function(a, b){ return a + b; });
+a.length == 4 && b == 6
+
+@test array.reduce.2
+a = [[0,1], [2,3], [4,5]]
+b = a.reduce(function(a,b) {return a.concat(b);});
+a.length == 3 && b.length == 6 && b == "0,1,2,3,4,5"
+
+@test array.reduce.3
+a = []
+b = a.reduce(function(a, b){ return a + b; }, [1,2,3]);
+b.length == 3
+
+@test array.reduce.4
+a = [1]
+b = a.reduce(function(a, b){ return a + b; }, 2);
+b == 3
+
+@test array.reduceRight.1
+a = [[0,1], [2,3], [4,5]]
+b = a.reduceRight(function(a,b) {return a.concat(b);});
+a.length == 3 && b.length == 6 && b == "4,5,2,3,0,1"
+
+@test array.every.1
+function bigEnough(a, b, c) {return (a >= 10);}
+a = [12,5,8,130,44]
+b = [12,54,18,130,44]
+!a.every(bigEnough) && b.every(bigEnough)
+
+@test array.some.1
+function bigEnough(a, b, c) {return (a >= 10);}
+a = [12,5,8,130,44]
+b = [1,2,3,4,5]
+a.some(bigEnough) && !b.some(bigEnough)
+
+@test array.forEach.1
+z = 0;
+a = [1,2,3,4]
+a.forEach(function(a, b, c) {z+=a})
+z == 10
+
+@test array.map.1
+a = [4,64,1024,65536]
+b = a.map(Math.sqrt)
+b.length == 4 && b == '2,8,32,256'
+
+@test array.filter.1
+a = [12, 5, 8, 130, 44];
+b = a.filter(function(a, b, c) {return (a >= 10);})
+b.length == 3 && b == '12,130,44'
