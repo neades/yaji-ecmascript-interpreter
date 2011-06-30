@@ -72,6 +72,16 @@ public class ArrayObject extends BuiltinFunctionObject {
         }
         return theArray;
     }
+    
+    public ESValue isArray(ESValue[] args) throws EcmaScriptException {
+        if (args.length >= 1) {
+            if (args[0] instanceof ESObject 
+                    && "Array".equals(((ESObject)args[0]).getESClassName())) {
+                return ESBoolean.makeBoolean(true);
+            }
+        }
+        return ESBoolean.makeBoolean(false);
+    }
 
     /**
      * Utility function to create the single Array object
@@ -94,7 +104,9 @@ public class ArrayObject extends BuiltinFunctionObject {
         ArrayObject arrayObject = new ArrayObject(functionPrototype, evaluator);
 
         try {
-            // For arrayPrototype
+            /*
+             * ES5 15.4.4 - Properties of the Array Prototype Object
+             */
             class ArrayPrototypeToString extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
@@ -107,7 +119,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                         ESValue[] arguments) throws EcmaScriptException {
                     BuiltinFunctionObject join = (BuiltinFunctionObject) thisObject
                             .getProperty(JOINstring, JOINhash);
-                    return join.callFunction(thisObject, new ESValue[0]);
+                    return join.callFunction(thisObject, EMPTY_ARRAY);
                 }
             }
             class ArrayPrototypeJoin extends BuiltinFunctionObject {
@@ -152,10 +164,6 @@ public class ArrayObject extends BuiltinFunctionObject {
 
                 public ESValue callFunction(ESObject thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
-                    if (!(thisObject instanceof ArrayPrototype)) {
-                        throw new EcmaScriptException(
-                                "reverse only implemented for arrays");
-                    }
                     return ((ArrayPrototype) thisObject).reverse();
                 }
             }
@@ -169,20 +177,220 @@ public class ArrayObject extends BuiltinFunctionObject {
 
                 public ESValue callFunction(ESObject thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
-                    if (!(thisObject instanceof ArrayPrototype)) {
-                        throw new EcmaScriptException(
-                                "sort only implemented for arrays");
-                    }
                     ESValue compareFn = null;
                     if (arguments.length > 0)
                         compareFn = arguments[0];
                     return ((ArrayPrototype) thisObject).sort(compareFn);
                 }
             }
+            class ArrayPrototypePop extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
 
-            arrayObject.putHiddenProperty("prototype", arrayPrototype);
-//            arrayObject.putHiddenProperty(LENGTHstring, ESNumber.valueOf(1));
+                ArrayPrototypePop(String name, Evaluator evaluator,
+                        FunctionPrototype fp) {
+                    super(fp, evaluator, name, 1);
+                }
 
+                public ESValue callFunction(ESObject thisObject,
+                        ESValue[] arguments) throws EcmaScriptException {
+                    return ((ArrayPrototype) thisObject).pop();
+                }
+            }
+            class ArrayPrototypePush extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
+
+                ArrayPrototypePush(String name, Evaluator evaluator,
+                        FunctionPrototype fp) {
+                    super(fp, evaluator, name, 1);
+                }
+
+                public ESValue callFunction(ESObject thisObject,
+                        ESValue[] arguments) throws EcmaScriptException {
+                    return ((ArrayPrototype) thisObject).push(arguments);
+                }
+            }
+            class ArrayPrototypeShift extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
+
+                ArrayPrototypeShift(String name, Evaluator evaluator,
+                        FunctionPrototype fp) {
+                    super(fp, evaluator, name, 1);
+                }
+
+                public ESValue callFunction(ESObject thisObject,
+                        ESValue[] arguments) throws EcmaScriptException {
+                    return ((ArrayPrototype) thisObject).shift();
+                }
+            }
+            class ArrayPrototypeUnshift extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
+
+                ArrayPrototypeUnshift(String name, Evaluator evaluator,
+                        FunctionPrototype fp) {
+                    super(fp, evaluator, name, 1);
+                }
+
+                public ESValue callFunction(ESObject thisObject,
+                        ESValue[] arguments) throws EcmaScriptException {
+                    return ((ArrayPrototype) thisObject).unshift(arguments);
+                }
+            }
+            class ArrayPrototypeSlice extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
+
+                ArrayPrototypeSlice(String name, Evaluator evaluator,
+                        FunctionPrototype fp) {
+                    super(fp, evaluator, name, 2);
+                }
+
+                public ESValue callFunction(ESObject thisObject,
+                        ESValue[] arguments) throws EcmaScriptException {
+                    return ((ArrayPrototype) thisObject).slice(arguments);
+                }
+            }
+            class ArrayPrototypeSplice extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
+
+                ArrayPrototypeSplice(String name, Evaluator evaluator,
+                        FunctionPrototype fp) {
+                    super(fp, evaluator, name, 2);
+                }
+
+                public ESValue callFunction(ESObject thisObject,
+                        ESValue[] arguments) throws EcmaScriptException {
+                    return ((ArrayPrototype) thisObject).splice(arguments);
+                }
+            }
+            class ArrayPrototypeIndexOf extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
+
+                ArrayPrototypeIndexOf(String name, Evaluator evaluator,
+                        FunctionPrototype fp) {
+                    super(fp, evaluator, name, 1);
+                }
+
+                public ESValue callFunction(ESObject thisObject,
+                        ESValue[] arguments) throws EcmaScriptException {
+                    return ((ArrayPrototype) thisObject).indexOf(arguments);
+                }
+            }
+            class ArrayPrototypeLastIndexOf extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
+
+                ArrayPrototypeLastIndexOf(String name, Evaluator evaluator,
+                        FunctionPrototype fp) {
+                    super(fp, evaluator, name, 1);
+                }
+
+                public ESValue callFunction(ESObject thisObject,
+                        ESValue[] arguments) throws EcmaScriptException {
+                    return ((ArrayPrototype) thisObject).lastIndexOf(arguments);
+                }
+            }
+            class ArrayPrototypeConcat extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
+
+                ArrayPrototypeConcat(String name, Evaluator evaluator,
+                        FunctionPrototype fp) {
+                    super(fp, evaluator, name, 1);
+                }
+
+                public ESValue callFunction(ESObject thisObject,
+                        ESValue[] arguments) throws EcmaScriptException {
+                    return ((ArrayPrototype) thisObject).concat(arguments);
+                }
+            }
+            class ArrayPrototypeReduce extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
+
+                ArrayPrototypeReduce(String name, Evaluator evaluator,
+                        FunctionPrototype fp) {
+                    super(fp, evaluator, name, 1);
+                }
+
+                public ESValue callFunction(ESObject thisObject,
+                        ESValue[] arguments) throws EcmaScriptException {
+                    return ((ArrayPrototype) thisObject).reduce(arguments);
+                }
+            }
+            class ArrayPrototypeReduceRight extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
+
+                ArrayPrototypeReduceRight(String name, Evaluator evaluator,
+                        FunctionPrototype fp) {
+                    super(fp, evaluator, name, 1);
+                }
+
+                public ESValue callFunction(ESObject thisObject,
+                        ESValue[] arguments) throws EcmaScriptException {
+                    return ((ArrayPrototype) thisObject).reduceRight(arguments);
+                }
+            }
+            class ArrayPrototypeEvery extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
+
+                ArrayPrototypeEvery(String name, Evaluator evaluator,
+                        FunctionPrototype fp) {
+                    super(fp, evaluator, name, 1);
+                }
+
+                public ESValue callFunction(ESObject thisObject,
+                        ESValue[] arguments) throws EcmaScriptException {
+                    return ((ArrayPrototype) thisObject).every(arguments);
+                }
+            }
+            class ArrayPrototypeSome extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
+
+                ArrayPrototypeSome(String name, Evaluator evaluator,
+                        FunctionPrototype fp) {
+                    super(fp, evaluator, name, 1);
+                }
+
+                public ESValue callFunction(ESObject thisObject,
+                        ESValue[] arguments) throws EcmaScriptException {
+                    return ((ArrayPrototype) thisObject).some(arguments);
+                }
+            }
+            class ArrayPrototypeForEach extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
+
+                ArrayPrototypeForEach(String name, Evaluator evaluator,
+                        FunctionPrototype fp) {
+                    super(fp, evaluator, name, 1);
+                }
+
+                public ESValue callFunction(ESObject thisObject,
+                        ESValue[] arguments) throws EcmaScriptException {
+                    return ((ArrayPrototype) thisObject).forEach(arguments);
+                }
+            }
+            class ArrayPrototypeMap extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
+
+                ArrayPrototypeMap(String name, Evaluator evaluator,
+                        FunctionPrototype fp) {
+                    super(fp, evaluator, name, 1);
+                }
+
+                public ESValue callFunction(ESObject thisObject,
+                        ESValue[] arguments) throws EcmaScriptException {
+                    return ((ArrayPrototype) thisObject).map(arguments);
+                }
+            }
+            class ArrayPrototypeFilter extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
+
+                ArrayPrototypeFilter(String name, Evaluator evaluator,
+                        FunctionPrototype fp) {
+                    super(fp, evaluator, name, 1);
+                }
+
+                public ESValue callFunction(ESObject thisObject,
+                        ESValue[] arguments) throws EcmaScriptException {
+                    return ((ArrayPrototype) thisObject).filter(arguments);
+                }
+            }
             arrayPrototype.putHiddenProperty("constructor", arrayObject);
             arrayPrototype.putHiddenProperty("toString",
                     new ArrayPrototypeToString("toString", evaluator,
@@ -194,6 +402,67 @@ public class ArrayObject extends BuiltinFunctionObject {
                             functionPrototype));
             arrayPrototype.putHiddenProperty("sort", new ArrayPrototypeSort(
                     "sort", evaluator, functionPrototype));
+            arrayPrototype.putHiddenProperty("pop", new ArrayPrototypePop(
+                    "pop", evaluator, functionPrototype));
+            arrayPrototype.putHiddenProperty("push", new ArrayPrototypePush(
+                    "push", evaluator, functionPrototype));
+            arrayPrototype.putHiddenProperty("shift", new ArrayPrototypeShift(
+                    "shift", evaluator, functionPrototype));
+            arrayPrototype.putHiddenProperty("unshift",
+                    new ArrayPrototypeUnshift("unshift", evaluator,
+                            functionPrototype));
+            arrayPrototype.putHiddenProperty("slice", new ArrayPrototypeSlice(
+                    "slice", evaluator, functionPrototype));
+            arrayPrototype.putHiddenProperty("splice",
+                    new ArrayPrototypeSplice("splice", evaluator,
+                            functionPrototype));
+            arrayPrototype.putHiddenProperty("indexOf",
+                    new ArrayPrototypeIndexOf("indexOf", evaluator,
+                            functionPrototype));
+            arrayPrototype.putHiddenProperty("lastIndexOf",
+                    new ArrayPrototypeLastIndexOf("lastIndexOf", evaluator,
+                            functionPrototype));
+            arrayPrototype.putHiddenProperty("concat",
+                    new ArrayPrototypeConcat("concat", evaluator,
+                            functionPrototype));
+            arrayPrototype.putHiddenProperty("reduce",
+                    new ArrayPrototypeReduce("reduce", evaluator,
+                            functionPrototype));
+            arrayPrototype.putHiddenProperty("reduceRight",
+                    new ArrayPrototypeReduceRight("reduceRight", evaluator,
+                            functionPrototype));
+            arrayPrototype.putHiddenProperty("every", new ArrayPrototypeEvery(
+                    "every", evaluator, functionPrototype));
+            arrayPrototype.putHiddenProperty("some", new ArrayPrototypeSome(
+                    "some", evaluator, functionPrototype));
+            arrayPrototype.putHiddenProperty("forEach",
+                    new ArrayPrototypeForEach("forEach", evaluator,
+                            functionPrototype));
+            arrayPrototype.putHiddenProperty("map", new ArrayPrototypeMap(
+                    "map", evaluator, functionPrototype));
+            arrayPrototype.putHiddenProperty("filter",
+                    new ArrayPrototypeFilter("filter", evaluator,
+                            functionPrototype));
+
+            /*
+             * ES5 15.4.3 - Properties of the Array Constructor
+             */
+            class ArrayIsArray extends BuiltinFunctionObject {
+                private static final long serialVersionUID = 1L;
+
+                ArrayIsArray(String name, Evaluator evaluator,
+                        FunctionPrototype fp) {
+                    super(fp, evaluator, name, 1);
+                }
+
+                public ESValue callFunction(ESObject thisObject,
+                        ESValue[] arguments) throws EcmaScriptException {
+                    return ((ArrayObject) thisObject).isArray(arguments);
+                }
+            }
+            arrayObject.putHiddenProperty("prototype", arrayPrototype);
+            arrayObject.putHiddenProperty("isArray", new ArrayIsArray(
+                    "isArray", evaluator, functionPrototype));
         } catch (EcmaScriptException e) {
             e.printStackTrace();
             throw new ProgrammingError(e.getMessage());

@@ -18,11 +18,14 @@
 package FESI.Data;
 
 import java.lang.reflect.Array;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Vector;
 
 import FESI.Exceptions.EcmaScriptException;
+import FESI.Exceptions.ProgrammingError;
 import FESI.Exceptions.ReferenceError;
+import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
 import FESI.Interpreter.ScopeChain;
 
@@ -33,6 +36,10 @@ public class ArrayPrototype extends ESObject {
     private static final long serialVersionUID = 2559830243680989945L;
     private static final String LENGTHstring = ("length").intern();
     private static final int LENGTHhash = LENGTHstring.hashCode();
+    
+    private enum IterationType {
+        EVERY, SOME, FOREACH, MAP, FILTER;
+    }
 
     // The array value
     // We could use a non synchronized vector or directly and array
@@ -245,12 +252,16 @@ public class ArrayPrototype extends ESObject {
     }
 
     /**
-     * Reverse the orders of the elements in an array
+     * ES5 - 15.4.4.8 
+     * Array.prototype.reverse ( )
+     * 
+     * The elements of the array are rearranged so as to reverse their order.
+     * The object is returned as the result of the call.
      * 
      * @return the reversed array (which is the same as this one)
      * @throws EcmaScriptException
      */
-    public ESValue reverse() throws EcmaScriptException {
+    public ESValue reverse() {
         int size = theArray.size();
         if (size > 0) {
             Vector<ESValue> reversed = new Vector<ESValue>(size);
@@ -263,6 +274,459 @@ public class ArrayPrototype extends ESObject {
         return this;
     }
 
+    /**
+     * ES5 - 15.4.4.7 
+     * Array.prototype.push ( [ item1 [ , item2 [ , … ] ] ] )
+     * 
+     * The arguments are appended to the end of the array, in the order in which
+     * they appear. The new length of the array is returned as the result of the
+     * call.
+     * 
+     * @param args
+     * @return
+     */
+    public ESValue push(ESValue[] args) {
+        for (ESValue v : args) {
+            theArray.add(v);
+        }
+        return ESNumber.valueOf(theArray.size());
+    }
+    
+    /**
+     * ES5 - 15.4.4.6
+     * Array.prototype.pop ( )
+     * 
+     * The last element of the array is removed from the array and returned.
+     * 
+     * @return
+     */
+    public ESValue pop() {
+        int len = theArray.size();
+        if (len == 0) {
+            return ESUndefined.theUndefined;
+        }
+        return theArray.remove(len-1);
+    }
+    
+    /**
+     * ES5 - 15.4.4.9
+     * Array.prototype.shift ( )
+     * 
+     * The first element of the array is removed from the array and returned.
+     * 
+     * @return
+     */
+    public ESValue shift() {
+        if (theArray.size() == 0) {
+            return ESUndefined.theUndefined;
+        }
+        return theArray.remove(0);
+    }
+
+    /**
+     * ES5 - 15.4.4.13 
+     * Array.prototype.unshift ( [ item1 [ , item2 [ , … ] ] ] )
+     * 
+     * The arguments are prepended to the start of the array, such that their
+     * order within the array is the same as the order in which they appear in
+     * the argument list.
+     * 
+     * @param args
+     * @return
+     */
+    public ESValue unshift(ESValue[] args) {
+       int i = 0;
+       for (ESValue v : args) {
+           theArray.add(i++, v);
+       }
+       return ESNumber.valueOf(theArray.size());
+    }
+    
+    /**
+     * ES5 - 15.4.4.10
+     * Array.prototype.slice (start, end)
+     * 
+     * Returns a one-level deep copy of a portion of an array.
+     * 
+     * @param args
+     * @return
+     * @throws EcmaScriptException
+     */
+    public ESValue slice(ESValue[] args) throws EcmaScriptException {
+        int begin, end;
+        if (args.length == 0) {
+            begin = 0;
+            end = theArray.size();
+        } else {
+            begin = ((ESNumber) args[0]).toInt32();
+            end = args.length == 1 ? args.length : (int) ((ESNumber) args[1])
+                    .toInteger();
+        }
+        ArrayPrototype newArray = newEmptyArray();
+        newArray.theArray.addAll(theArray.subList(begin, end));
+        return newArray;
+    }
+
+    /**
+     * ES5 - 15.4.4.12 
+     * Array.prototype.splice (start, deleteCount [ , item1 [ ,item2 [ , … ] ] ] )
+     * 
+     * Changes the content of an array, adding new elements while removing old
+     * elements.
+     * 
+     * TODO: Optimise
+     * 
+     * @param args
+     * @return
+     * @throws EcmaScriptException
+     */
+    public ESValue splice(ESValue[] args) throws EcmaScriptException {
+        ArrayPrototype newArray = newEmptyArray();
+
+        if (args.length >= 2) {
+            int len = theArray.size();
+            
+            int relStart = ((ESNumber) args[0]).toInt32();
+            int start = relStart < 0 ? Math.max(len + relStart, 0) : Math.min(
+                    relStart, len);
+            
+            int delCount = Math.min(
+                    Math.max(((ESNumber) args[1]).toInt32(), 0), len - start);
+
+            int i;
+            for (i = 0; i < delCount; i++) {
+                ESValue v = theArray.get(start + i);
+                if (v != null) {
+                    newArray.theArray.add(v);
+                }
+            }
+           
+            int itemCount = args.length - 2;
+            if (itemCount < delCount) {
+                for (i = start; i < (len - delCount); i++) {
+                    int to = i + itemCount;
+                    ESValue v = theArray.get(i + delCount);
+                    if (v != null) {
+                        if (to >= theArray.size()) {
+                            theArray.add(v);
+                        } else {
+                            theArray.set(to, v);
+                        }
+                    } else {
+                        theArray.remove(to);
+                    }
+                }
+                
+                for (i = len; i > (len - delCount + itemCount); i--) {
+                    theArray.remove(i-1);
+                }
+            } else if (itemCount > delCount) {
+                for (i = len - delCount; i > start; i--) {
+                    int to = i + itemCount - 1;
+                    ESValue v = theArray.get(i + delCount - 1);
+                    if (v != null) {
+                        if (to >= theArray.size()) {
+                            theArray.add(v);
+                        } else {
+                            theArray.set(to, v);
+                        }
+                    } else {
+                        theArray.remove(to);
+                    }
+                }
+            }
+            
+            for (i = 2; i < args.length; i++) {
+                theArray.set(start++, args[i]);
+            }
+        }
+        return newArray;
+    }
+    
+    /**
+     * ES5 - 15.4.4.14 
+     * Array.prototype.indexOf ( searchElement [ , fromIndex ] )
+     * 
+     * Returns the first index at which a given element can be found in the
+     * array, or -1 if it is not present.
+     * 
+     * @param args
+     * @return
+     * @throws EcmaScriptException
+     */
+    public ESValue indexOf(ESValue[] args) throws EcmaScriptException {
+        int len = theArray.size();
+        if (len != 0) {
+            int offset = args.length >= 2 ? ((ESNumber) args[1]).toInt32() : 0;
+            if (offset < len) {
+                int index;
+                if (offset >= 0) {
+                    index = offset;
+                } else {
+                    index = len - Math.abs(offset);
+                    if (index < 0) {
+                        index = 0;
+                    }
+                }
+                return ESNumber.valueOf(theArray.indexOf(args[0], index));
+            }
+        }
+        return ESNumber.valueOf(-1);
+    }
+
+    /**
+     * 15.4.4.15 
+     * Array.prototype.lastIndexOf ( searchElement [ , fromIndex ] )
+     * 
+     * Returns the last index at which a given element can be found in the
+     * array, or -1 if it is not present. The array is searched backwards,
+     * starting at fromIndex.
+     * 
+     * @param args
+     * @return
+     * @throws EcmaScriptException
+     */
+    public ESValue lastIndexOf(ESValue[] args) throws EcmaScriptException {
+        int len = theArray.size();
+        if (len != 0) {
+            int offset = args.length >= 2 ? ((ESNumber) args[1]).toInt32()
+                    : len;
+            int index = offset >= 0 ? Math.min(offset, len - 1) : len
+                    - Math.abs(offset);
+            return ESNumber.valueOf(theArray.lastIndexOf(args[0], index));
+        }
+        return ESNumber.valueOf(-1);
+    }
+    
+    /**
+     * ES5 - 15.4.4.4
+     * Array.prototype.concat ( [ item1 [ , item2 [ , … ] ] ] )
+     * 
+     * When the concat method is called with zero or more arguments item1,
+     * item2, etc., it returns an array containing the array elements of the
+     * object followed by the array elements of each argument in order.
+     * 
+     * @param args
+     * @return
+     * @throws EcmaScriptException
+     */
+    public ESValue concat(ESValue[] args) throws EcmaScriptException {
+        ArrayPrototype newArray = newEmptyArray();
+        
+        Vector<ESValue> items = new Vector<ESValue>();
+        items.addAll(theArray);
+        Collections.addAll(items, args);
+        for (ESValue value : items) {
+            if (value instanceof ArrayPrototype) {
+                for (ESValue subValue : ((ArrayPrototype) value).theArray) {
+                    newArray.theArray.add(subValue);
+                }
+            } else {
+                newArray.theArray.add(value);
+            }
+        }
+        return newArray;
+    }
+    
+    /**
+     * ES5 - 15.4.4.21
+     * Array.prototype.reduce ( callbackfn [ , initialValue ] )
+     * 
+     * Apply a function against an accumulator and each value of
+     * the array (from left-to-right) as to reduce it to a single value.
+     * 
+     * @param args
+     * @return
+     * @throws EcmaScriptException
+     */
+    public ESValue reduce(ESValue[] args) throws EcmaScriptException {
+        return reduce(args, 0);
+    }
+
+    /**
+     * ES5 - 15.4.4.22 
+     * Array.prototype.reduceRight ( callbackfn [ , initialValue ] )
+     * 
+     * Apply a function simultaneously against two values of the array (from
+     * right-to-left) as to reduce it to a single value.
+     * 
+     * @param args
+     * @return
+     * @throws EcmaScriptException
+     */
+    public ESValue reduceRight(ESValue[] args) throws EcmaScriptException {
+        return reduce(args, theArray.size()-1);
+    }
+    
+    /**
+     * ES5 - 15.4.4.16 
+     * Array.prototype.every ( callbackfn [ , thisArg ] )
+     * 
+     * Tests whether all elements in the array pass the test implemented by the
+     * provided function.
+     * 
+     * @param args
+     * @return
+     * @throws EcmaScriptException
+     */
+    public ESValue every(ESValue[] args) throws EcmaScriptException {
+        return iterate(args, IterationType.EVERY);
+    }
+    
+    /**
+     * ES5 - 15.4.4.17 
+     * Array.prototype.some ( callbackfn [ , thisArg ] )
+     * 
+     * Tests whether some element in the array passes the test implemented by
+     * the provided function.
+     * 
+     * @param args
+     * @return
+     * @throws EcmaScriptException
+     */
+    public ESValue some(ESValue[] args) throws EcmaScriptException {
+        return iterate(args, IterationType.SOME);
+    }
+    
+    /**
+     * ES5 - 15.4.4.18 
+     * Array.prototype.forEach ( callbackfn [ , thisArg ] )
+     * 
+     * Executes a provided function once per array element.
+     * 
+     * @param args
+     * @return
+     * @throws EcmaScriptException
+     */
+    public ESValue forEach(ESValue[] args) throws EcmaScriptException {
+        return iterate(args, IterationType.FOREACH);
+    }
+    
+    /**
+     * ES5 - 15.4.4.19 
+     * Array.prototype.map ( callbackfn [ , thisArg ] )
+     * 
+     * Creates a new array with the results of calling a provided function on
+     * every element in this array.
+     * 
+     * @param args
+     * @return
+     * @throws EcmaScriptException
+     */
+    public ESValue map(ESValue[] args) throws EcmaScriptException {
+        return iterate(args, IterationType.MAP);
+    }
+
+    /**
+     * ES5 - 15.4.4.20 
+     * Array.prototype.filter ( callbackfn [ , thisArg ] )
+     * 
+     * Creates a new array with all elements that pass the test implemented by
+     * the provided function.
+     * 
+     * @param args
+     * @return
+     * @throws EcmaScriptException
+     */
+    public ESValue filter(ESValue[] args) throws EcmaScriptException {
+        return iterate(args, IterationType.FILTER);
+    }
+    
+    private ESValue reduce(ESValue[] args, int offset)
+            throws EcmaScriptException {
+        ESValue callbackfn = args.length > 0 ? args[0]
+                : ESUndefined.theUndefined;
+        if (callbackfn == null || !(callbackfn instanceof FunctionPrototype)) {
+            throw new TypeError(callbackfn + " is not a function");
+        }
+
+        ESValue initialValue = args.length > 1 ? args[1] : null;
+        for (int i = 0; i < theArray.size(); i++) {
+            ESValue currentValue = theArray.get(Math.abs(i - offset));
+            if (currentValue == null) {
+                continue;
+            }
+
+            if (initialValue == null) {
+                initialValue = currentValue;
+            } else {
+                ESValue[] callArgs = { initialValue, currentValue,
+                        ESNumber.valueOf(i), this };
+                initialValue = callbackfn.callFunction(this, callArgs);
+            }
+        }
+
+        if (initialValue == null) {
+            throw new TypeError("Reduce of empty array with no initial value");
+        }
+
+        return initialValue;
+    }
+    
+    private ESValue iterate(ESValue[] args, IterationType type)
+            throws EcmaScriptException {
+        ESValue callbackfn = args.length > 0 ? args[0]
+                : ESUndefined.theUndefined;
+        if (callbackfn == null || !(callbackfn instanceof FunctionPrototype)) {
+            throw new TypeError(callbackfn + " is not a function");
+        }
+
+        ArrayPrototype newArray = newEmptyArray();
+        for (int i = 0; i < theArray.size(); i++) {
+            ESValue elem = theArray.get(i);
+            if (elem == null) {
+                continue;
+            }
+
+            ESValue thisArg;
+            if (args.length < 2 || args[1] == null
+                    || args[1] == ESUndefined.theUndefined) {
+                thisArg = this;
+            } else {
+                thisArg = args[1];
+            }
+
+            ESValue[] callArgs = { elem, ESNumber.valueOf(i), this };
+            ESValue ret = callbackfn.callFunction((ESObject) thisArg, callArgs);
+            switch (type) {
+            case EVERY:
+                if (!ret.booleanValue()) {
+                    return ret.toESBoolean();
+                }
+                break;
+            case SOME:
+                if (ret.booleanValue()) {
+                    return ret.toESBoolean();
+                }
+                break;
+            case FOREACH:
+                break;
+            case MAP:
+                newArray.theArray.add(i, ret);
+                break;
+            case FILTER:
+                if (ret.booleanValue()) {
+                    newArray.theArray.add(elem);
+                }
+                break;
+            default:
+                throw new ProgrammingError("Invalid iteration type");
+            }
+        }
+        switch (type) {
+        case EVERY:
+            return ESBoolean.makeBoolean(true);
+        case SOME:
+            return ESBoolean.makeBoolean(false);
+        case FOREACH:
+        default:
+            return ESUndefined.theUndefined;
+        case MAP:
+        case FILTER:
+            return newArray;
+        }
+    }
+    
     // This routines are taken from Java examples in a nutshell
     static interface Comparer {
         /**
@@ -293,6 +757,12 @@ public class ArrayPrototype extends ESObject {
             // System.out.println("s1 = " + s1 + " s2 = " + s2);
             return s1.compareTo(s2);
         }
+    }
+    
+    private ArrayPrototype newEmptyArray() throws EcmaScriptException {
+        Evaluator eval = getEvaluator();
+        return (ArrayPrototype) eval.getValue("Array").doConstruct(
+                eval.getThisObject(), ESValue.EMPTY_ARRAY);
     }
 
     /**
@@ -344,7 +814,10 @@ public class ArrayPrototype extends ESObject {
     }
 
     /**
-     * Sort the array with a specified compare routine
+     * ES5 - 15.4.4.11 
+     * Array.prototype.sort (comparefn)
+     * 
+     * Sorts the elements of an array in place and returns the array.
      * 
      * @param compareFn
      *            A function returning a comparer
@@ -697,5 +1170,4 @@ public class ArrayPrototype extends ESObject {
             return compValue.toInt32();
         }
     }
-
 }
