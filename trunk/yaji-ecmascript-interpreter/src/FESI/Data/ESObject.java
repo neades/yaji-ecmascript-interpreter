@@ -21,6 +21,7 @@ import java.util.Enumeration;
 
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
+import FESI.Exceptions.ReferenceError;
 import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
 import FESI.Interpreter.FesiHashtable;
@@ -199,8 +200,8 @@ public abstract class ESObject extends ESValue {
         if (value == null) {
             if (prototype == null) {
                 if (previousScope == null) {
-                    throw new EcmaScriptException("global variable '"
-                            + propertyName + "' does not have a value","ReferenceError");
+                    throw new ReferenceError("global variable '"
+                            + propertyName + "' does not have a value");
                 }
                 value = previousScope.getValue(propertyName, hash);
             } else {

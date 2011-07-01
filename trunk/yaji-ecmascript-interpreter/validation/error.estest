@@ -247,3 +247,60 @@ try {
 } catch (ex) {
   typeof ex === 'object';
 }
+
+@test try.7 ES5 12.14
+var success;
+try {
+  success = false;
+} catch(ex) {
+  success = false;
+} finally {
+  success = true;
+}
+success;
+
+@test try.8 ES5 12.14
+var success = false;
+try {
+  try {
+    throw Error();
+  } finally {
+    success = true;
+  } 
+} catch( e ) {
+  // ignored
+}
+success;
+
+@test try.8 ES5 12.14
+var success = false;
+try {
+  try {
+    throw Error();
+  } catch (e) {
+    not.defined;
+  } finally {
+    success = true;
+  } 
+} catch( e ) {
+  // ignored
+}
+success;
+
+@test catch.exception.1
+var result = '';
+try {
+  colours[2] = "red";
+} catch (e) {
+  result =  "Error name: " + e.name + ". Error message: " + e.message;
+}
+result === "Error name: ReferenceError. Error message: global variable 'colours' does not have a value";
+
+@test catch.thrown.exception
+var result = '';
+try {
+  throw Error('test');
+} catch (e) {
+  result =  "Error name: " + e.name + ". Error message: " + e.message;
+}
+result === "Error name: Error. Error message: test";

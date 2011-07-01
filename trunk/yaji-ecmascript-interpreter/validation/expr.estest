@@ -85,6 +85,11 @@ e = 0xFF;
 f = ~ e;
 e==~~e && f!=e
 
+@test unary.7
+e = 2;
+f = --e;
+f === (e-1);
+
 // 11.5
 @test multiplicative.1
 12 * 3 == 36;

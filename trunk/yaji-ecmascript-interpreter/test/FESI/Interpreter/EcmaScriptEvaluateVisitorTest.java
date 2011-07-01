@@ -1,6 +1,7 @@
 package FESI.Interpreter;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -186,6 +187,23 @@ public class EcmaScriptEvaluateVisitorTest {
         EcmaScriptEvaluateVisitor visitor = createVisitor();
         ESValue result = (ESValue) visitor.visit(statement,EcmaScriptEvaluateVisitor.FOR_VALUE);
         assertEquals(ESBoolean.makeBoolean(true),result);
+    }
+    
+    @Test
+    public void shouldThrowException() throws Exception {
+        String sourceText = "throw new Error('test');";
+        EcmaScript es = new EcmaScript(new StringReader(sourceText));
+        
+        ASTStatement statement = (ASTStatement) es.Program().jjtGetChild(0);
+        
+        EcmaScriptEvaluateVisitor visitor = createVisitor();
+        try {
+            visitor.visit(statement,EcmaScriptEvaluateVisitor.FOR_VALUE);
+            fail("Should throw exception");
+        } catch (PackagedException e) {
+            ESValue errorObject = e.exception.getErrorObject(evaluator);
+            assertEquals("Error: test",errorObject.toString());
+        }
     }
 
     private EcmaScriptEvaluateVisitor createVisitor() {
