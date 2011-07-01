@@ -304,3 +304,12 @@ try {
   result =  "Error name: " + e.name + ". Error message: " + e.message;
 }
 result === "Error name: Error. Error message: test";
+
+@test throws.typeerror.1 ES5.1 11.2.2
+var o = {};
+try {
+  new o();
+  false;
+} catch (e) {
+  "TypeError" === e.name;
+}
