@@ -51,7 +51,9 @@ public class EcmaScriptException extends Exception {
     private Throwable originatingException = null; // If the exception package
     // another one
 
-    private final String errorObject;
+    private final String errorObjectType;
+
+    private ESValue errorObject;
 
     /**
      * Create a generic exception with cause "reason"
@@ -61,7 +63,7 @@ public class EcmaScriptException extends Exception {
      */
     public EcmaScriptException(String reason) {
         super(reason);
-        this.errorObject = "Error";
+        this.errorObjectType = "Error";
     }
 
     /**
@@ -86,7 +88,7 @@ public class EcmaScriptException extends Exception {
      */
     public EcmaScriptException(String reason, String errorObject) {
         super(reason);
-        this.errorObject = errorObject;
+        this.errorObjectType = errorObject;
     }
 
     /**
@@ -101,7 +103,7 @@ public class EcmaScriptException extends Exception {
     public EcmaScriptException(String reason, Throwable originatingException, String errorObject) {
         super(reason);
         this.originatingException = originatingException;
-        this.errorObject = errorObject;
+        this.errorObjectType = errorObject;
     }
 
     /**
@@ -219,6 +221,13 @@ public class EcmaScriptException extends Exception {
     }
 
     public ESValue getErrorObject(Evaluator evaluator) throws EcmaScriptException {
-        return evaluator.newError(errorObject, new ESString(super.getMessage()));
+        if (errorObject != null) {
+            return errorObject;
+        }
+        return evaluator.newError(errorObjectType, new ESString(super.getMessage()));
+    }
+
+    public void setErrorObject(ESValue value) {
+        errorObject = value;
     }
 }

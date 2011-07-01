@@ -61,6 +61,7 @@ import FESI.AST.ASTStatement;
 import FESI.AST.ASTStatementList;
 import FESI.AST.ASTSuperReference;
 import FESI.AST.ASTThisReference;
+import FESI.AST.ASTThrowStatement;
 import FESI.AST.ASTTryStatement;
 import FESI.AST.ASTUnaryExpression;
 import FESI.AST.ASTVariableDeclaration;
@@ -1818,5 +1819,12 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
     public Object visit(ASTFinally node, Object data) {
         node.assertOneChild();
         return node.jjtGetChild(0).jjtAccept(this, data);
+    }
+
+    public Object visit(ASTThrowStatement node, Object data) {
+        node.assertOneChild();
+        EcmaScriptException exception = new EcmaScriptException("throw");
+        exception.setErrorObject((ESValue)node.jjtGetChild(0).jjtAccept(this, data));
+        throw new PackagedException(exception, node);
     }
 }

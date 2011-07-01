@@ -60,6 +60,7 @@ import FESI.AST.ASTStatement;
 import FESI.AST.ASTStatementList;
 import FESI.AST.ASTSuperReference;
 import FESI.AST.ASTThisReference;
+import FESI.AST.ASTThrowStatement;
 import FESI.AST.ASTTryStatement;
 import FESI.AST.ASTUnaryExpression;
 import FESI.AST.ASTVariableDeclaration;
@@ -382,6 +383,11 @@ public class EcmaScriptVariableVisitor implements EcmaScriptVisitor,
     }
     
     public Object visit(ASTSetAccessor node, Object data) {
+        // no internal variable declarations possible
+        return data;
+    }
+    
+    public Object visit(ASTThrowStatement node, Object data) {
         // no internal variable declarations possible
         return data;
     }

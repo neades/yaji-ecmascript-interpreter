@@ -2749,7 +2749,8 @@ void ExpressionInES()                     :
  |	BreakStatement()
  |	ReturnStatement()
  |	WithStatement()
- |  TryStatement()/*@bgen(jjtree)*/
+ |  TryStatement()
+ |  ThrowStatement()/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -3482,6 +3483,40 @@ void ExpressionInES()                     :
         }
 /*@egen*/
  }
+
+void ThrowStatement()                 :
+{/*@bgen(jjtree) ThrowStatement */
+  ASTThrowStatement jjtn000 = new ASTThrowStatement(JJTTHROWSTATEMENT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) ThrowStatement */
+        try {
+/*@egen*/
+	<THROW> Expression() Sc()/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+            jjtreeCloseNodeScope(jjtn000);
+          }
+        }
+/*@egen*/
+}
 
 void Catch()        :
 {/*@bgen(jjtree) Catch */

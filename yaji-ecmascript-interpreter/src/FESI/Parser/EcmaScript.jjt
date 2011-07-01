@@ -932,6 +932,7 @@ void ExpressionInES() #ExpressionList(>1) :
  |	ReturnStatement()
  |	WithStatement()
  |  TryStatement()
+ |  ThrowStatement()
  }
  
  void Block() #void :
@@ -1089,6 +1090,12 @@ void ExpressionInES() #ExpressionList(>1) :
  	[ Catch() ]
  	[ Finally() ]
  }
+
+void ThrowStatement() #ThrowStatement :
+{}
+{
+	<THROW> Expression() Sc()
+}
 
 void Catch() #Catch :
 {}

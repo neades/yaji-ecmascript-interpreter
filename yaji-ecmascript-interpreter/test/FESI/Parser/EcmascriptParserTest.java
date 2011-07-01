@@ -160,6 +160,14 @@ public class EcmascriptParserTest {
                   + "      [3.14159]" + eol
                   + "    Elision" + eol
                   + "    Elision" + eol
+                },
+                // throw Statement
+                { "throw new Error();", "Program" + eol  
+                  + " Statement" + eol
+                  + "  ThrowStatement" + eol
+                  + "   AllocationExpression" + eol
+                  + "    <Error>" + eol
+                  + "    FunctionCallParameters" + eol
                 }
             });
     }

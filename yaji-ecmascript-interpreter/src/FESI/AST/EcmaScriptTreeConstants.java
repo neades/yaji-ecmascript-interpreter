@@ -46,10 +46,11 @@ public interface EcmaScriptTreeConstants
   public int JJTRETURNSTATEMENT = 39;
   public int JJTWITHSTATEMENT = 40;
   public int JJTTRYSTATEMENT = 41;
-  public int JJTCATCH = 42;
-  public int JJTFINALLY = 43;
-  public int JJTFUNCTIONDECLARATION = 44;
-  public int JJTPROGRAM = 45;
+  public int JJTTHROWSTATEMENT = 42;
+  public int JJTCATCH = 43;
+  public int JJTFINALLY = 44;
+  public int JJTFUNCTIONDECLARATION = 45;
+  public int JJTPROGRAM = 46;
 
 
   public String[] jjtNodeName = {
@@ -95,10 +96,11 @@ public interface EcmaScriptTreeConstants
     "ReturnStatement",
     "WithStatement",
     "TryStatement",
+    "ThrowStatement",
     "Catch",
     "Finally",
     "FunctionDeclaration",
     "Program",
   };
 }
-/* JavaCC - OriginalChecksum=7e832caf423f6f4bce7683cb0ba32974 (do not edit this line) */
+/* JavaCC - OriginalChecksum=02425502c06427fbc1cb70a4ee2c83e4 (do not edit this line) */
