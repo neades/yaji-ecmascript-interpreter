@@ -9,3 +9,7 @@
   # Try to run validation suites at http://es5conform.codeplex.com/,  http://test262.ecmascript.org/ and http://sputnik.googlelabs.com/
   # Remove all the ClassFile stuff - either remove functionality or use bcel or some better library.
   # Change vectors to arraylists
+  # Complete implementation of all ES5.1 features.
+  # Optimise
+  # Investigate Compilation
+  # Branch and implement features from Project Harmony.
