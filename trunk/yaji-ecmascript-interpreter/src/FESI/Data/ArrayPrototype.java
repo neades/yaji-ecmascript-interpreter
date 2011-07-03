@@ -18,6 +18,8 @@
 package FESI.Data;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -41,9 +43,7 @@ public class ArrayPrototype extends ESObject {
         EVERY, SOME, FOREACH, MAP, FILTER;
     }
 
-    // The array value
-    // We could use a non synchronized vector or directly and array
-    protected Vector<ESValue> theArray = new Vector<ESValue>();
+    private ArrayList<ESValue> theArray = new ArrayList<ESValue>();
 
     /**
      * Create a new empty array
@@ -79,7 +79,7 @@ public class ArrayPrototype extends ESObject {
             return array;
         }
         for (int i = 0; i < l; i++) {
-            ESValue element = theArray.elementAt(i);
+            ESValue element = theArray.get(i);
             if (componentType == Integer.TYPE) {
                 if (element.isNumberValue()) {
                     double d = element.doubleValue();
@@ -236,7 +236,16 @@ public class ArrayPrototype extends ESObject {
      *            the new size 90 or positive)
      */
     public void setSize(int size) {
-        theArray.setSize(size);
+        int currentSize = theArray.size();
+        if (size > currentSize) {
+            theArray.ensureCapacity(size);
+            theArray.addAll(currentSize,
+                    Arrays.asList(new ESValue[size - currentSize]));
+        } else {
+            // Truncate
+            theArray.subList(size, theArray.size()).clear();
+            theArray.trimToSize();
+        }
     }
 
     /**
@@ -248,7 +257,7 @@ public class ArrayPrototype extends ESObject {
      *            the index of the element
      */
     public void setElementAt(ESValue theElement, int index) {
-        theArray.setElementAt(theElement, index);
+        theArray.set(index, theElement);
     }
 
     /**
@@ -258,18 +267,14 @@ public class ArrayPrototype extends ESObject {
      * The elements of the array are rearranged so as to reverse their order.
      * The object is returned as the result of the call.
      * 
+     * TODO: Use Collections.reverse
+     * 
      * @return the reversed array (which is the same as this one)
      * @throws EcmaScriptException
      */
     public ESValue reverse() {
-        int size = theArray.size();
-        if (size > 0) {
-            Vector<ESValue> reversed = new Vector<ESValue>(size);
-            reversed.setSize(size);
-            for (int i = 0, j = size - 1; i < size; i++, j--) {
-                reversed.setElementAt(theArray.elementAt(j), i);
-            }
-            theArray = reversed;
+        if (theArray.size() > 0) {
+            Collections.reverse(theArray);
         }
         return this;
     }
@@ -359,8 +364,7 @@ public class ArrayPrototype extends ESObject {
             end = theArray.size();
         } else {
             begin = ((ESNumber) args[0]).toInt32();
-            end = args.length == 1 ? args.length : (int) ((ESNumber) args[1])
-                    .toInteger();
+            end = args.length == 1 ? args.length : ((ESNumber) args[1]).toInt32();
         }
         ArrayPrototype newArray = newEmptyArray();
         newArray.theArray.addAll(theArray.subList(begin, end));
@@ -468,7 +472,13 @@ public class ArrayPrototype extends ESObject {
                         index = 0;
                     }
                 }
-                return ESNumber.valueOf(theArray.indexOf(args[0], index));
+                
+                while (index < len) {
+                    if (theArray.get(index).equals(args[0])) {
+                        return ESNumber.valueOf(index);
+                    }
+                    index++;
+                }
             }
         }
         return ESNumber.valueOf(-1);
@@ -493,7 +503,13 @@ public class ArrayPrototype extends ESObject {
                     : len;
             int index = offset >= 0 ? Math.min(offset, len - 1) : len
                     - Math.abs(offset);
-            return ESNumber.valueOf(theArray.lastIndexOf(args[0], index));
+
+            while (index >= 0) {
+                if (theArray.get(index).equals(args[0])) {
+                    return ESNumber.valueOf(index);
+                }
+                index--;
+            }
         }
         return ESNumber.valueOf(-1);
     }
@@ -783,22 +799,22 @@ public class ArrayPrototype extends ESObject {
         // why it is guaranteed to sort the array...
         // Note the use of the compare() method of the Comparer object.
         int i = from, j = to;
-        ESValue center = theArray.elementAt((from + to) / 2);
+        ESValue center = theArray.get((from + to) / 2);
         do {
-            ESValue ai = theArray.elementAt(i);
-            ESValue aj = theArray.elementAt(j);
+            ESValue ai = theArray.get(i);
+            ESValue aj = theArray.get(j);
             while ((i < to) && (c.compare(center, ai) > 0)) {
                 i++;
-                ai = theArray.elementAt(i);
+                ai = theArray.get(i);
             }
             while ((j > from) && (c.compare(center, aj) < 0)) {
                 j--;
-                aj = theArray.elementAt(j);
+                aj = theArray.get(j);
             }
             if (i < j) {
                 ESValue tmp = ai;
-                theArray.setElementAt(aj, i);
-                theArray.setElementAt(tmp, j);
+                theArray.set(i, aj);
+                theArray.set(j, tmp);
             }
             if (i <= j) {
                 i++;
@@ -849,7 +865,7 @@ public class ArrayPrototype extends ESObject {
                 throw new EcmaScriptException("Invalid length value: "
                         + propertyValue);
             }
-            theArray.setSize(length);
+            setSize(length);
         } else {
             int index = -1; // indicates not a valid index value
             try {
@@ -869,11 +885,12 @@ public class ArrayPrototype extends ESObject {
     @Override
     public void putProperty(int index, ESValue propertyValue)
             throws EcmaScriptException {
-
         if (index >= theArray.size()) {
-            theArray.setSize(index + 1);
+            setSize(index);
+            theArray.add(index, propertyValue);
+        } else {
+            theArray.set(index, propertyValue);
         }
-        theArray.setElementAt(propertyValue, index);
     }
 
     // overrides
@@ -919,7 +936,7 @@ public class ArrayPrototype extends ESObject {
     public ESValue getProperty(int index) throws EcmaScriptException {
         Object theElement = null;
         if (index < theArray.size()) {
-            theElement = theArray.elementAt(index);
+            theElement = theArray.get(index);
         }
         if (theElement == null) {
             return ESUndefined.theUndefined;
@@ -987,7 +1004,7 @@ public class ArrayPrototype extends ESObject {
 
                 // Check if a numeric key is appropriate
                 while ((nextIndex < theArray.size())
-                        && (theArray.elementAt(nextIndex) == null)) {
+                        && (theArray.get(nextIndex) == null)) {
                     nextIndex++;
                 }
                 if (nextIndex < theArray.size()) {
@@ -1072,7 +1089,7 @@ public class ArrayPrototype extends ESObject {
                 // loop on idex properties
                 if (nextIndex < theArray.size()) {
                     while ((nextIndex < theArray.size())
-                            && (theArray.elementAt(nextIndex) == null)) {
+                            && (theArray.get(nextIndex) == null)) {
                         nextIndex++;
                     }
                     if (nextIndex < theArray.size()) {
