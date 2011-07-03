@@ -391,7 +391,7 @@ public class Interpret implements InterpreterCommands {
         // Selecting the interactive mode and GUI
         OUTONE: for (int i = 0; i < args.length; i++) {
             String arg = args[i];
-            if (arg.startsWith("-")) {
+            if (startsWith(arg,'-')) {
                 for (int j = 1; j < arg.length(); j++) {
                     char c = arg.charAt(j);
                     if (c == 'i') {
@@ -438,7 +438,7 @@ public class Interpret implements InterpreterCommands {
         OUTTWO: // for each argument
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
-            if (arg.startsWith("-")) {
+            if (startsWith(arg,'-')) {
                 if (arg.equals("--"))
                     continue OUTTWO;
                 INTWO: // for each letter in - argument
@@ -657,7 +657,7 @@ public class Interpret implements InterpreterCommands {
         // Third pass to load files
         OUTTHREE: for (int i = 0; i < args.length; i++) {
             String arg = args[i];
-            if (arg.startsWith("-") && !args.equals("--")) {
+            if (startsWith(arg, '-') && !args.equals("--")) {
                 INTHREE: // for each letter in - argument
                 for (int j = 1; j < arg.length(); j++) {
                     char c = arg.charAt(j);
@@ -787,7 +787,7 @@ public class Interpret implements InterpreterCommands {
 
                 while (line != null) {
 
-                    if (line.startsWith("@")) {
+                    if (startsWith(line,'@')) {
                         StringTokenizer st = new StringTokenizer(line);
                         String command = null;
                         String parameter = null;
@@ -827,7 +827,7 @@ public class Interpret implements InterpreterCommands {
                                                     + e.getMessage() + "]]");
                                             break; // Terminate with current
                                                    // error
-                                        } else if (moreLine.startsWith("@")) {
+                                        } else if (startsWith(moreLine,'@')) {
                                             printStream
                                                     .println("[[Only command @end allowed when reading script end]]");
                                             printStream
@@ -882,6 +882,10 @@ public class Interpret implements InterpreterCommands {
         // Normal exit - force exit in case other thread where started (awt)
         if (interactive || anyMainTest)
             exit();
+    }
+
+    private boolean startsWith(String arg, char ch) {
+        return arg.length() > 0 && arg.charAt(0) == ch;
     }
 
     /**
@@ -1233,7 +1237,7 @@ public class Interpret implements InterpreterCommands {
                     currentTest = src;
                 } else {
                     scriptBuffer.append(src);
-                    scriptBuffer.append("\n");
+                    scriptBuffer.append('\n');
                 }
                 src = lr.readLine();
             }
@@ -1514,8 +1518,7 @@ public class Interpret implements InterpreterCommands {
             if (toBeDescribed.isComposite()) {
                 for (Enumeration<ValueDescription> e = toBeDescribed
                         .getAllDescriptions(); e.hasMoreElements();) {
-                    ValueDescription description = (ValueDescription) e
-                            .nextElement();
+                    ValueDescription description = e.nextElement();
                     printStream.println("   " + description.toString());
                 }
             }
@@ -1735,7 +1738,7 @@ abstract class Command {
             printStream.println("@@ Command '" + command + "' not recognized");
             interpreter.printHelp();
         } else if (foundCmds.size() == 1) {
-            Command cmd = (Command) foundCmds.get(0);
+            Command cmd = foundCmds.get(0);
             return cmd.doCommand(interpreter, parameter);
         } else {
             printStream

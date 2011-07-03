@@ -255,7 +255,7 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         HashtableEntry tab[] = getTable();
         int index = (hash & 0x7FFFFFFF) % tab.length;
         for (HashtableEntry e = tab[index]; e != null; e = e.next) {
-            if ((e.key == key) || ((e.hash == hash) && e.key.equals(key))) {
+            if ((e.key == key) || ((e.hash == hash) && e.key.equals(key))) { // $codepro.audit.disable stringComparison
                 return true;
             }
         }
@@ -278,7 +278,7 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         HashtableEntry tab[] = getTable();
         int index = (hash & 0x7FFFFFFF) % tab.length;
         for (HashtableEntry e = tab[index]; e != null; e = e.next) {
-            if ((e.key == key) || ((e.hash == hash) && e.key.equals(key))) {
+            if ((e.key == key) || ((e.hash == hash) && e.key.equals(key))) { // $codepro.audit.disable stringComparison
                 return e.value;
             }
         }
@@ -299,7 +299,7 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         HashtableEntry tab[] = getTable();
         int index = (hash & 0x7FFFFFFF) % tab.length;
         for (HashtableEntry e = tab[index]; e != null; e = e.next) {
-            if ((e.key == key) || ((e.hash == hash) && e.key.equals(key))) {
+            if ((e.key == key) || ((e.hash == hash) && e.key.equals(key))) { // $codepro.audit.disable stringComparison
                 return e.hidden;
             }
         }
@@ -321,7 +321,7 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         HashtableEntry tab[] = getTable();
         int index = (hash & 0x7FFFFFFF) % tab.length;
         for (HashtableEntry e = tab[index]; e != null; e = e.next) {
-            if ((e.key == key) || ((e.hash == hash) && e.key.equals(key))) {
+            if ((e.key == key) || ((e.hash == hash) && e.key.equals(key))) { // $codepro.audit.disable stringComparison
                 return e.readonly;
             }
         }
@@ -512,17 +512,17 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         StringBuilder buf = new StringBuilder(max > 0 ? max * 16 : 16);
         Enumeration<String> k = keys();
         Enumeration<ESValue> e = elements();
-        buf.append("{");
+        buf.append('{');
 
         for (int i = 0; i <= max; i++) {
             String s1 = k.nextElement().toString();
             String s2 = e.nextElement().toString();
-            buf.append(s1).append("=").append(s2);
+            buf.append(s1).append('=').append(s2);
             if (i < max) {
                 buf.append(", ");
             }
         }
-        buf.append("}");
+        buf.append('}');
         return buf.toString();
     }
 

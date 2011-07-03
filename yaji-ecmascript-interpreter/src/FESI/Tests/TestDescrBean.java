@@ -70,16 +70,16 @@ public class TestDescrBean {
                 + ", intArray=[");
         for (int i = 0; i < intArray.length; i++) {
             if (i > 0)
-                v.append(",");
+                v.append(',');
             v.append(Integer.toString(intArray[i]));
         }
         v.append("], intIndexed=[");
         for (int i = 0; i < intIndexed.length; i++) {
             if (i > 0)
-                v.append(",");
+                v.append(',');
             v.append(Integer.toString(intIndexed[i]));
         }
-        v.append("]");
+        v.append(']');
         return v.toString();
     }
 }

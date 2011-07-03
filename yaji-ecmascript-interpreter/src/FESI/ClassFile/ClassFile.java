@@ -230,7 +230,7 @@ final class ClassFile {
             dos.writeShort(attributes.size());
 
             for (int i = 0; i < attributes.size(); i++) {
-                ((Attribute) attributes.elementAt(i)).write(dos);
+                (attributes.elementAt(i)).write(dos);
             }
         } else
             dos.writeShort(0);

@@ -314,7 +314,7 @@ public abstract class ESObject extends ESValue {
                     return true;
                 }
                 while (props != null && props.hasMoreElements()) {
-                    currentKey = (String) props.nextElement();
+                    currentKey = props.nextElement();
                     currentHash = currentKey.hashCode();
                     if (inside) {
                         if (getPropertyMap().containsKey(currentKey,
@@ -332,7 +332,7 @@ public abstract class ESObject extends ESValue {
                     inside = true;
                     props = prototype.getProperties();
                     while (props.hasMoreElements()) {
-                        currentKey = (String) props.nextElement();
+                        currentKey = props.nextElement();
                         currentHash = currentKey.hashCode();
                         if (getPropertyMap().containsKey(currentKey,
                                 currentHash)) {
@@ -390,7 +390,7 @@ public abstract class ESObject extends ESValue {
                 }
                 // loop on standard or prototype properties
                 while (props != null && props.hasMoreElements()) {
-                    currentKey = (String) props.nextElement();
+                    currentKey = props.nextElement();
                     currentHash = currentKey.hashCode();
                     if (inside) {
                         if (getPropertyMap().containsKey(currentKey,
@@ -407,7 +407,7 @@ public abstract class ESObject extends ESValue {
                     inside = true;
                     props = prototype.getProperties();
                     while (props.hasMoreElements()) {
-                        currentKey = (String) props.nextElement();
+                        currentKey = props.nextElement();
                         currentHash = currentKey.hashCode();
                         if (getPropertyMap().containsKey(currentKey,
                                 currentHash)) {
@@ -925,7 +925,7 @@ public abstract class ESObject extends ESValue {
                 inSpecial = false;
                 // Otherwise check in current enumeration
                 while (props != null && props.hasMoreElements()) {
-                    currentKey = (String) props.nextElement();
+                    currentKey = props.nextElement();
                     // if (inside) {
                     // if (properties.containsKey(currentKey, currentHash))
                     // continue;
@@ -942,7 +942,7 @@ public abstract class ESObject extends ESValue {
 
                     proto = proto.getPrototype();
                     while (props.hasMoreElements()) {
-                        currentKey = (String) props.nextElement();
+                        currentKey = props.nextElement();
                         // if (properties.containsKey(currentKey, currentHash))
                         // continue;
                         return true;
@@ -1081,7 +1081,7 @@ public abstract class ESObject extends ESValue {
     }
 
     public boolean isFrozen() {
-        boolean frozen = extensible == false;
+        boolean frozen = !extensible;
         if (frozen && !hasNoPropertyMap()) {
             frozen = getPropertyMap().isAllReadOnly();
         }

@@ -107,10 +107,10 @@ public class ConstructedFunctionObject extends FunctionPrototype {
         str.append('(');
         for (int i = 0; i < theArguments.length; i++) {
             if (i > 0)
-                str.append(",");
+                str.append(',');
             str.append(theArguments[i]);
         }
-        str.append(")");
+        str.append(')');
         return str.toString();
     }
 
@@ -156,10 +156,10 @@ public class ConstructedFunctionObject extends FunctionPrototype {
         StringBuilder str = new StringBuilder();
         str.append("<Function: ");
         str.append(getFunctionName());
-        str.append("(");
+        str.append('(');
         for (int i = 0; i < theArguments.length; i++) {
             if (i > 0)
-                str.append(",");
+                str.append(',');
             str.append(theArguments[i]);
         }
         str.append(")>");

@@ -372,7 +372,6 @@ public class AwtConsole extends Frame implements Console {
                     out.write(ch);
                     nbrOfKeyTyped++;
                 } else if (ch == 13) {
-                    ; // ignore RETURN
                 } else {
                     theTextArea.append("?");
                     out.write('?');

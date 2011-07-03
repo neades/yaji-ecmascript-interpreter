@@ -182,9 +182,9 @@ public class JSGlobalWrapper extends JSWrapper implements JSGlobalObject {
                 Evaluator otherEvaluator = ((JSWrapper) prototype).evaluator;
                 if (otherEvaluator != evaluator)
                     throw new ProgrammingError("Evaluator mismatch");
-                op = (ESObject) ((JSWrapper) prototype).getESObject();
+                op = ((JSWrapper) prototype).getESObject();
             }
-            ESObject object = new ObjectPrototype((ESObject) op, evaluator);
+            ESObject object = new ObjectPrototype(op, evaluator);
             return new JSWrapper(object, evaluator);
         }
     }

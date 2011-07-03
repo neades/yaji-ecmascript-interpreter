@@ -66,7 +66,7 @@ public class FunctionObject extends BuiltinFunctionObject implements
         int i;
         for (i = 0; i < (nArgs - 1); i++) {
             if (i > 0) {
-                parameters.append(",");
+                parameters.append(',');
             }
             String arg = arguments[i].toString();
             parameters.append(arg);

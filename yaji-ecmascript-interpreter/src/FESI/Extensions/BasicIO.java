@@ -66,8 +66,8 @@ public class BasicIO extends AbstractBasicIO {
             // response = null;
         }
         boolean result;
-        if (response != null
-                && response.trim().toLowerCase().startsWith("y")) {
+        if (response != null && response.length() > 0
+                && response.trim().toLowerCase().charAt(0) == 'y') {
             result = true;
         } else {
             result = false;

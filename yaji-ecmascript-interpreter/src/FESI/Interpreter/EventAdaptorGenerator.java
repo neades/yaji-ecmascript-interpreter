@@ -26,7 +26,6 @@ package FESI.Interpreter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
@@ -249,7 +248,7 @@ public final class EventAdaptorGenerator extends ClassLoader {
             System.err.println("generateAdaptorClass(" + className + ")");
 
         try { // generate the classfile into the stream
-            new EventAdaptorClassFile(className, (OutputStream) baos);
+            new EventAdaptorClassFile(className, baos);
         } catch (IOException ioe) {
             return null;
         } catch (ClassNotFoundException cnfe) {
