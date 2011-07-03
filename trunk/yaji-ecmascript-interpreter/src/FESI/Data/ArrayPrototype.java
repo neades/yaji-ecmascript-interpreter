@@ -281,7 +281,7 @@ public class ArrayPrototype extends ESObject {
 
     /**
      * ES5 - 15.4.4.7 
-     * Array.prototype.push ( [ item1 [ , item2 [ , … ] ] ] )
+     * Array.prototype.push ( [ item1 [ , item2 [ , ï¿½ ] ] ] )
      * 
      * The arguments are appended to the end of the array, in the order in which
      * they appear. The new length of the array is returned as the result of the
@@ -330,7 +330,7 @@ public class ArrayPrototype extends ESObject {
 
     /**
      * ES5 - 15.4.4.13 
-     * Array.prototype.unshift ( [ item1 [ , item2 [ , … ] ] ] )
+     * Array.prototype.unshift ( [ item1 [ , item2 [ , ï¿½ ] ] ] )
      * 
      * The arguments are prepended to the start of the array, such that their
      * order within the array is the same as the order in which they appear in
@@ -373,7 +373,7 @@ public class ArrayPrototype extends ESObject {
 
     /**
      * ES5 - 15.4.4.12 
-     * Array.prototype.splice (start, deleteCount [ , item1 [ ,item2 [ , … ] ] ] )
+     * Array.prototype.splice (start, deleteCount [ , item1 [ ,item2 [ , ï¿½ ] ] ] )
      * 
      * Changes the content of an array, adding new elements while removing old
      * elements.
@@ -516,7 +516,7 @@ public class ArrayPrototype extends ESObject {
     
     /**
      * ES5 - 15.4.4.4
-     * Array.prototype.concat ( [ item1 [ , item2 [ , … ] ] ] )
+     * Array.prototype.concat ( [ item1 [ , item2 [ , ï¿½ ] ] ] )
      * 
      * When the concat method is called with zero or more arguments item1,
      * item2, etc., it returns an array containing the array elements of the
@@ -1017,12 +1017,12 @@ public class ArrayPrototype extends ESObject {
                     currentKey = props.nextElement();
                     currentHash = currentKey.hashCode();
                     if (inside) {
-                        if (getPropertyMap().containsKey((String) currentKey,
+                        if (getPropertyMap().containsKey(currentKey,
                                 currentHash)) {
                             continue;
                         }
                     } else {
-                        if (isHiddenProperty((String) currentKey, currentHash)) {
+                        if (isHiddenProperty(currentKey, currentHash)) {
                             continue;
                         }
                     }
@@ -1034,7 +1034,7 @@ public class ArrayPrototype extends ESObject {
                     while (props.hasMoreElements()) {
                         currentKey = props.nextElement();
                         currentHash = currentKey.hashCode();
-                        if (getPropertyMap().containsKey((String) currentKey,
+                        if (getPropertyMap().containsKey(currentKey,
                                 currentHash)) {
                             continue;
                         }
@@ -1108,7 +1108,7 @@ public class ArrayPrototype extends ESObject {
                 }
                 // loop on standard or prototype properties
                 while (props.hasMoreElements()) {
-                    currentKey = (String) props.nextElement();
+                    currentKey = props.nextElement();
                     currentHash = currentKey.hashCode();
                     if (inside) {
                         if (getPropertyMap().containsKey(currentKey,
@@ -1125,7 +1125,7 @@ public class ArrayPrototype extends ESObject {
                     inside = true;
                     props = getPrototype().getProperties();
                     while (props.hasMoreElements()) {
-                        currentKey = (String) props.nextElement();
+                        currentKey = props.nextElement();
                         currentHash = currentKey.hashCode();
                         if (getPropertyMap().containsKey(currentKey,
                                 currentHash)) {

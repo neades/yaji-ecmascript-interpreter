@@ -111,7 +111,7 @@ public class HelpWindow extends JFrame implements HyperlinkListener {
     public void backHistory() {
         int last = history.size() - 2; // -1 to skip current, -1 for base 0
         if (last >= 0) {
-            URL url = (URL) history.get(last);
+            URL url = history.get(last);
             history.remove(last);
             Cursor cursor = html.getCursor();
             Cursor waitCursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);

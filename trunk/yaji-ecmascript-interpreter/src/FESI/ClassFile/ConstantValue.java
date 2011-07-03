@@ -1,3 +1,4 @@
+// $codepro.audit.disable unnecessaryCast
 /*
  *
  * @(#) ConstantValue.java 1.2@(#)

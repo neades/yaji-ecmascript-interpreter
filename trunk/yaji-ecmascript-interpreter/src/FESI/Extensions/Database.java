@@ -451,7 +451,7 @@ class ESRowSet extends ESObject {
                     "Attempt to access a released result set");
         }
         if (idx > 0 && idx <= colNames.size()) {
-            return (String) colNames.get(idx - 1); // to base 0
+            return colNames.get(idx - 1); // to base 0
         }
         throw new EcmaScriptException("Column index (base 1) " + idx
                 + " out of range, max: " + colNames.size());
@@ -651,7 +651,7 @@ class ESRowSet extends ESObject {
                 }
                 // loop on standard or prototype properties
                 while (props.hasMoreElements()) {
-                    currentKey = (String) props.nextElement();
+                    currentKey = props.nextElement();
                     currentHash = currentKey.hashCode();
                     if (inside) {
                         try {
@@ -670,7 +670,7 @@ class ESRowSet extends ESObject {
                     inside = true;
                     props = getPrototype().getProperties();
                     while (props.hasMoreElements()) {
-                        currentKey = (String) props.nextElement();
+                        currentKey = props.nextElement();
                         currentHash = currentKey.hashCode();
                         try {
                             if (hasProperty(currentKey, currentHash))

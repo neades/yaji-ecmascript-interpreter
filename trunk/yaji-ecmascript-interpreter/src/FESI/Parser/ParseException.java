@@ -101,7 +101,7 @@ public class ParseException extends Exception {
         Token tok = currentToken.next;
         for (int i = 0; i < maxSize; i++) {
             if (i != 0)
-                retval.append(" ");
+                retval.append(' ');
             if (tok.kind == 0) {
                 retval.append(tokenImage[0]);
                 break;
@@ -110,7 +110,7 @@ public class ParseException extends Exception {
             tok = tok.next;
         }
         retval.append("\" at line ").append(currentToken.next.beginLine).append(", column ").append(currentToken.next.beginColumn);
-        retval.append(".").append(eol);
+        retval.append('.').append(eol);
         if (expectedTokenSequences.length == 1) {
             retval.append("Was expecting:").append(eol).append("    ");
         } else {
@@ -118,7 +118,7 @@ public class ParseException extends Exception {
         }
         for (int i = 0; i < expectedTokenSequences.length; i++) {
             for (int j = 0; j < expectedTokenSequences[i].length; j++) {
-                retval.append(tokenImage[expectedTokenSequences[i][j]]).append(" ");
+                retval.append(tokenImage[expectedTokenSequences[i][j]]).append(' ');
             }
             if (expectedTokenSequences[i][expectedTokenSequences[i].length - 1] != 0) {
                 retval.append("...");

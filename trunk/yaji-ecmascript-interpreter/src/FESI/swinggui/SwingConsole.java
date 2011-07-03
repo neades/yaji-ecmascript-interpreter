@@ -714,7 +714,6 @@ public class SwingConsole extends JFrame implements ExtendedConsole {
                     out.write(ch);
                     nbrOfKeyTyped++;
                 } else if (ch == 13) {
-                    ; // ignore RETURN
                 } else {
                     // theConsoleArea.append("?");
                     out.write('?');

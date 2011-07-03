@@ -635,7 +635,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
                 if (directEnumeration) {
                     s = ESLoader.normalizeValue(en, evaluator);
                 } else {
-                    s = new ESString((String) (en.toString()));
+                    s = new ESString((en.toString()));
                 }
 
                 Object lvo = node.jjtGetChild(0).jjtAccept(this, FOR_REFERENCE);
@@ -694,7 +694,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
                 if (directEnumeration) {
                     s = ESLoader.normalizeValue(en, evaluator);
                 } else {
-                    s = new ESString((String) (en.toString()));
+                    s = new ESString((en.toString()));
                 }
                 // Typing already checked above - will generate an error anyhow
                 lv = (ESReference) node.jjtGetChild(0).jjtAccept(this,
@@ -942,7 +942,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
                         System.out.println("--->Last result: " + lastResult
                                 + " " + lastResult.getClass() + "<---"); // ********
                         // Via global or WITH, use current object
-                        ESValue theFunction = (ESObject) lastResult
+                        ESValue theFunction = lastResult
                                 .toESObject(evaluator); // Conversion needed ?
                         lastResult = theFunction.callFunction(thisObject,
                                 arguments);
@@ -1051,7 +1051,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
             if (compositor instanceof ASTFunctionCallParameters) {
                 ASTFunctionCallParameters fc = (ASTFunctionCallParameters) compositor;
                 ESValue[] arguments = (ESValue[]) fc.jjtAccept(this, FOR_VALUE);
-                result = (ESValue) constr.doConstruct(
+                result = constr.doConstruct(
                         evaluator.getThisObject(), arguments);
                 if (result == null) {
                     throw new EcmaScriptException("new " + compositor

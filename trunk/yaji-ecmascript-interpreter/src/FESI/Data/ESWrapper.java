@@ -1613,15 +1613,15 @@ public class ESWrapper extends ESObject {
 
         buffer.append(modifiers(member.getModifiers()));
         if (returntype != null) {
-            buffer.append(typename(returntype)).append(" ");
+            buffer.append(typename(returntype)).append(' ');
         }
-        buffer.append(member.getName()).append("(");
+        buffer.append(member.getName()).append('(');
         for (int i = 0; i < parameters.length; i++) {
             if (i > 0)
                 buffer.append(", ");
             buffer.append(typename(parameters[i]));
         }
-        buffer.append(")");
+        buffer.append(')');
         if (exceptions.length > 0)
             buffer.append(" throws ");
         for (int i = 0; i < exceptions.length; i++) {
@@ -1629,7 +1629,7 @@ public class ESWrapper extends ESObject {
                 buffer.append(", ");
             buffer.append(typename(exceptions[i]));
         }
-        buffer.append(";");
+        buffer.append(';');
         return buffer.toString();
     }
 
@@ -1648,15 +1648,15 @@ public class ESWrapper extends ESObject {
         buffer.append(descriptor.getName()).append(": ").append(
                 modifiers(method.getModifiers()));
         if (returntype != null) {
-            buffer.append(typename(returntype)).append(" ");
+            buffer.append(typename(returntype)).append(' ');
         }
-        buffer.append(method.getName()).append("(");
+        buffer.append(method.getName()).append('(');
         for (int i = 0; i < parameters.length; i++) {
             if (i > 0)
                 buffer.append(", ");
             buffer.append(typename(parameters[i]));
         }
-        buffer.append(")");
+        buffer.append(')');
         if (exceptions.length > 0)
             buffer.append(" throws ");
         for (int i = 0; i < exceptions.length; i++) {
@@ -1664,7 +1664,7 @@ public class ESWrapper extends ESObject {
                 buffer.append(", ");
             buffer.append(typename(exceptions[i]));
         }
-        buffer.append(";");
+        buffer.append(';');
         return buffer.toString();
     }
 
@@ -1673,7 +1673,7 @@ public class ESWrapper extends ESObject {
         // Print modifiers, type (class or interface), name and superclass.
         if (c.isInterface()) {
             // The modifiers will include the "interface" keyword here...
-            buffer.append(Modifier.toString(c.getModifiers())).append(" ")
+            buffer.append(Modifier.toString(c.getModifiers())).append(' ')
                     .append(c.getName());
         } else if (c.getSuperclass() != null) {
             buffer.append(Modifier.toString(c.getModifiers()))

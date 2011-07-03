@@ -201,7 +201,7 @@ public final class EventAdaptorClassFile {
         Code[] ary = { c };
 
         classFile.addMethodDesc(new MethodDesc("getListenerClass",
-                "()Ljava/lang/Class;", (short) MethodDesc.ACC_PUBLIC,
+                "()Ljava/lang/Class;", MethodDesc.ACC_PUBLIC,
                 classFile, ary));
     }
 
@@ -273,7 +273,7 @@ public final class EventAdaptorClassFile {
         // now add a method to the class file describing the constructor ...
 
         classFile.addMethodDesc(new MethodDesc("<init>", "()V",
-                (short) MethodDesc.ACC_PUBLIC, classFile, ary));
+                MethodDesc.ACC_PUBLIC, classFile, ary));
     }
 
     /**
@@ -410,7 +410,7 @@ public final class EventAdaptorClassFile {
             if (i <= 255)
                 c.addOp1(Code.OP_LDC, (byte) i);
             else
-                c.addOpShort(Code.OP_LDC_WIDE, (short) i);
+                c.addOpShort(Code.OP_LDC_WIDE, i);
         }
 
         c.addOpShort(Code.OP_ANEWARRAY, classFile.addClassConstant(
@@ -446,7 +446,7 @@ public final class EventAdaptorClassFile {
                 if (ic < 255)
                     c.addOp1(Code.OP_LDC, (byte) ic);
                 else
-                    c.addOpShort(Code.OP_LDC_WIDE, (short) ic);
+                    c.addOpShort(Code.OP_LDC_WIDE, ic);
             }
 
             /*
@@ -655,7 +655,7 @@ public final class EventAdaptorClassFile {
             // we now have the param's value of TOS,
             // construct a container object for it
 
-            c.addOpShort(Code.OP_NEW, (short) cc.getConstantPoolIndex());
+            c.addOpShort(Code.OP_NEW, cc.getConstantPoolIndex());
 
             if (singleWordParam) {
                 c.addOp(Code.OP_DUP_X1); // this, <param_word>, this

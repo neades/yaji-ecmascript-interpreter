@@ -541,7 +541,7 @@ public class Evaluator implements Serializable {
         GlobalObject go = this.getGlobalObject();
         JSGlobalWrapper jgo = new JSGlobalWrapper(go, this);
         try {
-            ((JSExtension) extension).initializeExtension(jgo);
+            extension.initializeExtension(jgo);
         } catch (JSException e) {
             throw new EcmaScriptException("Error initializing extension "
                     + name, e);

@@ -441,7 +441,7 @@ class ESFile extends ESObject {
                     break;
                 }
                 buffer.append(line);
-                buffer.append("\n"); // EcmaScript EOL
+                buffer.append('\n'); // EcmaScript EOL
             }
 
             // Close the file

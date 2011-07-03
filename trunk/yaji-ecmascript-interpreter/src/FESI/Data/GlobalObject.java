@@ -259,7 +259,7 @@ public class GlobalObject extends ObjectPrototype {
                         if (s.startsWith("0x") || s.startsWith("0X")) {
                             s = s.substring(2);
                             radix = 16;
-                        } else if (s.startsWith("0")) {
+                        } else if (s.length() > 0 && s.charAt(0) == '0') {
                             radix = 8;
                         }
                     }

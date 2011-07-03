@@ -281,7 +281,7 @@ public class MathObject extends ObjectPrototype {
             }
             double arg1 = (arguments.length > 0) ? arguments[0].doubleValue()
                     : Double.NaN;
-            double arg2 = (arguments.length > 01) ? arguments[1].doubleValue()
+            double arg2 = (arguments.length > 1) ? arguments[1].doubleValue()
                     : Double.NaN;
             if (Double.isNaN(arg1) || Double.isNaN(arg2)) {
                 return ESNumber.valueOf(Double.NaN);

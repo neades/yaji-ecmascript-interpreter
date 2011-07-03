@@ -38,7 +38,7 @@ public class FESIResourceConnection extends URLConnection {
         if (ESLoader.isDebugLoader())
             System.out.println(" ** new FESIResourceConnection('" + url + "')");
         String file = url.getFile();
-        if (file.startsWith("/")) {
+        if (file.length() > 0 && file.charAt(0) == '/') {
             file = file.substring(1);
         }
         if (!file.startsWith(prefix)) {

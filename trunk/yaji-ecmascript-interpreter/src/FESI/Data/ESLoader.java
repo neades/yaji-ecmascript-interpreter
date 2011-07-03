@@ -145,7 +145,7 @@ public abstract class ESLoader extends ESObject {
     @Override
     public void putProperty(String propertyName, ESValue propertyValue, int hash)
             throws EcmaScriptException {
-        return; // None can be put by the user
+        // None can be put by the user
     }
 
     // overrides

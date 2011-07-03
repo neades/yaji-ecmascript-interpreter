@@ -259,7 +259,7 @@ public class ESArrayWrapper extends ESObject {
                 }
                 // loop on standard or prototype properties
                 if (props.hasMoreElements()) {
-                    currentKey = (String) props.nextElement();
+                    currentKey = props.nextElement();
                     return true;
                 }
                 return false;

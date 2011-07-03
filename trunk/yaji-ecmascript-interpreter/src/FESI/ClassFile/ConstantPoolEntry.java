@@ -95,7 +95,7 @@ abstract class ConstantPoolEntry {
         if (index == -1)
             index = classFile.addConstantPoolEntry(this);
 
-        return (short) index;
+        return index;
     }
 
     /**
