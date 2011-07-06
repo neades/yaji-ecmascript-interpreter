@@ -175,6 +175,28 @@ public class EcmascriptParserTest {
                     + "   <x>" + eol
                     + "   <\"instanceof\">" + eol
                     + "   <TypeError>" + eol
+                },
+                { "switch (x) { case 'x': r = 1; break; default: r=2; }", "Program" + eol
+                    + " Statement" + eol
+                    + "  SwitchStatement" + eol
+                    + "   <x>" + eol
+                    + "   CaseClause" + eol
+                    + "    [x]" + eol 
+                    + "    StatementList" + eol 
+                    + "     Statement" + eol 
+                    + "      AssignmentExpression" + eol 
+                    + "       <r>" + eol 
+                    + "       <\"=\">" + eol 
+                    + "       [1]" + eol 
+                    + "     Statement" + eol 
+                    + "      BreakStatement" + eol 
+                    + "   DefaultClause" + eol 
+                    + "    StatementList" + eol 
+                    + "     Statement" + eol 
+                    + "      AssignmentExpression" + eol 
+                    + "       <r>" + eol
+                    + "       <\"=\">" + eol 
+                    + "       [2]" + eol
                 }
             });
     }

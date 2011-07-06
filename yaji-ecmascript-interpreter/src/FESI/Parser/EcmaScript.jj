@@ -2751,7 +2751,8 @@ void ExpressionInES()                     :
  |	ReturnStatement()
  |	WithStatement()
  |  TryStatement()
- |  ThrowStatement()/*@bgen(jjtree)*/
+ |  ThrowStatement()
+ |  SwitchStatement()/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -3564,6 +3565,112 @@ void Finally()          :
         try {
 /*@egen*/
 	<FINALLY> Block()/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+            jjtreeCloseNodeScope(jjtn000);
+          }
+        }
+/*@egen*/
+}
+
+
+void SwitchStatement()                  :
+{/*@bgen(jjtree) SwitchStatement */
+  ASTSwitchStatement jjtn000 = new ASTSwitchStatement(JJTSWITCHSTATEMENT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) SwitchStatement */
+        try {
+/*@egen*/
+	<SWITCH> "(" Expression() ")" "{"
+		( CaseClause() )*
+		[ DefaultClause() ( CaseClause() )* ]
+	"}"/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+            jjtreeCloseNodeScope(jjtn000);
+          }
+        }
+/*@egen*/
+}
+
+void CaseClause()             :
+{/*@bgen(jjtree) CaseClause */
+  ASTCaseClause jjtn000 = new ASTCaseClause(JJTCASECLAUSE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) CaseClause */
+  try {
+/*@egen*/
+  <CASE> Expression() ":" StatementList()/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtreeCloseNodeScope(jjtn000);
+    }
+  }
+/*@egen*/
+}
+
+void DefaultClause()                :
+{/*@bgen(jjtree) DefaultClause */
+  ASTDefaultClause jjtn000 = new ASTDefaultClause(JJTDEFAULTCLAUSE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) DefaultClause */
+        try {
+/*@egen*/
+	<_DEFAULT> ":" StatementList()/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
