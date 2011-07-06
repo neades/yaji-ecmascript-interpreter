@@ -32,13 +32,11 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Enumeration;
-import java.util.Hashtable;
 
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
 import FESI.Interpreter.ClassInfo;
 import FESI.Interpreter.Evaluator;
-import FESI.Interpreter.EventAdaptor;
 import FESI.Interpreter.ScopeChain;
 
 /**
@@ -66,9 +64,6 @@ public class ESWrapper extends ESObject {
 
     // A marker object never returned as a valid property !
     private static ESValue noPropertyMarker = null;
-
-    private Hashtable<String, ESObject> eventHandlers = null;
-    private Hashtable<Class<?>, EventAdaptor> eventAdaptors = null;
 
     /**
      * Wrap a java object in an EcmaScript object, use object and beans
@@ -482,21 +477,14 @@ public class ESWrapper extends ESObject {
                     + propertyName + " to undefined");
         }
         Class<? extends Object> cls = null;
-        Object theObject = null; // means static
         if (javaObject instanceof Class<?>) {
             cls = (Class<?>) javaObject;
         } else {
             cls = javaObject.getClass();
-            theObject = javaObject;
         }
         PropertyDescriptor descriptor = ClassInfo.lookupBeanField(propertyName,
                 cls);
         if (descriptor == null) {
-            // Possibly event ?
-            if (theObject != null && propertyName.startsWith("on")) {
-                putEventHandler(propertyName, propertyValue);
-                return true;
-            }
             return false;
 
         }
@@ -641,13 +629,7 @@ public class ESWrapper extends ESObject {
                                                   // superclass
             }
         } catch (NoSuchFieldException e) {
-            // Possibly event ?
-            if (theObject != null && propertyName.startsWith("on")) {
-                putEventHandler(propertyName, propertyValue);
-                return true;
-            }
             return false;
-
         }
 
         int modifiers = fld.getModifiers();
@@ -729,158 +711,6 @@ public class ESWrapper extends ESObject {
         return getProperties();
     }
 
-    /**
-     * Build an event adaptor for a class, keep them in a cache
-     * 
-     * @param listenerType
-     *            the class to event to listen to
-     * @exception EcmaScriptException
-     *                Unable to build adaptor
-     */
-    private EventAdaptor getEventAdaptor(Class<?> listenerType)
-            throws EcmaScriptException {
-        if (eventAdaptors == null)
-            eventAdaptors = new Hashtable<Class<?>, EventAdaptor>();
-        // Check if event adaptor already created
-        EventAdaptor adaptor = eventAdaptors.get(listenerType);
-        if (adaptor == null) {
-            if (debugEvent)
-                System.out.println("** Creating new adaptor for '"
-                        + listenerType.getName() + "'");
-            try {
-                adaptor = EventAdaptor.getEventAdaptor(listenerType,
-                        javaObject, this);
-            } catch (Exception e) {
-                throw new EcmaScriptException("Cannot build adaptor for '"
-                        + listenerType.getName() + "', error: " + e);
-            }
-            eventAdaptors.put(listenerType, adaptor);
-        }
-        if (debugEvent)
-            System.out.println("** Adaptor found: " + adaptor);
-        return adaptor;
-    }
-
-    /**
-     * Create an event handler for a specific property
-     * 
-     * @param propertyName
-     *            the name of the property (must start with "on")
-     * @param handler
-     *            The value which must be an event handler routine or script
-     */
-    private void putEventHandler(String propertyName, ESValue handler)
-            throws EcmaScriptException {
-        String eventName = propertyName.substring(2);
-        if (debugEvent)
-            System.out
-                    .println("** Attempt to set event '" + propertyName + "'");
-
-        // prepare the handler code - if it is not a function,
-        // build a function of one argument (the event)
-        ESObject eventHandler = null;
-        if (handler != ESNull.theNull) {
-            if (handler instanceof FunctionPrototype) {
-                eventHandler = (ESObject) handler;
-            } else {
-                ESValue body = handler.toESString();
-                ESObject fo = getEvaluator().getFunctionObject();
-                ESValue event = new ESString("event"); // The parameter of the
-                                                       // handling routine
-                ESValue[] esArgs = new ESValue[] { event, body };
-                try {
-                    eventHandler = fo.doConstruct(null, esArgs);
-                } catch (EcmaScriptException e) {
-                    // The error must be rethrown as if it is the error
-                    // indicating incmplete
-                    // lines the interpreter may ask the user for more lines !
-                    throw new EcmaScriptException(
-                            "Error creating function anonymous(event){" + body
-                                    + "}\n" + e);
-                }
-            }
-        }
-
-        // Find the handler characteristics and key
-        Class<? extends Object> cls = javaObject.getClass();
-        BeanInfo bi;
-        try {
-            bi = Introspector.getBeanInfo(cls);
-        } catch (IntrospectionException e) {
-            throw new EcmaScriptException("BeanInfo not found for java class '"
-                    + cls + "', error: " + e.getMessage());
-        }
-        EventSetDescriptor[] eds = bi.getEventSetDescriptors();
-        for (int i = 0; i < eds.length; i++) {
-            EventSetDescriptor thisEvent = eds[i];
-            String name = thisEvent.getName();
-            // Check if event name matches the onXxx name
-            if (name.equalsIgnoreCase(eventName)) { // We could handle case
-                                                    // better
-                if (debugEvent)
-                    System.out.println("** Event '" + propertyName + "' found");
-                Method methods[] = thisEvent.getListenerMethods();
-                // If onXxxx is for an event name, then there must be a single
-                // method
-                if (methods.length != 1) {
-                    throw new EcmaScriptException(
-                            "Only 1 listener supported, there are "
-                                    + methods.length + " listeners for event '"
-                                    + eventName + "'");
-                }
-                Class<?> listenerType = thisEvent.getListenerType();
-                String key = listenerType.getName() + ":"
-                        + methods[0].getName();
-                this.getEventAdaptor(listenerType);
-                if (eventHandlers == null)
-                    eventHandlers = new Hashtable<String, ESObject>();
-                if (handler == ESNull.theNull) {
-                    if (debugEvent)
-                        System.out.println(" ** Handler removed for key: "
-                                + key);
-                    eventHandlers.remove(key);
-                } else {
-                    if (debugEvent)
-                        System.out.println(" ** Handler added for key: " + key);
-                    eventHandlers.put(key, eventHandler);
-                }
-                return;
-            }
-            // Check if onXxx matches a method of this event
-            Method methods[] = thisEvent.getListenerMethods();
-            for (int j = 0; j < methods.length; j++) {
-                Method thisMethod = methods[j];
-                String methodName = thisMethod.getName();
-                if (methodName.equalsIgnoreCase(eventName)) { // We could handle
-                    // casing better
-                    if (debugEvent)
-                        System.out.println("** Event method '" + propertyName
-                                + "' found");
-                    Class<?> listenerType = thisEvent.getListenerType();
-                    String key = listenerType.getName() + ":"
-                            + thisMethod.getName();
-                    this.getEventAdaptor(listenerType);
-                    if (eventHandlers == null)
-                        eventHandlers = new Hashtable<String, ESObject>();
-                    if (handler == ESNull.theNull) {
-                        if (debugEvent)
-                            System.out.println(" ** Handler removed for key: "
-                                    + key);
-                        eventHandlers.remove(key);
-                    } else {
-                        if (debugEvent)
-                            System.out.println(" ** Handler added for key: "
-                                    + key);
-                        eventHandlers.put(key, eventHandler);
-                    }
-                    return;
-                }
-            } // for each method
-
-        } // for each event
-        throw new EcmaScriptException("Event '" + eventName
-                + "' not found for java class " + cls);
-    }
 
     // overrides
     public ESValue getDefaultValue(int hint) throws EcmaScriptException {
@@ -1293,28 +1123,6 @@ public class ESWrapper extends ESObject {
     // public String getTypeofString() {
     // return "JavaObject";
     // }
-
-    // Routine to handle events
-    public void dispatchEvent(Object[] a, Class<?> listener, Method event) {
-        if (debugEvent)
-            System.out.println(" ** Dispatch event: " + event.getName()
-                    + " for " + listener.getName());
-        if (eventHandlers == null)
-            return; // no handler at all
-        String key = listener.getName() + ":" + event.getName();
-        if (debugEvent)
-            System.out.println(" ** Event key: " + key);
-        ESObject handlerFunction = eventHandlers.get(key);
-        if (handlerFunction == null)
-            return; // no handler for this event
-        if (debugEvent)
-            System.out.println(" ** Handler found: " + handlerFunction);
-        try {
-            getEvaluator().evaluateEvent(this, handlerFunction, a);
-        } catch (EcmaScriptException e) {
-            System.err.println("Exception in FESI event handler: " + e);
-        }
-    }
 
     // Routines to describe this object
 
