@@ -934,6 +934,7 @@ void ExpressionInES() #ExpressionList(>1) :
  |	WithStatement()
  |  TryStatement()
  |  ThrowStatement()
+ |  SwitchStatement()
  }
  
  void Block() #void :
@@ -1108,6 +1109,28 @@ void Finally() #Finally :
 {}
 {
 	<FINALLY> Block()
+}
+
+
+void SwitchStatement() #SwitchStatement :
+{}
+{
+	<SWITCH> "(" Expression() ")" "{"
+		( CaseClause() )*
+		[ DefaultClause() ( CaseClause() )* ]
+	"}"
+}
+
+void CaseClause() #CaseClause :
+{}
+{
+  <CASE> Expression() ":" StatementList()
+}
+
+void DefaultClause() #DefaultClause :
+{}
+{
+	<_DEFAULT> ":" StatementList()
 }
 
 /*

@@ -190,6 +190,7 @@
 	<batchtest fork="yes" todir="${reports}">
 		<fileset dir="${test-classes}">
 			<include name="**/*Test.class" />
+			<exclude name="**/ESTestFilesTest.class"/>
 		</fileset>
 	</batchtest>
 	<formatter type="xml" />
