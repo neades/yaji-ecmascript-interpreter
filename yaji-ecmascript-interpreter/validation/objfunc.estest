@@ -220,3 +220,38 @@ o.v == 'value2'
 var o = {v: 'value1', get value() {return this.v;}};
 o.v = 'value2'
 o.value == 'value2'
+
+@test getPrototypeOf.15.2.3.2.2-ES5.1
+var o = {};
+var p = Object.getPrototypeOf(o);
+typeof o === 'object';
+
+@test getPrototypeOf.15.2.3.2.1-ES5.1
+try {
+  Object.getPrototypeOf("non-object");
+  false;
+} catch( e ) {
+  "TypeError" === e.name;
+}
+
+@test freeze.15.2.3.9-ES5.1
+var o = {};
+Object.freeze(o);
+Object.isFrozen(o);
+
+@test freeze.15.2.3.9.1-ES5.1
+try {
+  Object.freeze("non-object");
+  false;
+} catch( e ) {
+  "TypeError" === e.name;
+}
+
+@test isfrozen.15.2.3.12.1-ES5.1
+try {
+  Object.isFrozen("non-object");
+  false;
+} catch( e ) {
+  "TypeError" === e.name;
+}
+

@@ -688,6 +688,9 @@ public class Interpret implements InterpreterCommands {
                         String[] fileNames = args[++i].split(System.getProperty("path.separator"));
                         for (String fileName : fileNames) {
                             doTest(fileName);
+                            if (anyError) {
+                                break;
+                            }
                         }
                         someFileLoaded = true; // So it exit without reading
                         anyMainTest = true;
@@ -1294,7 +1297,7 @@ public class Interpret implements InterpreterCommands {
      */
     protected boolean testString(String currentTest, String scriptString,
             File file) {
-        printStream.println("@@ Testing " + currentTest);
+        //printStream.println("@@ Testing " + currentTest);
         try {
             ESValue theValue = evaluator.evaluate(scriptString);
             if (theValue == null) {
