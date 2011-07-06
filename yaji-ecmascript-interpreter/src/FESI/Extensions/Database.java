@@ -228,9 +228,9 @@ class ESDatabase extends ESObject {
             // System.err.println("##Cannot connect: " + e);
             // e.printStackTrace();
             lastError = e;
-            return ESBoolean.makeBoolean(false);
+            return ESBoolean.valueOf(false);
         }
-        return ESBoolean.makeBoolean(true);
+        return ESBoolean.valueOf(true);
     }
 
     /**
@@ -253,10 +253,10 @@ class ESDatabase extends ESObject {
                 // System.err.println("##Cannot disonnect: " + e);
                 // e.printStackTrace();
                 lastError = e;
-                return ESBoolean.makeBoolean(false);
+                return ESBoolean.valueOf(false);
             }
         }
-        return ESBoolean.makeBoolean(true);
+        return ESBoolean.valueOf(true);
     }
 
     ESValue release() {
@@ -295,7 +295,7 @@ class ESDatabase extends ESObject {
                 // do nothing
             }
             statement = null;
-            return ESBoolean.makeBoolean(false);
+            return ESBoolean.valueOf(false);
         }
         ESRowSet rowSet = new ESRowSet(esRowSetPrototype, getEvaluator(), sql,
                 this, statement, resultSet);
@@ -328,7 +328,7 @@ class ESDatabase extends ESObject {
                 // do nothing
             }
             statement = null;
-            return ESBoolean.makeBoolean(false);
+            return ESBoolean.valueOf(false);
         }
         try {
             statement.close();
@@ -723,7 +723,7 @@ class ESRowSet extends ESObject {
             firstRowSeen = true;
         else
             lastRowSeen = true;
-        return ESBoolean.makeBoolean(status);
+        return ESBoolean.valueOf(status);
     }
 
     public String toString() {
@@ -1028,7 +1028,7 @@ public class Database extends Extension {
         public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESRowSet rowSet = (ESRowSet) thisObject;
-            return ESBoolean.makeBoolean(rowSet.hasMoreRows());
+            return ESBoolean.valueOf(rowSet.hasMoreRows());
         }
     }
 

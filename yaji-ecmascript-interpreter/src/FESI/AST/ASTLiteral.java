@@ -197,7 +197,7 @@ public class ASTLiteral extends SimpleNode {
     }
 
     public void setBooleanValue(boolean value) {
-        theValue = ESBoolean.makeBoolean(value);
+        theValue = ESBoolean.valueOf(value);
     }
 
     public void setNullValue() {

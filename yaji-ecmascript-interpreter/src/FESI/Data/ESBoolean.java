@@ -41,12 +41,23 @@ public final class ESBoolean extends ESPrimitive {
      * Create a boolean primitive (either true or false) by returning the
      * predefined (unique) true or false values
      * 
+     * @deprecated Replaced by ESBoolean.valueOf
      * @return either trueValue or falseValue
      */
     static public ESBoolean makeBoolean(boolean value) {
-        return value ? trueValue : falseValue;
+        return valueOf(value);
     }
 
+    /**
+     * Create a boolean primitive (either true or false) by returning the
+     * predefined (unique) true or false values
+     * 
+     * @return either trueValue or falseValue
+     */
+    static public ESBoolean valueOf(boolean value) {
+        return value ? trueValue : falseValue;
+    }
+    
     // overrides
     @Override
     public String toDetailString() {
@@ -139,7 +150,7 @@ public final class ESBoolean extends ESPrimitive {
          * @throws ObjectStreamException
          */
         public Object readResolve() throws ObjectStreamException {
-            return ESBoolean.makeBoolean(value);
+            return ESBoolean.valueOf(value);
         }
     }
 

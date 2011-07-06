@@ -193,6 +193,7 @@ TOKEN :
 | < SWITCH: "switch" >
 | < THROW: "throw" >
 | < TRY: "try" >
+| < INSTANCEOF: "instanceof" >
 
 // They are not supposed to be keywords
 | < TRUE: "true" >
@@ -1845,7 +1846,7 @@ void RelOp()           :
 {/*@bgen(jjtree) Operator */
   try {
 /*@egen*/
-  ( "<" | ">" | "<=" | ">=" )/*@bgen(jjtree)*/
+  ( "<" | ">" | "<=" | ">=" | <INSTANCEOF>)/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;

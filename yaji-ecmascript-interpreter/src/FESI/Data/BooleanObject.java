@@ -40,9 +40,9 @@ public class BooleanObject extends BuiltinFunctionObject {
     public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
             throws EcmaScriptException {
         if (arguments.length == 0) {
-            return ESBoolean.makeBoolean(false);
+            return ESBoolean.valueOf(false);
         }
-        return ESBoolean.makeBoolean(arguments[0].booleanValue());
+        return ESBoolean.valueOf(arguments[0].booleanValue());
 
     }
 
@@ -54,9 +54,9 @@ public class BooleanObject extends BuiltinFunctionObject {
         theObject = new BooleanPrototype(bp, getEvaluator());
         if (arguments.length > 0) {
             theObject.value = ESBoolean
-                    .makeBoolean(arguments[0].booleanValue());
+                    .valueOf(arguments[0].booleanValue());
         } else {
-            theObject.value = ESBoolean.makeBoolean(false);
+            theObject.value = ESBoolean.valueOf(false);
         }
         return theObject;
     }

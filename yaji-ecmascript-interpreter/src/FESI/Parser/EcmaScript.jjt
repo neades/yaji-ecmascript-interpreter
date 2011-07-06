@@ -187,6 +187,7 @@ TOKEN :
 | < SWITCH: "switch" >
 | < THROW: "throw" >
 | < TRY: "try" >
+| < INSTANCEOF: "instanceof" >
 
 // They are not supposed to be keywords
 | < TRUE: "true" >
@@ -707,7 +708,7 @@ void RelOp() #Operator :
   Token t;
 }
 {
-  ( "<" | ">" | "<=" | ">=" ) 
+  ( "<" | ">" | "<=" | ">=" | <INSTANCEOF>) 
   {
     jjtThis.setOperator(getToken(0).kind);
   }

@@ -82,49 +82,49 @@ public class EcmaScriptEvaluateVisitorTest {
     public void shouldEvaluateStrictEquality_Equals() throws Exception {
         ESValue result = evaluateBinaryExpression("1 === 1");
         
-        assertEquals(ESBoolean.makeBoolean(true), result);
+        assertEquals(ESBoolean.valueOf(true), result);
     }
 
     @Test
     public void shouldEvaluateStrictEquality_UnequalType() throws Exception {
         ESValue result = evaluateBinaryExpression("'1' === 1");
         
-        assertEquals(ESBoolean.makeBoolean(false), result);
+        assertEquals(ESBoolean.valueOf(false), result);
     }
 
     @Test
     public void shouldEvaluateStrictEquality_UndefinedEquals() throws Exception {
         ESValue result = evaluateBinaryExpression("undefined === undefined");
         
-        assertEquals(ESBoolean.makeBoolean(true), result);
+        assertEquals(ESBoolean.valueOf(true), result);
     }
 
     @Test
     public void shouldEvaluateStrictEquality_NullEquals() throws Exception {
         ESValue result = evaluateBinaryExpression("null === null");
         
-        assertEquals(ESBoolean.makeBoolean(true), result);
+        assertEquals(ESBoolean.valueOf(true), result);
     }
 
     @Test
     public void shouldEvaluateStrictEquality_NanNotEquals() throws Exception {
         ESValue result = evaluateBinaryExpression("NaN === NaN");
         
-        assertEquals(ESBoolean.makeBoolean(false), result);
+        assertEquals(ESBoolean.valueOf(false), result);
     }
 
     @Test
     public void shouldEvaluateStrictEquality_NanNotEquals1() throws Exception {
         ESValue result = evaluateBinaryExpression("1 === NaN");
         
-        assertEquals(ESBoolean.makeBoolean(false), result);
+        assertEquals(ESBoolean.valueOf(false), result);
     }
 
     @Test
     public void shouldEvaluateStrictEquality_1NotEqualsNaN() throws Exception {
         ESValue result = evaluateBinaryExpression("NaN === 1");
         
-        assertEquals(ESBoolean.makeBoolean(false), result);
+        assertEquals(ESBoolean.valueOf(false), result);
     }
     
     @Test
@@ -136,7 +136,7 @@ public class EcmaScriptEvaluateVisitorTest {
         
         EcmaScriptEvaluateVisitor visitor = createVisitor();
         ESValue result = (ESValue) visitor.visit(statement,EcmaScriptEvaluateVisitor.FOR_VALUE);
-        assertEquals(ESBoolean.makeBoolean(true),result);
+        assertEquals(ESBoolean.valueOf(true),result);
     }
 
     @Test
@@ -148,8 +148,8 @@ public class EcmaScriptEvaluateVisitorTest {
         
         EcmaScriptEvaluateVisitor visitor = createVisitor();
         ESValue result = (ESValue) visitor.visit(statement,EcmaScriptEvaluateVisitor.FOR_VALUE);
-        assertEquals(ESBoolean.makeBoolean(true),result);
-        assertEquals(ESBoolean.makeBoolean(true),evaluator.getGlobalObject().getProperty("global", "global".hashCode()));
+        assertEquals(ESBoolean.valueOf(true),result);
+        assertEquals(ESBoolean.valueOf(true),evaluator.getGlobalObject().getProperty("global", "global".hashCode()));
     }
 
     @Test
@@ -162,7 +162,7 @@ public class EcmaScriptEvaluateVisitorTest {
         EcmaScriptEvaluateVisitor visitor = createVisitor();
         ESValue result = (ESValue) visitor.visit(statement,EcmaScriptEvaluateVisitor.FOR_VALUE);
         assertEquals(ESNumber.valueOf(2),result);
-        assertEquals(ESBoolean.makeBoolean(true),evaluator.getGlobalObject().getProperty("global", "global".hashCode()));
+        assertEquals(ESBoolean.valueOf(true),evaluator.getGlobalObject().getProperty("global", "global".hashCode()));
     }
 
     @Test
@@ -186,7 +186,7 @@ public class EcmaScriptEvaluateVisitorTest {
         
         EcmaScriptEvaluateVisitor visitor = createVisitor();
         ESValue result = (ESValue) visitor.visit(statement,EcmaScriptEvaluateVisitor.FOR_VALUE);
-        assertEquals(ESBoolean.makeBoolean(true),result);
+        assertEquals(ESBoolean.valueOf(true),result);
     }
     
     @Test

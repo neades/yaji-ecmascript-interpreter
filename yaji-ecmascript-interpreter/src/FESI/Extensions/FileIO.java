@@ -696,7 +696,7 @@ public class FileIO extends Extension {
         public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESFile file = (ESFile) thisObject;
-            return ESBoolean.makeBoolean(file.write(true, arguments));
+            return ESBoolean.valueOf(file.write(true, arguments));
         }
     }
 
@@ -729,7 +729,7 @@ public class FileIO extends Extension {
         public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESFile file = (ESFile) thisObject;
-            return ESBoolean.makeBoolean(file.eof());
+            return ESBoolean.valueOf(file.eof());
         }
     }
 
@@ -743,7 +743,7 @@ public class FileIO extends Extension {
         public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESFile file = (ESFile) thisObject;
-            return ESBoolean.makeBoolean(file.exists());
+            return ESBoolean.valueOf(file.exists());
         }
     }
 
@@ -757,7 +757,7 @@ public class FileIO extends Extension {
         public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESFile file = (ESFile) thisObject;
-            return ESBoolean.makeBoolean(file.isOpened());
+            return ESBoolean.valueOf(file.isOpened());
         }
     }
 
@@ -771,7 +771,7 @@ public class FileIO extends Extension {
         public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESFile file = (ESFile) thisObject;
-            return ESBoolean.makeBoolean(file.isAbsolute());
+            return ESBoolean.valueOf(file.isAbsolute());
         }
     }
 
@@ -785,7 +785,7 @@ public class FileIO extends Extension {
         public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESFile file = (ESFile) thisObject;
-            return ESBoolean.makeBoolean(file.isFile());
+            return ESBoolean.valueOf(file.isFile());
         }
     }
 
@@ -799,7 +799,7 @@ public class FileIO extends Extension {
         public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESFile file = (ESFile) thisObject;
-            return ESBoolean.makeBoolean(file.isDirectory());
+            return ESBoolean.valueOf(file.isDirectory());
         }
     }
 
@@ -813,7 +813,7 @@ public class FileIO extends Extension {
         public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESFile file = (ESFile) thisObject;
-            return ESBoolean.makeBoolean(file.write(false, arguments));
+            return ESBoolean.valueOf(file.write(false, arguments));
         }
     }
 
@@ -828,7 +828,7 @@ public class FileIO extends Extension {
                 throws EcmaScriptException {
             ESFile file = (ESFile) thisObject;
 
-            return ESBoolean.makeBoolean(file.open());
+            return ESBoolean.valueOf(file.open());
         }
     }
 
@@ -842,7 +842,7 @@ public class FileIO extends Extension {
         public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESFile file = (ESFile) thisObject;
-            return ESBoolean.makeBoolean(file.close());
+            return ESBoolean.valueOf(file.close());
         }
     }
 
@@ -856,7 +856,7 @@ public class FileIO extends Extension {
         public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESFile file = (ESFile) thisObject;
-            return ESBoolean.makeBoolean(file.flush());
+            return ESBoolean.valueOf(file.flush());
         }
     }
 
@@ -930,7 +930,7 @@ public class FileIO extends Extension {
         public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESFile file = (ESFile) thisObject;
-            return ESBoolean.makeBoolean(file.remove());
+            return ESBoolean.valueOf(file.remove());
         }
     }
 
@@ -945,7 +945,7 @@ public class FileIO extends Extension {
                 throws EcmaScriptException {
             ESFile file = (ESFile) thisObject;
             if (arguments.length <= 0)
-                return ESBoolean.makeBoolean(false);
+                return ESBoolean.valueOf(false);
             ESFile toFile = null;
             if (arguments[0] instanceof ESFile) {
                 toFile = (ESFile) arguments[0];
@@ -953,7 +953,7 @@ public class FileIO extends Extension {
                 toFile = new ESFile(esFilePrototype, this.getEvaluator(),
                         arguments[0].toString());
             }
-            return ESBoolean.makeBoolean(file.renameTo(toFile));
+            return ESBoolean.valueOf(file.renameTo(toFile));
         }
     }
 
@@ -967,7 +967,7 @@ public class FileIO extends Extension {
         public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESFile file = (ESFile) thisObject;
-            return ESBoolean.makeBoolean(file.canWrite());
+            return ESBoolean.valueOf(file.canWrite());
         }
     }
 
@@ -981,7 +981,7 @@ public class FileIO extends Extension {
         public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESFile file = (ESFile) thisObject;
-            return ESBoolean.makeBoolean(file.canRead());
+            return ESBoolean.valueOf(file.canRead());
         }
     }
 
@@ -1053,7 +1053,7 @@ public class FileIO extends Extension {
         public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESFile file = (ESFile) thisObject;
-            return ESBoolean.makeBoolean(file.mkdir());
+            return ESBoolean.valueOf(file.mkdir());
         }
     }
 
@@ -1069,7 +1069,7 @@ public class FileIO extends Extension {
             ESFile file = (ESFile) thisObject;
             String[] l = file.list();
             if (l == null) {
-                return ESBoolean.makeBoolean(false);
+                return ESBoolean.valueOf(false);
             }
             ESObject ap = this.getEvaluator().getArrayPrototype();
             ArrayPrototype theArray = new ArrayPrototype(ap, this
