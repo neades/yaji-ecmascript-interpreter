@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import FESI.Exceptions.EcmaScriptException;
 import FESI.Interpreter.Evaluator;
 
 public class ObjectObjectTest {
@@ -90,4 +91,22 @@ public class ObjectObjectTest {
     assert(Object.isSealed(frozen) === true);
 */
 
+    @Test public void shouldInitialisePrototypeToObjectPrototype() throws Exception {
+        ESValue prototype = objectObject.getProperty("prototype", "prototype".hashCode());
+        assertTrue( prototype instanceof ObjectPrototype);
+    }
+    
+    @Test public void shouldImplementGetPrototypeOf() throws Exception {
+        ESValue result = objectObject.doIndirectCall(evaluator, objectObject, "getPrototypeOf", new ESValue[] { objectObject });
+        assertTrue(result instanceof FunctionPrototype);
+    }
+    @Test public void getPrototypeOfShouldThrowTypeError() throws Exception {
+        try {
+            objectObject.doIndirectCall(evaluator, objectObject, "getPrototypeOf", ESValue.EMPTY_ARRAY);
+            fail("Should throw exception");
+        } catch( EcmaScriptException e) {
+            ESObject errorObject = (ESObject) e.getErrorObject(evaluator);
+            assertEquals("TypeError",errorObject.getProperty("name","name".hashCode()).toString());
+        }
+    }
 }

@@ -30,6 +30,10 @@ public class ObjectObject extends BuiltinFunctionObject {
     public ObjectObject(ESObject prototype, Evaluator evaluator)
             throws EcmaScriptException {
         super(prototype, evaluator, "Object", 1);
+        
+        ObjectPrototype p = new ObjectPrototype(null, evaluator);
+        putHiddenProperty("prototype", p);
+        
         putHiddenProperty("isFrozen", new BuiltinFunctionObject(prototype,
                 evaluator, "isFrozen", 1) {
 
@@ -58,6 +62,23 @@ public class ObjectObject extends BuiltinFunctionObject {
                 }
                 ((ESObject) arguments[0]).freeze();
                 return arguments[0];
+            }
+        });
+        putHiddenProperty("getPrototypeOf", new BuiltinFunctionObject(prototype, evaluator, "getPrototypeOf", 1) {
+            private static final long serialVersionUID = 2995052280653091683L;
+            
+            @Override
+            public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                    throws EcmaScriptException {
+                ESValue objectToInterrogate = ESUndefined.theUndefined;
+                if (arguments.length > 0) {
+                    objectToInterrogate = arguments[0];
+                }
+                if (!(objectToInterrogate instanceof ESObject)) {
+                    throw new TypeError("Object.getPrototypeOf() should be passed an Object");
+                }
+                ESObject prototype = ((ESObject) objectToInterrogate).getPrototype();
+                return prototype == null ? ESNull.theNull : prototype;
             }
         });
     }
