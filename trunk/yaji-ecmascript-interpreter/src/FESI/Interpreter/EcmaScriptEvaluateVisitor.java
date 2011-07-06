@@ -1270,38 +1270,22 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
                     break;
                 case LT: {
                     int compareCode = compare(v1, v2);
-                    if (compareCode == ESValue.COMPARE_TRUE) {
-                        result = ESBoolean.valueOf(true);
-                    } else {
-                        result = ESBoolean.valueOf(false);
-                    }
+                    result = ESBoolean.valueOf(compareCode == ESValue.COMPARE_TRUE);
                 }
                     break;
                 case GT: {
                     int compareCode = compare(v2, v1);
-                    if (compareCode == ESValue.COMPARE_TRUE) {
-                        result = ESBoolean.valueOf(true);
-                    } else {
-                        result = ESBoolean.valueOf(false);
-                    }
+                    result = ESBoolean.valueOf(compareCode == ESValue.COMPARE_TRUE);
                 }
                     break;
                 case LE: {
                     int compareCode = compare(v2, v1);
-                    if (compareCode == ESValue.COMPARE_FALSE) {
-                        result = ESBoolean.valueOf(true);
-                    } else {
-                        result = ESBoolean.valueOf(false);
-                    }
+                    result = ESBoolean.valueOf(compareCode == ESValue.COMPARE_FALSE);
                 }
                     break;
                 case GE: {
                     int compareCode = compare(v1, v2);
-                    if (compareCode == ESValue.COMPARE_FALSE) {
-                        result = ESBoolean.valueOf(true);
-                    } else {
-                        result = ESBoolean.valueOf(false);
-                    }
+                    result = ESBoolean.valueOf(compareCode == ESValue.COMPARE_FALSE);
                 }
                     break;
                 case EQ: {
