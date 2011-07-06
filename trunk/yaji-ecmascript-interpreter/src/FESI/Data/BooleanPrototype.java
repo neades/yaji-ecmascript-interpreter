@@ -26,7 +26,7 @@ import FESI.Interpreter.Evaluator;
 class BooleanPrototype extends ESObject {
     private static final long serialVersionUID = 6495065713332027767L;
     // The value
-    protected ESBoolean value = ESBoolean.makeBoolean(false);
+    protected ESBoolean value = ESBoolean.valueOf(false);
 
     /**
      * Create a new Boolean initialized to false

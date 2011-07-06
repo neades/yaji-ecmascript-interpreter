@@ -105,9 +105,9 @@ class ESJavaRegExp extends ESObject {
     public ESValue getPropertyInScope(String propertyName,
             ScopeChain previousScope, int hash) throws EcmaScriptException {
         if (propertyName.equals(IGNORECASEstring)) {
-            return ESBoolean.makeBoolean(ignoreCase);
+            return ESBoolean.valueOf(ignoreCase);
         } else if (propertyName.equals(GLOBALstring)) {
-            return ESBoolean.makeBoolean(global);
+            return ESBoolean.valueOf(global);
         }
         return super.getPropertyInScope(propertyName, previousScope, hash);
     }
@@ -115,9 +115,9 @@ class ESJavaRegExp extends ESObject {
     public ESValue getProperty(String propertyName, int hash)
             throws EcmaScriptException {
         if (propertyName.equals(IGNORECASEstring)) {
-            return ESBoolean.makeBoolean(ignoreCase);
+            return ESBoolean.valueOf(ignoreCase);
         } else if (propertyName.equals(GLOBALstring)) {
-            return ESBoolean.makeBoolean(global);
+            return ESBoolean.valueOf(global);
         } else {
             return super.getProperty(propertyName, hash);
         }
@@ -169,7 +169,7 @@ public class JavaRegExp extends Extension {
             ESJavaRegExp pattern = (ESJavaRegExp) thisObject;
             String str = arguments[0].toString();
             Matcher matcher = pattern.getPattern().matcher(str);
-            return ESBoolean.makeBoolean(matcher.find());
+            return ESBoolean.valueOf(matcher.find());
         }
     }
 

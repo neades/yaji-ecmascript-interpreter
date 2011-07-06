@@ -18,6 +18,7 @@
 package FESI.Data;
 
 import FESI.Exceptions.EcmaScriptException;
+import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
 import FESI.Interpreter.ScopeChain;
 
@@ -136,5 +137,24 @@ public class FunctionPrototype extends ESObject {
     // overrides
     public String toString() {
         return "<" + getESClassName() + ":" + this.getFunctionName() + ">";
+    }
+    
+    @Override
+    public boolean hasInstance(ESValue v1) throws EcmaScriptException {
+        if (! (v1 instanceof ESObject)) {
+            return false;
+        }
+        ESObject v = (ESObject)v1;
+        ESValue prototype = getProperty("prototype", "prototype".hashCode());
+        if (! (prototype instanceof ESObject)) {
+            throw new TypeError("prototype of Function expected to be an Object");
+        }
+        while (v != null) {
+            v = v.getPrototype();
+            if (v == prototype) {
+                return true;
+            }
+        } 
+        return false;
     }
 }

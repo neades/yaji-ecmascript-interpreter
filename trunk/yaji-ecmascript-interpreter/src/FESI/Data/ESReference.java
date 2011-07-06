@@ -112,7 +112,9 @@ public class ESReference {
     public void putValue(ESObject g, ESValue v) throws EcmaScriptException {
         // System.out.println("PUT " + v + " to " + this);
         if (base == null) {
-            g.putProperty(propertyName, v, hash);
+            if (g != null) {
+                g.putProperty(propertyName, v, hash);
+            }
         } else {
             base.putProperty(propertyName, v, hash);
         }

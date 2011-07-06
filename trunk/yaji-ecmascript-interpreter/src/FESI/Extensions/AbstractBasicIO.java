@@ -105,7 +105,7 @@ public abstract class AbstractBasicIO extends Extension  implements BasicIOInter
                 for (int i = 0; i < arguments.length; i++) {
                     sb.append(arguments[i].toString());
                 }
-                return ESBoolean.makeBoolean(displayConfirm(sb.toString()));
+                return ESBoolean.valueOf(displayConfirm(sb.toString()));
             }
         }
 

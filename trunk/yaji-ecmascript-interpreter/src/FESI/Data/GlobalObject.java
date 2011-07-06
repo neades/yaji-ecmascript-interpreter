@@ -447,7 +447,7 @@ public class GlobalObject extends ObjectPrototype {
                     if (arguments.length < 1)
                         return ESUndefined.theUndefined;
                     double d = arguments[0].doubleValue();
-                    return ESBoolean.makeBoolean(Double.isNaN(d));
+                    return ESBoolean.valueOf(Double.isNaN(d));
                 }
             }
 
@@ -464,7 +464,7 @@ public class GlobalObject extends ObjectPrototype {
                     if (arguments.length < 1)
                         return ESUndefined.theUndefined;
                     double d = arguments[0].doubleValue();
-                    return ESBoolean.makeBoolean(!Double.isInfinite(d));
+                    return ESBoolean.valueOf(!Double.isInfinite(d));
                 }
             }
 

@@ -71,7 +71,7 @@ public class JavaAccess extends Extension {
                 String pathName = arguments[0].toString();
                 ext = this.getEvaluator().addExtension(pathName);
             }
-            return ESBoolean.makeBoolean(ext != null);
+            return ESBoolean.valueOf(ext != null);
         }
     }
 

@@ -199,7 +199,7 @@ public abstract class ESValue implements java.io.Serializable {
      *                Not thrown
      */
     public ESValue toESBoolean() throws EcmaScriptException {
-        return ESBoolean.makeBoolean(this.booleanValue());
+        return ESBoolean.valueOf(this.booleanValue());
     }
 
     /**

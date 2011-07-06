@@ -84,6 +84,7 @@ import FESI.Data.ESValue;
 import FESI.Data.ObjectObject;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
+import FESI.Exceptions.TypeError;
 import FESI.Parser.EcmaScriptConstants;
 import FESI.Util.IAppendable;
 
@@ -534,7 +535,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
             Node testNode = node.jjtGetChild(1);
             ESValue testValue;
             if (testNode instanceof ASTEmptyExpression) {
-                testValue = ESBoolean.makeBoolean(true);
+                testValue = ESBoolean.valueOf(true);
             } else {
                 testValue = acceptNull(testNode.jjtAccept(this, FOR_VALUE));
             }
@@ -549,7 +550,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
                 } else if (completionCode == C_CONTINUE) {
                     node.jjtGetChild(2).jjtAccept(this, FOR_VALUE);
                     if (testNode instanceof ASTEmptyExpression) {
-                        testValue = ESBoolean.makeBoolean(true);
+                        testValue = ESBoolean.valueOf(true);
                     } else {
                         testValue = acceptNull(testNode.jjtAccept(this,
                                 FOR_VALUE));
@@ -558,7 +559,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
                 } else {
                     node.jjtGetChild(2).jjtAccept(this, FOR_VALUE);
                     if (testNode instanceof ASTEmptyExpression) {
-                        testValue = ESBoolean.makeBoolean(true);
+                        testValue = ESBoolean.valueOf(true);
                     } else {
                         testValue = acceptNull(testNode.jjtAccept(this,
                                 FOR_VALUE));
@@ -582,7 +583,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
             Node testNode = node.jjtGetChild(1);
             ESValue testValue;
             if (testNode instanceof ASTEmptyExpression) {
-                testValue = ESBoolean.makeBoolean(true);
+                testValue = ESBoolean.valueOf(true);
             } else {
                 testValue = acceptNull(testNode.jjtAccept(this, FOR_VALUE));
             }
@@ -597,7 +598,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
                 } else if (completionCode == C_CONTINUE) {
                     node.jjtGetChild(2).jjtAccept(this, FOR_VALUE);
                     if (testNode instanceof ASTEmptyExpression) {
-                        testValue = ESBoolean.makeBoolean(true);
+                        testValue = ESBoolean.valueOf(true);
                     } else {
                         testValue = acceptNull(testNode.jjtAccept(this,
                                 FOR_VALUE));
@@ -606,7 +607,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
                 } else {
                     node.jjtGetChild(2).jjtAccept(this, FOR_VALUE);
                     if (testNode instanceof ASTEmptyExpression) {
-                        testValue = ESBoolean.makeBoolean(true);
+                        testValue = ESBoolean.valueOf(true);
                     } else {
                         testValue = acceptNull(testNode.jjtAccept(this,
                                 FOR_VALUE));
@@ -1118,10 +1119,10 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
                 ESValue base = lv.getBase();
                 String propertyName = lv.getPropertyName();
                 if (base instanceof ESObject) {
-                    r = ESBoolean.makeBoolean(((ESObject) base).deleteProperty(
+                    r = ESBoolean.valueOf(((ESObject) base).deleteProperty(
                             propertyName, propertyName.hashCode()));
                 } else {
-                    r = ESBoolean.makeBoolean(true);
+                    r = ESBoolean.valueOf(true);
                 }
             }
                 break;
@@ -1201,7 +1202,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
                 ESValue v = (ESValue) node.jjtGetChild(1).jjtAccept(this,
                         FOR_VALUE);
                 boolean bv = v.booleanValue();
-                r = ESBoolean.makeBoolean(!bv);
+                r = ESBoolean.valueOf(!bv);
             }
                 break;
             default:
@@ -1270,45 +1271,45 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
                 case LT: {
                     int compareCode = compare(v1, v2);
                     if (compareCode == ESValue.COMPARE_TRUE) {
-                        result = ESBoolean.makeBoolean(true);
+                        result = ESBoolean.valueOf(true);
                     } else {
-                        result = ESBoolean.makeBoolean(false);
+                        result = ESBoolean.valueOf(false);
                     }
                 }
                     break;
                 case GT: {
                     int compareCode = compare(v2, v1);
                     if (compareCode == ESValue.COMPARE_TRUE) {
-                        result = ESBoolean.makeBoolean(true);
+                        result = ESBoolean.valueOf(true);
                     } else {
-                        result = ESBoolean.makeBoolean(false);
+                        result = ESBoolean.valueOf(false);
                     }
                 }
                     break;
                 case LE: {
                     int compareCode = compare(v2, v1);
                     if (compareCode == ESValue.COMPARE_FALSE) {
-                        result = ESBoolean.makeBoolean(true);
+                        result = ESBoolean.valueOf(true);
                     } else {
-                        result = ESBoolean.makeBoolean(false);
+                        result = ESBoolean.valueOf(false);
                     }
                 }
                     break;
                 case GE: {
                     int compareCode = compare(v1, v2);
                     if (compareCode == ESValue.COMPARE_FALSE) {
-                        result = ESBoolean.makeBoolean(true);
+                        result = ESBoolean.valueOf(true);
                     } else {
-                        result = ESBoolean.makeBoolean(false);
+                        result = ESBoolean.valueOf(false);
                     }
                 }
                     break;
                 case EQ: {
-                    result = ESBoolean.makeBoolean(equal(v1, v2));
+                    result = ESBoolean.valueOf(equal(v1, v2));
                 }
                     break;
                 case NE: {
-                    result = ESBoolean.makeBoolean(!equal(v1, v2));
+                    result = ESBoolean.valueOf(!equal(v1, v2));
                 }
                     break;
                 case BIT_AND: {
@@ -1330,13 +1331,19 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
                 }
                     break;
                 case STRICT_EQ: {
-                    result = ESBoolean.makeBoolean(strictEqual(v1, v2));
+                    result = ESBoolean.valueOf(strictEqual(v1, v2));
                 }
                     break;
                 case STRICT_NEQ: {
-                    result = ESBoolean.makeBoolean(!strictEqual(v1, v2));
+                    result = ESBoolean.valueOf(!strictEqual(v1, v2));
                 }
                     break;
+                case INSTANCEOF: {
+                    if (! (v2 instanceof ESObject) ) {
+                        throw new TypeError("RHS of instanceof must be an object");
+                    }
+                    result = ESBoolean.valueOf(((ESObject)v2).hasInstance(v1));
+                }   break;
                 default:
                     throw new ProgrammingError("Unimplemented binary");
                 } // switch
@@ -1360,7 +1367,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
                 i++;
             }
             // Normalize to primitive - could be optimized...
-            result = ESBoolean.makeBoolean(result.booleanValue());
+            result = ESBoolean.valueOf(result.booleanValue());
         } catch (EcmaScriptException e) {
             throw new PackagedException(e, node);
         }
@@ -1379,7 +1386,7 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
                 i++;
             }
             // Normalize to primitive - could be optimized...
-            result = ESBoolean.makeBoolean(result.booleanValue());
+            result = ESBoolean.valueOf(result.booleanValue());
 
         } catch (EcmaScriptException e) {
             throw new PackagedException(e, node);

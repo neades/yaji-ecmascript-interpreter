@@ -1087,4 +1087,8 @@ public abstract class ESObject extends ESValue {
         }
         return frozen;
     }
+
+    public boolean hasInstance(ESValue v1) throws EcmaScriptException {
+        throw new TypeError("hasInstance not implemented");
+    }
 }

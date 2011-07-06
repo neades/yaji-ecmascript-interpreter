@@ -77,10 +77,10 @@ public class ArrayObject extends BuiltinFunctionObject {
         if (args.length >= 1) {
             if (args[0] instanceof ESObject 
                     && "Array".equals(((ESObject)args[0]).getESClassName())) {
-                return ESBoolean.makeBoolean(true);
+                return ESBoolean.valueOf(true);
             }
         }
-        return ESBoolean.makeBoolean(false);
+        return ESBoolean.valueOf(false);
     }
 
     /**

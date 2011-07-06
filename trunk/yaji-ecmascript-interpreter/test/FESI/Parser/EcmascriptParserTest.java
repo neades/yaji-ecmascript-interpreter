@@ -168,6 +168,13 @@ public class EcmascriptParserTest {
                   + "   AllocationExpression" + eol
                   + "    <Error>" + eol
                   + "    FunctionCallParameters" + eol
+                },
+                { "x instanceof TypeError", "Program" + eol
+                    + " Statement" + eol
+                    + "  BinaryExpressionSequence" + eol
+                    + "   <x>" + eol
+                    + "   <\"instanceof\">" + eol
+                    + "   <TypeError>" + eol
                 }
             });
     }

@@ -731,9 +731,9 @@ public class ArrayPrototype extends ESObject {
         }
         switch (type) {
         case EVERY:
-            return ESBoolean.makeBoolean(true);
+            return ESBoolean.valueOf(true);
         case SOME:
-            return ESBoolean.makeBoolean(false);
+            return ESBoolean.valueOf(false);
         case FOREACH:
         default:
             return ESUndefined.theUndefined;

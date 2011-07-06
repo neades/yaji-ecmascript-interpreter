@@ -41,7 +41,7 @@ public class ObjectObject extends BuiltinFunctionObject {
                         || !(arguments[0] instanceof ESObject)) {
                     throw new TypeError("Object.isFrozen() should be passed an Object");
                 }
-                return ESBoolean.makeBoolean(((ESObject) arguments[0])
+                return ESBoolean.valueOf(((ESObject) arguments[0])
                         .isFrozen());
             }
         });

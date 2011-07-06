@@ -21,7 +21,7 @@ public class ObjectObjectTest {
     @Test public void testNewObjectNotFrozen() throws Exception {
         ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
         
-        assertEquals("A new object is extensible, so it is not frozen.",ESBoolean.makeBoolean(false),
+        assertEquals("A new object is extensible, so it is not frozen.",ESBoolean.valueOf(false),
                 objectObject.doIndirectCall(evaluator, evaluator.getGlobalObject(), "isFrozen", new ESValue[] { object }));
     }
     
@@ -78,7 +78,7 @@ public class ObjectObjectTest {
         object.freeze();
         objectObject.doIndirectCall(evaluator, evaluator.getGlobalObject(), "freeze", new ESValue[] { object });
         assertEquals("the easiest way for an object to be frozen is if Object.freeze has been called on it.",
-                ESBoolean.makeBoolean(true),
+                ESBoolean.valueOf(true),
                 objectObject.doIndirectCall(evaluator, evaluator.getGlobalObject(), "isFrozen", new ESValue[] { object }));
     }
 /*
