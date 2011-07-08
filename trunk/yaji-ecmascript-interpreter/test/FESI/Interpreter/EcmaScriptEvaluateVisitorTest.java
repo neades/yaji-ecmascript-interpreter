@@ -190,6 +190,114 @@ public class EcmaScriptEvaluateVisitorTest {
     }
     
     @Test
+    public void switchShouldHandleSimpleCaseSelection() throws Exception {
+        String sourceText = "switch ( 'x' ) { case 'x' : return 123; }";
+        EcmaScript es = new EcmaScript(new StringReader(sourceText));
+        
+        ASTStatement statement = (ASTStatement) es.Program().jjtGetChild(0);
+        
+        EcmaScriptEvaluateVisitor visitor = createVisitor();
+        ESValue result = (ESValue) visitor.visit(statement,EcmaScriptEvaluateVisitor.FOR_VALUE);
+        assertEquals(ESNumber.valueOf(123),result);
+    }
+
+    @Test
+    public void switchShouldHandleSimpleDefaultSelection() throws Exception {
+        String sourceText = "switch ( 'y' ) { case 'x' : return 456; default: return 123 }";
+        EcmaScript es = new EcmaScript(new StringReader(sourceText));
+        
+        ASTStatement statement = (ASTStatement) es.Program().jjtGetChild(0);
+        
+        EcmaScriptEvaluateVisitor visitor = createVisitor();
+        ESValue result = (ESValue) visitor.visit(statement,EcmaScriptEvaluateVisitor.FOR_VALUE);
+        assertEquals(ESNumber.valueOf(123),result);
+    }
+
+    @Test
+    public void switchShouldHandleCaseAfterDefault() throws Exception {
+        String sourceText = "switch ( 'y' ) { case 'x' : return 456; default: return 678; case 'y': return 123; }";
+        EcmaScript es = new EcmaScript(new StringReader(sourceText));
+        
+        ASTStatement statement = (ASTStatement) es.Program().jjtGetChild(0);
+        
+        EcmaScriptEvaluateVisitor visitor = createVisitor();
+        ESValue result = (ESValue) visitor.visit(statement,EcmaScriptEvaluateVisitor.FOR_VALUE);
+        assertEquals(ESNumber.valueOf(123),result);
+    }
+
+    @Test
+    public void switchShouldfallThrough() throws Exception {
+        String sourceText = "switch ( 'y' ) { case 'y': var x = 0; case 'x' : return 123; default: return 678; }";
+        EcmaScript es = new EcmaScript(new StringReader(sourceText));
+        
+        ASTStatement statement = (ASTStatement) es.Program().jjtGetChild(0);
+        
+        EcmaScriptEvaluateVisitor visitor = createVisitor();
+        ESValue result = (ESValue) visitor.visit(statement,EcmaScriptEvaluateVisitor.FOR_VALUE);
+        assertEquals(ESNumber.valueOf(123),result);
+    }
+
+    @Test
+    public void switchShouldFallThroughToDefault() throws Exception {
+        String sourceText = "switch ( 'y' ) { case 'x' : return 678; case 'y': var x = 0; default: return 123; }";
+        EcmaScript es = new EcmaScript(new StringReader(sourceText));
+        
+        ASTStatement statement = (ASTStatement) es.Program().jjtGetChild(0);
+        
+        EcmaScriptEvaluateVisitor visitor = createVisitor();
+        ESValue result = (ESValue) visitor.visit(statement,EcmaScriptEvaluateVisitor.FOR_VALUE);
+        assertEquals(ESNumber.valueOf(123),result);
+    }
+
+    @Test
+    public void switchShouldFallThroughDefault() throws Exception {
+        String sourceText = "switch ( 'y' ) { case 'x' : return 678; default: var x = 0; case 'z': return 123; }";
+        EcmaScript es = new EcmaScript(new StringReader(sourceText));
+        
+        ASTStatement statement = (ASTStatement) es.Program().jjtGetChild(0);
+        
+        EcmaScriptEvaluateVisitor visitor = createVisitor();
+        ESValue result = (ESValue) visitor.visit(statement,EcmaScriptEvaluateVisitor.FOR_VALUE);
+        assertEquals(ESNumber.valueOf(123),result);
+    }
+
+    @Test
+    public void switchShouldFallWithNoStatementList() throws Exception {
+        String sourceText = "switch ( 'x' ) { case 'x' : default: return 123; }";
+        EcmaScript es = new EcmaScript(new StringReader(sourceText));
+        
+        ASTStatement statement = (ASTStatement) es.Program().jjtGetChild(0);
+        
+        EcmaScriptEvaluateVisitor visitor = createVisitor();
+        ESValue result = (ESValue) visitor.visit(statement,EcmaScriptEvaluateVisitor.FOR_VALUE);
+        assertEquals(ESNumber.valueOf(123),result);
+    }
+
+    @Test
+    public void switchShouldBreak() throws Exception {
+        String sourceText = "switch ( 'x' ) { case 'x' : 123; break; default: 456; }";
+        EcmaScript es = new EcmaScript(new StringReader(sourceText));
+        
+        ASTStatement statement = (ASTStatement) es.Program().jjtGetChild(0);
+        
+        EcmaScriptEvaluateVisitor visitor = createVisitor();
+        visitor.visit(statement,EcmaScriptEvaluateVisitor.FOR_VALUE);
+        assertEquals(EcmaScriptEvaluateVisitor.C_NORMAL,visitor.completionCode);
+    }
+
+    @Test
+    public void switchShouldFallDefaultWithNoStatementList() throws Exception {
+        String sourceText = "switch ( 'x' ) { case 'x' : default: case 'q' : return 123; }";
+        EcmaScript es = new EcmaScript(new StringReader(sourceText));
+        
+        ASTStatement statement = (ASTStatement) es.Program().jjtGetChild(0);
+        
+        EcmaScriptEvaluateVisitor visitor = createVisitor();
+        ESValue result = (ESValue) visitor.visit(statement,EcmaScriptEvaluateVisitor.FOR_VALUE);
+        assertEquals(ESNumber.valueOf(123),result);
+    }
+
+    @Test
     public void shouldThrowException() throws Exception {
         String sourceText = "throw new Error('test');";
         EcmaScript es = new EcmaScript(new StringReader(sourceText));

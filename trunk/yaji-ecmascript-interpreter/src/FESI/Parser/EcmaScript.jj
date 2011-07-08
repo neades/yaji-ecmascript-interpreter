@@ -3636,7 +3636,7 @@ void CaseClause()             :
 {/*@bgen(jjtree) CaseClause */
   try {
 /*@egen*/
-  <CASE> Expression() ":" StatementList()/*@bgen(jjtree)*/
+  <CASE> Expression() ":" [ StatementList() ]/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -3670,7 +3670,7 @@ void DefaultClause()                :
 {/*@bgen(jjtree) DefaultClause */
         try {
 /*@egen*/
-	<_DEFAULT> ":" StatementList()/*@bgen(jjtree)*/
+	<_DEFAULT> ":" [ StatementList() ]/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);

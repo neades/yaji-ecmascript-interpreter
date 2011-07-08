@@ -152,4 +152,9 @@ public abstract class SimpleNode implements Node, EcmaScriptConstants {
         }
     }
 
+    public void assertAtLeastOneChild() {
+        if (jjtGetNumChildren() < 1) {
+            throw new ProgrammingError("AST Should have at least 1 child");
+        }
+    }
 }
