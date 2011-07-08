@@ -19,53 +19,13 @@ package FESI.Interpreter;
 
 import java.util.List;
 
-import FESI.AST.ASTAllocationExpression;
-import FESI.AST.ASTAndExpressionSequence;
-import FESI.AST.ASTArrayLiteral;
-import FESI.AST.ASTAssignmentExpression;
-import FESI.AST.ASTBinaryExpressionSequence;
-import FESI.AST.ASTBreakStatement;
-import FESI.AST.ASTCatch;
-import FESI.AST.ASTCompositeReference;
-import FESI.AST.ASTConditionalExpression;
-import FESI.AST.ASTContinueStatement;
-import FESI.AST.ASTElision;
-import FESI.AST.ASTEmptyExpression;
-import FESI.AST.ASTExpressionList;
-import FESI.AST.ASTFinally;
-import FESI.AST.ASTForInStatement;
-import FESI.AST.ASTForStatement;
-import FESI.AST.ASTForVarInStatement;
-import FESI.AST.ASTForVarStatement;
 import FESI.AST.ASTFormalParameterList;
-import FESI.AST.ASTFunctionCallParameters;
 import FESI.AST.ASTFunctionDeclaration;
-import FESI.AST.ASTFunctionExpression;
-import FESI.AST.ASTGetAccessor;
 import FESI.AST.ASTIdentifier;
-import FESI.AST.ASTIfStatement;
-import FESI.AST.ASTLiteral;
-import FESI.AST.ASTObjectLiteral;
-import FESI.AST.ASTOperator;
-import FESI.AST.ASTOrExpressionSequence;
-import FESI.AST.ASTPostfixExpression;
 import FESI.AST.ASTProgram;
-import FESI.AST.ASTPropertyIdentifierReference;
-import FESI.AST.ASTPropertyNameAndValue;
-import FESI.AST.ASTPropertyValueReference;
-import FESI.AST.ASTReturnStatement;
-import FESI.AST.ASTSetAccessor;
 import FESI.AST.ASTStatement;
 import FESI.AST.ASTStatementList;
-import FESI.AST.ASTSuperReference;
-import FESI.AST.ASTThisReference;
-import FESI.AST.ASTThrowStatement;
-import FESI.AST.ASTTryStatement;
-import FESI.AST.ASTUnaryExpression;
-import FESI.AST.ASTVariableDeclaration;
-import FESI.AST.ASTWhileStatement;
-import FESI.AST.ASTWithStatement;
-import FESI.AST.EcmaScriptVisitor;
+import FESI.AST.AbstractEcmaScriptVisitor;
 import FESI.AST.SimpleNode;
 import FESI.Data.ConstructedFunctionObject;
 import FESI.Data.ESReference;
@@ -81,8 +41,7 @@ import FESI.Parser.EcmaScriptConstants;
  * The function declarations will be ignored by the evaluation visitor (the tree
  * is not modified).
  */
-public class EcmaScriptFunctionVisitor implements EcmaScriptVisitor,
-        EcmaScriptConstants, java.io.Serializable {
+public class EcmaScriptFunctionVisitor extends AbstractEcmaScriptVisitor implements EcmaScriptConstants, java.io.Serializable {
     private static final long serialVersionUID = 4746752174336980575L;
     // The visitor work on behalf on an evaluator
     private Evaluator evaluator = null;
@@ -126,24 +85,13 @@ public class EcmaScriptFunctionVisitor implements EcmaScriptVisitor,
      * Irrelevant parts of the tree are skipped
      *------------------------------------------------------------------*/
 
-    private void badAST() {
+    @Override
+    public Object defaultAction(SimpleNode node, Object data) {
         throw new ProgrammingError("Bad AST walk in EcmaScriptFunctionVisitor");
-    }
-
-    // The dispatching is by node type - if the specific visitor
-    // is not implemented, then this routine is called
-    public Object visit(SimpleNode node, Object data) {
-        badAST();
-        return data;
     }
 
     public Object visit(ASTProgram node, Object data) {
         data = node.childrenAccept(this, data);
-        return data;
-    }
-
-    public Object visit(ASTStatementList node, Object data) {
-        badAST();
         return data;
     }
 
@@ -184,219 +132,9 @@ public class EcmaScriptFunctionVisitor implements EcmaScriptVisitor,
         return data;
     }
 
-    public Object visit(ASTFormalParameterList node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTStatement node, Object data) {
+     public Object visit(ASTStatement node, Object data) {
         // Ignore statements for function declaration visitors
         return data;
     }
 
-    public Object visit(ASTVariableDeclaration node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTIfStatement node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTContinueStatement node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTWhileStatement node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTForStatement node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTForInStatement node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTForVarStatement node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTForVarInStatement node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTBreakStatement node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTReturnStatement node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTWithStatement node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTThisReference node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTSuperReference node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTCompositeReference node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTFunctionCallParameters node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTPropertyValueReference node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTPropertyIdentifierReference node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTAllocationExpression node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTOperator node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTPostfixExpression node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTUnaryExpression node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTBinaryExpressionSequence node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTAndExpressionSequence node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTOrExpressionSequence node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTConditionalExpression node, Object data) {
-        badAST();
-        return data;
-    }
-
-    // Can we really have a cascade ?
-    public Object visit(ASTAssignmentExpression node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTExpressionList node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTEmptyExpression node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTLiteral node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTIdentifier node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTObjectLiteral node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTPropertyNameAndValue node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTFunctionExpression node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTArrayLiteral node, Object data) {
-        badAST();
-        return data;
-    }
-    
-    public Object visit(ASTTryStatement node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTCatch node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTFinally node, Object data) {
-        badAST();
-        return data;
-   }
-
-    public Object visit(ASTElision node, Object data) {
-        badAST();
-        return data;
-    }
-
-    public Object visit(ASTGetAccessor node, Object data) {
-        badAST();
-        return data;
-    }
-    
-    public Object visit(ASTSetAccessor node, Object data) {
-        badAST();
-        return data;
-    }
-    
-    public Object visit(ASTThrowStatement node, Object data) {
-        badAST();
-        return data;
-    }
 }

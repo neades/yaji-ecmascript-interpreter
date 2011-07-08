@@ -38,7 +38,6 @@ import FESI.AST.ASTForInStatement;
 import FESI.AST.ASTForStatement;
 import FESI.AST.ASTForVarInStatement;
 import FESI.AST.ASTForVarStatement;
-import FESI.AST.ASTFormalParameterList;
 import FESI.AST.ASTFunctionCallParameters;
 import FESI.AST.ASTFunctionDeclaration;
 import FESI.AST.ASTFunctionExpression;
@@ -47,7 +46,6 @@ import FESI.AST.ASTIdentifier;
 import FESI.AST.ASTIfStatement;
 import FESI.AST.ASTLiteral;
 import FESI.AST.ASTObjectLiteral;
-import FESI.AST.ASTOperator;
 import FESI.AST.ASTOrExpressionSequence;
 import FESI.AST.ASTPostfixExpression;
 import FESI.AST.ASTProgram;
@@ -59,6 +57,7 @@ import FESI.AST.ASTSetAccessor;
 import FESI.AST.ASTStatement;
 import FESI.AST.ASTStatementList;
 import FESI.AST.ASTSuperReference;
+import FESI.AST.ASTSwitchStatement;
 import FESI.AST.ASTThisReference;
 import FESI.AST.ASTThrowStatement;
 import FESI.AST.ASTTryStatement;
@@ -66,7 +65,7 @@ import FESI.AST.ASTUnaryExpression;
 import FESI.AST.ASTVariableDeclaration;
 import FESI.AST.ASTWhileStatement;
 import FESI.AST.ASTWithStatement;
-import FESI.AST.EcmaScriptVisitor;
+import FESI.AST.AbstractEcmaScriptVisitor;
 import FESI.AST.SimpleNode;
 import FESI.Exceptions.ProgrammingError;
 import FESI.Parser.EcmaScriptConstants;
@@ -79,8 +78,7 @@ import FESI.Parser.EcmaScriptConstants;
  * The variable declarations will be ignored by the evaluation visitor (the tree
  * is not modified).
  */
-public class EcmaScriptVariableVisitor implements EcmaScriptVisitor,
-        EcmaScriptConstants, java.io.Serializable {
+public class EcmaScriptVariableVisitor extends AbstractEcmaScriptVisitor implements EcmaScriptConstants, java.io.Serializable {
     private static final long serialVersionUID = 989146122497439912L;
     private boolean debug = false;
     private Vector<String> variableList = null;
@@ -134,15 +132,9 @@ public class EcmaScriptVariableVisitor implements EcmaScriptVisitor,
      * Irrelevant parts of the tree are skipped
      *------------------------------------------------------------------*/
 
-    private void badAST() {
+    @Override
+    public Object defaultAction(SimpleNode node, Object data) {
         throw new ProgrammingError("Bad AST walk in EcmaScriptVariableVisitor");
-    }
-
-    // The dispatching is by node type - if the specific visitor
-    // is not implemented, then this routine is called
-    public Object visit(SimpleNode node, Object data) {
-        badAST();
-        return data;
     }
 
     public Object visit(ASTProgram node, Object data) {
@@ -157,11 +149,6 @@ public class EcmaScriptVariableVisitor implements EcmaScriptVisitor,
 
     public Object visit(ASTFunctionDeclaration node, Object data) {
         // ignore function declarations in this mode
-        return data;
-    }
-
-    public Object visit(ASTFormalParameterList node, Object data) {
-        badAST();
         return data;
     }
 
@@ -274,11 +261,6 @@ public class EcmaScriptVariableVisitor implements EcmaScriptVisitor,
         return data;
     }
 
-    public Object visit(ASTOperator node, Object data) {
-        badAST();
-        return data;
-    }
-
     public Object visit(ASTPostfixExpression node, Object data) {
         // no internal variable declarations possible
         return data;
@@ -388,7 +370,12 @@ public class EcmaScriptVariableVisitor implements EcmaScriptVisitor,
     }
     
     public Object visit(ASTThrowStatement node, Object data) {
-        // no internal variable declarations possible
+        // TODO is this correct
+        return data;
+    }
+    
+    public Object visit(ASTSwitchStatement node, Object data) {
+        // TODO is this correct
         return data;
     }
 }

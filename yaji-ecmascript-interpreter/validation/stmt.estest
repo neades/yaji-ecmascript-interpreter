@@ -415,4 +415,206 @@ try {
 }
 error;
 
+@test switch.12.11-1
+
+function SwitchTest(value){
+  var result = 0;
+  
+  switch(value) {
+    case 0:
+      result += 2;
+    case 1:
+      result += 4;
+      break;
+    case 2:
+      result += 8;
+    case 3:
+      result += 16;
+    default:
+      result += 32;
+      break;
+    case 4:
+      result += 64;
+  }
+  writeln("Value: " + value + "  Result: "+result );
+  return result;
+}
+        
+SwitchTest(0) === 6 
+  && SwitchTest(1) === 4 
+  && SwitchTest(2) === 56
+  && SwitchTest(3) === 48
+  && SwitchTest(4) === 64
+  && SwitchTest(true) === 32
+  && SwitchTest(false) === 32
+  && SwitchTest(null) === 32
+  && SwitchTest(void 0) === 32
+  && SwitchTest('0') === 32;
+  
+  
+@test switch.12.11-2
+var x = new Number(2);
+
+function SwitchTest(value){
+  var result = 0;
+  
+  switch(value) {
+    case 0:
+      result += 2;
+    case '1':
+      result += 4;
+      break;
+    case new Number(2):
+      result += 8;
+    case 3:
+      result += 16;
+    default:
+      result += 32;
+      break;
+    case 4:
+      result += 64;
+      break;
+    case x:
+      result += 128;
+      break;
+    case 0:
+      result += 256;
+    case 1:
+      result += 512;
+  }
+  
+  return result;
+}
+        
+SwitchTest(0) === 6
+&& SwitchTest(1) === 512
+&& SwitchTest(2) === 32
+&& SwitchTest(3) === 48
+&& SwitchTest(4) === 64
+&& SwitchTest(true) === 32
+&& SwitchTest(false) === 32
+&& SwitchTest(null) === 32
+&& SwitchTest(void 0) === 32
+&& SwitchTest('0') === 32
+&& SwitchTest(x) === 128
+
+@test switch.12.11-3
+function SwitchTest(value){
+  var result = 0;
+  
+  switch(value) {
+    case 0:
+      result += 2;
+    case 1:
+      result += 4;
+      break;
+    case 2:
+      result += 8;
+    case 3:
+      result += 16;
+    default:
+      result += 32;
+      break;
+    case null:
+      result += 64;
+    case NaN:
+      result += 128;
+      break;
+    case Infinity:
+      result += 256;
+    case 2+3:
+      result += 512;
+      break;
+    case undefined:
+      result += 1024;
+  }
+  
+  return result;
+}
+        
+SwitchTest(0) === 6
+&& SwitchTest(1) === 4
+&& SwitchTest(2) === 56
+&& SwitchTest(3) === 48
+&& SwitchTest(4) === 32
+&& SwitchTest(5) === 512
+&& SwitchTest(true) === 32
+&& SwitchTest(false) === 32
+&& SwitchTest(null) === 192
+&& SwitchTest(void 0) === 1024
+&& SwitchTest(NaN) === 32
+&& SwitchTest(Infinity) === 768;
+
+@test: switch.12.11-4
+function SwitchTest(value){
+  var result = 0;
+  
+  switch(value) {
+    case 0:
+      result += 2;
+    case 1:
+      result += 4;
+      break;
+    case 2:
+      result += 8;
+    case isNaN(value):
+      result += 16;
+    default:
+      result += 32;
+      break;
+    case null:
+      result += 64;
+    case isNaN:
+      result += 128;
+      break;
+    case Infinity:
+      result += 256;
+    case 2+3:
+      result += 512;
+      break;
+    case undefined:
+      result += 1024;
+  }
+  
+  return result;
+}
+        
+SwitchTest(eval('Number(false)')) === 6
+&& SwitchTest(parseInt) === 32
+&& SwitchTest(isNaN) === 128
+&& SwitchTest(true) === 32
+&& SwitchTest(false) === 48
+&& SwitchTest(null) === 192
+&& SwitchTest(void 0) === 1024
+&& SwitchTest(NaN) === 32
+&& SwitchTest(Infinity) === 768;
+
+
+@test: switch.12.11-9
+function SwitchTest(value){
+  var result = 0;
+  
+  switch(value) {
+    case 0:
+      switch(value) {
+        case 0:
+         result += 3;
+        break;
+        default:
+          result += 32;
+          break;
+        }
+      result *= 2;
+      break;
+      result=3;
+    default:
+      result += 32;
+      break;
+  }
+  return result;
+}
+
+var x = SwitchTest(0);
+x===6;
+
 

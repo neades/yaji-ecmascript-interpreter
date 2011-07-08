@@ -17,6 +17,10 @@
 
 package FESI.Interpreter;
 
+import static FESI.Data.ESValue.hasGetAccessorDescriptor;
+import static FESI.Data.ESValue.hasSetAccessorDescriptor;
+import static FESI.Data.ESValue.isAccessorDescriptor;
+
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -27,10 +31,12 @@ import FESI.AST.ASTArrayLiteral;
 import FESI.AST.ASTAssignmentExpression;
 import FESI.AST.ASTBinaryExpressionSequence;
 import FESI.AST.ASTBreakStatement;
+import FESI.AST.ASTCaseClause;
 import FESI.AST.ASTCatch;
 import FESI.AST.ASTCompositeReference;
 import FESI.AST.ASTConditionalExpression;
 import FESI.AST.ASTContinueStatement;
+import FESI.AST.ASTDefaultClause;
 import FESI.AST.ASTElision;
 import FESI.AST.ASTEmptyExpression;
 import FESI.AST.ASTExpressionList;
@@ -60,6 +66,7 @@ import FESI.AST.ASTSetAccessor;
 import FESI.AST.ASTStatement;
 import FESI.AST.ASTStatementList;
 import FESI.AST.ASTSuperReference;
+import FESI.AST.ASTSwitchStatement;
 import FESI.AST.ASTThisReference;
 import FESI.AST.ASTThrowStatement;
 import FESI.AST.ASTTryStatement;
@@ -67,7 +74,7 @@ import FESI.AST.ASTUnaryExpression;
 import FESI.AST.ASTVariableDeclaration;
 import FESI.AST.ASTWhileStatement;
 import FESI.AST.ASTWithStatement;
-import FESI.AST.EcmaScriptVisitor;
+import FESI.AST.AbstractEcmaScriptVisitor;
 import FESI.AST.Node;
 import FESI.AST.SimpleNode;
 import FESI.Data.ConstructedFunctionObject;
@@ -87,10 +94,6 @@ import FESI.Exceptions.ProgrammingError;
 import FESI.Exceptions.TypeError;
 import FESI.Parser.EcmaScriptConstants;
 import FESI.Util.IAppendable;
-
-import static FESI.Data.ESValue.hasGetAccessorDescriptor;
-import static FESI.Data.ESValue.hasSetAccessorDescriptor;
-import static FESI.Data.ESValue.isAccessorDescriptor;
 
 /**
  * Exception used to package any exception encountered during visiting to an
@@ -122,8 +125,7 @@ class PackagedException extends RuntimeException {
  * The parse tree must have been preprocessed by the variable and function
  * visitors first.
  */
-public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
-        EcmaScriptConstants {
+public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor implements EcmaScriptConstants {
 
     // Continuation codes
     public static final int C_NORMAL = 0;
@@ -1817,5 +1819,75 @@ public class EcmaScriptEvaluateVisitor implements EcmaScriptVisitor,
         EcmaScriptException exception = new EcmaScriptException("throw");
         exception.setErrorObject((ESValue)node.jjtGetChild(0).jjtAccept(this, data));
         throw new PackagedException(exception, node);
+    }
+    
+    
+    private static class SwitchState {
+        boolean found;
+        ESValue input;
+        ESValue result;
+    }
+    public Object visit(ASTSwitchStatement node, Object data) {
+        node.assertAtLeastOneChild();
+        
+        SwitchState switchState = new SwitchState();
+        switchState.input = (ESValue) node.jjtGetChild(0).jjtAccept(this, FOR_VALUE);
+        switchState.result = ESUndefined.theUndefined;
+        int n = node.jjtGetNumChildren();
+        int defaultNode = -1;
+        for (int i=1; i<n && completionCode == C_NORMAL; i++) {
+            Node child = node.jjtGetChild(i);
+            if (child instanceof ASTCaseClause) {
+                switchState.result = (ESValue) child.jjtAccept(this, switchState);
+            } else if (switchState.found) {
+                switchState.result = (ESValue) child.jjtAccept(this, switchState); 
+            } else {
+                defaultNode = i;
+            }
+        }
+        if (!switchState.found) { 
+            if (defaultNode != -1) {
+                switchState.found = true;
+                for (int i=defaultNode; i<n && completionCode == C_NORMAL; i++) {
+                    Node child = node.jjtGetChild(i);
+                    switchState.result = (ESValue) child.jjtAccept(this, switchState);
+                }
+           } else {
+               switchState.result = ESUndefined.theUndefined;
+            }
+        }
+        if (completionCode == C_BREAK) {
+            completionCode = C_NORMAL;
+        }
+        return switchState.result;
+    }
+    
+    public Object visit(ASTCaseClause node, Object data) {
+        node.assertAtLeastOneChild();
+        int n = node.jjtGetNumChildren();
+        
+        SwitchState switchState = (SwitchState) data;
+        ESValue clauseSelector = (ESValue) node.jjtGetChild(0).jjtAccept(this, FOR_VALUE);
+        
+        Object result;
+        try {
+            result = null;
+            switchState.found = switchState.found || strictEqual(switchState.input,clauseSelector);
+            if (switchState.found && n>1) {
+                result = node.jjtGetChild(1).jjtAccept(this, data);
+            }
+        } catch (EcmaScriptException e) {
+            throw new PackagedException(e, node);
+        }
+        
+        return result;
+    }
+    
+    @Override
+    public Object visit(ASTDefaultClause node, Object data) {
+        if (node.jjtGetNumChildren() == 0) {
+            return ((SwitchState)data).result;
+        }
+        return node.jjtGetChild(0).jjtAccept(this, data);
     }
 }

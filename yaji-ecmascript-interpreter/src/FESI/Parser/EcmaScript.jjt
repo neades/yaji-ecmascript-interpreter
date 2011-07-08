@@ -1124,13 +1124,13 @@ void SwitchStatement() #SwitchStatement :
 void CaseClause() #CaseClause :
 {}
 {
-  <CASE> Expression() ":" StatementList()
+  <CASE> Expression() ":" [ StatementList() ]
 }
 
 void DefaultClause() #DefaultClause :
 {}
 {
-	<_DEFAULT> ":" StatementList()
+	<_DEFAULT> ":" [ StatementList() ]
 }
 
 /*
