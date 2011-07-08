@@ -243,7 +243,7 @@ public class GlobalObject extends ObjectPrototype {
                 public ESValue callFunction(ESObject thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     if (arguments.length < 1)
-                        return ESUndefined.theUndefined;
+                        return ESNumber.valueOf(Double.NaN);
                     int radix = 10;
                     String s = arguments[0].toString().trim();
                     if (arguments.length > 1) {
