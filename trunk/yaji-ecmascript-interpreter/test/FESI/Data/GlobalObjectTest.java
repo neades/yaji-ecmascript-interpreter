@@ -52,6 +52,18 @@ public class GlobalObjectTest  {
 
     
     @Test
+    public void testParseFloatNoArgs(){
+        try {
+            ESValue result = globalObject.doIndirectCall(evaluator, globalObject, "parseFloat", new ESValue[] {});
+            assertEquals("NaN", result.toString());
+        } catch (EcmaScriptException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    @Test
     public void testParseIntNoArgs(){
         try {
             ESValue result = globalObject.doIndirectCall(evaluator, globalObject, "parseInt", new ESValue[] {});

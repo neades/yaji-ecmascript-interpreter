@@ -314,7 +314,7 @@ public class GlobalObject extends ObjectPrototype {
                 public ESValue callFunction(ESObject thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     if (arguments.length < 1)
-                        return ESUndefined.theUndefined;
+                        return ESNumber.valueOf(Double.NaN);
                     String s = arguments[0].toString().trim();
                     Double d = new Double(Double.NaN);
                     int i; // approximate look for a prefix
