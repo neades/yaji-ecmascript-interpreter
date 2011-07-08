@@ -37,5 +37,17 @@ public class GlobalObjectTest  {
             e.printStackTrace();
         }
     }
+    
+    @Test
+    public void testParseIntNoArgs(){
+        try {
+            ESValue result = globalObject.doIndirectCall(evaluator, globalObject, "parseInt", new ESValue[] {});
+            assertEquals("NaN", result.toString());
+        } catch (EcmaScriptException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
