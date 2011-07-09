@@ -53,12 +53,13 @@ public class ESReference {
         this.base = (ESObject) base;
         this.propertyName = propertyName;
         this.hash = hash;
-        // System.out.println("NEWREF: " + this);
     }
 
     /**
-     * Return the base object to which the property applies Only used for the
+     * Return the base object to which the property applies used for the
      * DELETE operation. See 8.7.1
+     * 
+     * Also used for retrieving updated Array lengths
      * 
      * @return The base object, possibly null
      * @exception EcmaScriptException
@@ -69,8 +70,10 @@ public class ESReference {
     }
 
     /**
-     * Get the name of the property to apply to the base object Only used for
+     * Get the name of the property to apply to the base object used for
      * the DELETE operation. See 8.7.2
+     * 
+     * Also used for retrieving updated Array lengths
      * 
      * @return The name of the property, never null
      * @exception EcmaScriptException
@@ -78,6 +81,18 @@ public class ESReference {
      */
     public String getPropertyName() throws EcmaScriptException {
         return propertyName;
+    }
+    
+
+    /**
+     * Used for retrieving updated Array lengths
+     * 
+     * @return The hash of the property, never null
+     * @exception EcmaScriptException
+     *                not thrown
+     */
+    public int getHash() {
+        return hash;
     }
 
     /**
