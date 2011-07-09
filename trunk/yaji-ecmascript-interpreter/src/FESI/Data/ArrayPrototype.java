@@ -267,8 +267,6 @@ public class ArrayPrototype extends ESObject {
      * The elements of the array are rearranged so as to reverse their order.
      * The object is returned as the result of the call.
      * 
-     * TODO: Use Collections.reverse
-     * 
      * @return the reversed array (which is the same as this one)
      * @throws EcmaScriptException
      */
@@ -373,7 +371,7 @@ public class ArrayPrototype extends ESObject {
 
     /**
      * ES5 - 15.4.4.12 
-     * Array.prototype.splice (start, deleteCount [ , item1 [ ,item2 [ , � ] ] ] )
+     * Array.prototype.splice (start, deleteCount [, item1 [,item2 [ ... ] ] )
      * 
      * Changes the content of an array, adding new elements while removing old
      * elements.
@@ -860,12 +858,24 @@ public class ArrayPrototype extends ESObject {
     public void putProperty(String propertyName, ESValue propertyValue, int hash)
             throws EcmaScriptException {
         if (hash == LENGTHhash && propertyName.equals(LENGTHstring)) {
-            int length = (int) (((ESPrimitive) propertyValue).doubleValue());
-            if (length < 0) {
-                throw new EcmaScriptException("Invalid length value: "
-                        + propertyValue);
+            int newLen = (int) (((ESPrimitive) propertyValue).doubleValue());
+            if (newLen >= theArray.size()) {
+                setSize(newLen);
+            } else {
+                int len = theArray.size();
+                int i;
+                for (i = len; i >= newLen; i--) {
+                    ESValue value = theArray.get(i-1);
+                    if (value != null && value != ESUndefined.theUndefined) {
+                        // assuming null/undefined are the only "deletable"
+                        // elements in our implementation (for the moment)
+                        break;
+                    }
+                }
+                if (i != len) {
+                    setSize(i);
+                }
             }
-            setSize(length);
         } else {
             int index = -1; // indicates not a valid index value
             try {
