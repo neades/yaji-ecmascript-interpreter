@@ -91,6 +91,27 @@ isNaN(NaN);
 @test isNaN.2
 !isNaN(12);
 
+@test isNaN.3
+isNaN(undefined);
+
+@test parseFloat.1
+isNaN(parseFloat());
+
+@test parseFloat.2
+isNaN(parseFloat(undefined));
+
+@test parseFloat.3
+parseFloat(3.14)==3.14;
+
+@test parseInt.1
+isNaN(parseInt());
+
+@test parseInt.2
+isNaN(parseInt(undefined));
+
+@test parseInt.3
+parseInt(3)==3;
+
 @test var.1
 var va=3;
 va==3;
