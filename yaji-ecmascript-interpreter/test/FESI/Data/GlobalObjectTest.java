@@ -1,6 +1,7 @@
 package FESI.Data;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.Before;
@@ -32,9 +33,9 @@ public class GlobalObjectTest  {
             ESValue result = globalObject.doIndirectCall(evaluator, globalObject, "isNaN", new ESValue[] {ESUndefined.theUndefined});
             assertEquals(true, result.booleanValue());
         } catch (EcmaScriptException e) {
-            e.printStackTrace();
+            fail("EcmaScriptException: "+e);
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            fail("NoSuchMethodException: "+e);
         }
     }
     
@@ -44,9 +45,9 @@ public class GlobalObjectTest  {
             ESValue result = globalObject.doIndirectCall(evaluator, globalObject, "parseFloat", new ESValue[] {ESUndefined.theUndefined});
             assertEquals("NaN", result.toString());
         } catch (EcmaScriptException e) {
-            e.printStackTrace();
+            fail("EcmaScriptException: "+e);
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            fail("NoSuchMethodException: "+e);
         }
     }
 
@@ -57,9 +58,9 @@ public class GlobalObjectTest  {
             ESValue result = globalObject.doIndirectCall(evaluator, globalObject, "parseFloat", new ESValue[] {});
             assertEquals("NaN", result.toString());
         } catch (EcmaScriptException e) {
-            e.printStackTrace();
+            fail("EcmaScriptException: "+e);
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            fail("NoSuchMethodException: "+e);
         }
     }
     
@@ -69,9 +70,9 @@ public class GlobalObjectTest  {
             ESValue result = globalObject.doIndirectCall(evaluator, globalObject, "parseInt", new ESValue[] {});
             assertEquals("NaN", result.toString());
         } catch (EcmaScriptException e) {
-            e.printStackTrace();
+            fail("EcmaScriptException: "+e);
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            fail("NoSuchMethodException: "+e);
         }
     }
 
