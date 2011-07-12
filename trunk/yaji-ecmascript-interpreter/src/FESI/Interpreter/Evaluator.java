@@ -17,10 +17,12 @@
 
 package FESI.Interpreter;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.StringReader;
@@ -759,9 +761,10 @@ public class Evaluator implements Serializable {
                     + "' does not exist or is not a text file");
         }
         EvaluationSource es = new FileEvaluationSource(file.getPath(), null);
-        FileReader fr = null;
+        Reader fr = null;
         try {
-            fr = new FileReader(file);
+            fr = new InputStreamReader(new FileInputStream(file),"UTF-8");
+
             theValue = evaluate(fr, null, es, false); // no return on main file
             if (theValue == null)
                 theValue = ESUndefined.theUndefined;
@@ -1285,10 +1288,10 @@ public class Evaluator implements Serializable {
     synchronized public ESValue evaluate(File file, ESObject thisObject)
             throws EcmaScriptException, IOException {
         EvaluationSource es = new FileEvaluationSource(file.getPath(), null);
-        FileReader fr = null;
+        BufferedReader fr = null;
         ESValue value = null;
         try {
-            fr = new FileReader(file);
+            fr = new BufferedReader(new InputStreamReader(new FileInputStream(file),"UTF-8"));
             value = evaluate(fr, thisObject, es, false); // No return on a main
                                                          // file
         } finally {

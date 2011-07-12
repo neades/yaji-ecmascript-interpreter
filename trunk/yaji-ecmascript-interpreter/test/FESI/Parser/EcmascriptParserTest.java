@@ -113,6 +113,22 @@ public class EcmascriptParserTest {
                         + "    FormalParameterList" + eol
                         + "    StatementList" + eol 
                 },
+                // Nested function declaration
+                /*
+                { "var func = function namedFunction () { function inner() {} };", "Program" + eol 
+                        + " Statement" + eol
+                        + "  VariableDeclaration" + eol
+                        + "   <func>" + eol
+                        + "   FunctionExpression" + eol
+                        + "    <namedFunction>" + eol
+                        + "    FormalParameterList" + eol
+                        + "    StatementList" + eol
+                        + "     FunctionDeclaration" + eol
+                        + "      <inner>" + eol
+                        + "      FormalParameterList" + eol
+                        + "      StatementList" + eol
+                },
+                */
                 // Strict equals
                 { "var result = '1' === 1;", "Program" + eol 
                         + " Statement" + eol
