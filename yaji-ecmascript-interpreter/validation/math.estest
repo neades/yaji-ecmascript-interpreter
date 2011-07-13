@@ -174,11 +174,29 @@ isNaN(Math.max(3,NaN));
 @test max.2
 4 == Math.max(2,4);
 
+@test max.3
+-Infinity == Math.max();
+
+@test max.4
+4 == Math.max(2,4,3,1);
+
+@test max.5
+7.1 == Math.max(7.1,-10,0.12,7);
+
 @test min.1
 isNaN(Math.min(3,NaN));
 
 @test min.2
 2 == Math.min(2,4);
+
+@test min.3
+Infinity == Math.min();
+
+@test min.4
+1 == Math.min(2,4,3,1);
+
+@test min.5
+-1.12 == Math.min(-1.12,7.1,-1,0.12,7);
 
 @test pow.1
 Math.pow(2,3) == 8;

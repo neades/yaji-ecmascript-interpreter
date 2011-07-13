@@ -17,6 +17,8 @@
 
 package FESI.Data;
 
+import java.util.Arrays;
+
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
 import FESI.Interpreter.Evaluator;
@@ -134,22 +136,30 @@ public class MathObject extends ObjectPrototype {
                 return Math.log(arg);
             }
         });
-        putHiddenProperty("max", new BuiltinMathFunctionTwo("max", evaluator,
+        putHiddenProperty("max", new BuiltinMathFunctionN("max", evaluator,
                 functionPrototype) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public double applyMathFunction(double arg1, double arg2) {
-                return Math.max(arg1, arg2);
+            public double applyMathFunction(double[] arguments) {
+                if (arguments.length == 0) {
+                    return Double.NEGATIVE_INFINITY;
+                }
+                Arrays.sort(arguments);
+                return arguments[arguments.length-1];
             }
         });
-        putHiddenProperty("min", new BuiltinMathFunctionTwo("min", evaluator,
+        putHiddenProperty("min", new BuiltinMathFunctionN("min", evaluator,
                 functionPrototype) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public double applyMathFunction(double arg1, double arg2) {
-                return Math.min(arg1, arg2);
+            public double applyMathFunction(double[] arguments) {
+                if (arguments.length == 0) {
+                    return Double.POSITIVE_INFINITY;
+                }
+                Arrays.sort(arguments);
+                return arguments[0];
             }
         });
         putHiddenProperty("pow", new BuiltinMathFunctionTwo("pow", evaluator,
@@ -287,6 +297,31 @@ public class MathObject extends ObjectPrototype {
                 return ESNumber.valueOf(Double.NaN);
             }
             return ESNumber.valueOf(applyMathFunction(arg1, arg2));
+        }
+    }
+
+    // class of n-ary functions
+    abstract class BuiltinMathFunctionN extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 978692357189557419L;
+
+        BuiltinMathFunctionN(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, (int)Double.POSITIVE_INFINITY);
+        }
+
+        abstract double applyMathFunction(double[] arguments);
+
+        @Override
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            double[] doubles = new double[arguments.length];
+            for (int i = 0; i < arguments.length; i++){
+                if (Double.isNaN(arguments[i].doubleValue())){
+                    return ESNumber.valueOf(Double.NaN);
+                }
+                doubles[i] = arguments[i].doubleValue();
+            }
+            return ESNumber.valueOf(applyMathFunction(doubles));
         }
     }
 
