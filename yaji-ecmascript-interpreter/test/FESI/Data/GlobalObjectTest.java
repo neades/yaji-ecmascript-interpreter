@@ -26,54 +26,30 @@ public class GlobalObjectTest  {
     public void tearDown() throws Exception {
         EvaluatorAccess.setAccessor(null);
     }
-    
+
     @Test
-    public void testIsNaNOnUndefined(){
-        try {
-            ESValue result = globalObject.doIndirectCall(evaluator, globalObject, "isNaN", new ESValue[] {ESUndefined.theUndefined});
-            assertEquals(true, result.booleanValue());
-        } catch (EcmaScriptException e) {
-            fail("EcmaScriptException: "+e);
-        } catch (NoSuchMethodException e) {
-            fail("NoSuchMethodException: "+e);
-        }
-    }
-    
-    @Test
-    public void testParseFloatOnUndefined(){
-        try {
-            ESValue result = globalObject.doIndirectCall(evaluator, globalObject, "parseFloat", new ESValue[] {ESUndefined.theUndefined});
-            assertEquals("NaN", result.toString());
-        } catch (EcmaScriptException e) {
-            fail("EcmaScriptException: "+e);
-        } catch (NoSuchMethodException e) {
-            fail("NoSuchMethodException: "+e);
-        }
+    public void testIsNaNOnUndefined() throws EcmaScriptException, NoSuchMethodException{
+        ESValue result = globalObject.doIndirectCall(evaluator, globalObject, "isNaN", new ESValue[] {ESUndefined.theUndefined});
+        assertEquals(true, result.booleanValue());
     }
 
-    
     @Test
-    public void testParseFloatNoArgs(){
-        try {
-            ESValue result = globalObject.doIndirectCall(evaluator, globalObject, "parseFloat", new ESValue[] {});
-            assertEquals("NaN", result.toString());
-        } catch (EcmaScriptException e) {
-            fail("EcmaScriptException: "+e);
-        } catch (NoSuchMethodException e) {
-            fail("NoSuchMethodException: "+e);
-        }
+    public void testParseFloatOnUndefined() throws EcmaScriptException, NoSuchMethodException{
+        ESValue result = globalObject.doIndirectCall(evaluator, globalObject, "parseFloat", new ESValue[] {ESUndefined.theUndefined});
+        assertEquals("NaN", result.toString());
     }
-    
+
+
     @Test
-    public void testParseIntNoArgs(){
-        try {
-            ESValue result = globalObject.doIndirectCall(evaluator, globalObject, "parseInt", new ESValue[] {});
-            assertEquals("NaN", result.toString());
-        } catch (EcmaScriptException e) {
-            fail("EcmaScriptException: "+e);
-        } catch (NoSuchMethodException e) {
-            fail("NoSuchMethodException: "+e);
-        }
+    public void testParseFloatNoArgs() throws EcmaScriptException, NoSuchMethodException{
+        ESValue result = globalObject.doIndirectCall(evaluator, globalObject, "parseFloat", new ESValue[] {});
+        assertEquals("NaN", result.toString());
+    }
+
+    @Test
+    public void testParseIntNoArgs() throws EcmaScriptException, NoSuchMethodException{
+        ESValue result = globalObject.doIndirectCall(evaluator, globalObject, "parseInt", new ESValue[] {});
+        assertEquals("NaN", result.toString());
     }
 
 }
