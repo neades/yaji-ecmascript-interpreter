@@ -1139,10 +1139,8 @@ public class Interpret implements InterpreterCommands {
             boolean inScript = false;
             StringBuilder script = null;
             String src = lr.readLine();
-            int lineNumber = 0;
             while (src != null) {
                 String srclc = src.toLowerCase();
-                lineNumber++;
                 if (inScript && srclc.indexOf("</script>") != -1) {
                     inScript = false;
                     evaluator.evaluate(script.toString());
@@ -1216,10 +1214,8 @@ public class Interpret implements InterpreterCommands {
             String currentTest = null;
             StringBuilder scriptBuffer = new StringBuilder();
             String src = lr.readLine();
-            int lineNumber = 0;
             while (src != null) {
                 String srclc = src.toLowerCase();
-                lineNumber++;
                 if (srclc.startsWith("@test")) {
                     String scriptString = scriptBuffer.toString();
                     if (currentTest != null) {
