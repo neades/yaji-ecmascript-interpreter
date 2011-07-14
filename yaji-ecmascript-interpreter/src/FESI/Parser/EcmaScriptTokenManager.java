@@ -1585,7 +1585,6 @@ private final int[] jjrounds = new int[86];
 private final int[] jjstateSet = new int[172];
 private final StringBuilder jjimage = new StringBuilder();
 private StringBuilder image = jjimage;
-private int jjimageLen;
 protected char curChar;
 /** Constructor. */
 public EcmaScriptTokenManager(SimpleCharStream stream){
@@ -1686,7 +1685,6 @@ public Token getNextToken()
    }
    image = jjimage;
    image.setLength(0);
-   jjimageLen = 0;
 
    for (;;)
    {
@@ -1753,7 +1751,6 @@ public Token getNextToken()
            curLexState = jjnewLexState[jjmatchedKind];
            continue EOFLoop;
         }
-        jjimageLen += jjmatchedPos + 1;
       if (jjnewLexState[jjmatchedKind] != -1)
         curLexState = jjnewLexState[jjmatchedKind];
         curPos = 0;

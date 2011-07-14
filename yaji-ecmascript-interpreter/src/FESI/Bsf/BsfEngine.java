@@ -24,7 +24,7 @@ public class BsfEngine extends BSFEngineImpl {
      * initialize the engine. put the manager into the context -> manager map
      * hashtable too.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes" })
     public void initialize(BSFManager mgr, String lang, Vector declaredBeans)
             throws BSFException {
         super.initialize(mgr, lang, declaredBeans);
@@ -67,7 +67,7 @@ public class BsfEngine extends BSFEngineImpl {
      * This is used by an application to evaluate a string containing some
      * function. It can be used as well for a piece of code using return
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public Object apply(String source, int lineNo, int columnNo,
             Object funcBody, Vector paramNames, Vector arguments)
             throws BSFException {
