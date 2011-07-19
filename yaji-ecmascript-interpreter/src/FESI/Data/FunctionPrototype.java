@@ -124,7 +124,7 @@ public class FunctionPrototype extends ESObject {
     }
 
     // overrides
-    public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+    public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
         return ESUndefined.theUndefined;
     }

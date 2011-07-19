@@ -116,7 +116,7 @@ public abstract class ESValue implements java.io.Serializable {
      * @exception EcmaScriptException
      *                Thrown because by default this is not supported
      */
-    public ESValue toESObject(Evaluator evaluator) throws EcmaScriptException {
+    public ESObject toESObject(Evaluator evaluator) throws EcmaScriptException {
         throw new EcmaScriptException("Conversion to object unsupported by "
                 + this);
     }
@@ -262,9 +262,9 @@ public abstract class ESValue implements java.io.Serializable {
      * @param arguments
      * @throws EcmaScriptException
      */
-    public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+    public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
-        throw new EcmaScriptException("Function called on non object: " + this);
+        throw new TypeError("Function called on non object: " + this);
     }
 
     /**

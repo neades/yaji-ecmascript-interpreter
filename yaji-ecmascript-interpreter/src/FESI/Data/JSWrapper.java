@@ -485,7 +485,7 @@ public class JSWrapper implements JSObject {
                     this.theFunction = theFunction;
                 }
 
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     ESValue value = ESUndefined.theUndefined;
                     Object jsArguments[] = new Object[arguments.length];
@@ -503,7 +503,7 @@ public class JSWrapper implements JSObject {
                     }
                     try {
                         Object result = theFunction.doCall(new JSWrapper(
-                                thisObject, this.getEvaluator()), jsArguments);
+                                thisObject.toESObject(getEvaluator()), this.getEvaluator()), jsArguments);
                         value = ESLoader.normalizeValue(result, this
                                 .getEvaluator());
                     } catch (JSException e) {

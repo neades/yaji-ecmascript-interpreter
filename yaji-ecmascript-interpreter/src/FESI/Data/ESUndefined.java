@@ -52,7 +52,7 @@ public final class ESUndefined extends ESPrimitive {
      *                Thrown to indicate call on undefined value
      * @return never
      */
-    public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+    public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
         throw new EcmaScriptException(
                 "Function called on undefined value or property");

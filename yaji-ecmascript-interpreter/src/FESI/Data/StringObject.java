@@ -40,7 +40,7 @@ public class StringObject extends BuiltinFunctionObject {
 
     // overrides
     @Override
-    public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+    public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
         if (arguments.length == 0) {
             return new ESString("");
@@ -95,7 +95,7 @@ public class StringObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     return ((StringPrototype) thisObject).value;
                 }
@@ -110,7 +110,7 @@ public class StringObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     return ((StringPrototype) thisObject).value;
                 }
@@ -125,7 +125,7 @@ public class StringObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     String str = thisObject.toString();
                     int pos = 0;
@@ -149,7 +149,7 @@ public class StringObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     String str = thisObject.toString();
                     int pos = 0;
@@ -173,7 +173,7 @@ public class StringObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     String str = thisObject.toString();
                     int pos = 0;
@@ -198,7 +198,7 @@ public class StringObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     String str = thisObject.toString();
                     int pos = str.length();
@@ -228,7 +228,7 @@ public class StringObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     String str = thisObject.toString();
                     ESObject ap = this.getEvaluator().getArrayPrototype();
@@ -277,7 +277,7 @@ public class StringObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     String str = thisObject.toString();
                     int start = 0;
@@ -316,7 +316,7 @@ public class StringObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     String str = thisObject.toString();
 
@@ -333,7 +333,7 @@ public class StringObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     String str = thisObject.toString();
 
@@ -351,7 +351,7 @@ public class StringObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     ESObject sp = this.getEvaluator().getStringPrototype();
                     StringPrototype theObject = new StringPrototype(sp, this

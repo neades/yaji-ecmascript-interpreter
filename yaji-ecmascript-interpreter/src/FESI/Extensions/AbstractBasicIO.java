@@ -23,7 +23,7 @@ public abstract class AbstractBasicIO extends Extension  implements BasicIOInter
                 super(fp, evaluator, name, 1);
             }
     
-            public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+            public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                     throws EcmaScriptException {
                 for (int i = 0; i < arguments.length; i++) {
                     System.out.print(arguments[i].toString());
@@ -40,7 +40,7 @@ public abstract class AbstractBasicIO extends Extension  implements BasicIOInter
                 super(fp, evaluator, name, 1);
             }
     
-            public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+            public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                     throws EcmaScriptException {
                 for (int i = 0; i < arguments.length; i++) {
                     System.out.print(arguments[i].toString());
@@ -57,7 +57,7 @@ public abstract class AbstractBasicIO extends Extension  implements BasicIOInter
             super(fp, evaluator, name, 1);
         }
 
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < arguments.length; i++) {
@@ -78,7 +78,7 @@ public abstract class AbstractBasicIO extends Extension  implements BasicIOInter
                 super(fp, evaluator, name, 1);
             }
     
-            public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+            public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                     throws EcmaScriptException {
                 String prompt = "";
                 String defaultResponse = "";
@@ -99,7 +99,7 @@ public abstract class AbstractBasicIO extends Extension  implements BasicIOInter
                 super(fp, evaluator, name, 1);
             }
     
-            public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+            public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                     throws EcmaScriptException {
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < arguments.length; i++) {
@@ -116,7 +116,7 @@ public abstract class AbstractBasicIO extends Extension  implements BasicIOInter
                 super(fp, evaluator, name, 1);
             }
     
-            public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+            public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                     throws EcmaScriptException {
                 int status = 0;
                 if (arguments.length > 0) {
@@ -134,7 +134,7 @@ public abstract class AbstractBasicIO extends Extension  implements BasicIOInter
                 super(fp, evaluator, name, 0); // 0 = Just some default value
             }
     
-            public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+            public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                     throws EcmaScriptException {
     
                 return ESUndefined.theUndefined;
@@ -148,7 +148,7 @@ public abstract class AbstractBasicIO extends Extension  implements BasicIOInter
                 super(fp, evaluator, name, 1); // 0 = Just some default value
             }
     
-            public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+            public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                     throws EcmaScriptException {
                 String fileName = null;
                 if (arguments.length > 0)

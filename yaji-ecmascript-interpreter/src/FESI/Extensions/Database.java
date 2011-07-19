@@ -754,9 +754,9 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
-            return doConstruct(thisObject, arguments);
+            return doConstruct(thisObject.toESObject(getEvaluator()), arguments);
         }
 
         public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
@@ -788,7 +788,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESDatabase database = (ESDatabase) thisObject;
             return database.getLastError();
@@ -802,7 +802,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESDatabase database = (ESDatabase) thisObject;
             return database.release();
@@ -816,7 +816,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESDatabase database = (ESDatabase) thisObject;
             return database.connect(arguments);
@@ -831,7 +831,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESDatabase database = (ESDatabase) thisObject;
             return database.disconnect();
@@ -846,7 +846,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESDatabase database = (ESDatabase) thisObject;
             return database.executeRetrieval(arguments);
@@ -861,7 +861,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESDatabase database = (ESDatabase) thisObject;
             return database.executeCommand(arguments);
@@ -876,7 +876,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESDatabase database = (ESDatabase) thisObject;
             return new ESWrapper(database.getMetaData(), this.getEvaluator());
@@ -890,7 +890,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESRowSet rowSet = (ESRowSet) thisObject;
             return rowSet.release();
@@ -904,7 +904,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESRowSet rowSet = (ESRowSet) thisObject;
             return rowSet.next();
@@ -919,7 +919,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESRowSet rowSet = (ESRowSet) thisObject;
             return ESNumber.valueOf(rowSet.getColumnCount());
@@ -934,7 +934,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESRowSet rowSet = (ESRowSet) thisObject;
             if (arguments.length < 1) {
@@ -959,7 +959,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESRowSet rowSet = (ESRowSet) thisObject;
             if (arguments.length < 1) {
@@ -979,7 +979,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESRowSet rowSet = (ESRowSet) thisObject;
             if (arguments.length < 1) {
@@ -999,7 +999,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESRowSet rowSet = (ESRowSet) thisObject;
             if (arguments.length < 1) {
@@ -1025,7 +1025,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESRowSet rowSet = (ESRowSet) thisObject;
             return ESBoolean.valueOf(rowSet.hasMoreRows());
@@ -1039,7 +1039,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESRowSet rowSet = (ESRowSet) thisObject;
             return new ESWrapper(rowSet.getMetaData(), this.getEvaluator());

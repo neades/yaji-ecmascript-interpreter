@@ -255,3 +255,32 @@ try {
   "TypeError" === e.name;
 }
 
+@test Function.length.15.3.3.2
+1 === Function.length;
+
+@test Function.prototype.call.15.3.4.4-1
+try {
+  var o={};
+  var f = 'string';
+  f.call(o);
+  false;
+} catch (e) {
+  "TypeError" === e.name;  
+}
+
+@test Function.prototype.call.15.3.4.4-4a
+var f=function() {
+  return this.name;
+};
+var o={ name:'the name' };
+'the name' === f.call(o);
+
+@test Function.prototype.call.15.3.4.4-4b
+var f=function() {
+  return arguments[1];
+};
+var o={};
+'the name' === f.call(o,void 0,'the name');
+
+@test Function.prototype.call.15.3.4.4-5
+1 === Function.prototype.call.length;

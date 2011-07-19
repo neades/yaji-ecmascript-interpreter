@@ -37,7 +37,7 @@ public class BooleanObject extends BuiltinFunctionObject {
     }
 
     // overrides
-    public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+    public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
         if (arguments.length == 0) {
             return ESBoolean.valueOf(false);
@@ -90,7 +90,7 @@ public class BooleanObject extends BuiltinFunctionObject {
                     super(fp, evaluator, name, 1);
                 }
 
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     ESValue v = ((BooleanPrototype) thisObject).value;
                     String s = v.toString();
@@ -105,7 +105,7 @@ public class BooleanObject extends BuiltinFunctionObject {
                     super(fp, evaluator, name, 1);
                 }
 
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     return ((BooleanPrototype) thisObject).value;
                 }

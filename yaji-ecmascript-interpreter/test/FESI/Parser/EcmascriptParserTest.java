@@ -1,7 +1,7 @@
 package FESI.Parser;
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -9,8 +9,6 @@ import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -22,7 +20,6 @@ import FESI.AST.EcmaScriptDumpVisitor;
 public class EcmascriptParserTest {
     private String source;
     private String expected;
-    private PrintStream originalOut;
     private static String eol = System.getProperty("line.separator");
 
     @Parameters
@@ -113,22 +110,6 @@ public class EcmascriptParserTest {
                         + "    FormalParameterList" + eol
                         + "    StatementList" + eol 
                 },
-                // Nested function declaration
-                /*
-                { "var func = function namedFunction () { function inner() {} };", "Program" + eol 
-                        + " Statement" + eol
-                        + "  VariableDeclaration" + eol
-                        + "   <func>" + eol
-                        + "   FunctionExpression" + eol
-                        + "    <namedFunction>" + eol
-                        + "    FormalParameterList" + eol
-                        + "    StatementList" + eol
-                        + "     FunctionDeclaration" + eol
-                        + "      <inner>" + eol
-                        + "      FormalParameterList" + eol
-                        + "      StatementList" + eol
-                },
-                */
                 // Strict equals
                 { "var result = '1' === 1;", "Program" + eol 
                         + " Statement" + eol
@@ -223,23 +204,12 @@ public class EcmascriptParserTest {
         this.expected = expected;
     }
 
-    @Before
-    public void setUp() {
-        originalOut = System.out;
-    }
-    
-    @After
-    public void tearDown() {
-        System.setOut(originalOut);
-    }
-    
     @Test
     public void shouldParse() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(baos));
 
         EcmaScript es = new EcmaScript(new StringReader(source));
-        EcmaScriptDumpVisitor dumper = new EcmaScriptDumpVisitor();
+        EcmaScriptDumpVisitor dumper = new EcmaScriptDumpVisitor(new PrintStream(baos));
         dumper.visit(es.Program(),null);
         
         String result = new String(baos.toByteArray());

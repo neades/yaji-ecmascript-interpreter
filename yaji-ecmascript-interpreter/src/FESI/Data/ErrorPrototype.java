@@ -12,8 +12,9 @@ public class ErrorPrototype extends ESObject {
         putHiddenProperty("toString", new BuiltinFunctionObject(evaluator.getFunctionPrototype(),evaluator,"toString",1) {
             private static final long serialVersionUID = 7306694754871874677L;
             @Override
-            public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+            public ESValue callFunction(ESValue thisValue, ESValue[] arguments)
                     throws EcmaScriptException {
+                ESObject thisObject = thisValue.toESObject(getEvaluator());
                 ESValue esmessage = thisObject.getProperty("message","message".hashCode());
                 if (esmessage.getTypeOf() == EStypeUndefined) {
                     return esmessage;

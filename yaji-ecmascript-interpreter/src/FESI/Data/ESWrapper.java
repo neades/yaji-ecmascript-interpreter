@@ -937,7 +937,7 @@ public class ESWrapper extends ESObject {
     }
 
     // overrides
-    public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+    public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
         return constructOrCall(arguments, true);
     }

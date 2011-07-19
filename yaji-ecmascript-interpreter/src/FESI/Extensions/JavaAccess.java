@@ -21,7 +21,6 @@ import FESI.Data.BuiltinFunctionObject;
 import FESI.Data.ESBeans;
 import FESI.Data.ESBoolean;
 import FESI.Data.ESLoader;
-import FESI.Data.ESObject;
 import FESI.Data.ESPackages;
 import FESI.Data.ESString;
 import FESI.Data.ESUndefined;
@@ -42,7 +41,7 @@ public class JavaAccess extends Extension {
             super(fp, evaluator, name, 1);
         }
 
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
 
             if (arguments.length > 0) {
@@ -63,7 +62,7 @@ public class JavaAccess extends Extension {
             super(fp, evaluator, name, 1);
         }
 
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
 
             Object ext = null;

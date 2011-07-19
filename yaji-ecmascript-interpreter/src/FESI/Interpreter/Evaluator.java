@@ -991,7 +991,10 @@ public class Evaluator implements Serializable {
                     useRepresentationOptimisation, representationOutputBuffer);
             theValue = evaluationVisitor.evaluateFunction(node, es);
             int cc = evaluationVisitor.getCompletionCode();
-            if ((cc != EcmaScriptEvaluateVisitor.C_NORMAL)
+//            if (cc == EcmaScriptEvaluateVisitor.C_NORMAL) {
+//                theValue = ESUndefined.theUndefined; // ES5.1 13.2.1.6
+//            } else 
+                if ((cc != EcmaScriptEvaluateVisitor.C_NORMAL)
                     && (cc != EcmaScriptEvaluateVisitor.C_RETURN)) {
                 throw new EcmaScriptException("Unexpected "
                         + evaluationVisitor.getCompletionCodeString()

@@ -88,7 +88,7 @@ public class ESBeans extends ESLoader {
     // overrides
     // Establish a bean classloader
     // The parameter is the directory or jar to load from
-    public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+    public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
         if (previousPackage == null && classLoader == null) {
             // This is the Beans object

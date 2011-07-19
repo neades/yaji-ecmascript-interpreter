@@ -163,7 +163,7 @@ public final class ESString extends ESPrimitive {
 
     // overrides
     @Override
-    public ESValue toESObject(Evaluator evaluator) throws EcmaScriptException {
+    public ESObject toESObject(Evaluator evaluator) throws EcmaScriptException {
         StringPrototype theObject = null;
         ESObject sp = evaluator.getStringPrototype();
         theObject = new StringPrototype(sp, evaluator);

@@ -29,9 +29,9 @@ public class NativeErrorObject extends BuiltinFunctionObject {
     }
     
     @Override
-    public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+    public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
-        return doConstruct(thisObject,arguments);
+        return doConstruct(thisObject.toESObject(getEvaluator()),arguments);
     }
     
     @Override

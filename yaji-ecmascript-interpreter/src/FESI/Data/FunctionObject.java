@@ -39,8 +39,9 @@ public class FunctionObject extends BuiltinFunctionObject implements
     private static final long serialVersionUID = 8501827292633127950L;
     static boolean debugParse = false;
 
-    FunctionObject(ESObject prototype, Evaluator evaluator) {
+    FunctionObject(ESObject prototype, Evaluator evaluator) throws EcmaScriptException {
         super(prototype, evaluator, "Function", 1);
+        putHiddenProperty("prototype", evaluator.getFunctionPrototype());
     }
 
     // overrides
@@ -49,9 +50,9 @@ public class FunctionObject extends BuiltinFunctionObject implements
     }
 
     // overrides - call and new have the same effect
-    public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+    public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
-        return doConstruct(thisObject, arguments);
+        return doConstruct(thisObject.toESObject(getEvaluator()), arguments);
     }
 
     // overrides - build a new function

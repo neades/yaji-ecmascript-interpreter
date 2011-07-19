@@ -39,7 +39,7 @@ public class ObjectObject extends BuiltinFunctionObject {
 
             private static final long serialVersionUID = 1L;
 
-            public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+            public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                     throws EcmaScriptException {
                 if (arguments.length == 0
                         || !(arguments[0] instanceof ESObject)) {
@@ -54,7 +54,7 @@ public class ObjectObject extends BuiltinFunctionObject {
 
             private static final long serialVersionUID = 1L;
 
-            public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+            public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                     throws EcmaScriptException {
                 if (arguments.length == 0
                         || !(arguments[0] instanceof ESObject)) {
@@ -68,7 +68,7 @@ public class ObjectObject extends BuiltinFunctionObject {
             private static final long serialVersionUID = 2995052280653091683L;
             
             @Override
-            public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+            public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                     throws EcmaScriptException {
                 ESValue objectToInterrogate = ESUndefined.theUndefined;
                 if (arguments.length > 0) {
@@ -118,7 +118,7 @@ public class ObjectObject extends BuiltinFunctionObject {
     }
 
     // overrides
-    public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+    public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
         ESValue theValue;
         if (arguments.length == 0) {

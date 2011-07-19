@@ -629,7 +629,7 @@ public abstract class ESObject extends ESValue {
      *                thrown because the function is not implemented
      */
     @Override
-    public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+    public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
         throw new EcmaScriptException("No function defined on: " + this);
     }
@@ -664,7 +664,7 @@ public abstract class ESObject extends ESValue {
                 functionName, functionName.hashCode());
         if (theFunction == null) {
             if (prototype == null) {
-                throw new EcmaScriptException("The function '" + functionName
+                throw new TypeError("The function '" + functionName
                         + "' is not defined for object '" + target.toString()
                         + "'");
             }
@@ -774,7 +774,7 @@ public abstract class ESObject extends ESValue {
      *                not thrown
      */
     @Override
-    public final ESValue toESObject(Evaluator evaluator)
+    public final ESObject toESObject(Evaluator evaluator)
             throws EcmaScriptException {
         return this;
     }
