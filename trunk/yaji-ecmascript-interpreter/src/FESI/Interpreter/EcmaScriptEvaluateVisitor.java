@@ -415,7 +415,10 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
             if (completionCode != C_NORMAL)
                 return result;
             Node statement = node.jjtGetChild(i);
-            result = statement.jjtAccept(this, FOR_VALUE);
+            Object s = statement.jjtAccept(this, FOR_VALUE);
+            if (s != null) {
+                result = s;
+            }
         }
         return result;
     }
@@ -441,7 +444,6 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
     }
 
     public Object visit(ASTVariableDeclaration node, Object data) {
-        Object result = null;
         int nChildren = assertInRange(node, 1, 2, "variable declaration");
         if (nChildren == 2) {
             try {
@@ -466,12 +468,11 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                 }
                 lv.putValue(null, rv); // null because the variable should be
                                        // undefined!
-                result = rv;
             } catch (EcmaScriptException e) {
                 throw new PackagedException(e, node);
             }
         }
-        return result;
+        return null;
     }
 
     public Object visit(ASTIfStatement node, Object data) {

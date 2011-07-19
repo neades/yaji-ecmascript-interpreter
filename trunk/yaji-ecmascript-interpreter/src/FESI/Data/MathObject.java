@@ -242,7 +242,7 @@ public class MathObject extends ObjectPrototype {
         abstract double applyMathFunction();
 
         @Override
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             return ESNumber.valueOf(applyMathFunction());
         }
@@ -260,7 +260,7 @@ public class MathObject extends ObjectPrototype {
         abstract double applyMathFunction(double arg);
 
         @Override
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             double arg = (arguments.length > 0) ? arguments[0].doubleValue()
                     : Double.NaN;
@@ -283,7 +283,7 @@ public class MathObject extends ObjectPrototype {
         abstract double applyMathFunction(double arg1, double arg2);
 
         @Override
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             if (arguments.length < 2) {
                 throw new EcmaScriptException("Missing parameter in function "
@@ -312,7 +312,7 @@ public class MathObject extends ObjectPrototype {
         abstract double applyMathFunction(double[] arguments);
 
         @Override
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             double[] doubles = new double[arguments.length];
             for (int i = 0; i < arguments.length; i++){

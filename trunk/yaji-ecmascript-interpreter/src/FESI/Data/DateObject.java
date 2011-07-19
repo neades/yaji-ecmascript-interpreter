@@ -43,7 +43,7 @@ public class DateObject extends BuiltinFunctionObject {
 
     // overrides
     @Override
-    public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+    public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
         return new ESString(new Date().toString());
     }
@@ -136,7 +136,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return (aDate.date == null) ? new ESString("NaN")
@@ -153,7 +153,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     if (aDate.date == null) {
@@ -174,7 +174,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     DateFormat df = DateFormat.getDateTimeInstance();
@@ -193,7 +193,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     DateFormat df = DateFormat.getDateTimeInstance(
@@ -213,7 +213,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     ESValue v = aDate.get(Calendar.YEAR);
@@ -230,7 +230,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.get(Calendar.YEAR);
@@ -246,7 +246,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.getUTC(Calendar.YEAR);
@@ -262,7 +262,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.get(Calendar.MONTH);
@@ -278,7 +278,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.getUTC(Calendar.MONTH);
@@ -294,7 +294,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.get(Calendar.DAY_OF_MONTH);
@@ -310,7 +310,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.getUTC(Calendar.DAY_OF_MONTH);
@@ -326,7 +326,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     // EcmaScript has SUNDAY=0, java SUNDAY=1 - converted in
@@ -344,7 +344,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.getUTC(Calendar.DAY_OF_WEEK);
@@ -360,7 +360,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.get(Calendar.HOUR_OF_DAY);
@@ -377,7 +377,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.getUTC(Calendar.HOUR_OF_DAY);
@@ -394,7 +394,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.get(Calendar.MINUTE);
@@ -410,7 +410,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.getUTC(Calendar.MINUTE);
@@ -426,7 +426,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.get(Calendar.SECOND);
@@ -442,7 +442,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.getUTC(Calendar.SECOND);
@@ -458,7 +458,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.get(Calendar.MILLISECOND);
@@ -474,7 +474,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.getUTC(Calendar.MILLISECOND);
@@ -490,7 +490,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.setYear(arguments);
@@ -506,7 +506,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.setTime(arguments, new int[] { Calendar.YEAR,
@@ -523,7 +523,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.setUTCTime(arguments, new int[] {
@@ -541,7 +541,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.setTime(arguments, new int[] { Calendar.MONTH,
@@ -558,7 +558,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.setUTCTime(arguments, new int[] {
@@ -575,7 +575,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.setTime(arguments,
@@ -592,7 +592,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.setUTCTime(arguments,
@@ -609,7 +609,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.setTime(arguments, new int[] {
@@ -627,7 +627,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.setUTCTime(arguments, new int[] {
@@ -645,7 +645,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.setTime(arguments, new int[] {
@@ -663,7 +663,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.setUTCTime(arguments, new int[] {
@@ -681,7 +681,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.setTime(arguments, new int[] {
@@ -698,7 +698,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.setUTCTime(arguments, new int[] {
@@ -715,7 +715,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.setTime(arguments,
@@ -732,7 +732,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     return aDate.setUTCTime(arguments,
@@ -749,7 +749,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     GregorianCalendar cal = new GregorianCalendar(TimeZone
@@ -787,7 +787,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     DatePrototype aDate = (DatePrototype) thisObject;
                     double dateValue = Double.NaN;
@@ -813,7 +813,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     if (arguments.length <= 0) {
                         throw new EcmaScriptException("Missing argument");
@@ -840,7 +840,7 @@ public class DateObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESObject thisObject,
+                public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     int l = arguments.length;
                     if (l <= 2) {

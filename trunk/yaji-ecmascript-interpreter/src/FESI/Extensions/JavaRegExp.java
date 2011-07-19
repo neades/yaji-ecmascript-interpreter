@@ -161,7 +161,7 @@ public class JavaRegExp extends Extension {
             super(fp, evaluator, name, 1);
         }
 
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             if (arguments.length < 1) {
                 throw new EcmaScriptException("test requires 1 string argument");
@@ -181,7 +181,7 @@ public class JavaRegExp extends Extension {
             super(fp, evaluator, name, 1);
         }
 
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             if (arguments.length < 1) {
                 throw new EcmaScriptException("exec requires 1 string argument");
@@ -218,9 +218,9 @@ public class JavaRegExp extends Extension {
             super(fp, evaluator, name, 1);
         }
 
-        public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
-            return doConstruct(thisObject, arguments);
+            return doConstruct(thisObject.toESObject(getEvaluator()), arguments);
         }
 
         public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
@@ -273,7 +273,7 @@ public class JavaRegExp extends Extension {
                 super(fp, evaluator, name, 1);
             }
 
-            public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+            public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                     throws EcmaScriptException {
                 if (arguments.length < 1) {
                     throw new EcmaScriptException(
@@ -304,7 +304,7 @@ public class JavaRegExp extends Extension {
                 super(fp, evaluator, name, 1);
             }
 
-            public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+            public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                     throws EcmaScriptException {
                 if (arguments.length < 2) {
                     throw new EcmaScriptException(
@@ -337,7 +337,7 @@ public class JavaRegExp extends Extension {
                 super(fp, evaluator, name, 1);
             }
 
-            public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+            public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                     throws EcmaScriptException {
                 if (arguments.length < 1) {
                     throw new EcmaScriptException(
@@ -383,7 +383,7 @@ public class JavaRegExp extends Extension {
                 super(fp, evaluator, name, 1);
             }
 
-            public ESValue callFunction(ESObject thisObject, ESValue[] arguments)
+            public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                     throws EcmaScriptException {
                 String str = thisObject.toString();
                 ESObject ap = this.getEvaluator().getArrayPrototype();

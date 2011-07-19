@@ -159,7 +159,7 @@ public final class ESNumber extends ESPrimitive {
 
     // overrides
     @Override
-    public ESValue toESObject(Evaluator evaluator) throws EcmaScriptException {
+    public ESObject toESObject(Evaluator evaluator) throws EcmaScriptException {
         NumberPrototype theObject = null;
         ESObject np = evaluator.getNumberPrototype();
         theObject = new NumberPrototype(np, evaluator);

@@ -102,7 +102,7 @@ public final class ESBoolean extends ESPrimitive {
 
     // overrides
     @Override
-    public ESValue toESObject(Evaluator evaluator) throws EcmaScriptException {
+    public ESObject toESObject(Evaluator evaluator) throws EcmaScriptException {
         BooleanPrototype theObject = null;
         ESObject bp = evaluator.getBooleanPrototype();
         theObject = new BooleanPrototype(bp, evaluator);

@@ -18,7 +18,6 @@ public class EcmascriptParserCharsetTest {
     @Test
     public void shouldParseUTF8BOM() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(baos));
 
         String source = "true;";
         byte[] bytes = source.getBytes("UTF-8");
@@ -30,7 +29,7 @@ public class EcmascriptParserCharsetTest {
 
         InputStreamReader reader = new InputStreamReader(new ByteArrayInputStream(byteSource),"UTF-8");
         EcmaScript es = new EcmaScript(reader);
-        EcmaScriptDumpVisitor dumper = new EcmaScriptDumpVisitor();
+        EcmaScriptDumpVisitor dumper = new EcmaScriptDumpVisitor(new PrintStream(baos));
         dumper.visit(es.Program(),null);
         
         String result = new String(baos.toByteArray());
