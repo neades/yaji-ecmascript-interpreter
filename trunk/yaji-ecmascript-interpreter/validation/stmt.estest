@@ -618,3 +618,35 @@ var x = SwitchTest(0);
 x===6;
 
 
+@test do.while.1
+a = 1;
+do a++; while (a<5);
+a==5;
+
+@test do.while.2
+a = 1;
+do a++; while (a<1);
+a==2;
+
+@test do.while.3
+a = 1;
+do {a++; if (a==3) break; } while (a<5);
+a==3;
+
+@test do.while.4
+a = 1;
+b = true;
+do {a++; if (a==5) b = false;} while (b);
+a==5;
+
+@test do.while.5
+var ir=-1;
+var i=0;
+do {
+  ir = i;
+  if (i>10) break;
+  i++;
+  continue;
+  ir = -1;
+} while (i<4);
+ir == 3;

@@ -35,25 +35,26 @@ public interface EcmaScriptTreeConstants
   public int JJTSTATEMENTLIST = 28;
   public int JJTVARIABLEDECLARATION = 29;
   public int JJTIFSTATEMENT = 30;
-  public int JJTWHILESTATEMENT = 31;
-  public int JJTFORSTATEMENT = 32;
-  public int JJTEMPTYEXPRESSION = 33;
-  public int JJTFORVARSTATEMENT = 34;
-  public int JJTFORINSTATEMENT = 35;
-  public int JJTFORVARINSTATEMENT = 36;
-  public int JJTCONTINUESTATEMENT = 37;
-  public int JJTBREAKSTATEMENT = 38;
-  public int JJTRETURNSTATEMENT = 39;
-  public int JJTWITHSTATEMENT = 40;
-  public int JJTTRYSTATEMENT = 41;
-  public int JJTTHROWSTATEMENT = 42;
-  public int JJTCATCH = 43;
-  public int JJTFINALLY = 44;
-  public int JJTSWITCHSTATEMENT = 45;
-  public int JJTCASECLAUSE = 46;
-  public int JJTDEFAULTCLAUSE = 47;
-  public int JJTFUNCTIONDECLARATION = 48;
-  public int JJTPROGRAM = 49;
+  public int JJTDOWHILESTATEMENT = 31;
+  public int JJTWHILESTATEMENT = 32;
+  public int JJTFORSTATEMENT = 33;
+  public int JJTEMPTYEXPRESSION = 34;
+  public int JJTFORVARSTATEMENT = 35;
+  public int JJTFORINSTATEMENT = 36;
+  public int JJTFORVARINSTATEMENT = 37;
+  public int JJTCONTINUESTATEMENT = 38;
+  public int JJTBREAKSTATEMENT = 39;
+  public int JJTRETURNSTATEMENT = 40;
+  public int JJTWITHSTATEMENT = 41;
+  public int JJTTRYSTATEMENT = 42;
+  public int JJTTHROWSTATEMENT = 43;
+  public int JJTCATCH = 44;
+  public int JJTFINALLY = 45;
+  public int JJTSWITCHSTATEMENT = 46;
+  public int JJTCASECLAUSE = 47;
+  public int JJTDEFAULTCLAUSE = 48;
+  public int JJTFUNCTIONDECLARATION = 49;
+  public int JJTPROGRAM = 50;
 
 
   public String[] jjtNodeName = {
@@ -88,6 +89,7 @@ public interface EcmaScriptTreeConstants
     "StatementList",
     "VariableDeclaration",
     "IfStatement",
+    "DoWhileStatement",
     "WhileStatement",
     "ForStatement",
     "EmptyExpression",
@@ -109,4 +111,4 @@ public interface EcmaScriptTreeConstants
     "Program",
   };
 }
-/* JavaCC - OriginalChecksum=0b25bb6b713250a19ef49b5c871e2967 (do not edit this line) */
+/* JavaCC - OriginalChecksum=b361e2724ff3f81b3e04f81f36bf80f5 (do not edit this line) */

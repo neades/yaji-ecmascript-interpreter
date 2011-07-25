@@ -30,6 +30,7 @@ import FESI.AST.ASTCatch;
 import FESI.AST.ASTCompositeReference;
 import FESI.AST.ASTConditionalExpression;
 import FESI.AST.ASTContinueStatement;
+import FESI.AST.ASTDoWhileStatement;
 import FESI.AST.ASTElision;
 import FESI.AST.ASTEmptyExpression;
 import FESI.AST.ASTExpressionList;
@@ -186,6 +187,11 @@ public class EcmaScriptVariableVisitor extends AbstractEcmaScriptVisitor impleme
     }
 
     public Object visit(ASTWhileStatement node, Object data) {
+        data = node.childrenAccept(this, data);
+        return data;
+    }
+
+    public Object visit(ASTDoWhileStatement node, Object data) {
         data = node.childrenAccept(this, data);
         return data;
     }

@@ -23,7 +23,7 @@ options {
                                                                       
                                                                
      
-                          
+                         
              
                          
                             
@@ -2975,12 +2975,47 @@ void ExpressionInES()                     :
  void IterationStatement()       :
  {}
  {
-     WhileStatement()
- |   LOOKAHEAD( "for" "(" Expression() ";" ) ForStatement()
- |   LOOKAHEAD( "for" "(" ";" ) ForStatement()
- |   LOOKAHEAD( "for" "(" "var" VariableDeclarationList() ";" ) ForVarStatement()
+    DoWhileStatement()
+ |  WhileStatement()
+ |  LOOKAHEAD( "for" "(" Expression() ";" ) ForStatement()
+ |  LOOKAHEAD( "for" "(" ";" ) ForStatement()
+ |  LOOKAHEAD( "for" "(" "var" VariableDeclarationList() ";" ) ForVarStatement()
  |	LOOKAHEAD(3) ForInStatement()
  |	LOOKAHEAD(3) ForVarInStatement()
+ }
+ 
+ void DoWhileStatement()                   :
+ {/*@bgen(jjtree) DoWhileStatement */
+  ASTDoWhileStatement jjtn000 = new ASTDoWhileStatement(JJTDOWHILESTATEMENT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/}
+ {/*@bgen(jjtree) DoWhileStatement */
+     try {
+/*@egen*/
+     <DO> Statement() <WHILE> "(" Expression() ")"/*@bgen(jjtree)*/
+     } catch (Throwable jjte000) {
+       if (jjtc000) {
+         jjtree.clearNodeScope(jjtn000);
+         jjtc000 = false;
+       } else {
+         jjtree.popNode();
+       }
+       if (jjte000 instanceof RuntimeException) {
+         throw (RuntimeException)jjte000;
+       }
+       if (jjte000 instanceof ParseException) {
+         throw (ParseException)jjte000;
+       }
+       throw (Error)jjte000;
+     } finally {
+       if (jjtc000) {
+         jjtree.closeNodeScope(jjtn000, true);
+         jjtreeCloseNodeScope(jjtn000);
+       }
+     }
+/*@egen*/
  }
  
  void WhileStatement()                 :
@@ -2993,7 +3028,7 @@ void ExpressionInES()                     :
  {/*@bgen(jjtree) WhileStatement */
      try {
 /*@egen*/
-     "while" "(" Expression() ")" Statement()/*@bgen(jjtree)*/
+     <WHILE> "(" Expression() ")" Statement()/*@bgen(jjtree)*/
      } catch (Throwable jjte000) {
        if (jjtc000) {
          jjtree.clearNodeScope(jjtn000);
