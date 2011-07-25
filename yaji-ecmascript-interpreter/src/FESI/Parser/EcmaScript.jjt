@@ -22,7 +22,7 @@ options {
   // Then all sources AST routines and the SimpleNode routine must be 
   // deleted from the parser package where they were generated.
   // 
-  BUILD_NODE_FILES=true; 
+  BUILD_NODE_FILES=false; 
   MULTI=true;
   NODE_DEFAULT_VOID=true;
   NODE_PACKAGE = "FESI.AST";
