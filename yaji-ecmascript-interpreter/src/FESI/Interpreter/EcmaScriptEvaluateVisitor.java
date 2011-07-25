@@ -37,6 +37,7 @@ import FESI.AST.ASTCompositeReference;
 import FESI.AST.ASTConditionalExpression;
 import FESI.AST.ASTContinueStatement;
 import FESI.AST.ASTDefaultClause;
+import FESI.AST.ASTDoWhileStatement;
 import FESI.AST.ASTElision;
 import FESI.AST.ASTEmptyExpression;
 import FESI.AST.ASTExpressionList;
@@ -526,6 +527,32 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                             FOR_VALUE));
                 }
             }
+        } catch (EcmaScriptException e) {
+            throw new PackagedException(e, node);
+        }
+        return result;
+    }
+
+    public Object visit(ASTDoWhileStatement node, Object data) {
+        Object result = null;
+        node.assertTwoChildren();
+        try {
+            ESValue testValue;
+            do {
+                result = node.jjtGetChild(0).jjtAccept(this, FOR_VALUE);
+                if (completionCode == C_RETURN) {
+                    return result;
+                } else if (completionCode == C_BREAK) {
+                    completionCode = C_NORMAL;
+                    return result;
+                } else {
+                    if (completionCode == C_CONTINUE) {
+                        completionCode = C_NORMAL;
+                    }
+                    testValue = acceptNull(node.jjtGetChild(1).jjtAccept(this,
+                            FOR_VALUE));
+                }
+            } while (testValue.booleanValue());
         } catch (EcmaScriptException e) {
             throw new PackagedException(e, node);
         }

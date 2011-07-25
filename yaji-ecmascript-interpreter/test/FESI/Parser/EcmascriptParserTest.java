@@ -194,6 +194,19 @@ public class EcmascriptParserTest {
                     + "       <r>" + eol
                     + "       <\"=\">" + eol 
                     + "       [2]" + eol
+                },
+                // do-while
+                { "do { x(); } while (true)",
+                    "Program" + eol
+                    + " Statement" + eol
+                    + "  DoWhileStatement" + eol
+                    + "   Statement" + eol
+                    + "    StatementList" + eol 
+                    + "     Statement" + eol 
+                    + "      CompositeReference" + eol
+                    + "       <x>" + eol 
+                    + "       FunctionCallParameters" + eol
+                    + "   [true]" + eol
                 }
             });
     }

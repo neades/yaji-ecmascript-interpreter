@@ -22,7 +22,7 @@ options {
   // Then all sources AST routines and the SimpleNode routine must be 
   // deleted from the parser package where they were generated.
   // 
-  BUILD_NODE_FILES=false; 
+  BUILD_NODE_FILES=true; 
   MULTI=true;
   NODE_DEFAULT_VOID=true;
   NODE_PACKAGE = "FESI.AST";
@@ -1037,18 +1037,25 @@ void ExpressionInES() #ExpressionList(>1) :
  void IterationStatement() #void :
  {}
  {
-     WhileStatement()
- |   LOOKAHEAD( "for" "(" Expression() ";" ) ForStatement()
- |   LOOKAHEAD( "for" "(" ";" ) ForStatement()
- |   LOOKAHEAD( "for" "(" "var" VariableDeclarationList() ";" ) ForVarStatement()
+    DoWhileStatement()
+ |  WhileStatement()
+ |  LOOKAHEAD( "for" "(" Expression() ";" ) ForStatement()
+ |  LOOKAHEAD( "for" "(" ";" ) ForStatement()
+ |  LOOKAHEAD( "for" "(" "var" VariableDeclarationList() ";" ) ForVarStatement()
  |	LOOKAHEAD(3) ForInStatement()
  |	LOOKAHEAD(3) ForVarInStatement()
+ }
+ 
+ void DoWhileStatement() #DoWhileStatement :
+ {}
+ {
+     <DO> Statement() <WHILE> "(" Expression() ")"
  }
  
  void WhileStatement() #WhileStatement :
  {}
  {
-     "while" "(" Expression() ")" Statement()
+     <WHILE> "(" Expression() ")" Statement()
  }
  
  void ForStatement() #ForStatement :
