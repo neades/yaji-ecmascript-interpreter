@@ -1,6 +1,7 @@
 package FESI.Interpreter;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
@@ -17,10 +18,14 @@ import FESI.AST.ASTObjectLiteral;
 import FESI.AST.ASTStatement;
 import FESI.AST.ASTVariableDeclaration;
 import FESI.Data.ESBoolean;
+import FESI.Data.ESNull;
 import FESI.Data.ESNumber;
 import FESI.Data.ESObject;
 import FESI.Data.ESString;
 import FESI.Data.ESValue;
+import FESI.Data.ObjectObject;
+import FESI.Data.ObjectPrototype;
+import FESI.Exceptions.TypeError;
 import FESI.Parser.EcmaScript;
 import FESI.Parser.ParseException;
 
@@ -125,6 +130,75 @@ public class EcmaScriptEvaluateVisitorTest {
         ESValue result = evaluateBinaryExpression("NaN === 1");
         
         assertEquals(ESBoolean.valueOf(false), result);
+    }
+    
+    @Test
+    public void shouldEvaluateInAsTrue() throws Exception {
+        EcmaScript es = new EcmaScript(new StringReader("'property' in p"));
+        
+        ASTStatement statement = (ASTStatement) es.Program().jjtGetChild(0);
+        ASTBinaryExpressionSequence expression = (ASTBinaryExpressionSequence) statement.jjtGetChild(0);
+        
+        evaluator = new Evaluator() {
+            private static final long serialVersionUID = -7746833632204914424L;
+            {
+                theScopeChain = globalScope;
+            }
+        };
+        EcmaScriptEvaluateVisitor visitor = new EcmaScriptEvaluateVisitor(evaluator);
+        ObjectPrototype p = ObjectObject.createObject(evaluator);
+        p.putProperty("property", ESNull.theNull, "property".hashCode());
+        evaluator.getGlobalObject().putProperty("p", p, "p".hashCode());
+        ESValue result = (ESValue) visitor.visit(expression,EcmaScriptEvaluateVisitor.FOR_VALUE);
+        
+        assertEquals(ESBoolean.valueOf(true), result);
+    }
+    
+    @Test
+    public void shouldEvaluateInAsFalse() throws Exception {
+        EcmaScript es = new EcmaScript(new StringReader("'prop' in p"));
+        
+        ASTStatement statement = (ASTStatement) es.Program().jjtGetChild(0);
+        ASTBinaryExpressionSequence expression = (ASTBinaryExpressionSequence) statement.jjtGetChild(0);
+        
+        evaluator = new Evaluator() {
+            private static final long serialVersionUID = -7746833632204914424L;
+            {
+                theScopeChain = globalScope;
+            }
+        };
+        EcmaScriptEvaluateVisitor visitor = new EcmaScriptEvaluateVisitor(evaluator);
+        ObjectPrototype p = ObjectObject.createObject(evaluator);
+        p.putProperty("property", ESNull.theNull, "property".hashCode());
+        evaluator.getGlobalObject().putProperty("p", p, "p".hashCode());
+        ESValue result = (ESValue) visitor.visit(expression,EcmaScriptEvaluateVisitor.FOR_VALUE);
+        
+        assertEquals(ESBoolean.valueOf(false), result);
+    }
+    
+    @Test
+    public void inShouldThrowExceptionIfNotObject() throws Exception {
+        EcmaScript es = new EcmaScript(new StringReader("'prop' in 'p'"));
+        
+        ASTStatement statement = (ASTStatement) es.Program().jjtGetChild(0);
+        ASTBinaryExpressionSequence expression = (ASTBinaryExpressionSequence) statement.jjtGetChild(0);
+        
+        evaluator = new Evaluator() {
+            private static final long serialVersionUID = -7746833632204914424L;
+            {
+                theScopeChain = globalScope;
+            }
+        };
+        EcmaScriptEvaluateVisitor visitor = new EcmaScriptEvaluateVisitor(evaluator);
+        ObjectPrototype p = ObjectObject.createObject(evaluator);
+        p.putProperty("property", ESNull.theNull, "property".hashCode());
+        evaluator.getGlobalObject().putProperty("p", p, "p".hashCode());
+        try {
+            visitor.visit(expression,EcmaScriptEvaluateVisitor.FOR_VALUE);
+            fail("Should throw exception");
+        } catch (PackagedException e) {
+            assertTrue(e.exception instanceof TypeError);
+        }
     }
     
     @Test

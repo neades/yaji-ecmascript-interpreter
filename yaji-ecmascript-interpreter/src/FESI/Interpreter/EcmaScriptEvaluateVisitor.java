@@ -1362,6 +1362,13 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                     }
                     result = ESBoolean.valueOf(((ESObject)v2).hasInstance(v1));
                 }   break;
+                case IN: {
+                    if (! (v2 instanceof ESObject)) {
+                        throw new TypeError("RHS of in must be an object");
+                    }
+                    String propertyName = v1.toString();
+                    result = ESBoolean.valueOf(((ESObject)v2).hasProperty(propertyName, propertyName.hashCode()));
+                }   break;
                 default:
                     throw new ProgrammingError("Unimplemented binary");
                 } // switch
