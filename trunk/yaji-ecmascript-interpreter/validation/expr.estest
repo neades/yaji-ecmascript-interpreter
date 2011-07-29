@@ -529,3 +529,7 @@ F2.prototype = new F1();
 var x = new F2();
 x instanceof F1;
 
+
+@test in.11.8.7
+var o = { p:'x' };
+'p' in o;

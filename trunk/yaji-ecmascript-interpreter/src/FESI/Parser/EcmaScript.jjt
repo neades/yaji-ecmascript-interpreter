@@ -728,15 +728,33 @@ void RelOp() #Operator :
   Token t;
 }
 {
+  ( "<" | ">" | "<=" | ">=" | <IN> | <INSTANCEOF>) 
+  {
+    jjtThis.setOperator(getToken(0).kind);
+  }
+}
+
+void RelOpNoIn() #Operator :
+{
+  Token t;
+}
+{
   ( "<" | ">" | "<=" | ">=" | <INSTANCEOF>) 
   {
     jjtThis.setOperator(getToken(0).kind);
   }
 }
+
 void RelationalExpression() #BinaryExpressionSequence(>1) :
 {}
 {
 	ShiftExpression() ( RelOp() ShiftExpression() )*
+}
+
+void RelationalExpressionNoIn() #BinaryExpressionSequence(>1) :
+{}
+{
+	ShiftExpression() ( RelOpNoIn() ShiftExpression() )*
 }
 
 void RelationalExpressionInES() #BinaryExpressionSequence(>1) :
@@ -757,10 +775,17 @@ void EqualOp() #Operator :
     jjtThis.setOperator(getToken(0).kind);
   }
 }
+
 void EqualityExpression() #BinaryExpressionSequence(>1) :
 {}
 {
 	RelationalExpression() ( EqualOp() RelationalExpression() )*  
+}
+
+void EqualityExpressionNoIn() #BinaryExpressionSequence(>1) :
+{}
+{
+	RelationalExpressionNoIn() ( EqualOp() RelationalExpressionNoIn() )*  
 }
 
 void EqualityExpressionInES() #BinaryExpressionSequence(>1) :
@@ -781,10 +806,17 @@ void BitwiseANDOp() #Operator :
     jjtThis.setOperator(getToken(0).kind);
   }
 }
+
 void BitwiseANDExpression() #BinaryExpressionSequence(>1) :
 {}
 {
 	EqualityExpression() ( BitwiseANDOp() EqualityExpression() )*
+}
+
+void BitwiseANDExpressionNoIn() #BinaryExpressionSequence(>1) :
+{}
+{
+	EqualityExpressionNoIn() ( BitwiseANDOp() EqualityExpressionNoIn() )*
 }
 
 void BitwiseANDExpressionInES() #BinaryExpressionSequence(>1) :
@@ -809,6 +841,12 @@ void BitwiseXORExpression() #BinaryExpressionSequence(>1) :
 {}
 {
 	BitwiseANDExpression() ( BitwiseXOROp() BitwiseANDExpression() )*
+}
+
+void BitwiseXORExpressionNoIn() #BinaryExpressionSequence(>1) :
+{}
+{
+	BitwiseANDExpressionNoIn() ( BitwiseXOROp() BitwiseANDExpressionNoIn() )*
 }
 
 
@@ -836,6 +874,12 @@ void BitwiseORExpression() #BinaryExpressionSequence(>1) :
 	BitwiseXORExpression() ( BitwiseOROp() BitwiseXORExpression() )*
 }
 
+void BitwiseORExpressionNoIn() #BinaryExpressionSequence(>1) :
+{}
+{
+	BitwiseXORExpressionNoIn() ( BitwiseOROp() BitwiseXORExpressionNoIn() )*
+}
+
 void BitwiseORExpressionInES() #BinaryExpressionSequence(>1) :
 {}
 {
@@ -849,6 +893,12 @@ void LogicalANDExpression() #AndExpressionSequence(>1) :
 {}
 {
 	BitwiseORExpression() ( "&&" BitwiseORExpression() )*
+}
+
+void LogicalANDExpressionNoIn() #AndExpressionSequence(>1) :
+{}
+{
+	BitwiseORExpressionNoIn() ( "&&" BitwiseORExpressionNoIn() )*
 }
 
 void LogicalANDExpressionInES() #AndExpressionSequence(>1) :
@@ -865,6 +915,12 @@ void LogicalORExpression() #OrExpressionSequence(>1) :
 	LogicalANDExpression() ( "||" LogicalANDExpression() )*
 }
 
+void LogicalORExpressionNoIn() #OrExpressionSequence(>1) :
+{}
+{
+	LogicalANDExpressionNoIn() ( "||" LogicalANDExpressionNoIn() )*
+}
+
 void LogicalORExpressionInES() #OrExpressionSequence(>1) :
 {}
 {
@@ -877,6 +933,12 @@ void ConditionalExpression() #ConditionalExpression(>1) :
 {}
 {
 	LogicalORExpression() [ "?" Expression() ":" ConditionalExpression() ]
+}
+
+void ConditionalExpressionNoIn() #ConditionalExpression(>1) :
+{}
+{
+	LogicalORExpressionNoIn() [ "?" ExpressionNoIn() ":" ConditionalExpressionNoIn() ]
 }
 
 void ConditionalExpressionInES() #ConditionalExpression(>1) :
@@ -906,6 +968,15 @@ void AssignmentExpression() #AssignmentExpression(>1) :
 	]
 }
 
+void AssignmentExpressionNoIn() #AssignmentExpression(>1) :
+{}
+{
+	ConditionalExpressionNoIn() 
+	[
+	    AssignementOperator() AssignmentExpressionNoIn()
+	]
+}
+
 void AssignmentExpressionInES() #AssignmentExpression(>1) :
 {}
 {
@@ -921,6 +992,12 @@ void Expression() #ExpressionList(>1) :
 {
 	AssignmentExpression() ( "," AssignmentExpression() )*
 	// AssignmentExpression() 
+}		
+
+void ExpressionNoIn() #ExpressionList(>1) :
+{}
+{
+	AssignmentExpressionNoIn() ( "," AssignmentExpressionNoIn() )*
 }		
 
 // Check that priority is ok, check with assigment
@@ -991,6 +1068,13 @@ void ExpressionInES() #ExpressionList(>1) :
      "=" AssignmentExpression()
  }
  
+ void InitializerNoIn() #void :
+ {}
+ {
+ //    "=" Expression()
+     "=" AssignmentExpressionNoIn()
+ }
+ 
  
  
  void EmptyStatement() #void :
@@ -1039,7 +1123,7 @@ void ExpressionInES() #ExpressionList(>1) :
  {
     DoWhileStatement()
  |  WhileStatement()
- |  LOOKAHEAD( "for" "(" Expression() ";" ) ForStatement()
+ |  LOOKAHEAD( "for" "(" ExpressionNoIn() ";" ) ForStatement()
  |  LOOKAHEAD( "for" "(" ";" ) ForStatement()
  |  LOOKAHEAD( "for" "(" "var" VariableDeclarationList() ";" ) ForVarStatement()
  |	LOOKAHEAD(3) ForInStatement()
@@ -1061,7 +1145,7 @@ void ExpressionInES() #ExpressionList(>1) :
  void ForStatement() #ForStatement :
  {}
  {
-     "for" "(" ( [ Expression() ] ) #EmptyExpression(jjtree.nodeArity()==0)  ";"  
+     "for" "(" ( [ ExpressionNoIn() ] ) #EmptyExpression(jjtree.nodeArity()==0)  ";"  
                             ( [ Expression() ] ) #EmptyExpression(jjtree.nodeArity()==0)  ";"  
                             ( [ Expression() ] ) #EmptyExpression(jjtree.nodeArity()==0) ")" 
                             Statement()
@@ -1079,13 +1163,13 @@ void ExpressionInES() #ExpressionList(>1) :
  void ForInStatement() #ForInStatement :
  {}
  {
-     "for" "(" Expression() "in" Expression() ")" Statement()
+     "for" "(" PrimaryExpression() <IN> Expression() ")" Statement()
  }
  
  void ForVarInStatement() #ForVarInStatement :
  {}
  {
-     "for" "(" "var" Identifier() ( [ Initializer() ] ) #EmptyExpression(jjtree.nodeArity()==0) "in" Expression() ")" Statement()
+     "for" "(" "var" Identifier() ( [ InitializerNoIn() ] ) #EmptyExpression(jjtree.nodeArity()==0) <IN> Expression() ")" Statement()
  }
  
  void ContinueStatement() #ContinueStatement :

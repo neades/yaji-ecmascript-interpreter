@@ -23,7 +23,7 @@ options {
                                                                       
                                                                
      
-                         
+                          
              
                          
                             
@@ -1866,6 +1866,37 @@ void RelOp()           :
 {/*@bgen(jjtree) Operator */
   try {
 /*@egen*/
+  ( "<" | ">" | "<=" | ">=" | <IN> | <INSTANCEOF>)/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+    jjtreeCloseNodeScope(jjtn000);
+  }
+/*@egen*/ 
+  {
+    jjtn000.setOperator(getToken(0).kind);
+  }/*@bgen(jjtree)*/
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtreeCloseNodeScope(jjtn000);
+    }
+  }
+/*@egen*/
+}
+
+void RelOpNoIn()           :
+{/*@bgen(jjtree) Operator */
+  ASTOperator jjtn000 = new ASTOperator(JJTOPERATOR);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/
+  Token t;
+}
+{/*@bgen(jjtree) Operator */
+  try {
+/*@egen*/
   ( "<" | ">" | "<=" | ">=" | <INSTANCEOF>)/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
@@ -1884,6 +1915,7 @@ void RelOp()           :
   }
 /*@egen*/
 }
+
 void RelationalExpression()                               :
 {/*@bgen(jjtree) #BinaryExpressionSequence(> 1) */
   ASTBinaryExpressionSequence jjtn000 = new ASTBinaryExpressionSequence(JJTBINARYEXPRESSIONSEQUENCE);
@@ -1895,6 +1927,40 @@ void RelationalExpression()                               :
         try {
 /*@egen*/
 	ShiftExpression() ( RelOp() ShiftExpression() )*/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, jjtree.nodeArity() > 1);
+            jjtreeCloseNodeScope(jjtn000);
+          }
+        }
+/*@egen*/
+}
+
+void RelationalExpressionNoIn()                               :
+{/*@bgen(jjtree) #BinaryExpressionSequence(> 1) */
+  ASTBinaryExpressionSequence jjtn000 = new ASTBinaryExpressionSequence(JJTBINARYEXPRESSIONSEQUENCE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) #BinaryExpressionSequence(> 1) */
+        try {
+/*@egen*/
+	ShiftExpression() ( RelOpNoIn() ShiftExpression() )*/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -1984,6 +2050,7 @@ void EqualOp()           :
   }
 /*@egen*/
 }
+
 void EqualityExpression()                               :
 {/*@bgen(jjtree) #BinaryExpressionSequence(> 1) */
   ASTBinaryExpressionSequence jjtn000 = new ASTBinaryExpressionSequence(JJTBINARYEXPRESSIONSEQUENCE);
@@ -1995,6 +2062,40 @@ void EqualityExpression()                               :
         try {
 /*@egen*/
 	RelationalExpression() ( EqualOp() RelationalExpression() )*/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, jjtree.nodeArity() > 1);
+            jjtreeCloseNodeScope(jjtn000);
+          }
+        }
+/*@egen*/  
+}
+
+void EqualityExpressionNoIn()                               :
+{/*@bgen(jjtree) #BinaryExpressionSequence(> 1) */
+  ASTBinaryExpressionSequence jjtn000 = new ASTBinaryExpressionSequence(JJTBINARYEXPRESSIONSEQUENCE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) #BinaryExpressionSequence(> 1) */
+        try {
+/*@egen*/
+	RelationalExpressionNoIn() ( EqualOp() RelationalExpressionNoIn() )*/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -2084,6 +2185,7 @@ void BitwiseANDOp()           :
   }
 /*@egen*/
 }
+
 void BitwiseANDExpression()                               :
 {/*@bgen(jjtree) #BinaryExpressionSequence(> 1) */
   ASTBinaryExpressionSequence jjtn000 = new ASTBinaryExpressionSequence(JJTBINARYEXPRESSIONSEQUENCE);
@@ -2095,6 +2197,40 @@ void BitwiseANDExpression()                               :
         try {
 /*@egen*/
 	EqualityExpression() ( BitwiseANDOp() EqualityExpression() )*/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, jjtree.nodeArity() > 1);
+            jjtreeCloseNodeScope(jjtn000);
+          }
+        }
+/*@egen*/
+}
+
+void BitwiseANDExpressionNoIn()                               :
+{/*@bgen(jjtree) #BinaryExpressionSequence(> 1) */
+  ASTBinaryExpressionSequence jjtn000 = new ASTBinaryExpressionSequence(JJTBINARYEXPRESSIONSEQUENCE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) #BinaryExpressionSequence(> 1) */
+        try {
+/*@egen*/
+	EqualityExpressionNoIn() ( BitwiseANDOp() EqualityExpressionNoIn() )*/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -2195,6 +2331,40 @@ void BitwiseXORExpression()                               :
         try {
 /*@egen*/
 	BitwiseANDExpression() ( BitwiseXOROp() BitwiseANDExpression() )*/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, jjtree.nodeArity() > 1);
+            jjtreeCloseNodeScope(jjtn000);
+          }
+        }
+/*@egen*/
+}
+
+void BitwiseXORExpressionNoIn()                               :
+{/*@bgen(jjtree) #BinaryExpressionSequence(> 1) */
+  ASTBinaryExpressionSequence jjtn000 = new ASTBinaryExpressionSequence(JJTBINARYEXPRESSIONSEQUENCE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) #BinaryExpressionSequence(> 1) */
+        try {
+/*@egen*/
+	BitwiseANDExpressionNoIn() ( BitwiseXOROp() BitwiseANDExpressionNoIn() )*/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -2319,6 +2489,40 @@ void BitwiseORExpression()                               :
 /*@egen*/
 }
 
+void BitwiseORExpressionNoIn()                               :
+{/*@bgen(jjtree) #BinaryExpressionSequence(> 1) */
+  ASTBinaryExpressionSequence jjtn000 = new ASTBinaryExpressionSequence(JJTBINARYEXPRESSIONSEQUENCE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) #BinaryExpressionSequence(> 1) */
+        try {
+/*@egen*/
+	BitwiseXORExpressionNoIn() ( BitwiseOROp() BitwiseXORExpressionNoIn() )*/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, jjtree.nodeArity() > 1);
+            jjtreeCloseNodeScope(jjtn000);
+          }
+        }
+/*@egen*/
+}
+
 void BitwiseORExpressionInES()                               :
 {/*@bgen(jjtree) #BinaryExpressionSequence(> 1) */
   ASTBinaryExpressionSequence jjtn000 = new ASTBinaryExpressionSequence(JJTBINARYEXPRESSIONSEQUENCE);
@@ -2367,6 +2571,40 @@ void LogicalANDExpression()                            :
         try {
 /*@egen*/
 	BitwiseORExpression() ( "&&" BitwiseORExpression() )*/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, jjtree.nodeArity() > 1);
+            jjtreeCloseNodeScope(jjtn000);
+          }
+        }
+/*@egen*/
+}
+
+void LogicalANDExpressionNoIn()                            :
+{/*@bgen(jjtree) #AndExpressionSequence(> 1) */
+  ASTAndExpressionSequence jjtn000 = new ASTAndExpressionSequence(JJTANDEXPRESSIONSEQUENCE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) #AndExpressionSequence(> 1) */
+        try {
+/*@egen*/
+	BitwiseORExpressionNoIn() ( "&&" BitwiseORExpressionNoIn() )*/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -2460,6 +2698,40 @@ void LogicalORExpression()                           :
 /*@egen*/
 }
 
+void LogicalORExpressionNoIn()                           :
+{/*@bgen(jjtree) #OrExpressionSequence(> 1) */
+  ASTOrExpressionSequence jjtn000 = new ASTOrExpressionSequence(JJTOREXPRESSIONSEQUENCE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) #OrExpressionSequence(> 1) */
+        try {
+/*@egen*/
+	LogicalANDExpressionNoIn() ( "||" LogicalANDExpressionNoIn() )*/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, jjtree.nodeArity() > 1);
+            jjtreeCloseNodeScope(jjtn000);
+          }
+        }
+/*@egen*/
+}
+
 void LogicalORExpressionInES()                           :
 {/*@bgen(jjtree) #OrExpressionSequence(> 1) */
   ASTOrExpressionSequence jjtn000 = new ASTOrExpressionSequence(JJTOREXPRESSIONSEQUENCE);
@@ -2507,6 +2779,40 @@ void ConditionalExpression()                            :
         try {
 /*@egen*/
 	LogicalORExpression() [ "?" Expression() ":" ConditionalExpression() ]/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, jjtree.nodeArity() > 1);
+            jjtreeCloseNodeScope(jjtn000);
+          }
+        }
+/*@egen*/
+}
+
+void ConditionalExpressionNoIn()                            :
+{/*@bgen(jjtree) #ConditionalExpression(> 1) */
+  ASTConditionalExpression jjtn000 = new ASTConditionalExpression(JJTCONDITIONALEXPRESSION);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) #ConditionalExpression(> 1) */
+        try {
+/*@egen*/
+	LogicalORExpressionNoIn() [ "?" ExpressionNoIn() ":" ConditionalExpressionNoIn() ]/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -2633,6 +2939,43 @@ void AssignmentExpression()                           :
 /*@egen*/
 }
 
+void AssignmentExpressionNoIn()                           :
+{/*@bgen(jjtree) #AssignmentExpression(> 1) */
+  ASTAssignmentExpression jjtn000 = new ASTAssignmentExpression(JJTASSIGNMENTEXPRESSION);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) #AssignmentExpression(> 1) */
+        try {
+/*@egen*/
+	ConditionalExpressionNoIn() 
+	[
+	    AssignementOperator() AssignmentExpressionNoIn()
+	]/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, jjtree.nodeArity() > 1);
+            jjtreeCloseNodeScope(jjtn000);
+          }
+        }
+/*@egen*/
+}
+
 void AssignmentExpressionInES()                           :
 {/*@bgen(jjtree) #AssignmentExpression(> 1) */
   ASTAssignmentExpression jjtn000 = new ASTAssignmentExpression(JJTASSIGNMENTEXPRESSION);
@@ -2704,6 +3047,40 @@ void Expression()                     :
         }
 /*@egen*/
 	// AssignmentExpression() 
+}		
+
+void ExpressionNoIn()                     :
+{/*@bgen(jjtree) #ExpressionList(> 1) */
+  ASTExpressionList jjtn000 = new ASTExpressionList(JJTEXPRESSIONLIST);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) #ExpressionList(> 1) */
+        try {
+/*@egen*/
+	AssignmentExpressionNoIn() ( "," AssignmentExpressionNoIn() )*/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, jjtree.nodeArity() > 1);
+            jjtreeCloseNodeScope(jjtn000);
+          }
+        }
+/*@egen*/
 }		
 
 // Check that priority is ok, check with assigment
@@ -2901,6 +3278,13 @@ void ExpressionInES()                     :
      "=" AssignmentExpression()
  }
  
+ void InitializerNoIn()       :
+ {}
+ {
+ //    "=" Expression()
+     "=" AssignmentExpressionNoIn()
+ }
+ 
  
  
  void EmptyStatement()       :
@@ -2977,7 +3361,7 @@ void ExpressionInES()                     :
  {
     DoWhileStatement()
  |  WhileStatement()
- |  LOOKAHEAD( "for" "(" Expression() ";" ) ForStatement()
+ |  LOOKAHEAD( "for" "(" ExpressionNoIn() ";" ) ForStatement()
  |  LOOKAHEAD( "for" "(" ";" ) ForStatement()
  |  LOOKAHEAD( "for" "(" "var" VariableDeclarationList() ";" ) ForVarStatement()
  |	LOOKAHEAD(3) ForInStatement()
@@ -3070,7 +3454,7 @@ void ExpressionInES()                     :
                  jjtreeOpenNodeScope(jjtn001);
                }
                try {
-/*@egen*/ ( [ Expression() ] )/*@bgen(jjtree)*/
+/*@egen*/ ( [ ExpressionNoIn() ] )/*@bgen(jjtree)*/
                } catch (Throwable jjte001) {
                  if (jjtc001) {
                    jjtree.clearNodeScope(jjtn001);
@@ -3281,7 +3665,7 @@ void ExpressionInES()                     :
  {/*@bgen(jjtree) ForInStatement */
      try {
 /*@egen*/
-     "for" "(" Expression() "in" Expression() ")" Statement()/*@bgen(jjtree)*/
+     "for" "(" PrimaryExpression() <IN> Expression() ")" Statement()/*@bgen(jjtree)*/
      } catch (Throwable jjte000) {
        if (jjtc000) {
          jjtree.clearNodeScope(jjtn000);
@@ -3323,7 +3707,7 @@ void ExpressionInES()                     :
                                     jjtreeOpenNodeScope(jjtn001);
                                   }
                                   try {
-/*@egen*/ ( [ Initializer() ] )/*@bgen(jjtree)*/
+/*@egen*/ ( [ InitializerNoIn() ] )/*@bgen(jjtree)*/
                                   } catch (Throwable jjte001) {
                                     if (jjtc001) {
                                       jjtree.clearNodeScope(jjtn001);
@@ -3344,7 +3728,7 @@ void ExpressionInES()                     :
                                       jjtreeCloseNodeScope(jjtn001);
                                     }
                                   }
-/*@egen*/                                         "in" Expression() ")" Statement()/*@bgen(jjtree)*/
+/*@egen*/                                         <IN> Expression() ")" Statement()/*@bgen(jjtree)*/
      } catch (Throwable jjte000) {
        if (jjtc000) {
          jjtree.clearNodeScope(jjtn000);

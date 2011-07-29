@@ -173,6 +173,13 @@ public class EcmascriptParserTest {
                     + "   <\"instanceof\">" + eol
                     + "   <TypeError>" + eol
                 },
+                { "x in object", "Program" + eol
+                    + " Statement" + eol
+                    + "  BinaryExpressionSequence" + eol
+                    + "   <x>" + eol
+                    + "   <\"in\">" + eol
+                    + "   <object>" + eol
+                },
                 { "switch (x) { case 'x': r = 1; break; default: r=2; }", "Program" + eol
                     + " Statement" + eol
                     + "  SwitchStatement" + eol
