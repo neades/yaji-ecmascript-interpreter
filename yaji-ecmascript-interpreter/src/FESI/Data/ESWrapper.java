@@ -35,6 +35,7 @@ import java.util.Enumeration;
 
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
+import FESI.Exceptions.ReferenceError;
 import FESI.Interpreter.ClassInfo;
 import FESI.Interpreter.Evaluator;
 import FESI.Interpreter.ScopeChain;
@@ -164,8 +165,8 @@ public class ESWrapper extends ESObject {
         }
         if (value == noPropertyMarker) {
             if (previousScope == null) {
-                throw new EcmaScriptException("global variable '"
-                        + propertyName + "' does not have a value");
+                throw new ReferenceError("Variable '" + propertyName
+                        + "' does not exist in the scope chain");
             }
             value = previousScope.getValue(propertyName, hash);
 
@@ -173,10 +174,10 @@ public class ESWrapper extends ESObject {
         return value;
     }
 
-    // overrides
     // Get either a bean or an object property - for objects attempt bean access
     // if object access failed
-    public ESValue getProperty(String propertyName, int hash)
+    @Override
+    public ESValue getPropertyIfAvailable(String propertyName, int hash)
             throws EcmaScriptException {
         ESValue value;
 
@@ -184,9 +185,7 @@ public class ESWrapper extends ESObject {
             // If declared as bean only examine using bean convention
             value = getBeanProperty(propertyName);
             if (value == noPropertyMarker) {
-                throw new EcmaScriptException("Property '" + propertyName
-                        + "' does not exists in bean " + this);
-                // return ESUndefined.theUndefined;
+                return null;
             }
         } else {
             // Otherwise examine as java object, bean, or corba object
@@ -229,8 +228,9 @@ public class ESWrapper extends ESObject {
             if (value == noPropertyMarker)
                 value = getCorbaProperty(propertyName);
             if (value == noPropertyMarker) {
-                throw new EcmaScriptException("Field or property '"
-                        + propertyName + "' does not exists in object " + this);
+//                throw new EcmaScriptException("Field or property '"
+//                        + propertyName + "' does not exists in object " + this);
+                return null;
             }
         }
 
@@ -404,20 +404,6 @@ public class ESWrapper extends ESObject {
             throw new EcmaScriptException("Cannot access java field "
                     + propertyName + " in " + this + ", error: " + e.toString());
         }
-    }
-
-    // overrides
-    public boolean hasProperty(String propertyName, int hash)
-            throws EcmaScriptException {
-        // TEST - wont work for functions, just for fields.
-        try {
-            getProperty(propertyName, hash);
-        } catch (Exception e) {
-            return false;
-        }
-        return true; // So it can be dereferenced by scopechain
-        // and wont be created
-        // See deleteProperty too and 8.6.2 on host objects
     }
 
     // overrides

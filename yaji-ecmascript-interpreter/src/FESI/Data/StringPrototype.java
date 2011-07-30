@@ -62,12 +62,13 @@ class StringPrototype extends ESObject {
         return super.getPropertyInScope(propertyName, previousScope, hash);
     }
 
-    public ESValue getProperty(String propertyName, int hash)
+    @Override
+    public ESValue getPropertyIfAvailable(String propertyName, int hash)
             throws EcmaScriptException {
         if (hash == LENGTHhash && propertyName.equals(LENGTHstring)) {
             return ESNumber.valueOf(value.getStringLength());
         }
-        return super.getProperty(propertyName, hash);
+        return super.getPropertyIfAvailable(propertyName, hash);
     }
 
     public String[] getSpecialPropertyNames() {

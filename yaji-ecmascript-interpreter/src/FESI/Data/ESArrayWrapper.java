@@ -22,6 +22,7 @@ import java.util.Enumeration;
 
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
+import FESI.Exceptions.ReferenceError;
 import FESI.Interpreter.Evaluator;
 import FESI.Interpreter.ScopeChain;
 
@@ -125,8 +126,8 @@ public class ESArrayWrapper extends ESObject {
         }
         // Do not examine the integer values...
         if (previousScope == null) {
-            throw new EcmaScriptException("global variable '" + propertyName
-                    + "' does not have a value");
+            throw new ReferenceError("Variable '" + propertyName
+                    + "' does not exist in the scope chain");
         }
         return previousScope.getValue(propertyName, hash);
 
@@ -134,7 +135,7 @@ public class ESArrayWrapper extends ESObject {
 
     // overrides
     @Override
-    public ESValue getProperty(String propertyName, int hash)
+    public ESValue getPropertyIfAvailable(String propertyName, int hash)
             throws EcmaScriptException {
         if (propertyName.equals("length")) {
             return ESNumber.valueOf(Array.getLength(javaArray));
@@ -149,12 +150,12 @@ public class ESArrayWrapper extends ESObject {
             throw new EcmaScriptException(
                     "Java Arrays accept only index properties");
         }
-        return getProperty(index);
+        return getPropertyIfAvailable(index);
     }
 
     // overrides
     @Override
-    public ESValue getProperty(int index) throws EcmaScriptException {
+    public ESValue getPropertyIfAvailable(int index) throws EcmaScriptException {
         Object theElement = null;
         int l = Array.getLength(javaArray);
         if (index >= l || index < 0) {
@@ -165,27 +166,6 @@ public class ESArrayWrapper extends ESObject {
         return ESLoader.normalizeValue(theElement, getEvaluator());
     }
 
-    // overrides
-    @Override
-    public boolean hasProperty(String propertyName, int hash)
-            throws EcmaScriptException {
-        if (propertyName.equals("length")) {
-            return true;
-        }
-        int index = -1; // indicates not a valid index value
-        try {
-            index = Integer.parseInt(propertyName); // should be uint
-        } catch (NumberFormatException e) {
-            // do nothing
-        }
-        if (index < 0) {
-            return false;
-        }
-        return (index >= 0) && (index < Array.getLength(javaArray));
-
-    }
-
-    // overrides
     // Skip elements which were never set (are null), as Netscape
     @Override
     public Enumeration<String> getProperties() {

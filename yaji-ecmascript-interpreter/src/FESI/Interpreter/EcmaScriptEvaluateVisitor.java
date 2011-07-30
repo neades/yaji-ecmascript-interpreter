@@ -861,9 +861,8 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                             // System.out.println("--->NB = " + newBase +
                             // "<---");
                             if (newBase instanceof ESUndefined) {
-                                throw new EcmaScriptException("The property '"
-                                        + propertyName
-                                        + "' is not defined in global object");
+                                throw new EcmaScriptException("Variable '" + propertyName
+                                        + "' has an undefined value");
                             }
                         } else {
                             ESObject currentBase = (ESObject) lastResult

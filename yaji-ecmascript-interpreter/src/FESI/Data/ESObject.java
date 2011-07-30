@@ -200,8 +200,8 @@ public abstract class ESObject extends ESValue {
         if (value == null) {
             if (prototype == null) {
                 if (previousScope == null) {
-                    throw new ReferenceError("global variable '"
-                            + propertyName + "' does not have a value");
+                    throw new ReferenceError("Variable '" + propertyName
+                            + "' does not exist in the scope chain");
                 }
                 value = previousScope.getValue(propertyName, hash);
             } else {
@@ -225,14 +225,14 @@ public abstract class ESObject extends ESValue {
      * @exception EcmaScriptException
      *                Error in host objects ?
      */
-    public ESValue getProperty(String propertyName, int hash)
+    public ESValue getPropertyIfAvailable(String propertyName, int hash)
             throws EcmaScriptException {
         ESValue value = getOwnProperty(propertyName, hash);
         
         if (value == null) {
             return prototype == null 
-                    ? ESUndefined.theUndefined 
-                    : prototype.getProperty(propertyName, hash);
+                    ? null
+                    : prototype.getPropertyIfAvailable(propertyName, hash);
         }
 
         if (isAccessorDescriptor(value)) {
@@ -244,6 +244,28 @@ public abstract class ESObject extends ESValue {
         return value;
     }
     
+    /**
+     * Get the property by name (see 8.6.2.1) propagating to
+     * the prototype if required
+     *
+     * Returns ESUndefined.theUndefined if the property was not found.
+     *
+     * @param   propertyName  The string naming the property
+     * @param   hash  The hashCode of propertyName
+     * @return     The property or <em>undefined</em>
+     * @exception   EcmaScriptException  Error in host objects ?
+     */
+    public final ESValue getProperty(String propertyName, int hash) throws EcmaScriptException {
+        ESValue value = getPropertyIfAvailable(propertyName, hash);
+
+        if (value == null) {
+            value = ESUndefined.theUndefined;
+        }
+
+        return value;
+    }
+
+
     public ESValue getOwnProperty(String propertyName, int hash)
             throws EcmaScriptException {
         ESValue property = hasNoPropertyMap() ? null : getPropertyMap().get(propertyName, hash);
@@ -264,19 +286,38 @@ public abstract class ESObject extends ESValue {
      * @exception EcmaScriptException
      *                Error in host objects ?
      */
-    public ESValue getProperty(int index) throws EcmaScriptException {
+    public final ESValue getProperty(int index) throws EcmaScriptException {
+        ESValue value = getPropertyIfAvailable(index);
+
+        if (value == null) {
+            return ESUndefined.theUndefined;
+        }
+
+        return value;
+    }
+    
+    /**
+     * Get the property by index value. By default the index is
+     * converted to a string, but this can be optimized for arrays.
+     * <P>This is not the same as the indexed properties of the first
+     * version of JavaScript and does not allow to access named
+     * properties other than the property using the integer string
+     * representation as a name.
+     *
+     * Returns null if the property was not found.
+     *
+     * @param   index  The property name as an integer.
+     * @return     The property or <em>null</em>
+     * @exception   EcmaScriptException  Error in host objects ?
+     */
+    public ESValue getPropertyIfAvailable(int index) throws EcmaScriptException {
         String iString = Integer.toString(index);
-        return getProperty(iString, iString.hashCode());
+        return getPropertyIfAvailable(iString, iString.hashCode());
     }
 
-    public boolean hasProperty(String propertyName, int hash)
+    public final boolean hasProperty(String propertyName, int hash)
             throws EcmaScriptException {
-        boolean found = properties != null
-                && getPropertyMap().containsKey(propertyName, hash);
-        if (!found && prototype != null) {
-            found = prototype.hasProperty(propertyName, hash);
-        }
-        return found;
+        return getPropertyIfAvailable(propertyName, hash) != null;
     }
 
     public boolean isHiddenProperty(String propertyName, int hash) {

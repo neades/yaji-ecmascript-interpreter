@@ -533,7 +533,7 @@ class ESRowSet extends ESObject {
         return ESUndefined.theUndefined;
     }
 
-    public ESValue getProperty(String propertyName, int hash)
+    public ESValue getPropertyIfAvailable(String propertyName, int hash)
             throws EcmaScriptException {
         // System.err.println(" &&& Getting property '" + propertyName + "'");
 
@@ -583,7 +583,7 @@ class ESRowSet extends ESObject {
         return ESUndefined.theUndefined;
     }
 
-    public ESValue getProperty(int index) throws EcmaScriptException {
+    public ESValue getPropertyIfAvailable(int index) throws EcmaScriptException {
         if (!firstRowSeen) {
             throw new EcmaScriptException(
                     "Attempt to access data before the first row is read");
