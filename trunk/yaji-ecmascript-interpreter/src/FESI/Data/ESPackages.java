@@ -77,7 +77,7 @@ public class ESPackages extends ESLoader {
     // Getting a property dynamically creates a new Package prefix object
     // If the resulting name represents a class then the class object is created
     // and returned (and will be used for example by the "new" operator).
-    public ESValue getProperty(String propertyName, int hash)
+    public ESValue getPropertyIfAvailable(String propertyName, int hash)
             throws EcmaScriptException {
         ESValue value = getPropertyMap().get(propertyName, hash);
         if (value == null) {

@@ -670,12 +670,12 @@ public class FileIO extends Extension {
             return super.getPropertyInScope(propertyName, previousScope, hash);
         }
 
-        public ESValue getProperty(String propertyName, int hash)
+        public ESValue getPropertyIfAvailable(String propertyName, int hash)
                 throws EcmaScriptException {
             if (propertyName.equals("separator")) {
                 return new ESString(File.separator);
             }
-            return super.getProperty(propertyName, hash);
+            return super.getPropertyIfAvailable(propertyName, hash);
 
         }
 

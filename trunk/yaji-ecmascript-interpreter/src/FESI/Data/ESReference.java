@@ -107,8 +107,8 @@ public class ESReference {
      */
     public ESValue getValue() throws EcmaScriptException {
         if (base == null) {
-            throw new EcmaScriptException("global variable '" + propertyName
-                    + "' does not have a value", NativeErrorObject.REFERENCE_ERROR);
+            throw new EcmaScriptException("Variable '" + propertyName
+                    + "' does not exist in the scope chain", NativeErrorObject.REFERENCE_ERROR);
         }
         return base.getProperty(propertyName, hash);
     }

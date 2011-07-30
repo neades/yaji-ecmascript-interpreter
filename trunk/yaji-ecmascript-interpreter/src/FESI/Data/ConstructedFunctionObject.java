@@ -33,6 +33,8 @@ public class ConstructedFunctionObject extends FunctionPrototype {
     private static final long serialVersionUID = 8665440834402496188L;
     private static final String PROTOTYPEstring = "prototype".intern();
     private static final int PROTOTYPEhash = PROTOTYPEstring.hashCode();
+    private static final String ARGUMENTSstring = ("arguments").intern();
+    private static final int ARGUMENTShash = ARGUMENTSstring.hashCode();
 
     private ASTStatementList theFunctionAST;
     private String[] theArguments;
@@ -114,7 +116,7 @@ public class ConstructedFunctionObject extends FunctionPrototype {
         return str.toString();
     }
 
-    // overrides
+    @Override
     public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
         ESValue value = null;
@@ -131,7 +133,7 @@ public class ConstructedFunctionObject extends FunctionPrototype {
         return value;
     }
 
-    // overrides
+    @Override
     public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
             throws EcmaScriptException {
         ESValue prototype = getProperty(PROTOTYPEstring, PROTOTYPEhash);
@@ -146,12 +148,12 @@ public class ConstructedFunctionObject extends FunctionPrototype {
         return obj;
     }
 
-    // overrides
+    @Override
     public String toString() {
         return getFunctionImplementationString();
     }
 
-    // overrides
+    @Override
     public String toDetailString() {
         StringBuilder str = new StringBuilder();
         str.append("<Function: ");
@@ -212,40 +214,30 @@ public class ConstructedFunctionObject extends FunctionPrototype {
         return theNewFunction;
     }
 
-    // overrides
+    @Override
     public ESValue getPropertyInScope(String propertyName,
             ScopeChain previousScope, int hash) throws EcmaScriptException {
-        if (propertyName.equals("arguments")) {
+        if (hash == ARGUMENTShash && propertyName.equals(ARGUMENTSstring)) {
             return currentArguments;
         }
         return super.getPropertyInScope(propertyName, previousScope, hash);
 
     }
 
-    // overrides
-    public ESValue getProperty(String propertyName, int hash)
+    @Override
+    public ESValue getPropertyIfAvailable(String propertyName, int hash)
             throws EcmaScriptException {
-        if (propertyName.equals("arguments")) {
+        if (hash == ARGUMENTShash && propertyName.equals(ARGUMENTSstring)) {
             return currentArguments;
         }
-        return super.getProperty(propertyName, hash);
-
-    }
-
-    // overrides
-    public boolean hasProperty(String propertyName, int hash)
-            throws EcmaScriptException {
-        if (propertyName.equals("arguments")) {
-            return true;
-        }
-        return super.hasProperty(propertyName, hash);
+        return super.getPropertyIfAvailable(propertyName, hash);
 
     }
 
     // overrides
     public void putProperty(String propertyName, ESValue propertyValue, int hash)
             throws EcmaScriptException {
-        if (!propertyName.equals("arguments")) {
+        if (hash != ARGUMENTShash || ! propertyName.equals(ARGUMENTSstring)) {
             super.putProperty(propertyName, propertyValue, hash);
         } // Allowed via putHiddenProperty, used internally !
     }

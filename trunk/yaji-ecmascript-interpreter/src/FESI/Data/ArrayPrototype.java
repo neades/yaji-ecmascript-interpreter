@@ -271,7 +271,7 @@ public class ArrayPrototype extends ESObject {
      * @throws EcmaScriptException
      */
     public ESValue reverse() {
-        if (theArray.size() > 0) {
+        if (theArray.size() > 1) {
             Collections.reverse(theArray);
         }
         return this;
@@ -910,20 +910,25 @@ public class ArrayPrototype extends ESObject {
         if (hash == LENGTHhash && propertyName.equals(LENGTHstring)) {
             return ESNumber.valueOf(theArray.size());
         }
-        if (hasProperty(propertyName, hash)) {
-            return getProperty(propertyName, hash);
+
+        ESValue value = getPropertyIfAvailable(propertyName, hash);
+
+        if (value != null) {
+            return value;
         }
+
         if (previousScope == null) {
-            throw new ReferenceError("global variable '" + propertyName
-                    + "' does not have a value");
+            throw new ReferenceError("Variable '" + propertyName
+                                          + "' does not exist in the scope chain");
         }
+
         return previousScope.getValue(propertyName, hash);
 
     }
 
     // overrides
     @Override
-    public ESValue getProperty(String propertyName, int hash)
+    public ESValue getPropertyIfAvailable(String propertyName, int hash)
             throws EcmaScriptException {
         if (hash == LENGTHhash && propertyName.equals(LENGTHstring)) {
             return ESNumber.valueOf(theArray.size());
@@ -935,45 +940,42 @@ public class ArrayPrototype extends ESObject {
             // do nothing
         }
         if (index < 0) {
-            return super.getProperty(propertyName, hash);
+            return super.getPropertyIfAvailable(propertyName, hash);
         }
-        return getProperty(index);
+        return getPropertyIfAvailable(index);
 
     }
 
     // overrides
     @Override
-    public ESValue getProperty(int index) throws EcmaScriptException {
+    public ESValue getPropertyIfAvailable(int index) throws EcmaScriptException {
         Object theElement = null;
         if (index < theArray.size()) {
             theElement = theArray.get(index);
-        }
-        if (theElement == null) {
-            return ESUndefined.theUndefined;
         }
         return (ESValue) theElement;
 
     }
 
-    // overrides
-    @Override
-    public boolean hasProperty(String propertyName, int hash)
-            throws EcmaScriptException {
-        if (hash == LENGTHhash && propertyName.equals(LENGTHstring)) {
-            return true;
-        }
-        int index = -1; // indicates not a valid index value
-        try {
-            index = Integer.parseInt(propertyName); // should be uint
-        } catch (NumberFormatException e) {
-            // do nothing
-        }
-        if (index < 0) {
-            return super.hasProperty(propertyName, hash);
-        }
-        return index < theArray.size();
-
-    }
+//    // overrides
+//    @Override
+//    public boolean hasProperty(String propertyName, int hash)
+//            throws EcmaScriptException {
+//        if (hash == LENGTHhash && propertyName.equals(LENGTHstring)) {
+//            return true;
+//        }
+//        int index = -1; // indicates not a valid index value
+//        try {
+//            index = Integer.parseInt(propertyName); // should be uint
+//        } catch (NumberFormatException e) {
+//            // do nothing
+//        }
+//        if (index < 0) {
+//            return super.hasProperty(propertyName, hash);
+//        }
+//        return index < theArray.size();
+//
+//    }
 
     // overrides
     // Skip elements which were never set (are null), as Netscape

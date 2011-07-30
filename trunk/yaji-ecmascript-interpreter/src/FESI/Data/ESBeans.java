@@ -70,7 +70,8 @@ public class ESBeans extends ESLoader {
 
     // overrides
     // Getting a property dynamically creates a new Beans prefix object
-    public ESValue getProperty(String propertyName, int hash)
+    @Override
+    public ESValue getPropertyIfAvailable(String propertyName, int hash)
             throws EcmaScriptException {
         ESValue value = getPropertyMap().get(propertyName, hash);
         if (value == null) {

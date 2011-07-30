@@ -129,9 +129,9 @@ public abstract class ESLoader extends ESObject {
 
     // overrides
     @Override
-    public boolean hasProperty(String propertyName, int hash)
+    public ESValue getPropertyIfAvailable(String propertyName, int hash)
             throws EcmaScriptException {
-        return true; // So it can be dereferenced by scopechain
+        return ESUndefined.theUndefined; // So it can be dereferenced by scopechain
         // and wont be created
     }
 

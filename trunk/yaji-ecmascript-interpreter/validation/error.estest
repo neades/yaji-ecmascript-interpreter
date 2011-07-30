@@ -294,7 +294,7 @@ try {
 } catch (e) {
   result =  "Error name: " + e.name + ". Error message: " + e.message;
 }
-result === "Error name: ReferenceError. Error message: global variable 'colours' does not have a value";
+result === "Error name: ReferenceError. Error message: Variable 'colours' does not exist in the scope chain";
 
 @test catch.thrown.exception
 var result = '';

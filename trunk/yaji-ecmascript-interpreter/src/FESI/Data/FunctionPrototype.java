@@ -91,22 +91,13 @@ public class FunctionPrototype extends ESObject {
         return super.getPropertyInScope(propertyName, previousScope, hash);
     }
 
-    // overrides
-    public ESValue getProperty(String propertyName, int hash)
+    @Override
+    public ESValue getPropertyIfAvailable(String propertyName, int hash)
             throws EcmaScriptException {
         if (hash == LENGTHhash && propertyName.equals(LENGTHstring)) {
             return ESNumber.valueOf(length);
         }
-        return super.getProperty(propertyName, hash);
-    }
-
-    // overrides
-    public boolean hasProperty(String propertyName, int hash)
-            throws EcmaScriptException {
-        if (hash == LENGTHhash && propertyName.equals(LENGTHstring)) {
-            return true;
-        }
-        return super.hasProperty(propertyName, hash);
+        return super.getPropertyIfAvailable(propertyName, hash);
     }
 
     // overrides
