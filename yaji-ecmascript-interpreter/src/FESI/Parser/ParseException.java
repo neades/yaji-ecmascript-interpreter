@@ -109,7 +109,8 @@ public class ParseException extends Exception {
             retval.append(add_escapes(tok.image));
             tok = tok.next;
         }
-        retval.append("\" at line ").append(currentToken.next.beginLine).append(", column ").append(currentToken.next.beginColumn);
+        Token errorToken = currentToken.next == null ? currentToken : currentToken.next;
+        retval.append("\" at line ").append(errorToken.beginLine).append(", column ").append(errorToken.beginColumn);
         retval.append('.').append(eol);
         if (expectedTokenSequences.length == 1) {
             retval.append("Was expecting:").append(eol).append("    ");

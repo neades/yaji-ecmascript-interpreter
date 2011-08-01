@@ -214,7 +214,23 @@ public class EcmascriptParserTest {
                     + "       <x>" + eol 
                     + "       FunctionCallParameters" + eol
                     + "   [true]" + eol
-                }
+                },
+                // Dereferencing Literals
+                { "'string'.charCodeAt(0)",
+                    "Program" + eol
+                    + " Statement" + eol
+                    + "  CompositeReference" + eol
+                    + "   [string]" + eol
+                    + "   PropertyIdentifierReference" + eol
+                    + "    <charCodeAt>" + eol
+                    + "   FunctionCallParameters" + eol
+                    + "    [0]" + eol
+                },
+//                { "'\\a'",
+//                    "Program" + eol
+//                    + " Statement" + eol
+//                    + "  [\\a]" + eol
+//                }
             });
     }
 

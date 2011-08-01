@@ -465,7 +465,7 @@ void PrimaryExpressionInES() #void :
 {
     ( ( ( (("this") #ThisReference) | (("super") #SuperReference)) ( PrimarySuffix() )* ) #CompositeReference(>1) )
 |   ( ( Identifier() ( PrimarySuffix() )* ) #CompositeReference(>1) )
-|	Literal()
+|	( ( Literal() ( PrimarySuffix() )* ) #CompositeReference(>1) )
 |	( ( "(" Expression() ")" ( PrimarySuffix() )* ) #CompositeReference(>1) )
 |	AllocationExpression()  
 }

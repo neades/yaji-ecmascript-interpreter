@@ -145,7 +145,7 @@ public class ASTLiteral extends SimpleNode {
                     i += 4;
                 } else if (c >= '0' && c <= '7') {
                     c = (char) (octval(image.charAt(i)));
-                    if ((image.length() > i) && (image.charAt(i + 1) >= '0')
+                    if ((image.length() > (i+1)) && (image.charAt(i + 1) >= '0')
                             && (image.charAt(i + 1) <= '7')) {
                         i++;
                         c = (char) ((c << 4) | octval(image.charAt(i)));
