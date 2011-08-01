@@ -388,6 +388,18 @@ public class EcmaScriptEvaluateVisitorTest {
         }
     }
 
+    @Test
+    public void shouldInvokeFunctionsOnLiterals() throws Exception {
+        String sourceText = "return 'A'.charCodeAt(0);";
+        EcmaScript es = new EcmaScript(new StringReader(sourceText));
+        
+        ASTStatement statement = (ASTStatement) es.Program().jjtGetChild(0);
+        
+        EcmaScriptEvaluateVisitor visitor = createVisitor();
+        ESValue result = (ESValue) visitor.visit(statement,EcmaScriptEvaluateVisitor.FOR_VALUE);
+        assertEquals(ESNumber.valueOf(65),result);
+    }
+    
     private EcmaScriptEvaluateVisitor createVisitor() {
         evaluator = new Evaluator() {
             private static final long serialVersionUID = -7746833632204914424L;

@@ -804,7 +804,7 @@ public class Evaluator implements Serializable {
         // System.out.println("** Try loading via " + path);
 
         ESValue value = ESUndefined.theUndefined;
-        if (path == null) {
+        if (path == null || moduleName.charAt(0) == '/' || moduleName.charAt(0) == '.') {
             File file = new File(moduleName);
             try {
                 value = evaluateLoadFile(file);
