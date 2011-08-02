@@ -12,6 +12,8 @@ import FESI.Exceptions.ProgrammingError;
 import FESI.Parser.EcmaScript;
 
 public class ASTLiteral extends SimpleNode {
+    private static final char LS = '\u2028';
+    private static final char PS = '\u2029';
     private static final long serialVersionUID = 628607318343717769L;
     private ESValue theValue = null;
 
@@ -116,11 +118,11 @@ public class ASTLiteral extends SimpleNode {
     }
 
     public void setStringValue(String image) {
-        int l = image.length();
-        StringBuilder sb = new StringBuilder(l);
-        for (int i = 0; i < l; i++) {
+        int length = image.length();
+        StringBuilder sb = new StringBuilder(length);
+        forloop: for (int i = 0; i < length; i++) {
             char c = image.charAt(i);
-            if ((c == '\\') && (i + 1 < l)) {
+            if ((c == '\\') && (i + 1 < length)) {
                 i++;
                 c = image.charAt(i);
                 if (c == 'n') {
@@ -133,28 +135,68 @@ public class ASTLiteral extends SimpleNode {
                     c = '\r';
                 } else if (c == 't') {
                     c = '\t';
-                } else if (c == 'x') {
-                    c = (char) (hexval(image.charAt(i + 1)) << 4 | hexval(image
-                            .charAt(i + 1)));
+                } else if (c == 'v') {
+                    c = '\u000B';
+                } else if (c == 'x' && (i+2) < length) {
+                    c = 0;
+                    for( int j=1; j<3; j++) {
+                        char c1 = image.charAt(i+j);
+                        if (isHex(c1)) {
+                            c = (char) ((c << 4) | hexval(c1));
+                        } else {
+                            sb.append('x');
+                            continue forloop;
+                        }
+                    }
                     i += 2;
-                } else if (c == 'u') {
-                    c = (char) (hexval(image.charAt(i + 1)) << 12
-                            | hexval(image.charAt(i + 2)) << 8
-                            | hexval(image.charAt(i + 3)) << 4 | hexval(image
-                            .charAt(i + 4)));
+                } else if (c == 'u' && (i+4) < length) {
+                    c = 0;
+                    for( int j=1; j<5; j++) {
+                        char c1 = image.charAt(i+j);
+                        if (isHex(c1)) {
+                            c = (char) ((c << 4) | hexval(c1));
+                        } else {
+                            sb.append('u');
+                            continue forloop;
+                        }
+                    }
                     i += 4;
                 } else if (c >= '0' && c <= '7') {
-                    c = (char) (octval(image.charAt(i)));
-                    if ((image.length() > (i+1)) && (image.charAt(i + 1) >= '0')
-                            && (image.charAt(i + 1) <= '7')) {
-                        i++;
-                        c = (char) ((c << 4) | octval(image.charAt(i)));
+                    c = (char) (octval(c));
+                    if (i < length) {
+                        char c1 = image.charAt(i + 1);
+                        if (isOctal(c1)) {
+                            i++;
+                            c = (char) ((c << 3) | octval(c1));
+                            if (i < length && c <= '\037') {
+                                c1 = image.charAt(i + 1);
+                                if (isOctal(c1)) {
+                                    i++;
+                                    c = (char) ((c << 3) | octval(c1));
+                                }
+                            }
+                        }
                     }
+                } else if (c == '\r') {
+                    if (i < length && image.charAt(i+1) == '\n') {
+                        i++;
+                    }
+                    continue forloop;
+                } else if (c == '\n' || c == LS || c == PS) {
+                    continue forloop;
                 }
             }
             sb.append(c);
         }
         theValue = new ESString(sb.toString());
+    }
+
+    private boolean isHex(char c1) {
+        return (c1 >= '0' && c1 <= '9') || (c1 >= 'a' && c1 <= 'f') || (c1 >= 'A' && c1 <= 'F');
+    }
+
+    private boolean isOctal(char c1) {
+        return (c1 >= '0') && (c1 <= '7');
     }
 
     public void setDecimalValue(String image) {

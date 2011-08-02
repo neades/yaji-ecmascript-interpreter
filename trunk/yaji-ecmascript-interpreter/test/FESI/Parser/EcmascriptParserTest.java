@@ -226,11 +226,21 @@ public class EcmascriptParserTest {
                     + "   FunctionCallParameters" + eol
                     + "    [0]" + eol
                 },
-//                { "'\\a'",
-//                    "Program" + eol
-//                    + " Statement" + eol
-//                    + "  [\\a]" + eol
-//                }
+                { "'\\a'",
+                    "Program" + eol
+                    + " Statement" + eol
+                    + "  [a]" + eol
+                },
+                { "'\\b\\t\\n\\v\\f\\r\\\"\\''",
+                    "Program" + eol
+                    + " Statement" + eol
+                    + "  [\b\t\n\u000B\f\r\"']" + eol
+                },
+                { "'one\\\r\ntwo'",
+                    "Program" + eol
+                    + " Statement" + eol
+                    + "  [onetwo]" + eol
+                }
             });
     }
 
