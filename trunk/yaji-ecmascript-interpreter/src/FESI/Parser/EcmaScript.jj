@@ -562,7 +562,36 @@ void PrimaryExpression()       :
 {
     PrimaryExpressionInES() 
 |   ObjectLiteral()
-|   FunctionExpression()
+|   (/*@bgen(jjtree) #CompositeReference(> 1) */
+      {
+        ASTCompositeReference jjtn001 = new ASTCompositeReference(JJTCOMPOSITEREFERENCE);
+        boolean jjtc001 = true;
+        jjtree.openNodeScope(jjtn001);
+        jjtreeOpenNodeScope(jjtn001);
+      }
+      try {
+/*@egen*/ ( FunctionExpression() ( PrimarySuffix() )* )/*@bgen(jjtree)*/
+      } catch (Throwable jjte001) {
+        if (jjtc001) {
+          jjtree.clearNodeScope(jjtn001);
+          jjtc001 = false;
+        } else {
+          jjtree.popNode();
+        }
+        if (jjte001 instanceof RuntimeException) {
+          throw (RuntimeException)jjte001;
+        }
+        if (jjte001 instanceof ParseException) {
+          throw (ParseException)jjte001;
+        }
+        throw (Error)jjte001;
+      } finally {
+        if (jjtc001) {
+          jjtree.closeNodeScope(jjtn001, jjtree.nodeArity() > 1);
+          jjtreeCloseNodeScope(jjtn001);
+        }
+      }
+/*@egen*/                         )
 |   ArrayLiteral()
 }
 
