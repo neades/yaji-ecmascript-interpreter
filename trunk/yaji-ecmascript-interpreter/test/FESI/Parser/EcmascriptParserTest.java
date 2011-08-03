@@ -226,7 +226,8 @@ public class EcmascriptParserTest {
                     + "   FunctionCallParameters" + eol
                     + "    [0]" + eol
                 },
-                { "'\\a'",
+                // String literals
+                { "'\\a';",
                     "Program" + eol
                     + " Statement" + eol
                     + "  [a]" + eol
@@ -240,6 +241,20 @@ public class EcmascriptParserTest {
                     "Program" + eol
                     + " Statement" + eol
                     + "  [onetwo]" + eol
+                },
+                { "return \"#\\\\\" + a;",
+                    "Program" + eol
+                    + " Statement" + eol
+                    + "  ReturnStatement" + eol 
+                    + "   BinaryExpressionSequence" + eol 
+                    + "    [#\\]" + eol
+                    + "    <\"+\">" + eol
+                    + "    <a>" + eol
+                },
+                { "\"#\\\\\"",
+                    "Program" + eol
+                    + " Statement" + eol
+                    + "  [#\\]" + eol
                 }
             });
     }

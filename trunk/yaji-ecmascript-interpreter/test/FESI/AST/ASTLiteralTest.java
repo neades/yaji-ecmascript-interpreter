@@ -39,7 +39,9 @@ public class ASTLiteralTest {
                 { "IncompleteUnicodeEscape", "\\u123", "u123" },
                 { "IncompleteHexEscape", "\\x1", "x1" },
                 { "InvalidUnicodeSequence", "\\u123g", "u123g" },
-                { "InvalidHexEscape", "\\xag", "xag" }
+                { "InvalidHexEscape", "\\xag", "xag" },
+                { "TrailingBackSlash", "#\\\\", "#\\" },
+                { "Nul", "\\0", "\0" }
                 
         });
     }
