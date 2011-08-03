@@ -17,6 +17,12 @@
 
 package FESI.Data;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.BitSet;
+
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.EcmaScriptParseException;
 import FESI.Exceptions.ProgrammingError;
@@ -480,7 +486,6 @@ public class GlobalObject extends ObjectPrototype {
                     return ESBoolean.valueOf(Double.isNaN(d));
                 }
             }
-
             class GlobalObjectIsFinite extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
@@ -497,7 +502,40 @@ public class GlobalObject extends ObjectPrototype {
                     return ESBoolean.valueOf(!Double.isInfinite(d));
                 }
             }
+            class GlobalObjectURIHandler extends BuiltinFunctionObject {
+                public static final int ENCODE = 0x01;
+                public static final int DECODE = 0x02;
+                public static final int COMPONENT = 0x04;
 
+                private static final long serialVersionUID = 1L;
+
+                private final int opts;
+
+                GlobalObjectURIHandler(String name, Evaluator evaluator,
+                        FunctionPrototype fp, int opts) {
+                    super(fp, evaluator, name, 1);
+                    this.opts = opts;
+                }
+
+                public ESValue callFunction(ESValue thisObject,
+                        ESValue[] arguments) throws EcmaScriptException {
+                    if (arguments.length >= 1) {
+                        String s = String.valueOf(arguments[0]);
+                        switch (opts) {
+                        case ENCODE:
+                        case ENCODE | COMPONENT:
+                            return new ESString(URIHandler.encode(s,
+                                    (opts & COMPONENT) == 0));
+                        case DECODE:
+                        case DECODE | COMPONENT:
+                            return new ESString(URIHandler.decode(s,
+                                    (opts & COMPONENT) == 0));
+                        }
+                    }
+                    return ESUndefined.theUndefined;
+                }
+            }
+            
             // Create object (not yet usable!) in right order for
             // property chain
             ObjectPrototype objectPrototype = new ObjectPrototype(null,
@@ -570,6 +608,25 @@ public class GlobalObject extends ObjectPrototype {
             go.putHiddenProperty("isFinite", new GlobalObjectIsFinite(
                     "isFinite", evaluator, functionPrototype));
 
+            go.putHiddenProperty("encodeURI", 
+                    new GlobalObjectURIHandler("encodeURI", evaluator, 
+                            functionPrototype, 
+                            GlobalObjectURIHandler.ENCODE));
+            go.putHiddenProperty("encodeURIComponent", 
+                    new GlobalObjectURIHandler("encodeURIComponent", evaluator, 
+                            functionPrototype, 
+                            GlobalObjectURIHandler.ENCODE | 
+                            GlobalObjectURIHandler.COMPONENT));
+            go.putHiddenProperty("decodeURI", 
+                    new GlobalObjectURIHandler("decodeURI", evaluator, 
+                            functionPrototype, 
+                            GlobalObjectURIHandler.DECODE));
+            go.putHiddenProperty("decodeURIComponent", 
+                    new GlobalObjectURIHandler("decodeURIComponent", evaluator,
+                            functionPrototype, 
+                            GlobalObjectURIHandler.DECODE | 
+                            GlobalObjectURIHandler.COMPONENT));
+
             go.putHiddenProperty("Object", objectObject);
             go.putHiddenProperty("Function", functionObject);
             go.putHiddenProperty("String", stringObject);
@@ -599,5 +656,158 @@ public class GlobalObject extends ObjectPrototype {
             throw new ProgrammingError(e.getMessage());
         }
         return go;
+    }
+}
+
+class URIHandler {
+    private static final String ENCODING = "UTF-8";
+    private static final BitSet UNESCAPED_SET = new BitSet();
+    private static final BitSet RESERVED_SET = new BitSet();
+    private static final BitSet UNESCAPED_AND_RESERVED_SET = new BitSet();
+
+    static {
+        for (int i = 'a'; i <= 'z'; i++) {
+            UNESCAPED_SET.set(i);
+        }
+        for (int i = 'A'; i <= 'Z'; i++) {
+            UNESCAPED_SET.set(i);
+        }
+        for (int i = '0'; i <= '9'; i++) {
+            UNESCAPED_SET.set(i);
+        }
+        UNESCAPED_SET.set('-');
+        UNESCAPED_SET.set('_');
+        UNESCAPED_SET.set('.');
+        UNESCAPED_SET.set('!');
+        UNESCAPED_SET.set('~');
+        UNESCAPED_SET.set('*');
+        UNESCAPED_SET.set('\'');
+        UNESCAPED_SET.set('(');
+        UNESCAPED_SET.set(')');
+
+        RESERVED_SET.set(';');
+        RESERVED_SET.set('/');
+        RESERVED_SET.set('?');
+        RESERVED_SET.set(':');
+        RESERVED_SET.set('@');
+        RESERVED_SET.set('&');
+        RESERVED_SET.set('=');
+        RESERVED_SET.set('+');
+        RESERVED_SET.set('$');
+        RESERVED_SET.set(',');
+        RESERVED_SET.set('#');
+
+        UNESCAPED_AND_RESERVED_SET.or(UNESCAPED_SET);
+        UNESCAPED_AND_RESERVED_SET.or(RESERVED_SET);
+    }
+    
+    public static String encode(String s, boolean escapeReserved)
+            throws EcmaScriptException {
+        int len = s.length();
+
+        // 6 bytes should cater for all surrogate pairs
+        ByteArrayOutputStream buf = new ByteArrayOutputStream(6);
+        OutputStreamWriter writer = null;
+        try {
+            writer = new OutputStreamWriter(buf, ENCODING);
+        } catch (UnsupportedEncodingException e) {
+            throw new EcmaScriptException(e.getMessage());
+        }
+        StringBuilder sb = new StringBuilder(len);
+        
+        for (int i = 0; i < len; i++) {
+            int c = (int) s.charAt(i);
+            if (escapeReserved ? UNESCAPED_AND_RESERVED_SET.get(c)
+                    : UNESCAPED_SET.get(c)) {
+                sb.append((char) c);
+            } else {
+                // Translate to UTF-8
+                try {
+                    writer.write(c);
+                    if (c >= 0xD800 && c <= 0xDBFF) {
+                        if ((i + 1) < len) {
+                            /*
+                             * 'c' may be the first code unit of a Unicode
+                             * surrogate pair (high surrogate). 'c2' should be
+                             * the other half (low surrogate), but only if it is
+                             * in range. Otherwise, just continue and pick it up
+                             * as the next character.
+                             */
+                            int c2 = (int) s.charAt(i + 1);
+                            if (c2 >= 0xDC00 && c2 <= 0xDFFF) {
+                                writer.write(c2);
+                                i++;
+                            }
+                        }
+                    }
+                    writer.flush();
+                } catch (IOException e) {
+                    buf.reset();
+                    continue;
+                }
+               
+                // Convert to hex
+                for (byte b : buf.toByteArray()) {
+                    sb.append("%"+String.format("%02X", b));
+                }
+                buf.reset();
+            }
+        }
+        return sb.toString();
+    }
+
+    public static String decode(String s, boolean unescapeReserved)
+            throws EcmaScriptException {
+        int len = s.length();
+        
+        int i = 0;
+        char c;
+        byte[] buf = new byte[len];
+        StringBuilder sb = new StringBuilder();
+        
+        while (i < len) {
+            c = s.charAt(i);
+            if (c != '%') {
+                sb.append(c);
+                i++;
+            } else {
+                try {
+                    int j = 0;
+
+                    while (((i + 2) < len) && (c == '%')) {
+                        String hexStr = s.substring(i + 1, i + 3);
+                        byte intVal = (byte) Integer.parseInt(hexStr, 16);
+                        if (unescapeReserved && intVal > 0
+                                && RESERVED_SET.get(intVal)) {
+                            byte[] hexBytes = hexStr.getBytes();
+                            buf[j++] = '%';
+                            buf[j++] = hexBytes[0];
+                            buf[j++] = hexBytes[1];
+                        } else {
+                            buf[j++] = intVal;
+                        }
+
+                        i += 3;
+                        if (i < len) {
+                            c = s.charAt(i);
+                        }
+                    }
+
+                    if ((i < len) && (c == '%')) {
+                        throw new EcmaScriptException(
+                                "Incomplete hex literal found at end of URI");
+                    }
+                    
+                    try {
+                        sb.append(new String(buf, 0, j, ENCODING));
+                    } catch (UnsupportedEncodingException e) {
+                        throw new EcmaScriptException(e.getMessage());
+                    }
+                } catch (NumberFormatException e) {
+                    throw new EcmaScriptException(e.getMessage());
+                }
+            }
+        }
+        return sb.toString();
     }
 }
