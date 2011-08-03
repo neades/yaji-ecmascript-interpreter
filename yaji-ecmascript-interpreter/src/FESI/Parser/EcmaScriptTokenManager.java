@@ -1469,6 +1469,7 @@ public Token getNextToken()
    }
    image = jjimage;
    image.setLength(0);
+
    for (;;)
    {
      switch(curLexState)
@@ -1534,7 +1535,7 @@ public Token getNextToken()
            curLexState = jjnewLexState[jjmatchedKind];
            continue EOFLoop;
         }
-        if (jjnewLexState[jjmatchedKind] != -1)
+      if (jjnewLexState[jjmatchedKind] != -1)
         curLexState = jjnewLexState[jjmatchedKind];
         curPos = 0;
         jjmatchedKind = 0x7fffffff;

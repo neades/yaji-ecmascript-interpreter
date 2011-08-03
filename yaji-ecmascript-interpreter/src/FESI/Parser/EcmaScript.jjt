@@ -452,7 +452,7 @@ void PrimaryExpression() #void :
 {
     PrimaryExpressionInES() 
 |   ObjectLiteral()
-|   FunctionExpression()
+|   ( ( FunctionExpression() ( PrimarySuffix() )* ) #CompositeReference(>1) )
 |   ArrayLiteral()
 }
 
