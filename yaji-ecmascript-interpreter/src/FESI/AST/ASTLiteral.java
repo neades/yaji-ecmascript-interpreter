@@ -163,7 +163,7 @@ public class ASTLiteral extends SimpleNode {
                     i += 4;
                 } else if (c >= '0' && c <= '7') {
                     c = (char) (octval(c));
-                    if (i < length) {
+                    if ((i+1) < length) {
                         char c1 = image.charAt(i + 1);
                         if (isOctal(c1)) {
                             i++;
