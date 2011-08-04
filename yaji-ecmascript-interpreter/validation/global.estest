@@ -131,7 +131,7 @@ r=tryEval("1234+1", 32);
 r.value==1235 && !r.error
 
 @test encodeURI
-encodeURI("http://w3schools.com/my test.asp?name=st똪e&car=saab")=="http://w3schools.com/my%20test.asp?name=st%C3%A5le&car=saab"
+encodeURI("http://w3schools.com/my test.asp?name=st책le&car=saab")=="http://w3schools.com/my%20test.asp?name=st%C3%A5le&car=saab"
 
 @test encodeURI.1
 encodeURI('~!@#$%^&*(){}[]=:/,;?+\'"\\')=="~!@#$%25%5E&*()%7B%7D%5B%5D=:/,;?+'%22%5C"
@@ -140,13 +140,13 @@ encodeURI('~!@#$%^&*(){}[]=:/,;?+\'"\\')=="~!@#$%25%5E&*()%7B%7D%5B%5D=:/,;?+'%2
 encodeURI("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_.!~*'();/?:@&=+$,#")=="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_.!~*'();/?:@&=+$,#"
 
 @test encodeURIComponent
-encodeURIComponent("http://w3schools.com/my test.asp?name=st똪e&car=saab")=="http%3A%2F%2Fw3schools.com%2Fmy%20test.asp%3Fname%3Dst%C3%A5le%26car%3Dsaab"
+encodeURIComponent("http://w3schools.com/my test.asp?name=st책le&car=saab")=="http%3A%2F%2Fw3schools.com%2Fmy%20test.asp%3Fname%3Dst%C3%A5le%26car%3Dsaab"
 
 @test encodeURIComponent.1
 encodeURIComponent('~!@#$%^&*(){}[]=:/,;?+\'"\\')=="~!%40%23%24%25%5E%26*()%7B%7D%5B%5D%3D%3A%2F%2C%3B%3F%2B'%22%5C"
 
 @test decodeURI
-decodeURI("http://w3schools.com/my%20test.asp?name=st%C3%A5le&car=saab")=="http://w3schools.com/my test.asp?name=st똪e&car=saab"
+decodeURI("http://w3schools.com/my%20test.asp?name=st%C3%A5le&car=saab")=="http://w3schools.com/my test.asp?name=st책le&car=saab"
 
 @test decodeURIComponent
-decodeURIComponent("http%3A%2F%2Fw3schools.com%2Fmy%20test.asp%3Fname%3Dst%C3%A5le%26car%3Dsaab")=="http://w3schools.com/my test.asp?name=st똪e&car=saab"
+decodeURIComponent("http%3A%2F%2Fw3schools.com%2Fmy%20test.asp%3Fname%3Dst%C3%A5le%26car%3Dsaab")=="http://w3schools.com/my test.asp?name=st책le&car=saab"
