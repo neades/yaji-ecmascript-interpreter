@@ -19,6 +19,7 @@ package FESI.Interpreter;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -1206,7 +1207,7 @@ public class Interpret implements InterpreterCommands {
         int nSuccess = 0;
         int nErrors = 0;
         try {
-            lr = new BufferedReader(new FileReader(file));
+            lr = new BufferedReader(new InputStreamReader(new FileInputStream(file),"UTF-8"));
             document.putHiddenProperty("URL", new ESString("file://"
                     + file.getAbsolutePath()));
             printStream.println("@@ Processing test file '" + file.getPath()
