@@ -112,50 +112,6 @@ public class GlobalObject extends ObjectPrototype {
                 }
             }
 
-            // For functionPrototype
-            class FunctionPrototypeToString extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                FunctionPrototypeToString(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 1);
-                }
-
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    String s = "function "
-                            + ((FunctionPrototype) thisObject)
-                                    .getFunctionName()
-                            + ((FunctionPrototype) thisObject)
-                                    .getFunctionParametersString()
-                            + ((FunctionPrototype) thisObject)
-                                    .getFunctionImplementationString();
-                    return new ESString(s);
-                }
-            }
-            
-            class FunctionPrototypeCall extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-                FunctionPrototypeCall(String name, Evaluator evaluator, FunctionPrototype fp) {
-                    super(fp, evaluator, name, 1);
-                }
-
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    ESValue[] functionArguments;
-                    ESValue target;
-                    if (arguments.length == 0) {
-                        functionArguments = ESValue.EMPTY_ARRAY;
-                        target = ESUndefined.theUndefined;
-                    } else {
-                        functionArguments = new ESValue[arguments.length-1];
-                        System.arraycopy(arguments, 1, functionArguments, 0, functionArguments.length);
-                        target = arguments[0];
-                    }
-                    return thisObject.callFunction(target,functionArguments);
-                }
-                
-            }
 
             // For GlobalObject
             class GlobalObjectThrowError extends BuiltinFunctionObject {
@@ -571,12 +527,6 @@ public class GlobalObject extends ObjectPrototype {
             objectPrototype.putHiddenProperty("valueOf",
                     new ObjectPrototypeValueOf("valueOf", evaluator,
                             functionPrototype));
-
-            functionPrototype.putHiddenProperty("constructor", functionObject);
-            functionPrototype.putHiddenProperty("toString",
-                    new FunctionPrototypeToString("toString", evaluator,
-                            functionPrototype));
-            functionPrototype.putHiddenProperty("call", new FunctionPrototypeCall("call", evaluator, functionPrototype));
 
             functionObject.putHiddenProperty("prototype", functionPrototype);
             functionObject.putHiddenProperty("length", ESNumber.valueOf(1));

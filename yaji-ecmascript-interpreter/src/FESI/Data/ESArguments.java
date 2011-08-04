@@ -32,12 +32,8 @@ public class ESArguments extends ESObject {
     private final ESObject callee; // Called object
     private final int length; // Number of arguments
     protected String[] argumentNames; // Argument names from 0 to n
-    private static final String CALLEEstring = ("callee").intern();
-    private static final int CALLEEhash = CALLEEstring.hashCode();
-    private static final String ARGUMENTSstring = ("arguments").intern();
-    private static final int ARGUMENTShash = ARGUMENTSstring.hashCode();
-    private static final String LENGTHstring = ("length").intern();
-    private static final int LENGTHhash = LENGTHstring.hashCode();
+    
+    
 
 
     // (not readily available) int [] hashCodes; // Argument hash codes from 0
@@ -69,15 +65,15 @@ public class ESArguments extends ESObject {
     @Override
     public ESValue getPropertyInScope(String propertyName,
             ScopeChain previousScope, int hash) throws EcmaScriptException {
-        if (hash == CALLEEhash && propertyName.equals(CALLEEstring)) {
+        if (hash == StandardProperty.CALLEEhash && propertyName.equals(StandardProperty.CALLEEstring)) {
             return callee;
         }
 
-        if (hash == ARGUMENTShash && propertyName.equals(ARGUMENTSstring)) {
+        if (hash == StandardProperty.ARGUMENTShash && propertyName.equals(StandardProperty.ARGUMENTSstring)) {
             return this;
         }
 
-        if (hash == LENGTHhash && propertyName.equals(LENGTHstring)) {
+        if (hash == StandardProperty.LENGTHhash && propertyName.equals(StandardProperty.LENGTHstring)) {
             return ESNumber.valueOf(length);
         }
 
@@ -117,7 +113,7 @@ public class ESArguments extends ESObject {
     public ESValue doIndirectCallInScope(Evaluator evaluator,
             ScopeChain previousScope, ESObject thisObject, String functionName,
             int hash, ESValue[] arguments) throws EcmaScriptException {
-        if (hash == CALLEEhash && functionName.equals(CALLEEstring)) {
+        if (hash == StandardProperty.CALLEEhash && functionName.equals(StandardProperty.CALLEEstring)) {
             return callee.callFunction(thisObject, arguments);
         }
         return super.doIndirectCallInScope(evaluator, previousScope,
@@ -130,15 +126,15 @@ public class ESArguments extends ESObject {
     public ESValue getPropertyIfAvailable(String propertyName, int hash)
             throws EcmaScriptException {
 
-        if (hash == CALLEEhash && propertyName.equals(CALLEEstring)) {
+        if (hash == StandardProperty.CALLEEhash && propertyName.equals(StandardProperty.CALLEEstring)) {
             return callee;
         }
 
-        if (hash == ARGUMENTShash && propertyName.equals(ARGUMENTSstring)) {
+        if (hash == StandardProperty.ARGUMENTShash && propertyName.equals(StandardProperty.ARGUMENTSstring)) {
             return this;
         }
 
-        if (hash == LENGTHhash && propertyName.equals(LENGTHstring)) {
+        if (hash == StandardProperty.LENGTHhash && propertyName.equals(StandardProperty.LENGTHstring)) {
             return ESNumber.valueOf(length);
         }
 
@@ -313,7 +309,7 @@ public class ESArguments extends ESObject {
     // overrides
     @Override
     public String[] getSpecialPropertyNames() {
-        String[] ns = { ARGUMENTSstring, CALLEEstring, LENGTHstring };
+        String[] ns = { StandardProperty.ARGUMENTSstring, StandardProperty.CALLEEstring, StandardProperty.LENGTHstring };
         return ns;
     }
 

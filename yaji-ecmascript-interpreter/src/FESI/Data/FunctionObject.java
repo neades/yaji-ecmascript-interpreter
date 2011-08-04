@@ -24,6 +24,7 @@ import FESI.AST.ASTStatementList;
 import FESI.AST.EcmaScriptTreeConstants;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.EcmaScriptParseException;
+import FESI.Exceptions.TypeError;
 import FESI.Interpreter.EcmaScriptVariableVisitor;
 import FESI.Interpreter.Evaluator;
 import FESI.Interpreter.FunctionEvaluationSource;
@@ -38,10 +39,96 @@ public class FunctionObject extends BuiltinFunctionObject implements
         EcmaScriptTreeConstants {
     private static final long serialVersionUID = 8501827292633127950L;
     static boolean debugParse = false;
+    // For functionPrototype
+    private static class FunctionPrototypeToString extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
 
-    FunctionObject(ESObject prototype, Evaluator evaluator) throws EcmaScriptException {
+        FunctionPrototypeToString(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 1);
+        }
+
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            String s = "function "
+                    + ((FunctionPrototype) thisObject)
+                            .getFunctionName()
+                    + ((FunctionPrototype) thisObject)
+                            .getFunctionParametersString()
+                    + ((FunctionPrototype) thisObject)
+                            .getFunctionImplementationString();
+            return new ESString(s);
+        }
+    }
+    
+    private static class FunctionPrototypeCall extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+        FunctionPrototypeCall(String name, Evaluator evaluator, FunctionPrototype fp) {
+            super(fp, evaluator, name, 1);
+        }
+
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            ESValue[] functionArguments;
+            ESValue target;
+            if (arguments.length == 0) {
+                functionArguments = ESValue.EMPTY_ARRAY;
+                target = ESUndefined.theUndefined;
+            } else {
+                functionArguments = new ESValue[arguments.length-1];
+                System.arraycopy(arguments, 1, functionArguments, 0, functionArguments.length);
+                target = arguments[0];
+            }
+            return thisObject.callFunction(target,functionArguments);
+        }
+        
+    }
+    
+    private static class FunctionPrototypeApply extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+        FunctionPrototypeApply(String name, Evaluator evaluator, FunctionPrototype fp) {
+            super(fp, evaluator, name, 2);
+        }
+
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            ESValue[] functionArguments = ESValue.EMPTY_ARRAY;
+            ESValue target;
+            if (arguments.length == 0) {
+                target = ESUndefined.theUndefined;
+            } else if (arguments.length == 1) {
+                target = arguments[0];
+            } else {
+                target = arguments[0];
+                ESValue arrayValue = arguments[1];
+                if (arrayValue == ESUndefined.theUndefined || arrayValue == ESNull.theNull) {
+                    functionArguments = ESValue.EMPTY_ARRAY;
+                } else {
+                    if (!(arrayValue instanceof ESObject)) {
+                        throw new TypeError("Second parameter 'argArray' supplied to 'apply' must be an object");
+                    }
+                    ESObject array = (ESObject) arrayValue;
+                    int length = array.getProperty(StandardProperty.LENGTHstring,StandardProperty.LENGTHhash).toInt32();
+                    functionArguments = new ESValue[length];
+                    for( int index=0; index<length; index++) {
+                        functionArguments[index] = array.getProperty(index);
+                    }
+                }
+            }
+            return thisObject.callFunction(target,functionArguments);
+        }
+        
+    }
+    
+
+    FunctionObject(FunctionPrototype prototype, Evaluator evaluator) throws EcmaScriptException {
         super(prototype, evaluator, "Function", 1);
-        putHiddenProperty("prototype", evaluator.getFunctionPrototype());
+        putHiddenProperty("prototype", prototype);
+        prototype.putHiddenProperty("constructor", this);
+        prototype.putHiddenProperty("toString",
+                new FunctionPrototypeToString("toString", evaluator, prototype));
+        prototype.putHiddenProperty("call", new FunctionPrototypeCall("call", evaluator, prototype));
+        prototype.putHiddenProperty("apply", new FunctionPrototypeApply("apply", evaluator, prototype));
     }
 
     // overrides
@@ -141,4 +228,6 @@ public class FunctionObject extends BuiltinFunctionObject implements
     public String toString() {
         return "<Function>";
     }
+    
+    
 }

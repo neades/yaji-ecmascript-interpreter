@@ -91,6 +91,7 @@ import FESI.Data.ESString;
 import FESI.Data.ESUndefined;
 import FESI.Data.ESValue;
 import FESI.Data.ObjectObject;
+import FESI.Data.StandardProperty;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
 import FESI.Exceptions.TypeError;
@@ -155,9 +156,6 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
     private IAppendable representationOutputBuffer = null;
     private EvaluationSource evaluationSource;
     
-    private static final String LENGTHstring = ("length").intern();
-    private static final int LENGTHhash = LENGTHstring.hashCode();
-
     /**
      * Create a new visitor
      * 
@@ -1464,8 +1462,8 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
             if (operator == ASSIGN) {
                 // Simple assignement may create a new property
                 evaluator.putValue(lv, v2);
-                if (lv.getHash() == LENGTHhash
-                        && LENGTHstring.equals(lv.getPropertyName())) {
+                if (lv.getHash() == StandardProperty.LENGTHhash
+                        && StandardProperty.LENGTHstring.equals(lv.getPropertyName())) {
                     // Array length assignment return may not actually be the 
                     // specified length, so get the length after the fact. 
                     // N.B.: could also be achieved by modifying the ESNumber 
@@ -1473,7 +1471,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                     ESValue baseValue = lv.getBase();
                     if (baseValue instanceof ArrayPrototype) {
                         result = ((ArrayPrototype) baseValue).getProperty(
-                                LENGTHstring, LENGTHhash);
+                                StandardProperty.LENGTHstring, StandardProperty.LENGTHhash);
                     }
                 } else {
                     result = v2;
