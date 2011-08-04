@@ -30,9 +30,6 @@ public class FunctionPrototype extends ESObject {
     private String functionName = null;
     private int length = 0;
 
-    private static final String LENGTHstring = ("length").intern();
-    private static final int LENGTHhash = LENGTHstring.hashCode();
-
     FunctionPrototype(ESObject prototype, Evaluator evaluator,
             String functionName, int length) {
         super(prototype, evaluator);
@@ -85,7 +82,7 @@ public class FunctionPrototype extends ESObject {
     // overrides
     public ESValue getPropertyInScope(String propertyName,
             ScopeChain previousScope, int hash) throws EcmaScriptException {
-        if (hash == LENGTHhash && propertyName.equals(LENGTHstring)) {
+        if (hash == StandardProperty.LENGTHhash && propertyName.equals(StandardProperty.LENGTHstring)) {
             return ESNumber.valueOf(length);
         }
         return super.getPropertyInScope(propertyName, previousScope, hash);
@@ -94,7 +91,7 @@ public class FunctionPrototype extends ESObject {
     @Override
     public ESValue getPropertyIfAvailable(String propertyName, int hash)
             throws EcmaScriptException {
-        if (hash == LENGTHhash && propertyName.equals(LENGTHstring)) {
+        if (hash == StandardProperty.LENGTHhash && propertyName.equals(StandardProperty.LENGTHstring)) {
             return ESNumber.valueOf(length);
         }
         return super.getPropertyIfAvailable(propertyName, hash);
@@ -103,14 +100,14 @@ public class FunctionPrototype extends ESObject {
     // overrides
     public void putProperty(String propertyName, ESValue propertyValue, int hash)
             throws EcmaScriptException {
-        if (!(hash == LENGTHhash && propertyName.equals(LENGTHstring))) {
+        if (!(hash == StandardProperty.LENGTHhash && propertyName.equals(StandardProperty.LENGTHstring))) {
             super.putProperty(propertyName, propertyValue, hash);
         } // Allowed via putHiddenProperty, used internally !
     }
 
     // overrides
     public String[] getSpecialPropertyNames() {
-        String[] ns = { LENGTHstring };
+        String[] ns = { StandardProperty.LENGTHstring };
         return ns;
     }
 

@@ -23,8 +23,6 @@ import FESI.Interpreter.ScopeChain;
 
 class StringPrototype extends ESObject {
     private static final long serialVersionUID = 1434073915774458544L;
-    private static final String LENGTHstring = ("length").intern();
-    private static final int LENGTHhash = LENGTHstring.hashCode();
 
     ESString value = new ESString("");
 
@@ -56,7 +54,7 @@ class StringPrototype extends ESObject {
 
     public ESValue getPropertyInScope(String propertyName,
             ScopeChain previousScope, int hash) throws EcmaScriptException {
-        if (hash == LENGTHhash && propertyName.equals(LENGTHstring)) {
+        if (hash == StandardProperty.LENGTHhash && propertyName.equals(StandardProperty.LENGTHstring)) {
             return ESNumber.valueOf(value.getStringLength());
         }
         return super.getPropertyInScope(propertyName, previousScope, hash);
@@ -65,14 +63,14 @@ class StringPrototype extends ESObject {
     @Override
     public ESValue getPropertyIfAvailable(String propertyName, int hash)
             throws EcmaScriptException {
-        if (hash == LENGTHhash && propertyName.equals(LENGTHstring)) {
+        if (hash == StandardProperty.LENGTHhash && propertyName.equals(StandardProperty.LENGTHstring)) {
             return ESNumber.valueOf(value.getStringLength());
         }
         return super.getPropertyIfAvailable(propertyName, hash);
     }
 
     public String[] getSpecialPropertyNames() {
-        String[] ns = { LENGTHstring };
+        String[] ns = { StandardProperty.LENGTHstring };
         return ns;
     }
 

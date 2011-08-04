@@ -36,8 +36,6 @@ import FESI.Interpreter.ScopeChain;
  */
 public class ArrayPrototype extends ESObject {
     private static final long serialVersionUID = 2559830243680989945L;
-    private static final String LENGTHstring = ("length").intern();
-    private static final int LENGTHhash = LENGTHstring.hashCode();
     
     private enum IterationType {
         EVERY, SOME, FOREACH, MAP, FILTER;
@@ -857,7 +855,7 @@ public class ArrayPrototype extends ESObject {
     @Override
     public void putProperty(String propertyName, ESValue propertyValue, int hash)
             throws EcmaScriptException {
-        if (hash == LENGTHhash && propertyName.equals(LENGTHstring)) {
+        if (hash == StandardProperty.LENGTHhash && propertyName.equals(StandardProperty.LENGTHstring)) {
             int newLen = (int) (((ESPrimitive) propertyValue).doubleValue());
             if (newLen >= theArray.size()) {
                 setSize(newLen);
@@ -907,7 +905,7 @@ public class ArrayPrototype extends ESObject {
     @Override
     public ESValue getPropertyInScope(String propertyName,
             ScopeChain previousScope, int hash) throws EcmaScriptException {
-        if (hash == LENGTHhash && propertyName.equals(LENGTHstring)) {
+        if (hash == StandardProperty.LENGTHhash && propertyName.equals(StandardProperty.LENGTHstring)) {
             return ESNumber.valueOf(theArray.size());
         }
 
@@ -930,7 +928,7 @@ public class ArrayPrototype extends ESObject {
     @Override
     public ESValue getPropertyIfAvailable(String propertyName, int hash)
             throws EcmaScriptException {
-        if (hash == LENGTHhash && propertyName.equals(LENGTHstring)) {
+        if (hash == StandardProperty.LENGTHhash && propertyName.equals(StandardProperty.LENGTHstring)) {
             return ESNumber.valueOf(theArray.size());
         }
         int index = -1; // indicates not a valid index value
@@ -1164,7 +1162,7 @@ public class ArrayPrototype extends ESObject {
     // overrides
     @Override
     public String[] getSpecialPropertyNames() {
-        String[] ns = { LENGTHstring };
+        String[] ns = { StandardProperty.LENGTHstring };
         return ns;
     }
 

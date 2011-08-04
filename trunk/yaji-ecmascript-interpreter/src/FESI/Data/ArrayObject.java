@@ -28,8 +28,6 @@ public class ArrayObject extends BuiltinFunctionObject {
     private static final long serialVersionUID = 1737676943108087235L;
     static final String JOINstring = ("join").intern();
     static final int JOINhash = JOINstring.hashCode();
-    static final String LENGTHstring = ("length").intern();
-    static final int LENGTHhash = LENGTHstring.hashCode();
     private static final String ZEROstring = ("0").intern();
     private static final int ZEROhash = ZEROstring.hashCode();
 
@@ -65,7 +63,7 @@ public class ArrayObject extends BuiltinFunctionObject {
             ESValue firstArg = arguments[0];
             // Not clear in standard:
             if (firstArg.isNumberValue()) {
-                theArray.putProperty(LENGTHstring, firstArg, LENGTHhash);
+                theArray.putProperty(StandardProperty.LENGTHstring, firstArg, StandardProperty.LENGTHhash);
             } else {
                 theArray.putProperty(ZEROstring, firstArg, ZEROhash);
             }
@@ -139,7 +137,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                     }
                     ESObject thisObject = thisValue.toESObject(getEvaluator());
                     int length = (thisObject.getProperty(
-                            ArrayObject.LENGTHstring, ArrayObject.LENGTHhash))
+                            StandardProperty.LENGTHstring, StandardProperty.LENGTHhash))
                             .toInt32();
                     for (int i = 0; i < length; i++) {
                         if (i > 0)

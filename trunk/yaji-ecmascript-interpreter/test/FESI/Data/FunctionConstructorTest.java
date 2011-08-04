@@ -1,14 +1,15 @@
 package FESI.Data;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.io.StringReader;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import FESI.AST.ASTProgram;
+import FESI.Exceptions.TypeError;
 import FESI.Interpreter.EcmaScriptFunctionVisitor;
 import FESI.Interpreter.Evaluator;
 import FESI.Parser.EcmaScript;
@@ -16,18 +17,61 @@ import FESI.Parser.EcmaScript;
 
 public class FunctionConstructorTest {
 
-    @Test public void shouldImplementCallOnFunctionDeclarations() throws Exception {
-        Evaluator evaluator = new Evaluator();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(baos));
+    private Evaluator evaluator;
+    private ESObject function;
+    @Before
+    public void setUp() throws Exception {
+        evaluator = new Evaluator();
 
-        EcmaScript es = new EcmaScript(new StringReader("function blah() { return 'called'; }"));
+        EcmaScript es = new EcmaScript(new StringReader("function blah() { var result = 'Called:';for( var i=0; i<arguments.length; i++ ) { result += arguments[i]; } return result; }"));
         EcmaScriptFunctionVisitor functionVisitor = new EcmaScriptFunctionVisitor(evaluator);
         functionVisitor.visit((ASTProgram)es.Program(), null);
-        
-        ESObject function = (ESObject) evaluator.getGlobalObject().getProperty("blah","blah".hashCode());
+
+        function = (ESObject) evaluator.getGlobalObject().getProperty("blah","blah".hashCode());
+    }
+    @Test public void shouldImplementCallOnFunctionDeclarations() throws Exception {
         ESValue value = function.doIndirectCall(evaluator, function, "call", new ESValue[] { evaluator.getGlobalObject() });
 
-        assertEquals("called",value.toString());
+        assertEquals("Called:",value.toString());
+    }
+
+    @Test public void shouldImplementApplyOnFunctionDeclarations() throws Exception {
+        ArrayPrototype array = new ArrayPrototype(evaluator.getArrayPrototype(), evaluator);
+        array.push(new ESValue[] { new ESString("param1"), new ESString("param2") });
+        ESValue value = function.doIndirectCall(evaluator, function, "apply", new ESValue[] { evaluator.getGlobalObject(), array });
+
+        assertEquals("Called:param1param2",value.toString());
+    }
+    
+    @Test public void shouldImplementApplyOnFunctionDeclarations_UndefinedArgs() throws Exception {
+        ESValue value = function.doIndirectCall(evaluator, function, "apply", new ESValue[] { evaluator.getGlobalObject(), ESUndefined.theUndefined });
+
+        assertEquals("Called:",value.toString());
+    }
+    
+    @Test public void shouldImplementApplyOnFunctionDeclarations_NoArgs() throws Exception {
+        ESValue value = function.doIndirectCall(evaluator, function, "apply", new ESValue[] { evaluator.getGlobalObject() });
+
+        assertEquals("Called:",value.toString());
+    }
+    
+    @Test public void shouldImplementApplyOnFunctionDeclarations_ArgsNotArray() throws Exception {
+        ObjectPrototype object = ObjectObject.createObject(evaluator);
+        object.putProperty(StandardProperty.LENGTHstring, ESNumber.valueOf(2), StandardProperty.LENGTHhash);
+        object.putProperty("0", new ESString("op1:"), "0".hashCode());
+        object.putProperty("1", new ESString("op2:"), "1".hashCode());
+        ESValue value = function.doIndirectCall(evaluator, function, "apply", new ESValue[] { evaluator.getGlobalObject(), object });
+
+        assertEquals("Called:op1:op2:",value.toString());
+    }
+    
+    @Test public void shouldImplementApplyOnFunctionDeclarations_InvalidArgs() throws Exception {
+        try {
+            function.doIndirectCall(evaluator, function, "apply", new ESValue[] { evaluator.getGlobalObject(), new ESString("arguments") });
+            fail("Should throw error");
+        } catch (TypeError e) {
+            // expected result
+        }
+
     }
 }

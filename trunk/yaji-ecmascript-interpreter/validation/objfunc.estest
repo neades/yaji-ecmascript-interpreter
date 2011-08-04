@@ -284,3 +284,30 @@ var o={};
 
 @test Function.prototype.call.15.3.4.4-5
 1 === Function.prototype.call.length;
+
+@test Function.prototype.apply.15.3.4.3-1
+try {
+  var o={};
+  var f = 'string';
+  f.call(o);
+  false;
+} catch (e) {
+  "TypeError" === e.name;  
+}
+
+@test Function.prototype.apply.15.3.4.3-9
+var f=function() {
+  return this.name;
+};
+var o={ name:'the name' };
+'the name' === f.apply(o);
+
+@test Function.prototype.apply.15.3.4.3-8
+var f=function() {
+  return arguments[1];
+};
+var o={};
+'the name' === f.apply(o,[void 0,'the name']);
+
+@test Function.prototype.apply.15.3.4.3-10
+2 === Function.prototype.apply.length;
