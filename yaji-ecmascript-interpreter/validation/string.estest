@@ -177,3 +177,21 @@ s==="100trued"
 
 @test concat.4
 1 === String.prototype.concat.length;
+
+@test toString.15.5.4.2.b
+try {
+   f = String.prototype.toString;
+   f.call(100);
+   false;
+} catch(e) {
+  "TypeError" === e.name;
+}
+
+@test toString.15.5.4.3.b
+try {
+   f = String.prototype.valueOf;
+   f.call(100);
+   false;
+} catch(e) {
+  "TypeError" === e.name;
+}

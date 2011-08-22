@@ -19,6 +19,7 @@ package FESI.Data;
 
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
+import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
 import FESI.Util.IAppendable;
 
@@ -38,7 +39,10 @@ public class StringObject extends BuiltinFunctionObject {
         @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
-            return ((StringPrototype) thisObject).value;
+            if (thisObject instanceof StringPrototype) {
+                return ((StringPrototype) thisObject).value;
+            }
+            throw new TypeError("String.prototype.toString can only be applied to a String");
         }
     }
 
@@ -53,7 +57,10 @@ public class StringObject extends BuiltinFunctionObject {
         @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
-            return ((StringPrototype) thisObject).value;
+            if (thisObject instanceof StringPrototype) {
+                return ((StringPrototype) thisObject).value;
+            }
+            throw new TypeError("String.prototype.valueOf can only be applied to a String");
         }
     }
 
