@@ -61,7 +61,7 @@ s.valueOf()==s.toString();
 
 
 @test indexof.1
-i = ("1234512345").indexOf("3")
+i = "1234512345".indexOf("3")
 i==2;
 
 @test indexof.2
@@ -73,7 +73,7 @@ i = ("123451122334455").indexOf("33")
 i==9;
 
 @test indexof.4
-i = ("123451122334455").indexOf("3",5)
+i = "123451122334455".indexOf("3",5)
 i==9;
 
 @test indexof.5
@@ -161,3 +161,19 @@ s=="abcd" && typeof(s)=="string";
 @test touppercase.1
 s = ("AbCd").toUpperCase();
 s=="ABCD" && typeof(s)=="string";
+
+@test concat.1 
+s = "con".concat("c","a","t");
+s==="concat"
+
+@test concat.2 
+s = "cons".concat(true,"d");
+s==="construed"
+
+@test concat.3 
+f = String.prototype.concat;
+s=f.call(100,true,"d");
+s==="100trued"
+
+@test concat.4
+1 === String.prototype.concat.length;
