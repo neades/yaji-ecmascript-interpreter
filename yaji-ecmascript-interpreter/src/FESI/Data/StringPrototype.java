@@ -66,7 +66,25 @@ class StringPrototype extends ESObject {
         if (hash == StandardProperty.LENGTHhash && propertyName.equals(StandardProperty.LENGTHstring)) {
             return ESNumber.valueOf(value.getStringLength());
         }
-        return super.getPropertyIfAvailable(propertyName, hash);
+        ESValue definedProperty = super.getPropertyIfAvailable(propertyName, hash);
+        if (definedProperty == null) {
+            if (isAllDigits(propertyName)) {
+                int index = Integer.parseInt(propertyName);
+                if (index < value.getStringLength()) {
+                    return ESString.valueOf(value.toString().substring(index, index+1));
+                }
+            }
+        }
+        return definedProperty;
+    }
+
+    private boolean isAllDigits(String propertyName) {
+        char[] charArray = propertyName.toCharArray();
+        boolean allDigits = true;
+        for (char c : charArray) {
+            allDigits &= Character.isDigit(c);
+        }
+        return allDigits;
     }
 
     public String[] getSpecialPropertyNames() {

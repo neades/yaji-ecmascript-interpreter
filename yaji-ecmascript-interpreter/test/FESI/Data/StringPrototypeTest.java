@@ -59,6 +59,21 @@ public class StringPrototypeTest {
         ESValue result = charAtFunction.callFunction(originalObject, new ESValue[] { ESNumber.valueOf(1) });
         assertEquals(new ESString("2"),result);
     }
+    
+    @Test
+    public void indexedAccessToString() throws Exception {
+        ESObject originalObject = new ESString("start").toESObject(evaluator);
+        assertEquals(new ESString("a"), originalObject.getProperty("2","2".hashCode()));
+    }
+    
+    @Test
+    public void accessToPropertyOnStringObject() throws Exception {
+        ESObject originalObject = new ESString("start").toESObject(evaluator);
+        originalObject.putProperty("z", new ESString("x"), "z".hashCode());
+        assertEquals(new ESString("x"), originalObject.getProperty("z","z".hashCode()));
+    }
+
+    
     private ESObject getStringPrototype() throws EcmaScriptException {
         ESObject stringObject = (ESObject) evaluator.getGlobalObject().getProperty("String","String".hashCode());
         ESObject stringPrototype = (ESObject) stringObject.getProperty(StandardProperty.PROTOTYPEstring,StandardProperty.PROTOTYPEhash);

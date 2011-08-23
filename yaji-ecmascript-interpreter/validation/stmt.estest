@@ -332,6 +332,12 @@ s1 = new String("abc");
 s2 = new String("def")
 testScope();
 
+@test scope.3a
+s1 = new String("abc");
+with(s1) {
+  return s1[1] === "b" && length === 3; 
+}
+
 @test scope.3
 s1 = new Date();
 s2 = new Date()
