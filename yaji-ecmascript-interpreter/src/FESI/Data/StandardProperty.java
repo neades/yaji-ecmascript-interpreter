@@ -8,5 +8,7 @@ public interface StandardProperty {
     static final int ARGUMENTShash = ARGUMENTSstring.hashCode();
     static final String CALLEEstring = "callee";
     static final int CALLEEhash = CALLEEstring.hashCode();
+    static final String PROTOTYPEstring = "prototype";
+    static final int PROTOTYPEhash = PROTOTYPEstring.hashCode();
 
 }
