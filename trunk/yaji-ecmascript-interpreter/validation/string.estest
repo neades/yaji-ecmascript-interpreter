@@ -195,3 +195,18 @@ try {
 } catch(e) {
   "TypeError" === e.name;
 }
+
+@test string.getownproperty.15.5.5.2
+"abc"[1] === "b";
+
+@test string.getownproperty.15.5.5.2.3
+"abc"[1.0] === "b";
+
+@test string.getownproperty.15.5.5.2.3a
+"abc"["1.0"] === undefined;
+
+@test string.getownproperty.15.5.5.2.7
+"abc"[4] === undefined;
+
+@test string.getownproperty.15.5.5.2.3
+"abc"[-4] === undefined;
