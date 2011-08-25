@@ -113,105 +113,121 @@ public interface EcmaScriptConstants {
   /** RegularExpression Id. */
   int IDENTIFIER = 79;
   /** RegularExpression Id. */
-  int LETTER = 80;
+  int IDENTIFIER_START = 80;
   /** RegularExpression Id. */
-  int DIGIT = 81;
+  int IDENTIFIER_PART = 81;
   /** RegularExpression Id. */
-  int LPAREN = 82;
+  int UNICODE_LETTER = 82;
   /** RegularExpression Id. */
-  int RPAREN = 83;
+  int UNICODE_ESCAPE_SEQUENCE = 83;
   /** RegularExpression Id. */
-  int LBRACE = 84;
+  int UNICODE_COMBINING_MARK = 84;
   /** RegularExpression Id. */
-  int RBRACE = 85;
+  int UNICODE_DIGIT = 85;
   /** RegularExpression Id. */
-  int LBRACKET = 86;
+  int UNICODE_CONNECTOR_PUNCTUATION = 86;
   /** RegularExpression Id. */
-  int RBRACKET = 87;
+  int ZWNJ = 87;
   /** RegularExpression Id. */
-  int SEMICOLON = 88;
+  int ZWJ = 88;
   /** RegularExpression Id. */
-  int COMMA = 89;
+  int HEX_DIGIT = 89;
   /** RegularExpression Id. */
-  int DOT = 90;
+  int LPAREN = 90;
   /** RegularExpression Id. */
-  int ASSIGN = 91;
+  int RPAREN = 91;
   /** RegularExpression Id. */
-  int GT = 92;
+  int LBRACE = 92;
   /** RegularExpression Id. */
-  int LT = 93;
+  int RBRACE = 93;
   /** RegularExpression Id. */
-  int BANG = 94;
+  int LBRACKET = 94;
   /** RegularExpression Id. */
-  int TILDE = 95;
+  int RBRACKET = 95;
   /** RegularExpression Id. */
-  int HOOK = 96;
+  int SEMICOLON = 96;
   /** RegularExpression Id. */
-  int COLON = 97;
+  int COMMA = 97;
   /** RegularExpression Id. */
-  int STRICT_EQ = 98;
+  int DOT = 98;
   /** RegularExpression Id. */
-  int STRICT_NEQ = 99;
+  int ASSIGN = 99;
   /** RegularExpression Id. */
-  int EQ = 100;
+  int GT = 100;
   /** RegularExpression Id. */
-  int LE = 101;
+  int LT = 101;
   /** RegularExpression Id. */
-  int GE = 102;
+  int BANG = 102;
   /** RegularExpression Id. */
-  int NE = 103;
+  int TILDE = 103;
   /** RegularExpression Id. */
-  int SC_OR = 104;
+  int HOOK = 104;
   /** RegularExpression Id. */
-  int SC_AND = 105;
+  int COLON = 105;
   /** RegularExpression Id. */
-  int INCR = 106;
+  int STRICT_EQ = 106;
   /** RegularExpression Id. */
-  int DECR = 107;
+  int STRICT_NEQ = 107;
   /** RegularExpression Id. */
-  int PLUS = 108;
+  int EQ = 108;
   /** RegularExpression Id. */
-  int MINUS = 109;
+  int LE = 109;
   /** RegularExpression Id. */
-  int STAR = 110;
+  int GE = 110;
   /** RegularExpression Id. */
-  int SLASH = 111;
+  int NE = 111;
   /** RegularExpression Id. */
-  int BIT_AND = 112;
+  int SC_OR = 112;
   /** RegularExpression Id. */
-  int BIT_OR = 113;
+  int SC_AND = 113;
   /** RegularExpression Id. */
-  int XOR = 114;
+  int INCR = 114;
   /** RegularExpression Id. */
-  int REM = 115;
+  int DECR = 115;
   /** RegularExpression Id. */
-  int LSHIFT = 116;
+  int PLUS = 116;
   /** RegularExpression Id. */
-  int RSIGNEDSHIFT = 117;
+  int MINUS = 117;
   /** RegularExpression Id. */
-  int RUNSIGNEDSHIFT = 118;
+  int STAR = 118;
   /** RegularExpression Id. */
-  int PLUSASSIGN = 119;
+  int SLASH = 119;
   /** RegularExpression Id. */
-  int MINUSASSIGN = 120;
+  int BIT_AND = 120;
   /** RegularExpression Id. */
-  int STARASSIGN = 121;
+  int BIT_OR = 121;
   /** RegularExpression Id. */
-  int SLASHASSIGN = 122;
+  int XOR = 122;
   /** RegularExpression Id. */
-  int ANDASSIGN = 123;
+  int REM = 123;
   /** RegularExpression Id. */
-  int ORASSIGN = 124;
+  int LSHIFT = 124;
   /** RegularExpression Id. */
-  int XORASSIGN = 125;
+  int RSIGNEDSHIFT = 125;
   /** RegularExpression Id. */
-  int REMASSIGN = 126;
+  int RUNSIGNEDSHIFT = 126;
   /** RegularExpression Id. */
-  int LSHIFTASSIGN = 127;
+  int PLUSASSIGN = 127;
   /** RegularExpression Id. */
-  int RSIGNEDSHIFTASSIGN = 128;
+  int MINUSASSIGN = 128;
   /** RegularExpression Id. */
-  int RUNSIGNEDSHIFTASSIGN = 129;
+  int STARASSIGN = 129;
+  /** RegularExpression Id. */
+  int SLASHASSIGN = 130;
+  /** RegularExpression Id. */
+  int ANDASSIGN = 131;
+  /** RegularExpression Id. */
+  int ORASSIGN = 132;
+  /** RegularExpression Id. */
+  int XORASSIGN = 133;
+  /** RegularExpression Id. */
+  int REMASSIGN = 134;
+  /** RegularExpression Id. */
+  int LSHIFTASSIGN = 135;
+  /** RegularExpression Id. */
+  int RSIGNEDSHIFTASSIGN = 136;
+  /** RegularExpression Id. */
+  int RUNSIGNEDSHIFTASSIGN = 137;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -302,8 +318,16 @@ public interface EcmaScriptConstants {
     "<DOUBLE_STRING_LITERAL_BODY>",
     "<UNTERMINATED_STRING_LITERAL>",
     "<IDENTIFIER>",
-    "<LETTER>",
-    "<DIGIT>",
+    "<IDENTIFIER_START>",
+    "<IDENTIFIER_PART>",
+    "<UNICODE_LETTER>",
+    "<UNICODE_ESCAPE_SEQUENCE>",
+    "<UNICODE_COMBINING_MARK>",
+    "<UNICODE_DIGIT>",
+    "<UNICODE_CONNECTOR_PUNCTUATION>",
+    "\"\\u200d\"",
+    "\"\\u200c\"",
+    "<HEX_DIGIT>",
     "\"(\"",
     "\")\"",
     "\"{\"",

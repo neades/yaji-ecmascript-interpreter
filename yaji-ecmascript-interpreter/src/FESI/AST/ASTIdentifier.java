@@ -4,6 +4,7 @@ package FESI.AST;
 
 import FESI.Data.ESString;
 import FESI.Parser.EcmaScript;
+import FESI.Parser.ParseException;
 
 public class ASTIdentifier extends SimpleNode {
     private static final long serialVersionUID = 2673088409445831343L;
@@ -33,12 +34,46 @@ public class ASTIdentifier extends SimpleNode {
     }
 
     // JMCL
-    public void setName(String identifierName) {
-        this.identifierName = ESString.valueOf(identifierName.intern()); // to
-                                                                         // lower
-                                                                         // number
-                                                                         // of
-                                                                         // strings
+    public void setName(String identifierName) throws ParseException {
+        int len = identifierName.length();
+        StringBuilder sb = new StringBuilder(len);
+
+        // Unicode escape processing
+        boolean identifierStart = true;
+        parent: 
+            for (int i = 0; i < len; i++) {
+            char c = identifierName.charAt(i);
+            if (c == '\\') {
+                if (identifierName.charAt(++i) == 'u' && (i + 4) < len) {
+                    c = 0;
+                    for (int j = 1; j < 5; j++) {
+                        char c1 = identifierName.charAt(i + j);
+                        if (isHex(c1)) {
+                            c = (char) ((c << 4) | hexval(c1));
+                        } else {
+                            sb.append('u');
+                            continue parent;
+                        }
+                    }
+                    i += 4;
+                }
+            }
+            
+            if (identifierStart) {
+                identifierStart = false;
+                if (!Character.isUnicodeIdentifierStart(c)) {
+                    throw new ParseException("Invalid identifier starting character");
+                }
+            } else {
+                if (!Character.isUnicodeIdentifierPart(c)) {
+                    throw new ParseException("Invalid identifier character");
+                }
+            }
+            sb.append(c);
+        }
+
+        identifierName = sb.toString();
+        this.identifierName = new ESString(identifierName);
         this.hash = identifierName.hashCode();
     }
 
