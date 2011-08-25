@@ -210,3 +210,14 @@ try {
 
 @test string.getownproperty.15.5.5.2.3
 "abc"[-4] === undefined;
+
+@test unicode.1
+'\u00A3\u0040\u20AC' == '£@€'
+
+@test unicode.2
+var abc\u0064 = 'abcd'
+abcd == 'abcd' && abcd === \u0061\u0062\u0063\u0064
+
+@test unicode.3
+\u0061\u0062\u0063\u0064 = '\u0061\u0062\u0063\u0064'
+abcd == \u0061\u0062\u0063\u0064 && \u0061\u0062\u0063\u0064 == '\u0061\u0062\u0063\u0064'
