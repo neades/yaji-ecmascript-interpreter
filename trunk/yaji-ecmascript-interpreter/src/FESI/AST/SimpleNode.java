@@ -157,4 +157,80 @@ public abstract class SimpleNode implements Node, EcmaScriptConstants {
             throw new ProgrammingError("AST Should have at least 1 child");
         }
     }
+    
+    protected static final int hexval(char c) throws ProgrammingError {
+        switch (c) {
+        case '0':
+            return 0;
+        case '1':
+            return 1;
+        case '2':
+            return 2;
+        case '3':
+            return 3;
+        case '4':
+            return 4;
+        case '5':
+            return 5;
+        case '6':
+            return 6;
+        case '7':
+            return 7;
+        case '8':
+            return 8;
+        case '9':
+            return 9;
+        case 'a':
+        case 'A':
+            return 10;
+        case 'b':
+        case 'B':
+            return 11;
+        case 'c':
+        case 'C':
+            return 12;
+        case 'd':
+        case 'D':
+            return 13;
+        case 'e':
+        case 'E':
+            return 14;
+        case 'f':
+        case 'F':
+            return 15;
+        }
+
+        throw new ProgrammingError("Illegal hex or unicode constant"); 
+    }
+
+    protected static final int octval(char c) throws ProgrammingError {
+        switch (c) {
+        case '0':
+            return 0;
+        case '1':
+            return 1;
+        case '2':
+            return 2;
+        case '3':
+            return 3;
+        case '4':
+            return 4;
+        case '5':
+            return 5;
+        case '6':
+            return 6;
+        case '7':
+            return 7;
+        }
+
+        throw new ProgrammingError("Illegal octal constant"); 
+    }
+    
+    protected static final boolean isHex(char c1) {
+        return (c1 >= '0' && c1 <= '9') || (c1 >= 'a' && c1 <= 'f') || (c1 >= 'A' && c1 <= 'F');
+    }
+
+    protected static final boolean isOctal(char c1) {
+        return (c1 >= '0') && (c1 <= '7');
+    }
 }

@@ -8,7 +8,6 @@ import FESI.Data.ESNull;
 import FESI.Data.ESNumber;
 import FESI.Data.ESString;
 import FESI.Data.ESValue;
-import FESI.Exceptions.ProgrammingError;
 import FESI.Parser.EcmaScript;
 
 public class ASTLiteral extends SimpleNode {
@@ -42,79 +41,6 @@ public class ASTLiteral extends SimpleNode {
     // JMCL
     public ESValue getValue() {
         return theValue;
-    }
-
-    static final int hexval(char c) throws ProgrammingError {
-        switch (c) {
-        case '0':
-            return 0;
-        case '1':
-            return 1;
-        case '2':
-            return 2;
-        case '3':
-            return 3;
-        case '4':
-            return 4;
-        case '5':
-            return 5;
-        case '6':
-            return 6;
-        case '7':
-            return 7;
-        case '8':
-            return 8;
-        case '9':
-            return 9;
-
-        case 'a':
-        case 'A':
-            return 10;
-        case 'b':
-        case 'B':
-            return 11;
-        case 'c':
-        case 'C':
-            return 12;
-        case 'd':
-        case 'D':
-            return 13;
-        case 'e':
-        case 'E':
-            return 14;
-        case 'f':
-        case 'F':
-            return 15;
-        }
-
-        throw new ProgrammingError("Illegal hex or unicode constant"); // Should
-                                                                       // never
-                                                                       // come
-                                                                       // here
-    }
-
-    static final int octval(char c) throws ProgrammingError {
-        switch (c) {
-        case '0':
-            return 0;
-        case '1':
-            return 1;
-        case '2':
-            return 2;
-        case '3':
-            return 3;
-        case '4':
-            return 4;
-        case '5':
-            return 5;
-        case '6':
-            return 6;
-        case '7':
-            return 7;
-        }
-
-        throw new ProgrammingError("Illegal octal constant"); // Should never
-                                                              // come here
     }
 
     public void setStringValue(String image) {
@@ -189,14 +115,6 @@ public class ASTLiteral extends SimpleNode {
             sb.append(c);
         }
         theValue = new ESString(sb.toString());
-    }
-
-    private boolean isHex(char c1) {
-        return (c1 >= '0' && c1 <= '9') || (c1 >= 'a' && c1 <= 'f') || (c1 >= 'A' && c1 <= 'F');
-    }
-
-    private boolean isOctal(char c1) {
-        return (c1 >= '0') && (c1 <= '7');
     }
 
     public void setDecimalValue(String image) {
