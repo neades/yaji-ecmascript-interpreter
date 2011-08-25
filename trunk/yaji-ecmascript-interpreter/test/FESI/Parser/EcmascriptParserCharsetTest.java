@@ -39,4 +39,47 @@ public class EcmascriptParserCharsetTest {
         assertEquals("Parsing "+source,expected,result);
     }
 
+    @Test
+    public void shouldParseUTF8ZWNJ() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        String source = "var abcd" + '\u200C' + "1234 = true;";
+
+        InputStreamReader reader = new InputStreamReader(
+                new ByteArrayInputStream(source.getBytes()), "UTF-8");
+        EcmaScript es = new EcmaScript(reader);
+        EcmaScriptDumpVisitor dumper = new EcmaScriptDumpVisitor(
+                new PrintStream(baos));
+        dumper.visit(es.Program(), null);
+
+        String result = new String(baos.toByteArray());
+        String expected = "Program" + eol 
+                + " Statement" + eol
+                + "  VariableDeclaration" + eol 
+                + "   <abcd‌1234>" + eol
+                + "   [true]" + eol;
+
+        assertEquals("Parsing " + source, expected, result);
+    }
+    
+    @Test
+    public void shouldParseUTF8ZWJ() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        String source = "var abcd" + '\u200D' + "1234 = true;";
+
+        InputStreamReader reader = new InputStreamReader(
+                new ByteArrayInputStream(source.getBytes()), "UTF-8");
+        EcmaScript es = new EcmaScript(reader);
+        EcmaScriptDumpVisitor dumper = new EcmaScriptDumpVisitor(
+                new PrintStream(baos));
+        dumper.visit(es.Program(), null);
+
+        String result = new String(baos.toByteArray());
+        String expected = "Program" + eol
+            + " Statement" + eol
+            + "  VariableDeclaration" + eol
+            + "   <abcd‍1234>" + eol
+            + "   [true]" + eol;
+
+        assertEquals("Parsing " + source, expected, result);
+    }
 }
