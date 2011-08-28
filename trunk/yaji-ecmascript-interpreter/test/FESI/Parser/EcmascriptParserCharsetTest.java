@@ -45,13 +45,13 @@ public class EcmascriptParserCharsetTest {
         String source = "var abcd" + '\u200C' + "1234 = true;";
 
         InputStreamReader reader = new InputStreamReader(
-                new ByteArrayInputStream(source.getBytes()), "UTF-8");
+                new ByteArrayInputStream(source.getBytes("UTF-8")), "UTF-8");
         EcmaScript es = new EcmaScript(reader);
         EcmaScriptDumpVisitor dumper = new EcmaScriptDumpVisitor(
-                new PrintStream(baos));
+                new PrintStream(baos,true,"UTF-8"));
         dumper.visit(es.Program(), null);
 
-        String result = new String(baos.toByteArray());
+        String result = new String(baos.toByteArray(),"UTF-8");
         String expected = "Program" + eol 
                 + " Statement" + eol
                 + "  VariableDeclaration" + eol 
@@ -67,13 +67,13 @@ public class EcmascriptParserCharsetTest {
         String source = "var abcd" + '\u200D' + "1234 = true;";
 
         InputStreamReader reader = new InputStreamReader(
-                new ByteArrayInputStream(source.getBytes()), "UTF-8");
+                new ByteArrayInputStream(source.getBytes("UTF-8")), "UTF-8");
         EcmaScript es = new EcmaScript(reader);
         EcmaScriptDumpVisitor dumper = new EcmaScriptDumpVisitor(
-                new PrintStream(baos));
+                new PrintStream(baos,true,"UTF-8"));
         dumper.visit(es.Program(), null);
 
-        String result = new String(baos.toByteArray());
+        String result = new String(baos.toByteArray(),"UTF-8");
         String expected = "Program" + eol
             + " Statement" + eol
             + "  VariableDeclaration" + eol
