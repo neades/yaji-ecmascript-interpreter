@@ -1,0 +1,133 @@
+writeln ("// " + document.URL);
+writeln ("// " + Date());
+writeln ("// Test the Java Access extension - FESI specific");
+writeln();
+
+@test parse.rfc4627.example.1
+var s = JSON.parse('{\
+      "Image": {\
+          "Width":  800,\
+          "Height": 600,\
+          "Title":  "View from 15th Floor",\
+          "Thumbnail": {\
+              "Url":    "http://www.example.com/image/481989943",\
+              "Height": 125,\
+              "Width":  "100"\
+          },\
+          "IDs": [116, 943, 234, 38793]\
+        }\
+   }');
+s.Image.Width === 800 &&
+       s.Image.Height === 600 &&
+       s.Image.Title === "View from 15th Floor" &&
+       s.Image.Thumbnail.Url === "http://www.example.com/image/481989943" &&
+       s.Image.Thumbnail.Height === 125 &&
+       s.Image.Thumbnail.Width === "100" &&
+       s.Image.IDs[0] === 116 &&
+       s.Image.IDs.length === 4;
+       
+@test parse.rfc4627.example.2.stringify
+var s = JSON.stringify({
+      "Image": {
+          "Width":  800,
+          "Height": 600,
+          "Title":  "View from 15th Floor",
+          "Thumbnail": {
+              "Url":    "http://www.example.com/image/481989943",
+              "Height": 125,
+              "Width":  "100"
+          },
+          "IDs": [116, 943, 234, 38793]
+        }
+   }, undefined, 4);
+s === '{\n\
+    "Image": {\n\
+        "Height": 600,\n\
+        "IDs": [\n\
+            116,\n\
+            943,\n\
+            234,\n\
+            38793\n\
+        ],\n\
+        "Thumbnail": {\n\
+            "Height": 125,\n\
+            "Url": "http:\\/\\/www.example.com\\/image\\/481989943",\n\
+            "Width": "100"\n\
+        },\n\
+        "Title": "View from 15th Floor",\n\
+        "Width": 800\n\
+    }\n\
+}';
+
+@test replacer.1
+function censor(key, value) {
+  if (typeof(value) == "string") {
+    return undefined;
+  }
+  return value;
+}
+	 
+var foo = {foundation: "Mozilla", model: "box", week: 45, transport: "car", month: 7};
+var jsonString = JSON.stringify(foo, censor);
+jsonString === '{"month":7,"week":45}';
+
+@test ms.stringify.example.1
+var contact = new Object();
+contact.firstname = "Jesper";
+contact.surname = "Aaberg";
+contact.phone = ["555-0100", "555-0120"];
+
+var memberfilter = new Array();
+memberfilter[0] = "surname";
+memberfilter[1] = "phone";
+var jsonText = JSON.stringify(contact, memberfilter, "\t");
+jsonText ===
+'{\n\
+	"surname": "Aaberg",\n\
+	"phone": [\n\
+		"555-0100",\n\
+		"555-0120"\n\
+	]\n\
+}';
+
+@test ms.stringify.example.2
+
+function replaceToUpper(key, value) {
+    return value.toString().toUpperCase();
+}
+
+var continents = new Array();
+continents[0] = "Europe";
+continents[1] = "Asia";
+continents[2] = "Australia";
+continents[3] = "Antarctica";
+continents[4] = "North America";
+continents[5] = "South America";
+continents[6] = "Africa";
+
+var jsonText = JSON.stringify(continents, replaceToUpper);
+jsonText === '"EUROPE,ASIA,AUSTRALIA,ANTARCTICA,NORTH AMERICA,SOUTH AMERICA,AFRICA"';
+
+@test ms.stringify.example.3
+var contact = new Object();
+contact.firstname = "Jesper";
+contact.surname = "Aaberg";
+contact.phone = ["555-0100", "555-0120"];
+
+contact.toJSON = function(key)
+ {
+    var replacement = new Object();
+    for (var val in this)
+    {
+        if (typeof (this[val]) === 'string')
+            replacement[val] = this[val].toUpperCase();
+        else
+            replacement[val] = this[val]
+    }
+    return replacement;
+};
+
+var jsonText = JSON.stringify(contact);
+writeln(jsonText);
+jsonText === '{"firstname":"JESPER","phone":["555-0100","555-0120"],"surname":"AABERG"}';
+

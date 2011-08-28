@@ -1,0 +1,159 @@
+/**
+ * Copyright (C) 2011 Neil Eades - all rights reserved.
+ *
+ * This file contains an JSON grammar for RFC4627 
+ */
+
+options {
+  STATIC = false;
+  DEBUG_PARSER = false;
+  DEBUG_TOKEN_MANAGER = false;
+  JAVA_UNICODE_ESCAPE = false; 
+}
+
+PARSER_BEGIN(Json)
+
+package org.yaji.json;
+
+import FESI.Data.ESValue;
+import FESI.Data.ESBoolean;
+import FESI.Data.ESNull;
+import FESI.Data.ESString;
+import FESI.Data.ESNumber;
+import FESI.Data.ESObject;
+import FESI.Data.ObjectObject;
+import FESI.Data.ArrayObject;
+import FESI.Data.ArrayPrototype;
+import FESI.Exceptions.EcmaScriptException;
+import FESI.Interpreter.Evaluator;
+
+@SuppressWarnings("all")
+public class Json {
+
+	private String unescape(String s) {
+	  return s.substring(1,s.length()-1);
+	}
+	
+	private Evaluator evaluator;
+	
+	public void setEvaluator(Evaluator evaluator) {
+	  this.evaluator = evaluator;
+	}
+}
+PARSER_END(Json)
+
+
+/* WHITE SPACE - 2*/
+
+SKIP :
+{
+  " "      /* SPACE */
+| "\t"     /* TAB */
+| "\r"     /* CR */
+| "\n"     /* LF */
+}
+
+TOKEN : {
+  < BEGIN_ARRAY : "[" >
+|
+  < BEGIN_OBJECT : "{" >
+|
+  < END_ARRAY : "]" >
+|
+  < END_OBJECT : "}" >
+|
+  < NAME_SEPARATOR : ":" >
+|
+  < VALUE_SEPARATOR : "," >
+}
+
+TOKEN :
+{
+  < FLOATING_POINT_LITERAL:("-")? (["0"-"9"])+ ("." (["0"-"9"])* )? (<EXPONENT>)? >
+|
+  < #EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+ >
+|
+  < STRING_LITERAL: /* 2.5 */
+        "\""
+        (
+          "\\" [ "\"", "\\", "/", "b", "f", "n", "r", "t" ]
+        | "\\u" <HEX> <HEX> <HEX> <HEX>
+        | (~["\"","\u0000" - "\u001f", "\\"])
+        )*
+        "\""
+  >
+| 
+  < #HEX : [ "0"-"9", "a"-"f", "A"-"F" ] >
+}
+
+ESValue Parse() :
+{
+	ESValue v;
+}
+{
+	v = Value() <EOF>
+	{ return v; }
+}
+
+ESValue Value() :
+{
+	ESValue v;
+	Token t;
+}
+{
+	( 
+		"false" { v = ESBoolean.valueOf(false); } 
+	|
+		"null"  { v = ESNull.theNull; }
+	|   
+	    "true"  { v = ESBoolean.valueOf(true); }
+	|   
+	    v=Object() 
+	|
+	    v=Array()
+	|
+		t=<FLOATING_POINT_LITERAL> { v = ESNumber.valueOf(t.image); }  
+    | 
+		t=<STRING_LITERAL> { v = new ESString(unescape(t.image)); }
+    )
+    { return v; }
+}
+
+ESObject Object() :
+{
+}
+{
+	{ ESObject map = ObjectObject.createObject(evaluator); }
+	<BEGIN_OBJECT>
+	  [ Member(map) ( <VALUE_SEPARATOR> Member(map) )* ] 
+	<END_OBJECT>
+	{ return map; }
+}
+
+ArrayPrototype Array() : 
+{
+	ESValue v;
+}
+{
+    { ArrayPrototype array = ArrayObject.createArray(evaluator); }
+	<BEGIN_ARRAY>
+	  [ v=Value() { array.add(v); } ( <VALUE_SEPARATOR> v=Value()  { array.add(v); } )* ]
+	<END_ARRAY>
+	{ return array; }
+}
+
+void Member(ESObject map) :
+{
+    Token t;
+    ESValue v;
+}
+{
+	t=<STRING_LITERAL> <NAME_SEPARATOR> v=Value() { String propertyName = unescape(t.image); 
+													try {	
+	                                                  map.putProperty(propertyName,v,propertyName.hashCode());
+	                                                } catch( EcmaScriptException e ) {
+	                                                  throw new ParseException(e.getMessage());
+	                                                }
+	                                              }
+}
+

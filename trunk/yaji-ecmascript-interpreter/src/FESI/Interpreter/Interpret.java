@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
 
+import org.yaji.debugger.Debugger;
+
 import FESI.Data.ArrayPrototype;
 import FESI.Data.ESLoader;
 import FESI.Data.ESObject;
@@ -426,6 +428,17 @@ public class Interpret implements InterpreterCommands {
                         continue OUTONE;
                     } else if (c == 'A') {
                         break OUTONE; // After -A reserved for called program
+                    } else if (c == '-') {
+                        // long options
+                        String[] longArg = arg.substring(2).split("=");
+                        if ("debug".equals(longArg[0])) {
+                            int port = 8888;
+                            if (longArg.length > 1) {
+                                port = Integer.parseInt(longArg[1]);
+                            }
+                            Debugger debugger = new Debugger(port);
+                            evaluator.setDebugger(debugger);
+                        }
                     }
                 } // for
             } // if
@@ -626,7 +639,8 @@ public class Interpret implements InterpreterCommands {
                             esArgs[k] = args[i];
                         }
                         break OUTTWO;
-
+                    } else if (c == '-') {
+                        continue OUTTWO;
                     } else {
                         if (!windowOnly)
                             usage();
@@ -732,6 +746,8 @@ public class Interpret implements InterpreterCommands {
 
                     } else if (c == 'A') {
                         break OUTTHREE;
+                    } else if (c == '-') {
+                        continue OUTTHREE;
                     }
 
                 } // for

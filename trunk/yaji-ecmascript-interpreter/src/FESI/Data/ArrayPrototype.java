@@ -17,12 +17,15 @@
 
 package FESI.Data;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Vector;
+
+import org.yaji.json.JsonState;
 
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
@@ -59,6 +62,10 @@ public class ArrayPrototype extends ESObject {
     @Override
     public String getESClassName() {
         return "Array";
+    }
+    
+    public void add(ESValue v) {
+        theArray.add(v);
     }
 
     /**
@@ -1196,5 +1203,35 @@ public class ArrayPrototype extends ESObject {
             ESValue compValue = compareFn.callFunction(thisObject, arguments);
             return compValue.toInt32();
         }
+    }
+    
+    @Override
+    public void toJson(Appendable appendable, JsonState state, String parentPropertyName) throws IOException, EcmaScriptException {
+        state.pushCyclicCheck(this);
+        state.indent.push();
+        appendable.append('[');
+        String separator = state.indent.start();
+        int i = 0;
+        for (ESValue value : theArray) {
+            appendable.append(separator);
+            value = state.callReplacerFunction(this, ESString.valueOf(i), value );
+            if (!value.canJson()) {
+                value = ESNull.theNull;
+            }
+            value.toJson(appendable, state, "");
+            separator = state.indent.separator();
+            i++;
+        }
+        if (i>0) {
+            appendable.append(state.indent.end());
+        }
+        appendable.append(']');
+        state.indent.pop();
+        state.popCyclicCheck();
+    }
+    
+    @Override
+    public boolean canJson() {
+        return true;
     }
 }

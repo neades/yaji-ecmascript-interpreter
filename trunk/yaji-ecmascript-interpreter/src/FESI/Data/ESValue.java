@@ -18,7 +18,10 @@
 
 package FESI.Data;
 
+import java.io.IOException;
 import java.util.Enumeration;
+
+import org.yaji.json.JsonState;
 
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.TypeError;
@@ -453,5 +456,13 @@ public abstract class ESValue implements java.io.Serializable {
     
     public static boolean hasGetAccessorDescriptor(ESValue desc) {
         return desc != null && desc.get != null && desc.get != ESUndefined.theUndefined;
+    }
+    
+    public void toJson(Appendable appendable, JsonState state, String parentPropertyName) throws IOException, EcmaScriptException {
+        appendable.append(toString());
+    }
+
+    public boolean canJson() {
+        return false;
     }
 }

@@ -601,6 +601,7 @@ public class GlobalObject extends ObjectPrototype {
                     evaluator, objectPrototype, functionPrototype));
             go.putHiddenProperty("Math", MathObject.makeMathObject(evaluator,
                     objectPrototype, functionPrototype));
+            go.putHiddenProperty("JSON", JsonObject.makeJsonObject(evaluator, objectPrototype, functionPrototype));
         } catch (EcmaScriptException e) {
             e.printStackTrace();
             throw new ProgrammingError(e.getMessage());

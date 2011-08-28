@@ -17,6 +17,11 @@
 
 package FESI.Data;
 
+import java.io.IOException;
+
+import org.yaji.json.JsonState;
+
+import FESI.Exceptions.EcmaScriptException;
 import FESI.Interpreter.Evaluator;
 
 /**
@@ -41,4 +46,35 @@ public class ObjectPrototype extends ESObject {
     public ObjectPrototype(ESObject prototype, Evaluator evaluator) {
         super(prototype, evaluator);
     }
+    
+    @Override
+    public boolean canJson() {
+        return true;
+    }
+
+    @Override
+    public void toJson(Appendable appendable, JsonState state, String parentPropertyName) throws IOException, EcmaScriptException {
+        state.pushCyclicCheck(this);
+        ESValue toJsonFunction = getPropertyIfAvailable(StandardProperty.TOJSONstring, StandardProperty.TOJSONhash);
+        if (toJsonFunction != null && toJsonFunction instanceof FunctionPrototype) {
+            ESValue value = toJsonFunction.callFunction(this, new ESValue[] { ESString.valueOf(parentPropertyName) });
+            if (value instanceof ObjectPrototype) {
+                ((ObjectPrototype)value).toJsonString(appendable, state);
+            } else {
+                value.toJson(appendable, state, parentPropertyName);
+            }
+        } else {
+            toJsonString(appendable, state);
+        }
+        state.popCyclicCheck();
+    }
+
+    private void toJsonString(Appendable appendable, JsonState state) throws IOException, EcmaScriptException {
+        appendable.append('{');
+        if (!hasNoPropertyMap()) {
+            getPropertyMap().toJson(appendable, state, this);
+        }
+        appendable.append('}');
+    }
+
 }

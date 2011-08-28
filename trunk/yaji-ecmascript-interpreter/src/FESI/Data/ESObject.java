@@ -49,12 +49,6 @@ public abstract class ESObject extends ESValue {
      */
     ESObject prototype = null;
 
-    // Prepare common names and their hash value
-    protected static final String TOSTRINGstring = ("toString").intern();
-    protected static final int TOSTRINGhash = TOSTRINGstring.hashCode();
-    protected static final String VALUEOFstring = ("valueOf").intern();
-    protected static final int VALUEOFhash = VALUEOFstring.hashCode();
-
     private final int initialSize;
 
     // Callback used to log profiling data
@@ -606,14 +600,14 @@ public abstract class ESObject extends ESValue {
         ESValue theFunction = null;
 
         if (hint == ESValue.EStypeString) {
-            theFunction = this.getProperty(TOSTRINGstring, TOSTRINGhash);
+            theFunction = this.getProperty(StandardProperty.TOSTRINGstring, StandardProperty.TOSTRINGhash);
             if (theFunction instanceof ESObject) {
                 theResult = theFunction.callFunction(this, new ESValue[0]);
                 if (theResult.isPrimitive()) {
                     return theResult;
                 }
             }
-            theFunction = this.getProperty(VALUEOFstring, VALUEOFhash);
+            theFunction = this.getProperty(StandardProperty.VALUEOFstring, StandardProperty.VALUEOFhash);
             if (theFunction instanceof ESObject) {
                 theResult = theFunction.callFunction(this, new ESValue[0]);
                 if (theResult.isPrimitive()) {
@@ -625,14 +619,14 @@ public abstract class ESObject extends ESValue {
             throw new EcmaScriptException("No default value for "
                     + super.toString() + " and hint " + hint);
         } else if (hint == ESValue.EStypeNumber) {
-            theFunction = this.getProperty(VALUEOFstring, VALUEOFhash);
+            theFunction = this.getProperty(StandardProperty.VALUEOFstring, StandardProperty.VALUEOFhash);
             if (theFunction instanceof ESObject) {
                 theResult = theFunction.callFunction(this, new ESValue[0]);
                 if (theResult.isPrimitive()) {
                     return theResult;
                 }
             }
-            theFunction = this.getProperty(TOSTRINGstring, TOSTRINGhash);
+            theFunction = this.getProperty(StandardProperty.TOSTRINGstring, StandardProperty.TOSTRINGhash);
             if (theFunction instanceof ESObject) {
                 theResult = theFunction.callFunction(this, new ESValue[0]);
                 if (theResult.isPrimitive()) {
@@ -1131,5 +1125,12 @@ public abstract class ESObject extends ESValue {
 
     public boolean hasInstance(ESValue v1) throws EcmaScriptException {
         throw new TypeError("hasInstance not implemented");
+    }
+    public void putProperty(String propertyName, ESValue value) throws EcmaScriptException {
+        putProperty(propertyName, value, propertyName.hashCode());
+    }
+
+    ESValue getProperty(String propertyName) throws EcmaScriptException {
+        return getProperty(propertyName,propertyName.hashCode());
     }
 }

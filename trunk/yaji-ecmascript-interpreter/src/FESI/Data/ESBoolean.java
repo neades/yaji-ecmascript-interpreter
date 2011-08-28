@@ -197,4 +197,9 @@ public final class ESBoolean extends ESPrimitive {
         boolean b2 = v2.booleanValue();
         return b1 == b2;
     }
+    
+    @Override
+    public boolean canJson() {
+        return true;
+    }
 }
