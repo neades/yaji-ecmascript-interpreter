@@ -43,6 +43,10 @@ public class ArrayObject extends BuiltinFunctionObject {
         super(prototype, evaluator, "Array", 1);
     }
 
+    public static ArrayPrototype createArray(Evaluator evaluator) {
+        ESObject ap = evaluator.getArrayPrototype();
+        return new ArrayPrototype(ap, evaluator);
+    }
     // overrides
     public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {

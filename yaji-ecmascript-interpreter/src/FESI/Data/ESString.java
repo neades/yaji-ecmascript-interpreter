@@ -17,9 +17,13 @@
 
 package FESI.Data;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.yaji.json.JsonState;
+import org.yaji.json.JsonUtil;
 
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Interpreter.Evaluator;
@@ -236,4 +240,25 @@ public final class ESString extends ESPrimitive {
         }
         return result;
     }
+    
+    @Override
+    public void toJson(Appendable appendable, JsonState state, String parentPropertyName) throws IOException {
+        appendable.append('"');
+        JsonUtil.escape(appendable,toString());
+        appendable.append('"');
+    }
+
+    @Override
+    public boolean canJson() {
+        return true;
+    }
+
+    public static ESValue valueOf(int i) {
+        String str = Integer.toString(i);
+        if (i < 256) {
+            return valueOf(str);
+        }
+        return new ESString(str);
+    }
+
 }

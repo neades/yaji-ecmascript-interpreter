@@ -16,6 +16,7 @@
 	<!-- Source content directory structure -->
 	<property name="src" location="src" />
 	<property name="src.parser" location="${src}/FESI/Parser" />
+	<property name="src.json" location="${src}/org/yaji/json" />
 	<property name="src.AST" location="${src}/FESI/AST" />
 	<property name="src.Interpreter" location="${src}/FESI/Interpreter" />
 	<property name="doc.html" location="./doc/html" />
@@ -125,6 +126,13 @@
 		</java>
 	</target>
 
+	<target name="json" depends="init" description="compile the JSON grammar ">
+		<java classname="javacc" fork="yes" dir="${src.json}" failonerror="true">
+			<arg file="${src.json}/Json.jj" />
+			<classpath refid="javacc.class.path" />
+		</java>
+	</target>
+
 
 	<!-- Compile the java code from ${src} into ${classes} -->
 	<target name="compile" depends="init" description="compile the source ">
@@ -134,7 +142,7 @@
 	</target>
 
 	<target name="compile-tests" depends="init" description="compile the test source ">
-		<javac srcdir="test" destdir="${test-classes}" debug="true">
+		<javac srcdir="test" destdir="${test-classes}" debug="true" encoding="UTF-8">
 			<classpath refid="project.test.class.path" />
 		</javac>
 	</target>
@@ -198,7 +206,7 @@
 </junit>
 </target>
 
-<target name="basic-validation" description="run the test suite" depends="basic,global,expr,objfunc,names,array,boolnmb,string,date,math,fileio,ja,regexp,BSFTest,error" />
+<target name="basic-validation" description="run the test suite" depends="basic,global,expr,objfunc,names,array,boolnmb,string,date,math,fileio,ja,regexp,BSFTest,error,json.estest" />
 
 <target name="basic">
 <java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
@@ -301,15 +309,24 @@
 	<classpath refid="project.execute.class.path" />
 </java>
 </target>
-<target name="regexp">
-<java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
-	<arg value="-T" />
-	<arg file="validation/regexp.estest" />
-	<classpath>
-		<path refid="project.execute.class.path" />
-	</classpath>
-</java>
-</target>
+	<target name="regexp">
+	<java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
+		<arg value="-T" />
+		<arg file="validation/regexp.estest" />
+		<classpath>
+			<path refid="project.execute.class.path" />
+		</classpath>
+	</java>
+	</target>
+	<target name="json.estest">
+	<java classname="FESI.Interpreter.Interpret" fork="true" failonerror="true">
+		<arg value="-T" />
+		<arg file="validation/json.estest" />
+		<classpath>
+			<path refid="project.execute.class.path" />
+		</classpath>
+	</java>
+	</target>
 <target name="BSFTest">
 <java classname="FESI.Tests.BSFTest" fork="true" failonerror="true">
 	<classpath>

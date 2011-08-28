@@ -112,4 +112,9 @@ public final class ESNull extends ESPrimitive {
     public boolean equalsSameType(ESValue v2) {
         return true;
     }
+    
+    @Override
+    public boolean canJson() {
+        return true;
+    }
 }

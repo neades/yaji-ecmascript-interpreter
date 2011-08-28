@@ -30,8 +30,19 @@
 
 package FESI.Interpreter;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.List;
 
+import org.yaji.json.JsonState;
+import org.yaji.json.JsonUtil;
+
+import FESI.Data.ESObject;
+import FESI.Data.ESString;
 import FESI.Data.ESValue;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.TypeError;
@@ -548,6 +559,71 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         }
         return frozen;
     }
+
+    public void toJson(Appendable appendable, JsonState state, ESObject thisObject) throws IOException, EcmaScriptException {
+        
+        List<HashtableEntry> sortedList;
+        if (state.allowedSize() > 0) {
+            sortedList = orderPropertiesByAllowed(state);
+        } else {
+            sortedList = getOrderedEntries();
+        }
+        state.indent.push();
+        String sep = state.indent.start();
+        boolean valueGenerated = false;
+        for (HashtableEntry hashtableEntry : sortedList) {
+            if (hashtableEntry == null) {
+                continue;
+            }
+            ESValue value = hashtableEntry.value;
+            value = state.callReplacerFunction(thisObject, ESString.valueOf(hashtableEntry.key), value );
+            if (value.canJson()) {
+                appendable.append(sep); sep=state.indent.separator();
+                appendable.append('"');
+                JsonUtil.escape(appendable, hashtableEntry.key);
+                appendable.append("\":").append(state.indent.preValue());
+                value.toJson(appendable, state, hashtableEntry.key);
+                valueGenerated = true;
+            }
+        }
+        if (valueGenerated) {
+            appendable.append(state.indent.end());
+        }
+        state.indent.pop();
+    }
+
+    private List<HashtableEntry> orderPropertiesByAllowed(JsonState state) {
+        List<HashtableEntry> sortedList;
+        HashtableEntry [] array = new HashtableEntry[state.allowedSize()];
+        HashtableEntry[] tab = getTable();
+        for (HashtableEntry hashtableEntry : tab) {
+            for (HashtableEntry e = hashtableEntry; e != null; e = e.next) {
+                int index = state.getAllowedIndex(e.key);
+                if (index != -1) {
+                    array[index] = e;
+                }
+            }
+        }
+        sortedList = Arrays.asList(array);
+        return sortedList;
+    }
+
+    private List<HashtableEntry> getOrderedEntries() {
+        HashtableEntry[] tab = getTable();
+        List<HashtableEntry> sortedList = new ArrayList<HashtableEntry>();
+        for (HashtableEntry hashtableEntry : tab) {
+            for (HashtableEntry e = hashtableEntry; e != null; e = e.next) {
+                sortedList.add(e);
+            }
+        }
+        Collections.sort(sortedList, new Comparator<HashtableEntry>() {
+            public int compare(HashtableEntry o1, HashtableEntry o2) {
+                return o1.key.compareTo(o2.key);
+            }
+        });
+        return sortedList;
+    }
+
 }
 
 /**

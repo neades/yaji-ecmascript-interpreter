@@ -33,6 +33,9 @@ import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.yaji.debugger.DebugEcmaScriptEvaluateVisitor;
+import org.yaji.debugger.Debugger;
+
 import FESI.AST.ASTProgram;
 import FESI.AST.ASTStatement;
 import FESI.AST.ASTStatementList;
@@ -724,8 +727,7 @@ public class Evaluator implements Serializable {
             functionDeclarationVisitor.processFunctionDeclarations(programNode,
                     es);
             varDeclarationVisitor.processVariableDeclarations(programNode, es);
-            EcmaScriptEvaluateVisitor evaluationVisitor = new EcmaScriptEvaluateVisitor(
-                    this);
+            EcmaScriptEvaluateVisitor evaluationVisitor = newEcmaScriptEvaluateVisitor();
             theValue = evaluationVisitor.evaluateProgram(programNode, es);
 
             if (theValue == null)
@@ -938,12 +940,17 @@ public class Evaluator implements Serializable {
      * default
      */
     protected EcmaScriptEvaluateVisitor newEcmaScriptEvaluateVisitor() {
+        if (debugger != null) {
+            return new DebugEcmaScriptEvaluateVisitor(this,debugger);
+        }
         return new EcmaScriptEvaluateVisitor(this);
     }
 
     protected ScopeChain globalScope;
 
     private boolean strictMode;
+
+    private Debugger debugger;
 
     /**
      * subevaluator - Evaluate a function node (inside a program evaluation)
@@ -1040,8 +1047,7 @@ public class Evaluator implements Serializable {
 
         theScopeChain = new ScopeChain(scopeObject, theScopeChain == null ? globalScope : theScopeChain);
         try {
-            EcmaScriptEvaluateVisitor evaluationVisitor = new EcmaScriptEvaluateVisitor(
-                    this);
+            EcmaScriptEvaluateVisitor evaluationVisitor = newEcmaScriptEvaluateVisitor();
             theValue = evaluationVisitor.evaluateWith(node, es);
         } finally {
             theScopeChain = theScopeChain.previousScope();
@@ -1083,8 +1089,7 @@ public class Evaluator implements Serializable {
             currentThisObject = thisObject;
         }
 
-        EcmaScriptEvaluateVisitor evaluationVisitor = new EcmaScriptEvaluateVisitor(
-                this);
+        EcmaScriptEvaluateVisitor evaluationVisitor = newEcmaScriptEvaluateVisitor();
         try {
 
             functionDeclarationVisitor.processFunctionDeclarations(node,
@@ -1458,6 +1463,11 @@ public class Evaluator implements Serializable {
             return errorObject.doConstruct((ESObject) errorObject, new ESValue[] { esString });
         }
         return ESUndefined.theUndefined;
+    }
+
+    public void setDebugger(Debugger debugger) {
+        this.debugger = debugger;
+        this.debugger.setEvaluator(this);
     }
 
 }
