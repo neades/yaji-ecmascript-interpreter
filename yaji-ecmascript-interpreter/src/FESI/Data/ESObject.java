@@ -1133,4 +1133,8 @@ public abstract class ESObject extends ESValue {
     ESValue getProperty(String propertyName) throws EcmaScriptException {
         return getProperty(propertyName,propertyName.hashCode());
     }
+
+    public ESValue getOwnPropertyDescriptor(String propertyName) throws EcmaScriptException {
+        return hasNoPropertyMap() ? ESUndefined.theUndefined : getPropertyMap().getOwnPropertyDescriptor(propertyName,getEvaluator());
+    }
 }

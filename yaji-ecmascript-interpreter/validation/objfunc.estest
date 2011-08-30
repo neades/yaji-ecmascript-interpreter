@@ -311,3 +311,24 @@ var o={};
 
 @test Function.prototype.apply.15.3.4.3-10
 2 === Function.prototype.apply.length;
+
+@Test getOwnPropertyDescriptor.15.2.3.3-1
+try {
+  var o={};
+  var f = 'string';
+  Object.getOwnPropertyDescriptor(f);
+  false;
+} catch (e) {
+  "TypeError" === e.name;  
+}
+
+
+@Test getOwnPropertyDescriptor.15.2.3.3-3
+var o={"f":10};
+var desc = Object.getOwnPropertyDescriptor(o,'f');
+desc.value === 10 && 
+  desc.writable === true &&
+  desc.enumerable === true &&
+  desc.configurable === true;
+
+

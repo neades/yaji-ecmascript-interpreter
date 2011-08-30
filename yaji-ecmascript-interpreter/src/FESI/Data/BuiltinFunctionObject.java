@@ -18,6 +18,7 @@
 package FESI.Data;
 
 import FESI.Exceptions.EcmaScriptException;
+import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
 
 /**
@@ -62,6 +63,18 @@ public abstract class BuiltinFunctionObject extends FunctionPrototype {
     public String toString() {
         return "<" + this.getFunctionName() + ":" + this.getClass().getName()
                 + ">";
+    }
+
+    protected ESValue getArg(ESValue[] arguments, int index) {
+        return (index<arguments.length)?arguments[index]:ESUndefined.theUndefined;
+    }
+
+    protected ESObject getArgAsObject(ESValue[] arguments, int index) throws TypeError {
+        ESValue object = getArg(arguments,index);
+        if (object instanceof ESObject) {
+            return (ESObject)object;
+        }
+        throw new TypeError(getFunctionName()+" expects argument "+(index+1)+" to be an Object");
     }
 
 }
