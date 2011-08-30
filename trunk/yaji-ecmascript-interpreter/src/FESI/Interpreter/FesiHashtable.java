@@ -41,9 +41,14 @@ import java.util.List;
 import org.yaji.json.JsonState;
 import org.yaji.json.JsonUtil;
 
+import FESI.Data.ESBoolean;
 import FESI.Data.ESObject;
 import FESI.Data.ESString;
+import FESI.Data.ESUndefined;
 import FESI.Data.ESValue;
+import FESI.Data.ObjectObject;
+import FESI.Data.ObjectPrototype;
+import FESI.Data.StandardProperty;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.TypeError;
 
@@ -263,14 +268,7 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
      */
 
     public boolean containsKey(String key, int hash) {
-        HashtableEntry tab[] = getTable();
-        int index = (hash & 0x7FFFFFFF) % tab.length;
-        for (HashtableEntry e = tab[index]; e != null; e = e.next) {
-            if ((e.key == key) || ((e.hash == hash) && e.key.equals(key))) { // $codepro.audit.disable stringComparison
-                return true;
-            }
-        }
-        return false;
+        return getHashtableEntry(key, hash) != null;
     }
 
     /**
@@ -286,15 +284,22 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
      */
 
     public ESValue get(String key, int hash) {
+        HashtableEntry e = getHashtableEntry(key, hash);
+        return e==null?null:e.value;
+    }
+
+    private HashtableEntry getHashtableEntry(String key, int hash) {
         HashtableEntry tab[] = getTable();
         int index = (hash & 0x7FFFFFFF) % tab.length;
-        for (HashtableEntry e = tab[index]; e != null; e = e.next) {
+        HashtableEntry e;
+        for (e = tab[index]; e != null; e = e.next) {
             if ((e.key == key) || ((e.hash == hash) && e.key.equals(key))) { // $codepro.audit.disable stringComparison
-                return e.value;
+                break;
             }
         }
-        return null;
+        return e;
     }
+    
 
     /**
      * Check if a property is hidden (return false if not present).
@@ -307,14 +312,8 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
      */
 
     public boolean isHidden(String key, int hash) {
-        HashtableEntry tab[] = getTable();
-        int index = (hash & 0x7FFFFFFF) % tab.length;
-        for (HashtableEntry e = tab[index]; e != null; e = e.next) {
-            if ((e.key == key) || ((e.hash == hash) && e.key.equals(key))) { // $codepro.audit.disable stringComparison
-                return e.hidden;
-            }
-        }
-        return false;
+        HashtableEntry e = getHashtableEntry(key, hash);
+        return e==null?false:e.hidden;
     }
 
     /**
@@ -329,14 +328,8 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
      */
 
     public boolean isReadonly(String key, int hash, boolean extensible) {
-        HashtableEntry tab[] = getTable();
-        int index = (hash & 0x7FFFFFFF) % tab.length;
-        for (HashtableEntry e = tab[index]; e != null; e = e.next) {
-            if ((e.key == key) || ((e.hash == hash) && e.key.equals(key))) { // $codepro.audit.disable stringComparison
-                return e.readonly;
-            }
-        }
-        return !extensible;
+        HashtableEntry e = getHashtableEntry(key, hash);
+        return e==null?!extensible:e.readonly;
     }
 
     /**
@@ -408,14 +401,11 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         }
 
         // Makes sure the key is not already in the hashtable.
-        HashtableEntry tab[] = getTable();
-        int index = (hash & 0x7FFFFFFF) % tab.length;
-        for (HashtableEntry e = tab[index]; e != null; e = e.next) {
-            if ((e.hash == hash) && e.key.equals(key)) {
-                ESValue old = e.value;
-                e.value = value;
-                return old;
-            }
+        HashtableEntry e = getHashtableEntry(key, hash);
+        if (e != null) {
+            ESValue old = e.value;
+            e.value = value;
+            return old;
         }
 
         if (count >= threshold) {
@@ -425,13 +415,15 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         }
 
         // Creates the new entry.
-        HashtableEntry e = new HashtableEntry();
+        HashtableEntry[] tab = getTable();
+        e = new HashtableEntry();
         e.hash = hash;
         e.key = key;
         e.value = value;
         e.hidden = hidden;
         e.readonly = readonly;
         e.configurable = true;
+        int index = (hash & 0x7FFFFFFF) % tab.length;
         e.next = tab[index];
         tab[index] = e;
         count++;
@@ -622,6 +614,24 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
             }
         });
         return sortedList;
+    }
+
+    public ESValue getOwnPropertyDescriptor(String propertyName, Evaluator evaluator) throws EcmaScriptException {
+        HashtableEntry e = getHashtableEntry(propertyName, propertyName.hashCode());
+        if (e == null) {
+            return ESUndefined.theUndefined;
+        }
+        ObjectPrototype object = ObjectObject.createObject(evaluator);
+        if (ESValue.isAccessorDescriptor(e.value)) {
+            object.putProperty(StandardProperty.SETstring,e.value.getSetAccessorDescriptor(),StandardProperty.SEThash);
+            object.putProperty(StandardProperty.GETstring, e.value.getGetAccessorDescriptor(), StandardProperty.GEThash);
+        } else {
+            object.putProperty(StandardProperty.VALUEstring,e.value,StandardProperty.VALUEhash);
+            object.putProperty(StandardProperty.WRITABLEstring, ESBoolean.valueOf(!e.readonly), StandardProperty.WRITABLEhash);
+        }
+        object.putProperty(StandardProperty.ENUMERABLEstring, ESBoolean.valueOf(!e.hidden), StandardProperty.ENUMERABLEhash);
+        object.putProperty(StandardProperty.CONFIGURABLEstring, ESBoolean.valueOf(true), StandardProperty.CONFIGURABLEhash);
+        return object;
     }
 
 }

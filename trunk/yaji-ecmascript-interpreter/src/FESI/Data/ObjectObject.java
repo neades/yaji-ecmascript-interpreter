@@ -70,15 +70,20 @@ public class ObjectObject extends BuiltinFunctionObject {
             @Override
             public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                     throws EcmaScriptException {
-                ESValue objectToInterrogate = ESUndefined.theUndefined;
-                if (arguments.length > 0) {
-                    objectToInterrogate = arguments[0];
-                }
-                if (!(objectToInterrogate instanceof ESObject)) {
-                    throw new TypeError("Object.getPrototypeOf() should be passed an Object");
-                }
-                ESObject prototype = ((ESObject) objectToInterrogate).getPrototype();
+                ESObject objectToInterrogate = getArgAsObject(arguments, 0);
+                ESObject prototype = objectToInterrogate.getPrototype();
                 return prototype == null ? ESNull.theNull : prototype;
+            }
+        });
+        putHiddenProperty("getOwnPropertyDescriptor", new BuiltinFunctionObject(prototype,evaluator, "getOwnPropertyDescriptor", 2) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
+                    throws EcmaScriptException {
+                ESObject object = getArgAsObject(arguments,0);
+                String propertyName = getArg(arguments,1).toString();
+                return object.getOwnPropertyDescriptor(propertyName);
             }
         });
     }

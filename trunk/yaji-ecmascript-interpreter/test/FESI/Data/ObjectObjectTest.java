@@ -1,12 +1,20 @@
 package FESI.Data;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import FESI.Exceptions.EcmaScriptException;
+import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
+import FESI.Util.EvaluatorAccess;
+import FESI.Util.IEvaluatorAccess;
 
 public class ObjectObjectTest {
     
@@ -15,6 +23,13 @@ public class ObjectObjectTest {
     @Before
     public void setUp() throws Exception {
         evaluator = new Evaluator();
+        
+        EvaluatorAccess.setAccessor(new IEvaluatorAccess() {
+            
+            public Evaluator getEvaluator() {
+                return evaluator;
+            }
+        });
         
         objectObject = (BuiltinFunctionObject) evaluator.getGlobalObject().getProperty("Object","Object".hashCode());
     }
@@ -109,4 +124,73 @@ public class ObjectObjectTest {
             assertEquals("TypeError",errorObject.getProperty("name","name".hashCode()).toString());
         }
     }
+    
+    @Test(expected=TypeError.class)
+    public void getOwnPropertyShouldThrowTypeErrorIfNotPassedObject() throws Exception {
+        objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyDescriptor", new ESValue[] { ESUndefined.theUndefined });
+    }
+    
+    @Test
+    public void getOwnPropertyShouldReturnDataDescriptorObject() throws Exception {
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        object.putProperty("test", ESNull.theNull, "test".hashCode());
+        ObjectPrototype result = (ObjectPrototype)objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyDescriptor", new ESValue[] { object, new ESString("test") });
+        assertEquals(ESBoolean.valueOf(true),result.getProperty(StandardProperty.WRITABLEstring));
+        assertEquals(ESBoolean.valueOf(true),result.getProperty(StandardProperty.ENUMERABLEstring));
+        assertEquals(ESBoolean.valueOf(true),result.getProperty(StandardProperty.CONFIGURABLEstring));
+        assertEquals(ESNull.theNull,result.getProperty(StandardProperty.VALUEstring));
+    }
+    
+    @Test
+    public void getOwnPropertyShouldReturnIndicateFieldWritable() throws Exception {
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        object.putProperty("test", ESNull.theNull, "test".hashCode());
+        object.freeze();
+        ObjectPrototype result = (ObjectPrototype)objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyDescriptor", new ESValue[] { object, new ESString("test") });
+        assertEquals(ESBoolean.valueOf(false),result.getProperty(StandardProperty.WRITABLEstring));
+    }
+    
+    @Test
+    public void getOwnPropertyShouldIndicateFieldEnumerable() throws Exception {
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        object.putHiddenProperty("test", ESNull.theNull);
+        ObjectPrototype result = (ObjectPrototype)objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyDescriptor", new ESValue[] { object, new ESString("test") });
+        assertEquals(ESBoolean.valueOf(false),result.getProperty(StandardProperty.ENUMERABLEstring));
+    }
+    
+    @Test
+    public void getOwnPropertyReturnsUndefinedIfNotDefined() throws Exception {
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        object.putProperty("test", ESNull.theNull, "test".hashCode());
+        ESValue result = objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyDescriptor", new ESValue[] { object, new ESString("not_test") });
+        assertSame(ESUndefined.theUndefined,result);
+    }
+    
+    @Test
+    public void getOwnPropertyReturnsSetterAndGetter() throws Exception {
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESValue v = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        v.setGetAccessorDescriptor(createFunction("return null;"));
+        v.setSetAccessorDescriptor(createFunction("return void 0;"));
+        object.putProperty("test", v, "test".hashCode());
+        
+        ObjectPrototype result = (ObjectPrototype)objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyDescriptor", new ESValue[] { object, new ESString("test") });
+        assertEquals(ESUndefined.theUndefined,result.getProperty(StandardProperty.WRITABLEstring));
+        assertEquals(ESBoolean.valueOf(true),result.getProperty(StandardProperty.ENUMERABLEstring));
+        assertEquals(ESBoolean.valueOf(true),result.getProperty(StandardProperty.CONFIGURABLEstring));
+        assertEquals(ESUndefined.theUndefined,result.getProperty(StandardProperty.VALUEstring));
+        assertTrue(result.getProperty(StandardProperty.GETstring) instanceof FunctionPrototype);
+        assertTrue(result.getProperty(StandardProperty.SETstring) instanceof FunctionPrototype);
+    }
+    
+    private ESValue createFunction(String... params) throws EcmaScriptException {
+        ESObject functionObject = (ESObject) evaluator.getGlobalObject().getProperty("Function", "Function".hashCode());
+        ArrayList<ESValue> paramArray = new ArrayList<ESValue>();
+        for (String string : params) {
+            paramArray.add(new ESString(string));
+        }
+        ESObject function = functionObject.doConstruct(functionObject, paramArray.toArray(new ESValue[paramArray.size()]));
+        return function;
+    }
+
 }
