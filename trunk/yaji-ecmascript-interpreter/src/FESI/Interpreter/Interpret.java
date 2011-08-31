@@ -148,21 +148,6 @@ public class Interpret implements InterpreterCommands {
             e.printStackTrace();
             errorExit();
         }
-
-        // Note that we use OptionalRegExp, so it is not a problem of the ORO
-        // stuff is notpresent.
-        if (!FESI.Extensions.OptionalRegExp.hasLoadedRegExp()) {
-            try {
-                evaluator.addMandatoryExtension(regularExpressionExtensionName);
-            } catch (EcmaScriptException e) {
-                errorStream.println("Cannot initialize "
-                        + regularExpressionExtensionName + " - exiting: " + eol
-                        + e);
-                e.printStackTrace();
-                errorExit();
-            }
-        }
-
     }
 
     /**

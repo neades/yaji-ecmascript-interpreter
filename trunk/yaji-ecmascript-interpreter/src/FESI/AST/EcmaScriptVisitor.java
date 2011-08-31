@@ -55,5 +55,6 @@ public interface EcmaScriptVisitor
   public Object visit(ASTCaseClause node, Object data);
   public Object visit(ASTDefaultClause node, Object data);
   public Object visit(ASTDoWhileStatement node, Object data);
+  public Object visit(ASTRegexp node, Object data);
 }
 /* JavaCC - OriginalChecksum=812fdecff22152963bf5b8db5ac260b9 (do not edit this line) */

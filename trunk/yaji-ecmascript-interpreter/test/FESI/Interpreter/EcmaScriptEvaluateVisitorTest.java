@@ -25,6 +25,7 @@ import FESI.Data.ESString;
 import FESI.Data.ESValue;
 import FESI.Data.ObjectObject;
 import FESI.Data.ObjectPrototype;
+import FESI.Data.RegExpPrototype;
 import FESI.Exceptions.TypeError;
 import FESI.Parser.EcmaScript;
 import FESI.Parser.ParseException;
@@ -398,6 +399,18 @@ public class EcmaScriptEvaluateVisitorTest {
         EcmaScriptEvaluateVisitor visitor = createVisitor();
         ESValue result = (ESValue) visitor.visit(statement,EcmaScriptEvaluateVisitor.FOR_VALUE);
         assertEquals(ESNumber.valueOf(65),result);
+    }
+    
+    @Test
+    public void shouldCreateRegularExpression() throws Exception {
+        String sourceText = "return /[a-z]*/;";
+        EcmaScript es = new EcmaScript(new StringReader(sourceText));
+        
+        ASTStatement statement = (ASTStatement) es.Program().jjtGetChild(0);
+        
+        EcmaScriptEvaluateVisitor visitor = createVisitor();
+        ESValue result = (ESValue) visitor.visit(statement,EcmaScriptEvaluateVisitor.FOR_VALUE);
+        assertTrue(result instanceof RegExpPrototype);
     }
     
     private EcmaScriptEvaluateVisitor createVisitor() {

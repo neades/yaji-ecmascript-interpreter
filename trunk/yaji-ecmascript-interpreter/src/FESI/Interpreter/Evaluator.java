@@ -141,6 +141,8 @@ public class Evaluator implements Serializable {
 
     private long nextObjectId = 0;
 
+    private ESObject regExpPrototype;
+
     /**
      * Reset the evaluator, forgetting all global definitions and loaded
      * extensions
@@ -277,6 +279,24 @@ public class Evaluator implements Serializable {
      */
     public ESObject getFunctionPrototype() {
         return functionPrototype;
+    }
+
+    /**
+     * Get the RegExp prototype object
+     * 
+     * @return the ESObject
+     */
+    public ESObject getRegExpPrototype() {
+        return regExpPrototype;
+    }
+
+    /**
+     * Set the RegExp prototype object
+     * 
+     * @return the ESObject
+     */
+    public void setRegExpPrototype(ESObject o) {
+        regExpPrototype = o;
     }
 
     /**

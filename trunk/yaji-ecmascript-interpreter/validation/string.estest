@@ -221,3 +221,23 @@ abcd == 'abcd' && abcd === \u0061\u0062\u0063\u0064
 @test unicode.3
 \u0061\u0062\u0063\u0064 = '\u0061\u0062\u0063\u0064'
 abcd == \u0061\u0062\u0063\u0064 && \u0061\u0062\u0063\u0064 == '\u0061\u0062\u0063\u0064'
+
+@test replace.1
+var s = "The batter hit the ball with the bat ";
+s += "and the fielder caught the ball with the glove.";
+
+// Replace "the" with "a".
+var re = /the/g;
+var r = s.replace(re, "a");
+
+r === "The batter hit a ball with a bat and a fielder caught a ball with a glove.";
+
+@test replace.2
+var s = "The quick brown fox jumps over the lazy dog.";
+// Create regular expression pattern.
+var re = /(\S+)(\s+)(\S+)/g;
+// Exchange each pair of words.
+var r = s.replace(re, "$3$2$1");
+
+r === "quick The fox brown over jumps lazy the dog.";
+

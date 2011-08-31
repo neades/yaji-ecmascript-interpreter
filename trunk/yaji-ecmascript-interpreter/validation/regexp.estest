@@ -33,7 +33,7 @@ r.test("xabc");
 
 
 @test test.3
-r.ignoreCase=true;
+r = new RegExp("a(.?)b","i");
 r.test("XABC");
 
 @test ignoreCase
@@ -43,7 +43,7 @@ r.ignoreCase
 ("XADBC").search(r)==1;
 
 @test search.2
-r.ignoreCase=false;
+r = new RegExp("a(.?)b");
 ("XADBC").search(r)==-1;
 
 @test match.1
@@ -70,3 +70,6 @@ result[0]=="http://profile.mitre.org:80/JRun/";
 s = '<A HREF="http://profile.mitre.org/JRun/">JRun Logs</A><BR>';
 result = urlPattern.exec(s);
 result[0]=="http://profile.mitre.org/JRun/";
+
+@test date.1
+/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/.test("2008-01-01T12:00:00Z")

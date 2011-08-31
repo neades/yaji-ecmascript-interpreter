@@ -62,6 +62,7 @@ import FESI.AST.ASTProgram;
 import FESI.AST.ASTPropertyIdentifierReference;
 import FESI.AST.ASTPropertyNameAndValue;
 import FESI.AST.ASTPropertyValueReference;
+import FESI.AST.ASTRegexp;
 import FESI.AST.ASTReturnStatement;
 import FESI.AST.ASTSetAccessor;
 import FESI.AST.ASTStatement;
@@ -91,6 +92,7 @@ import FESI.Data.ESString;
 import FESI.Data.ESUndefined;
 import FESI.Data.ESValue;
 import FESI.Data.ObjectObject;
+import FESI.Data.RegExpPrototype;
 import FESI.Data.StandardProperty;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
@@ -1938,5 +1940,10 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
             return ((SwitchState)data).result;
         }
         return node.jjtGetChild(0).jjtAccept(this, data);
+    }
+    
+    @Override
+    public Object visit(ASTRegexp node, Object data) {
+        return new RegExpPrototype(evaluator.getRegExpPrototype(), evaluator, node.getBody(), node.getFlags());
     }
 }

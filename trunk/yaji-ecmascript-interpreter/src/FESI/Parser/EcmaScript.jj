@@ -280,6 +280,37 @@ TOKEN :
         <SINGLE_STRING_LITERAL_BODY>
         (["\n","\r","\u2028","\u2029"])
   >
+|
+  < REGULAR_EXPRESSION_LITERAL:
+    "/"
+    <REGULAR_EXPRESSION_BODY>
+    "/"
+    (<IDENTIFIER_PART>)*
+  >
+|
+  <# REGULAR_EXPRESSION_BODY:
+    <REGULAR_EXPRESSION_FIRST_CHAR> (<REGULAR_EXPRESSION_CHAR>)*
+  >
+| <# REGULAR_EXPRESSION_CHAR:
+    ~[ "\r" , "\n" , "\u2028" , "\u2029", "\\", "/", "[" ]
+    | <REGULAR_EXPRESSION_BACKSLASH_SEQUENCE>
+    | <REGULAR_EXPRESSION_CLASS>
+  >
+| <# REGULAR_EXPRESSION_FIRST_CHAR: 
+    ~[ "\r" , "\n" , "\u2028" , "\u2029", "*", "\\", "/", "[" ]
+    | <REGULAR_EXPRESSION_BACKSLASH_SEQUENCE>
+    | <REGULAR_EXPRESSION_CLASS>
+  >
+| <# REGULAR_EXPRESSION_BACKSLASH_SEQUENCE:
+    "\\" ~[ "\r" , "\n" , "\u2028" , "\u2029" ]
+  >
+| <# REGULAR_EXPRESSION_CLASS:
+    "[" (<REGULAR_EXPRESSION_CLASS_CHAR>)* "]"
+  >
+| <# REGULAR_EXPRESSION_CLASS_CHAR:
+    ~[ "\r" , "\n" , "\u2028" , "\u2029", "*", "\\", "[" ]
+    | <REGULAR_EXPRESSION_BACKSLASH_SEQUENCE>
+  >
 }
 
 /* IDENTIFIERS */
@@ -932,6 +963,37 @@ void NullLiteral()          :
 /*@egen*/
 }
 
+void RegexpLiteral()         :
+{/*@bgen(jjtree) Regexp */
+  ASTRegexp jjtn000 = new ASTRegexp(JJTREGEXP);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/
+  Token t;
+}
+{/*@bgen(jjtree) Regexp */
+  try {
+/*@egen*/
+  t = <REGULAR_EXPRESSION_LITERAL>/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+    jjtreeCloseNodeScope(jjtn000);
+  }
+/*@egen*/
+  {
+    jjtn000.setRegularExpression(t.image);
+  }/*@bgen(jjtree)*/
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtreeCloseNodeScope(jjtn000);
+    }
+  }
+/*@egen*/
+}
+
 void Literal()       :
 {
   Token t;
@@ -944,6 +1006,8 @@ void Literal()       :
   BooleanLiteral()
 |
   NullLiteral()
+|
+  RegexpLiteral()
 |
   t = <UNTERMINATED_STRING_LITERAL>
   {
