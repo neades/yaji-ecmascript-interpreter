@@ -255,6 +255,20 @@ public class EcmascriptParserTest {
                     "Program" + eol
                     + " Statement" + eol
                     + "  [#\\]" + eol
+                },
+                { "var r = /[a-z]*/g;",
+                    "Program" + eol
+                    + " Statement" + eol
+                    + "  VariableDeclaration" + eol
+                    + "   <r>" + eol
+                    + "   /[a-z]*/g" + eol
+                },
+                { "var r = /[a-z]\\*/;",
+                    "Program" + eol
+                    + " Statement" + eol
+                    + "  VariableDeclaration" + eol
+                    + "   <r>" + eol
+                    + "   /[a-z]\\*/" + eol
                 }
             });
     }

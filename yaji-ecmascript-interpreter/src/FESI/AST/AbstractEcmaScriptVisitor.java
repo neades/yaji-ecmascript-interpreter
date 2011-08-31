@@ -211,4 +211,8 @@ public class AbstractEcmaScriptVisitor implements EcmaScriptVisitor {
     public Object visit(ASTDoWhileStatement node, Object data) {
         return defaultAction(node,data);
     }
+    
+    public Object visit(ASTRegexp node, Object data) {
+        return defaultAction(node, data);
+    }
 }

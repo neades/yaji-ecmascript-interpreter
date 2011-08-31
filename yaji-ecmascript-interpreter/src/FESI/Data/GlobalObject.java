@@ -34,11 +34,7 @@ import FESI.Interpreter.Evaluator;
  */
 public class GlobalObject extends ObjectPrototype {
     private static final long serialVersionUID = -4033899977752030036L;
-    static final String VALUEstring = ("value").intern();
-    static final int VALUEhash = VALUEstring.hashCode();
-    static final String ERRORstring = ("error").intern();
-    static final int ERRORhash = ERRORstring.hashCode();
-
+    
     private GlobalObject(ESObject prototype, Evaluator evaluator) {
         super(prototype, evaluator);
     }
@@ -156,16 +152,16 @@ public class GlobalObject extends ObjectPrototype {
                     ESObject result = ObjectObject.createObject(this
                             .getEvaluator());
                     if (arguments.length < 1) {
-                        result.putProperty(ERRORstring, ESNull.theNull,
-                                ERRORhash);
+                        result.putProperty(StandardProperty.ERRORstring, ESNull.theNull,
+                                StandardProperty.ERRORhash);
                         return result;
                     }
                     if (!(arguments[0] instanceof ESString)) {
                         result
-                                .putProperty(VALUEstring, arguments[0],
-                                        VALUEhash);
-                        result.putProperty(ERRORstring, ESNull.theNull,
-                                ERRORhash);
+                                .putProperty(StandardProperty.VALUEstring, arguments[0],
+                                        StandardProperty.VALUEhash);
+                        result.putProperty(StandardProperty.ERRORstring, ESNull.theNull,
+                                StandardProperty.ERRORhash);
                         return result;
                     }
                     String program = arguments[0].toString();
@@ -175,25 +171,25 @@ public class GlobalObject extends ObjectPrototype {
                     } catch (EcmaScriptParseException e) {
                         e.setNeverIncomplete();
                         if (arguments.length > 1) {
-                            result.putProperty(VALUEstring, arguments[1],
-                                    VALUEhash);
+                            result.putProperty(StandardProperty.VALUEstring, arguments[1],
+                                    StandardProperty.VALUEhash);
                         }
-                        result.putProperty(ERRORstring, ESLoader
+                        result.putProperty(StandardProperty.ERRORstring, ESLoader
                                 .normalizeValue(e, this.getEvaluator()),
-                                ERRORhash);
+                                StandardProperty.ERRORhash);
                         return result;
                     } catch (EcmaScriptException e) {
                         if (arguments.length > 1) {
-                            result.putProperty(VALUEstring, arguments[1],
-                                    VALUEhash);
+                            result.putProperty(StandardProperty.VALUEstring, arguments[1],
+                                    StandardProperty.VALUEhash);
                         }
-                        result.putProperty(ERRORstring, ESLoader
+                        result.putProperty(StandardProperty.ERRORstring, ESLoader
                                 .normalizeValue(e, this.getEvaluator()),
-                                ERRORhash);
+                                StandardProperty.ERRORhash);
                         return result;
                     }
-                    result.putProperty(VALUEstring, value, VALUEhash);
-                    result.putProperty(ERRORstring, ESNull.theNull, ERRORhash);
+                    result.putProperty(StandardProperty.VALUEstring, value, StandardProperty.VALUEhash);
+                    result.putProperty(StandardProperty.ERRORstring, ESNull.theNull, StandardProperty.ERRORhash);
                     return result;
                 }
             }
@@ -491,6 +487,7 @@ public class GlobalObject extends ObjectPrototype {
                     return ESUndefined.theUndefined;
                 }
             }
+
             
             // Create object (not yet usable!) in right order for
             // property chain
@@ -533,10 +530,19 @@ public class GlobalObject extends ObjectPrototype {
             
             ErrorObject errorObject = ErrorObject.make(evaluator, objectPrototype, functionPrototype);
             ErrorPrototype errorPrototype = errorObject.getPrototypeProperty();
-            
+
+            ESObject esRegExpPrototype = new RegExpPrototype(objectPrototype, evaluator);
+            ESObject globalObjectRegExp = new RegExpObject(StandardProperty.REG_EXPstring,
+                    evaluator, functionPrototype, esRegExpPrototype);
+            globalObjectRegExp.putHiddenProperty("prototype", esRegExpPrototype);
+            globalObjectRegExp.putHiddenProperty("length", ESNumber.valueOf(1));
+
+            esRegExpPrototype.putHiddenProperty("constructor", globalObjectRegExp);
+        
             // Save system object so that they can be quickly found
             evaluator.setObjectPrototype(objectPrototype);
             evaluator.setFunctionObject(functionObject);
+            evaluator.setRegExpPrototype(esRegExpPrototype);
 
             // Populate the global object
             go.putHiddenProperty("throwError", new GlobalObjectThrowError(
@@ -584,6 +590,7 @@ public class GlobalObject extends ObjectPrototype {
             go.putHiddenProperty("Boolean", booleanObject);
             go.putHiddenProperty("Array", arrayObject);
             go.putHiddenProperty("Date", dateObject);
+            go.putHiddenProperty(StandardProperty.REG_EXPstring, globalObjectRegExp);
             
             go.putHiddenProperty("Error", errorObject);
             go.putHiddenProperty(NativeErrorObject.EVAL_ERROR,NativeErrorObject.make(NativeErrorObject.EVAL_ERROR,evaluator,errorPrototype,functionPrototype));

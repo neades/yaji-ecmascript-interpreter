@@ -5,60 +5,62 @@ package FESI.AST;
 public interface EcmaScriptTreeConstants
 {
   public int JJTLITERAL = 0;
-  public int JJTVOID = 1;
-  public int JJTIDENTIFIER = 2;
-  public int JJTCOMPOSITEREFERENCE = 3;
-  public int JJTTHISREFERENCE = 4;
-  public int JJTSUPERREFERENCE = 5;
-  public int JJTFUNCTIONEXPRESSION = 6;
-  public int JJTFORMALPARAMETERLIST = 7;
-  public int JJTFUNCTIONCALLPARAMETERS = 8;
-  public int JJTPROPERTYVALUEREFERENCE = 9;
-  public int JJTPROPERTYIDENTIFIERREFERENCE = 10;
-  public int JJTALLOCATIONEXPRESSION = 11;
-  public int JJTARRAYLITERAL = 12;
-  public int JJTELISION = 13;
-  public int JJTOBJECTLITERAL = 14;
-  public int JJTPROPERTYNAMEANDVALUE = 15;
-  public int JJTGETACCESSOR = 16;
-  public int JJTSETACCESSOR = 17;
-  public int JJTOPERATOR = 18;
-  public int JJTPOSTFIXEXPRESSION = 19;
-  public int JJTUNARYEXPRESSION = 20;
-  public int JJTBINARYEXPRESSIONSEQUENCE = 21;
-  public int JJTANDEXPRESSIONSEQUENCE = 22;
-  public int JJTOREXPRESSIONSEQUENCE = 23;
-  public int JJTCONDITIONALEXPRESSION = 24;
-  public int JJTASSIGNMENTEXPRESSION = 25;
-  public int JJTEXPRESSIONLIST = 26;
-  public int JJTSTATEMENT = 27;
-  public int JJTSTATEMENTLIST = 28;
-  public int JJTVARIABLEDECLARATION = 29;
-  public int JJTIFSTATEMENT = 30;
-  public int JJTDOWHILESTATEMENT = 31;
-  public int JJTWHILESTATEMENT = 32;
-  public int JJTFORSTATEMENT = 33;
-  public int JJTEMPTYEXPRESSION = 34;
-  public int JJTFORVARSTATEMENT = 35;
-  public int JJTFORINSTATEMENT = 36;
-  public int JJTFORVARINSTATEMENT = 37;
-  public int JJTCONTINUESTATEMENT = 38;
-  public int JJTBREAKSTATEMENT = 39;
-  public int JJTRETURNSTATEMENT = 40;
-  public int JJTWITHSTATEMENT = 41;
-  public int JJTTRYSTATEMENT = 42;
-  public int JJTTHROWSTATEMENT = 43;
-  public int JJTCATCH = 44;
-  public int JJTFINALLY = 45;
-  public int JJTSWITCHSTATEMENT = 46;
-  public int JJTCASECLAUSE = 47;
-  public int JJTDEFAULTCLAUSE = 48;
-  public int JJTFUNCTIONDECLARATION = 49;
-  public int JJTPROGRAM = 50;
+  public int JJTREGEXP = 1;
+  public int JJTVOID = 2;
+  public int JJTIDENTIFIER = 3;
+  public int JJTCOMPOSITEREFERENCE = 4;
+  public int JJTTHISREFERENCE = 5;
+  public int JJTSUPERREFERENCE = 6;
+  public int JJTFUNCTIONEXPRESSION = 7;
+  public int JJTFORMALPARAMETERLIST = 8;
+  public int JJTFUNCTIONCALLPARAMETERS = 9;
+  public int JJTPROPERTYVALUEREFERENCE = 10;
+  public int JJTPROPERTYIDENTIFIERREFERENCE = 11;
+  public int JJTALLOCATIONEXPRESSION = 12;
+  public int JJTARRAYLITERAL = 13;
+  public int JJTELISION = 14;
+  public int JJTOBJECTLITERAL = 15;
+  public int JJTPROPERTYNAMEANDVALUE = 16;
+  public int JJTGETACCESSOR = 17;
+  public int JJTSETACCESSOR = 18;
+  public int JJTOPERATOR = 19;
+  public int JJTPOSTFIXEXPRESSION = 20;
+  public int JJTUNARYEXPRESSION = 21;
+  public int JJTBINARYEXPRESSIONSEQUENCE = 22;
+  public int JJTANDEXPRESSIONSEQUENCE = 23;
+  public int JJTOREXPRESSIONSEQUENCE = 24;
+  public int JJTCONDITIONALEXPRESSION = 25;
+  public int JJTASSIGNMENTEXPRESSION = 26;
+  public int JJTEXPRESSIONLIST = 27;
+  public int JJTSTATEMENT = 28;
+  public int JJTSTATEMENTLIST = 29;
+  public int JJTVARIABLEDECLARATION = 30;
+  public int JJTIFSTATEMENT = 31;
+  public int JJTDOWHILESTATEMENT = 32;
+  public int JJTWHILESTATEMENT = 33;
+  public int JJTFORSTATEMENT = 34;
+  public int JJTEMPTYEXPRESSION = 35;
+  public int JJTFORVARSTATEMENT = 36;
+  public int JJTFORINSTATEMENT = 37;
+  public int JJTFORVARINSTATEMENT = 38;
+  public int JJTCONTINUESTATEMENT = 39;
+  public int JJTBREAKSTATEMENT = 40;
+  public int JJTRETURNSTATEMENT = 41;
+  public int JJTWITHSTATEMENT = 42;
+  public int JJTTRYSTATEMENT = 43;
+  public int JJTTHROWSTATEMENT = 44;
+  public int JJTCATCH = 45;
+  public int JJTFINALLY = 46;
+  public int JJTSWITCHSTATEMENT = 47;
+  public int JJTCASECLAUSE = 48;
+  public int JJTDEFAULTCLAUSE = 49;
+  public int JJTFUNCTIONDECLARATION = 50;
+  public int JJTPROGRAM = 51;
 
 
   public String[] jjtNodeName = {
     "Literal",
+    "Regexp",
     "void",
     "Identifier",
     "CompositeReference",
@@ -111,4 +113,4 @@ public interface EcmaScriptTreeConstants
     "Program",
   };
 }
-/* JavaCC - OriginalChecksum=11920db6c9c6da2c5d5ab7c6cf1e405f (do not edit this line) */
+/* JavaCC - OriginalChecksum=ba9e62dc4bba52ef25e84cda1570d59e (do not edit this line) */

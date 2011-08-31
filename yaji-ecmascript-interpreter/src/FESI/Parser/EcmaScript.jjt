@@ -274,6 +274,37 @@ TOKEN :
         <SINGLE_STRING_LITERAL_BODY>
         (["\n","\r","\u2028","\u2029"])
   >
+|
+  < REGULAR_EXPRESSION_LITERAL:
+    "/"
+    <REGULAR_EXPRESSION_BODY>
+    "/"
+    (<IDENTIFIER_PART>)*
+  >
+|
+  <# REGULAR_EXPRESSION_BODY:
+    <REGULAR_EXPRESSION_FIRST_CHAR> (<REGULAR_EXPRESSION_CHAR>)*
+  >
+| <# REGULAR_EXPRESSION_CHAR:
+    ~[ "\r" , "\n" , "\u2028" , "\u2029", "\\", "/", "[" ]
+    | <REGULAR_EXPRESSION_BACKSLASH_SEQUENCE>
+    | <REGULAR_EXPRESSION_CLASS>
+  >
+| <# REGULAR_EXPRESSION_FIRST_CHAR: 
+    ~[ "\r" , "\n" , "\u2028" , "\u2029", "*", "\\", "/", "[" ]
+    | <REGULAR_EXPRESSION_BACKSLASH_SEQUENCE>
+    | <REGULAR_EXPRESSION_CLASS>
+  >
+| <# REGULAR_EXPRESSION_BACKSLASH_SEQUENCE:
+    "\\" ~[ "\r" , "\n" , "\u2028" , "\u2029" ]
+  >
+| <# REGULAR_EXPRESSION_CLASS:
+    "[" (<REGULAR_EXPRESSION_CLASS_CHAR>)* "]"
+  >
+| <# REGULAR_EXPRESSION_CLASS_CHAR:
+    ~[ "\r" , "\n" , "\u2028" , "\u2029", "*", "\\", "[" ]
+    | <REGULAR_EXPRESSION_BACKSLASH_SEQUENCE>
+  >
 }
 
 /* IDENTIFIERS */
@@ -842,6 +873,17 @@ void NullLiteral() #Literal :
   }
 }
 
+void RegexpLiteral() #Regexp :
+{
+  Token t;
+}
+{
+  t = <REGULAR_EXPRESSION_LITERAL>
+  {
+    jjtThis.setRegularExpression(t.image);
+  }
+}
+
 void Literal() #void :
 {
   Token t;
@@ -854,6 +896,8 @@ void Literal() #void :
   BooleanLiteral()
 |
   NullLiteral()
+|
+  RegexpLiteral()
 |
   t = <UNTERMINATED_STRING_LITERAL>
   {
