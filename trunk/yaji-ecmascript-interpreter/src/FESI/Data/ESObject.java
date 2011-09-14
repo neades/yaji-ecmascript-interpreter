@@ -25,6 +25,7 @@ import FESI.Exceptions.ReferenceError;
 import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
 import FESI.Interpreter.FesiHashtable;
+import FESI.Interpreter.FesiHashtable.IReporter;
 import FESI.Interpreter.ScopeChain;
 import FESI.Util.EvaluatorAccess;
 
@@ -495,7 +496,7 @@ public abstract class ESObject extends ESValue {
                 }
             } else {
                 getPropertyMap().put(propertyName, hash, false, false,
-                    propertyValue);
+                    propertyValue, true);
             }
         }
     }
@@ -544,7 +545,7 @@ public abstract class ESObject extends ESValue {
      */
     public void initializeProperty(String propertyName, ESValue propertyValue,
             int hash) throws EcmaScriptException {
-        getPropertyMap().put(propertyName, hash, false, false, propertyValue);
+        getPropertyMap().put(propertyName, hash, false, false, propertyValue, true);
     }
 
     /**
@@ -562,7 +563,7 @@ public abstract class ESObject extends ESValue {
             throws EcmaScriptException {
         propertyName = propertyName.intern();
         int hash = propertyName.hashCode();
-        getPropertyMap().put(propertyName, hash, true, false, propertyValue);
+        getPropertyMap().put(propertyName, hash, true, false, propertyValue, true);
     }
 
     /**
@@ -1136,5 +1137,19 @@ public abstract class ESObject extends ESValue {
 
     public ESValue getOwnPropertyDescriptor(String propertyName) throws EcmaScriptException {
         return hasNoPropertyMap() ? ESUndefined.theUndefined : getPropertyMap().getOwnPropertyDescriptor(propertyName,getEvaluator());
+    }
+
+    public ESValue defineProperty(final String propertyName, ESObject desc) throws EcmaScriptException {
+        getPropertyMap().defineProperty(propertyName,desc.getPropertyMap(), new IReporter() {
+            
+            public boolean reject(String message) throws TypeError{
+                throw new TypeError("Cannot define property "+propertyName+" on Object : "+message);
+            }
+        }, isExtensible());
+        return this;
+    }
+
+    private boolean isExtensible() {
+        return extensible;
     }
 }

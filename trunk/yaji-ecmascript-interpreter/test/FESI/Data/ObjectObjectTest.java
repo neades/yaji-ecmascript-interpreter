@@ -183,6 +183,322 @@ public class ObjectObjectTest {
         assertTrue(result.getProperty(StandardProperty.SETstring) instanceof FunctionPrototype);
     }
     
+    @Test
+    public void definePropertyShouldAllowEnumerableToBeSetFalse() throws Exception {
+        String descPropertyName = StandardProperty.ENUMERABLEstring;
+        definePropertyOnExistingProperty(descPropertyName, false);
+    }
+    
+    @Test
+    public void definePropertyShouldAllowWritableToBeSetFalse() throws Exception {
+        String descPropertyName = StandardProperty.WRITABLEstring;
+        definePropertyOnExistingProperty(descPropertyName, false);
+    }
+
+    @Test
+    public void definePropertyShouldAllowConfigurableToBeSetFalse() throws Exception {
+        String descPropertyName = StandardProperty.CONFIGURABLEstring;
+        definePropertyOnExistingProperty(descPropertyName, false);
+    }
+
+    
+    @Test
+    public void definePropertyShouldAllowEnumerableToBeSetTrue() throws Exception {
+        String descPropertyName = StandardProperty.ENUMERABLEstring;
+        definePropertyOnExistingProperty(descPropertyName, true);
+    }
+    
+    @Test
+    public void definePropertyShouldAllowWritableToBeSetTrue() throws Exception {
+        String descPropertyName = StandardProperty.WRITABLEstring;
+        definePropertyOnExistingProperty(descPropertyName, true);
+    }
+    
+    @Test
+    public void definePropertyShouldAllowValueToBeSet() throws Exception {
+        String descPropertyName = StandardProperty.VALUEstring;
+        definePropertyOnExistingProperty(descPropertyName, true);
+    }
+
+    @Test
+    public void definePropertyShouldAllowConfigurableToBeSetTrue() throws Exception {
+        String descPropertyName = StandardProperty.CONFIGURABLEstring;
+        definePropertyOnExistingProperty(descPropertyName, true);
+    }
+    
+    @Test(expected=TypeError.class)
+    public void definePropertyCannotAddPropertyIfObjectNotExtensible() throws Exception {
+        // 8.12.9.3
+        ESString propertyName = new ESString("propertyName");
+        ESObject argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        argumentsObject.putProperty(StandardProperty.CONFIGURABLEstring, ESBoolean.valueOf(false));
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        object.freeze();
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+    }
+    
+    @Test
+    public void shouldInitialiseNoneExistentPropertyToDefaultValue() throws Exception {
+        // 8.12.9.4 & 8.6.1 Table 7
+        ESString propertyName = new ESString("propertyName");
+        ESObject argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+        ObjectPrototype result = (ObjectPrototype)objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyDescriptor", new ESValue[] { object, propertyName });
+        assertEquals(ESBoolean.valueOf(false),result.getProperty(StandardProperty.WRITABLEstring));
+        assertEquals(ESBoolean.valueOf(false),result.getProperty(StandardProperty.ENUMERABLEstring));
+        assertEquals(ESBoolean.valueOf(false),result.getProperty(StandardProperty.CONFIGURABLEstring));
+        assertEquals(ESUndefined.theUndefined,result.getProperty(StandardProperty.VALUEstring));
+    }
+    
+    @Test(expected=TypeError.class)
+    public void shouldRejectIfNotConfigurable() throws Exception {
+        // 8.12.9.7a
+        ESString propertyName = new ESString("propertyName");
+        ESObject argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        argumentsObject.putProperty(StandardProperty.CONFIGURABLEstring, ESBoolean.valueOf(false));
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+        argumentsObject.putProperty(StandardProperty.CONFIGURABLEstring, ESBoolean.valueOf(true));
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+    }
+
+    @Test(expected=TypeError.class)
+    public void shouldRejectChangingEnumerablityOfNonConfigurableProperty() throws Exception {
+        // 8.12.9.7b
+        ESString propertyName = new ESString("propertyName");
+        ESObject argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        argumentsObject.putProperty(StandardProperty.CONFIGURABLEstring, ESBoolean.valueOf(false));
+        argumentsObject.putProperty(StandardProperty.ENUMERABLEstring, ESBoolean.valueOf(true));
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+        argumentsObject.putProperty(StandardProperty.ENUMERABLEstring, ESBoolean.valueOf(false));
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+    }
+
+    @Test(expected=TypeError.class)
+    public void shouldRejectChangingAccessorUsageOfNonConfigurableProperty() throws Exception {
+        // 8.12.9.9a
+        ESString propertyName = new ESString("propertyName");
+        ESObject argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        argumentsObject.putProperty(StandardProperty.CONFIGURABLEstring, ESBoolean.valueOf(false));
+        argumentsObject.putProperty(StandardProperty.VALUEstring, ESBoolean.valueOf(true));
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+        ESValue v = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        v.setGetAccessorDescriptor(createFunction("return null;"));
+        v.setSetAccessorDescriptor(createFunction("return void 0;"));
+        argumentsObject.putProperty(StandardProperty.VALUEstring,v);
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+    }
+    
+    @Test
+    public void changingToAccessorPropertyShouldRetainConfigurableAndEnumerableAttributes() throws Exception {
+        // 8.12.9.9b
+        ESString propertyName = new ESString("propertyName");
+        ESObject argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        argumentsObject.putProperty(StandardProperty.CONFIGURABLEstring, ESBoolean.valueOf(true));
+        argumentsObject.putProperty(StandardProperty.ENUMERABLEstring, ESBoolean.valueOf(true));
+        argumentsObject.putProperty(StandardProperty.VALUEstring, ESBoolean.valueOf(true));
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+        
+        argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESValue v = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        v.setGetAccessorDescriptor(createFunction("return null;"));
+        v.setSetAccessorDescriptor(createFunction("return void 0;"));
+        argumentsObject.putProperty(StandardProperty.VALUEstring,v);
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+        
+        ObjectPrototype result = (ObjectPrototype)objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyDescriptor", new ESValue[] { object, propertyName });
+        assertEquals(ESUndefined.theUndefined,result.getProperty(StandardProperty.WRITABLEstring));
+        assertEquals(ESBoolean.valueOf(true),result.getProperty(StandardProperty.ENUMERABLEstring));
+        assertEquals(ESBoolean.valueOf(true),result.getProperty(StandardProperty.CONFIGURABLEstring));
+        assertEquals(ESUndefined.theUndefined,result.getProperty(StandardProperty.VALUEstring));
+    }
+
+    @Test
+    public void changingToDataPropertyShouldRetainConfigurableAndEnumerableAttributes() throws Exception {
+        // 8.12.9.9b
+        ESString propertyName = new ESString("propertyName");
+        ESObject argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        argumentsObject.putProperty(StandardProperty.CONFIGURABLEstring, ESBoolean.valueOf(true));
+        argumentsObject.putProperty(StandardProperty.ENUMERABLEstring, ESBoolean.valueOf(true));
+        ESValue v = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        v.setGetAccessorDescriptor(createFunction("return null;"));
+        v.setSetAccessorDescriptor(createFunction("return void 0;"));
+        argumentsObject.putProperty(StandardProperty.VALUEstring,v);
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+        argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        argumentsObject.putProperty(StandardProperty.VALUEstring,new ESString("changed"));
+        
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+        
+        ObjectPrototype result = (ObjectPrototype)objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyDescriptor", new ESValue[] { object, propertyName });
+        assertEquals(ESBoolean.valueOf(false),result.getProperty(StandardProperty.WRITABLEstring));
+        assertEquals(ESBoolean.valueOf(true),result.getProperty(StandardProperty.ENUMERABLEstring));
+        assertEquals(ESBoolean.valueOf(true),result.getProperty(StandardProperty.CONFIGURABLEstring));
+        assertEquals(new ESString("changed"),result.getProperty(StandardProperty.VALUEstring));
+    }
+    
+    @Test(expected=TypeError.class)
+    public void shouldDisallowChangingWritableIfNonConfigurable() throws Exception {
+        // 8.12.9.10.a.i
+        ESString propertyName = new ESString("propertyName");
+        ESObject argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        argumentsObject.putProperty(StandardProperty.CONFIGURABLEstring, ESBoolean.valueOf(false));
+        argumentsObject.putProperty(StandardProperty.ENUMERABLEstring, ESBoolean.valueOf(true));
+        argumentsObject.putProperty(StandardProperty.WRITABLEstring, ESBoolean.valueOf(false));
+        argumentsObject.putProperty(StandardProperty.VALUEstring, ESBoolean.valueOf(true));
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+        
+        argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        argumentsObject.putProperty(StandardProperty.WRITABLEstring, ESBoolean.valueOf(true));
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+    }
+
+    @Test(expected=TypeError.class)
+    public void shouldDisallowChangingValueIfNonConfigurable() throws Exception {
+        // 8.12.9.10.a.ii.TRUE
+        ESString propertyName = new ESString("propertyName");
+        ESObject argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        argumentsObject.putProperty(StandardProperty.CONFIGURABLEstring, ESBoolean.valueOf(false));
+        argumentsObject.putProperty(StandardProperty.ENUMERABLEstring, ESBoolean.valueOf(true));
+        argumentsObject.putProperty(StandardProperty.WRITABLEstring, ESBoolean.valueOf(false));
+        argumentsObject.putProperty(StandardProperty.VALUEstring, ESBoolean.valueOf(true));
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+        
+        argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        argumentsObject.putProperty(StandardProperty.VALUEstring, ESBoolean.valueOf(false));
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+    }
+
+    @Test
+    public void shouldAllowChangingValueIfNonConfigurableIfSameValue() throws Exception {
+        // 8.12.9.10.a.ii.FALSE
+        ESString propertyName = new ESString("propertyName");
+        ESObject argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        argumentsObject.putProperty(StandardProperty.CONFIGURABLEstring, ESBoolean.valueOf(false));
+        argumentsObject.putProperty(StandardProperty.ENUMERABLEstring, ESBoolean.valueOf(true));
+        argumentsObject.putProperty(StandardProperty.WRITABLEstring, ESBoolean.valueOf(false));
+        argumentsObject.putProperty(StandardProperty.VALUEstring, ESBoolean.valueOf(true));
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+        
+        argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        argumentsObject.putProperty(StandardProperty.VALUEstring, ESBoolean.valueOf(true));
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+    }
+
+    @Test(expected=TypeError.class)
+    public void shouldRejectSetAccessorChangeOnNonConfigurableProperty() throws Exception {
+        // 8.12.9.11.a.i
+        ESString propertyName = new ESString("propertyName");
+        ESObject argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        argumentsObject.putProperty(StandardProperty.CONFIGURABLEstring, ESBoolean.valueOf(false));
+        argumentsObject.putProperty(StandardProperty.ENUMERABLEstring, ESBoolean.valueOf(true));
+        ESValue v = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        v.setGetAccessorDescriptor(createFunction("return null;"));
+        v.setSetAccessorDescriptor(createFunction("return void 0;"));
+        argumentsObject.putProperty(StandardProperty.VALUEstring,v);
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+        argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        v = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        v.setGetAccessorDescriptor(createFunction("return null;"));
+        v.setSetAccessorDescriptor(createFunction("return void 0;"));
+        argumentsObject.putProperty(StandardProperty.VALUEstring,v);
+        
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+    }
+    
+
+    @Test
+    public void shouldAllowSetAccessorNoChangeOnNonConfigurableProperty() throws Exception {
+        // 8.12.9.11.a.i.FALSE
+        ESString propertyName = new ESString("propertyName");
+        ESObject argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        argumentsObject.putProperty(StandardProperty.CONFIGURABLEstring, ESBoolean.valueOf(false));
+        argumentsObject.putProperty(StandardProperty.ENUMERABLEstring, ESBoolean.valueOf(true));
+        ESValue v = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESValue setFunction = createFunction("return void 0;");
+        v.setSetAccessorDescriptor(setFunction);
+        argumentsObject.putProperty(StandardProperty.VALUEstring,v);
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+        argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        v = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        v.setSetAccessorDescriptor(setFunction);
+        argumentsObject.putProperty(StandardProperty.VALUEstring,v);
+        
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+    }
+    
+
+    @Test(expected=TypeError.class)
+    public void shouldRejectGetAccessorChangeOnNonConfigurableProperty() throws Exception {
+        // 8.12.9.11.a.ii
+        ESString propertyName = new ESString("propertyName");
+        ESObject argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        argumentsObject.putProperty(StandardProperty.CONFIGURABLEstring, ESBoolean.valueOf(false));
+        argumentsObject.putProperty(StandardProperty.ENUMERABLEstring, ESBoolean.valueOf(true));
+        ESValue v = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        v.setGetAccessorDescriptor(createFunction("return null;"));
+        argumentsObject.putProperty(StandardProperty.VALUEstring,v);
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+        argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        v = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        v.setGetAccessorDescriptor(createFunction("return null;"));
+        argumentsObject.putProperty(StandardProperty.VALUEstring,v);
+        
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+    }
+    
+
+    @Test
+    public void shouldAllowGetAccessorNoChangeOnNonConfigurableProperty() throws Exception {
+        // 8.12.9.11.a.ii.FALSE
+        ESString propertyName = new ESString("propertyName");
+        ESObject argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        argumentsObject.putProperty(StandardProperty.CONFIGURABLEstring, ESBoolean.valueOf(false));
+        argumentsObject.putProperty(StandardProperty.ENUMERABLEstring, ESBoolean.valueOf(true));
+        ESValue v = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESValue getFunction = createFunction("return void 0;");
+        v.setGetAccessorDescriptor(getFunction);
+        argumentsObject.putProperty(StandardProperty.VALUEstring,v);
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+        argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        v = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        v.setGetAccessorDescriptor(getFunction);
+        argumentsObject.putProperty(StandardProperty.VALUEstring,v);
+        
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+    }
+    
+
+    private void definePropertyOnExistingProperty(String descPropertyName, boolean stateToTest)
+            throws EcmaScriptException, NoSuchMethodException {
+        ESString propertyName = new ESString("propertyName");
+        ESObject argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        argumentsObject.putProperty(descPropertyName, ESBoolean.valueOf(stateToTest));
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        object.putProperty("propertyName", ESUndefined.theUndefined);
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
+        ObjectPrototype result = (ObjectPrototype)objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyDescriptor", new ESValue[] { object, propertyName });
+        assertEquals(ESBoolean.valueOf(stateToTest),result.getProperty(descPropertyName));
+    }
+    
     private ESValue createFunction(String... params) throws EcmaScriptException {
         ESObject functionObject = (ESObject) evaluator.getGlobalObject().getProperty("Function", "Function".hashCode());
         ArrayList<ESValue> paramArray = new ArrayList<ESValue>();
