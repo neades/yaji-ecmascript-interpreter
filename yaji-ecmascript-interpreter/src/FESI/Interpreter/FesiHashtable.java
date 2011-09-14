@@ -59,11 +59,11 @@ class HashtableEntry implements java.io.Serializable {
     private static final long serialVersionUID = 4541703187276273804L;
     int hash;
     String key;
-    ESValue value;
+    ESValue value;          
     HashtableEntry next;
-    boolean hidden;
-    boolean readonly;
-    boolean configurable;
+    boolean hidden;         // = !enumerable
+    boolean readonly;       // = !writable
+    boolean configurable;  
 
     @Override
     protected Object clone() {
@@ -72,10 +72,17 @@ class HashtableEntry implements java.io.Serializable {
         entry.key = key;
         entry.value = value;
         entry.hidden = hidden;
-        entry.readonly = readonly;
+        entry.readonly = readonly;  
         entry.configurable = configurable;
         entry.next = (next != null) ? (HashtableEntry) next.clone() : null;
         return entry;
+    }
+
+    void set(ESValue value, boolean hidden, boolean readonly, boolean configurable) {
+        this.value = value;
+        this.hidden = hidden;
+        this.readonly = readonly;
+        this.configurable = configurable;
     }
 }
 
@@ -385,6 +392,7 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
      *            true if the entry must not be deleted.
      * @param value
      *            the value.
+     * @param configurable 
      * @return the previous value of the specified key in this hashtable, or
      *         <code>null</code> if it did not have one.
      * @exception NullPointerException
@@ -394,7 +402,7 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
      * @since JDK1.0
      */
     public ESValue put(String key, int hash, boolean hidden, boolean readonly,
-            ESValue value) {
+            ESValue value, boolean configurable) {
         // Make sure the value is not null
         if (value == null) {
             throw new NullPointerException("value");
@@ -404,14 +412,14 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         HashtableEntry e = getHashtableEntry(key, hash);
         if (e != null) {
             ESValue old = e.value;
-            e.value = value;
+            e.set(value, hidden, readonly, configurable);
             return old;
         }
 
         if (count >= threshold) {
             // Rehash the table if the threshold is exceeded
             rehash();
-            return put(key, hash, hidden, readonly, value);
+            return put(key, hash, hidden, readonly, value, configurable);
         }
 
         // Creates the new entry.
@@ -419,10 +427,7 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         e = new HashtableEntry();
         e.hash = hash;
         e.key = key;
-        e.value = value;
-        e.hidden = hidden;
-        e.readonly = readonly;
-        e.configurable = true;
+        e.set(value, hidden, readonly, configurable);
         int index = (hash & 0x7FFFFFFF) % tab.length;
         e.next = tab[index];
         tab[index] = e;
@@ -630,8 +635,83 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
             object.putProperty(StandardProperty.WRITABLEstring, ESBoolean.valueOf(!e.readonly), StandardProperty.WRITABLEhash);
         }
         object.putProperty(StandardProperty.ENUMERABLEstring, ESBoolean.valueOf(!e.hidden), StandardProperty.ENUMERABLEhash);
-        object.putProperty(StandardProperty.CONFIGURABLEstring, ESBoolean.valueOf(true), StandardProperty.CONFIGURABLEhash);
+        object.putProperty(StandardProperty.CONFIGURABLEstring, ESBoolean.valueOf(e.configurable), StandardProperty.CONFIGURABLEhash);
         return object;
+    }
+
+    public interface IReporter {
+        public boolean reject(String message) throws TypeError;
+    }
+    
+    public boolean defineProperty(String propertyName, FesiHashtable desc, IReporter reporter, boolean extensible) throws EcmaScriptException {
+        int propertNameHash = propertyName.hashCode();
+        HashtableEntry e = getHashtableEntry(propertyName, propertNameHash);
+        boolean enumerable = false;
+        boolean writable = false;
+        boolean configurable = false;
+        ESValue value = ESUndefined.theUndefined;
+        
+        
+        ESValue configurableValue = desc.get(StandardProperty.CONFIGURABLEstring, StandardProperty.CONFIGURABLEhash);
+        ESValue enumerableValue = desc.get(StandardProperty.ENUMERABLEstring, StandardProperty.ENUMERABLEhash);
+        ESValue newValue = desc.get(StandardProperty.VALUEstring, StandardProperty.VALUEhash);
+        ESValue writableValue = desc.get(StandardProperty.WRITABLEstring, StandardProperty.WRITABLEhash);
+        
+        if (e != null) {
+            enumerable = !e.hidden;
+            writable = !e.readonly;
+            configurable = e.configurable;
+            value = e.value;
+            
+            boolean valueIsAccessor = ESValue.isAccessorDescriptor(value);
+            boolean newValueIsAccessor = ESValue.isAccessorDescriptor(newValue);
+            if (!configurable) {
+                if (configurableValue != null && configurableValue.booleanValue()) {
+                    return reporter.reject("Cannot change configurable state of property "+ propertyName+ " It is not configurable");
+                }
+                if (enumerableValue != null && enumerableValue.booleanValue() != enumerable) {
+                    return reporter.reject("Cannot change enumerable state of property "+ propertyName+ " It is not configurable");
+                }
+                if (writableValue != null && writableValue.booleanValue() && !writable) {
+                    return reporter.reject("Cannot make property "+propertyName+" writable. It is not configurable.");
+                }
+                if (newValue != null) {
+                    if (valueIsAccessor != newValueIsAccessor) {
+                        return reporter.reject("Cannot change accessor state of property "+ propertyName+ " It is not configurable");
+                    } else if (valueIsAccessor && newValueIsAccessor) {
+                        if (ESValue.hasSetAccessorDescriptor(value) && !value.getSetAccessorDescriptor().equalsSameType(newValue.getSetAccessorDescriptor())) {
+                            return reporter.reject("Cannot change \"set\" accessor off property "+ propertyName+ " It is not configurable");
+                        }
+                        if (ESValue.hasGetAccessorDescriptor(value) && !value.getGetAccessorDescriptor().equalsSameType(newValue.getGetAccessorDescriptor())) {
+                            return reporter.reject("Cannot change \"get\" accessor off property "+ propertyName+ " It is not configurable");
+                        }
+                    } else if (!writable && !value.equalsSameType(newValue)) {
+                        return reporter.reject("Cannot change value of property "+propertyName+". It is not writable.");
+                    }
+                }
+            }
+        } else {
+            if (!extensible) {
+                return reporter.reject("Object is not extensible - property "+propertyName+" cannot be defined");
+            }
+        }
+        
+        configurable = updateBoolean(configurable, configurableValue);
+        enumerable = updateBoolean(enumerable, enumerableValue);
+        writable = updateBoolean(writable, writableValue);
+        if (newValue != null) {
+            value = newValue;
+        }
+        put(propertyName,propertNameHash,!enumerable,!writable,value,configurable);
+        return true;
+    }
+
+    private boolean updateBoolean(boolean configurable,
+            ESValue configurableValue) throws EcmaScriptException {
+        if (configurableValue != null) {
+            configurable = configurableValue.booleanValue();
+        }
+        return configurable;
     }
 
 }

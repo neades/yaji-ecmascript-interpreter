@@ -331,4 +331,16 @@ desc.value === 10 &&
   desc.enumerable === true &&
   desc.configurable === true;
 
+@Test defineProperty.15.2.3.6
+var o={};
+var o_ret = Object.defineProperty(o,"p", { value: 100 } );
+o_ret === o && o.p === 100;
 
+@Test defineProperty.15.2.3.6.1
+try {
+        var o="";
+        Object.defineProperty(o,"p", { value: 100 } );
+        false;
+} catch (e) {
+  "TypeError" === e.name;  
+}

@@ -77,11 +77,7 @@ public class ESBeans extends ESLoader {
         if (value == null) {
             buildPrefix();
             value = new ESBeans(propertyName, this, classLoader, getEvaluator());
-            getPropertyMap().put(propertyName, hash, false, false, value); // Cache
-                                                                           // it
-                                                                           // for
-                                                                           // faster
-                                                                           // retrievial
+            getPropertyMap().put(propertyName, hash, false, false, value, true);
         }
         return value;
     }
