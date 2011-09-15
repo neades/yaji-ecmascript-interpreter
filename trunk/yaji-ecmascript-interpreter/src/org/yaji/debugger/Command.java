@@ -113,7 +113,7 @@ class Command {
         Json json = new Json(new StringReader(getContentAsString()));
         json.setEvaluator(evaluator);
         try {
-            return json.Value();
+            return json.Parse();
         } catch (ParseException e) {
             e.printStackTrace();
         }

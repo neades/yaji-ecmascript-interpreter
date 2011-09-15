@@ -1,11 +1,19 @@
 package org.yaji.debugger;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.yaji.json.JsonUtil;
 
+import FESI.Data.ArrayPrototype;
 import FESI.Data.ESBoolean;
 import FESI.Data.ESNull;
 import FESI.Data.ESNumber;
@@ -23,6 +31,43 @@ public class V8Debugger {
     private abstract class CommandHandler {
         public abstract void invoke(ESObject jsonValue, ESObject response) throws EcmaScriptException;
     }
+    private static class SourceFile {
+        private String text = "";
+        private int nLines = 0;
+
+        public SourceFile(File file) {
+            try {
+                BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+                StringBuilder sb = new StringBuilder();
+                for(String readline = in.readLine(); readline != null; readline = in.readLine()) {
+                    sb = sb.append(readline).append("\r\n");
+                    nLines ++;
+                }
+                in.close();
+                
+                text = sb.toString();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        public ESValue getText() {
+            return new ESString(text);
+        }
+        
+        public ESValue getLineCount() {
+            return ESNumber.valueOf(nLines);
+        }
+    }
+
+    ArrayPrototype createArray() {
+        return new ArrayPrototype(evaluator.getArrayPrototype(),evaluator);
+    }
+    
     private Map<String,CommandHandler> commandMap = new HashMap<String,CommandHandler>() {
         private static final long serialVersionUID = 1L;
         {
@@ -92,7 +137,27 @@ public class V8Debugger {
             });
             put("scripts", new CommandHandler() {
                 @Override
-                public void invoke(ESObject request, ESObject response) {
+                public void invoke(ESObject request, ESObject response) throws EcmaScriptException {
+                    ESObject arguments = (ESObject) request.getProperty("arguments","arguments".hashCode());
+                    boolean includeSource = arguments.getProperty("includeSource","includeSource".hashCode()).booleanValue();
+                    ArrayPrototype array = new ArrayPrototype(evaluator.getArrayPrototype(),evaluator);
+                    List<File> scripts = debugger.getScripts();
+                    int index = 1;
+                    for (File file : scripts) {
+                        ESObject script = ObjectObject.createObject(evaluator);
+                        script.putProperty("id", ESNumber.valueOf(index++), "id".hashCode());
+                        script.putProperty("name", new ESString(file.getName()), "name".hashCode());
+                        SourceFile sourceFile = new SourceFile(file);
+                        script.putProperty("lineCount", sourceFile.getLineCount(), "lineCount".hashCode());
+                        if (includeSource) {
+                            script.putProperty("source", sourceFile.getText(), "source".hashCode());
+                        }
+                        array.add(script);
+                    }
+                    
+                    response.putProperty("body", array, "body".hashCode());
+                    response.putProperty("running", ESBoolean.valueOf(!debugger.isPaused()));
+                    response.putProperty("success", ESBoolean.valueOf(true));
                 }
             });
             put("source", new CommandHandler() {
@@ -142,7 +207,14 @@ public class V8Debugger {
             });
             put("listbreakpoints", new CommandHandler() {
                 @Override
-                public void invoke(ESObject request, ESObject response) {
+                public void invoke(ESObject request, ESObject response) throws EcmaScriptException {
+                    ESObject object = ObjectObject.createObject(evaluator);
+                    object.putProperty("breakpints", createArray(), "breakpoints".hashCode());
+                    object.putProperty("breakOnExceptions", ESBoolean.valueOf(true), "breakOnExceptions".hashCode());
+                    object.putProperty("breakOnUncaughtExceptions", ESBoolean.valueOf(true), "breakOnUncaughtExceptions".hashCode());
+                    response.putProperty("body", object, "body".hashCode());
+                    response.putProperty("running", ESBoolean.valueOf(!debugger.isPaused()));
+                    response.putProperty("succcess", ESBoolean.valueOf(true));
                 }
             });
         }
