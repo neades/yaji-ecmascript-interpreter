@@ -69,10 +69,6 @@ import FESI.jslib.JSExtension;
 /**
  * Defines the evaluation interface and contains the evaluation context.
  * <P>
- * <B>Important:</B> This object is also used as the synchronization object -
- * all entries into the evaluation process must be synchronized on the
- * evaluator, as the inside of the evaluator is not synchronized for speed
- * reasons.
  */
 public class Evaluator implements Serializable {
     private static final long serialVersionUID = -7530811329761640032L;
@@ -783,6 +779,9 @@ public class Evaluator implements Serializable {
                     + "' does not exist or is not a text file");
         }
         EvaluationSource es = new FileEvaluationSource(file.getPath(), null);
+        if (debugger != null) {
+            debugger.addScript(file);
+        }
         Reader fr = null;
         try {
             fr = new InputStreamReader(new FileInputStream(file),"UTF-8");
@@ -1152,7 +1151,7 @@ public class Evaluator implements Serializable {
      * @exception EmcaScriptException
      *                In case of any error during evaluation
      */
-    synchronized public void evaluateEvent(ESWrapper sourceObject,
+     public void evaluateEvent(ESWrapper sourceObject,
             ESObject theFunction, Object[] args) throws EcmaScriptException {
         ESValue[] esArgs = new ESValue[args.length];
         for (int i = 0; i < args.length; i++) {
@@ -1163,7 +1162,7 @@ public class Evaluator implements Serializable {
     }
 
     /**
-     * Top eval (synchronized) evaluate on identified stream
+     * Top eval evaluate on identified stream
      * 
      * @param is
      *            Input stream to evaluate
@@ -1178,7 +1177,7 @@ public class Evaluator implements Serializable {
      *                In case of any error during evaluation
      */
 
-    synchronized public ESValue evaluate(java.io.Reader is,
+     public ESValue evaluate(java.io.Reader is,
             ESObject thisObject, EvaluationSource es, boolean acceptReturn)
             throws EcmaScriptException {
         ESValue theValue = ESUndefined.theUndefined;
@@ -1225,7 +1224,7 @@ public class Evaluator implements Serializable {
     }
 
     /**
-     * Top eval (synchronized) evaluate on anonymous stream
+     * Top eval evaluate on anonymous stream
      * 
      * @param is
      *            Input stream to evaluate
@@ -1235,7 +1234,7 @@ public class Evaluator implements Serializable {
      * @exception EmcaScriptException
      *                In case of any error during evaluation
      */
-    synchronized public ESValue evaluate(Reader is, ESObject thisObject)
+    public ESValue evaluate(Reader is, ESObject thisObject)
             throws EcmaScriptException {
         EvaluationSource es = new UserEvaluationSource("<Anonymous stream>",
                 null);
@@ -1244,7 +1243,7 @@ public class Evaluator implements Serializable {
     }
 
     /**
-     * Top eval (synchronized) evaluate on anonymous stream with null thisObject
+     * Top eval evaluate on anonymous stream with null thisObject
      * 
      * @param is
      *            Input stream to evaluate
@@ -1252,12 +1251,12 @@ public class Evaluator implements Serializable {
      * @exception EmcaScriptException
      *                In case of any error during evaluation
      */
-    synchronized public ESValue evaluate(Reader is) throws EcmaScriptException {
+    public ESValue evaluate(Reader is) throws EcmaScriptException {
         return evaluate(is, null);
     }
 
     /**
-     * Top eval (synchronized) evaluate on an identified string (used by the
+     * Top eval evaluate on an identified string (used by the
      * GUI)
      * 
      * @param text
@@ -1268,7 +1267,7 @@ public class Evaluator implements Serializable {
      * @exception EmcaScriptException
      *                In case of any error during evaluation
      */
-    synchronized public ESValue evaluate(String text, String source)
+    public ESValue evaluate(String text, String source)
             throws EcmaScriptException {
         java.io.StringReader is = null;
         ESValue v = null;
@@ -1289,7 +1288,7 @@ public class Evaluator implements Serializable {
     }
 
     /**
-     * Top eval (synchronized) evaluate a file
+     * Top eval evaluate a file
      * 
      * @param file
      *            file to evaluate
@@ -1297,13 +1296,13 @@ public class Evaluator implements Serializable {
      * @exception EmcaScriptException
      *                In case of any error during evaluation
      */
-    synchronized public ESValue evaluate(File file) throws EcmaScriptException,
+    public ESValue evaluate(File file) throws EcmaScriptException,
             IOException {
         return evaluate(file, null);
     }
 
     /**
-     * Top eval (synchronized) evaluate a file
+     * Top eval evaluate a file
      * 
      * @param file
      *            file to evaluate
@@ -1313,7 +1312,7 @@ public class Evaluator implements Serializable {
      * @exception EmcaScriptException
      *                In case of any error during evaluation
      */
-    synchronized public ESValue evaluate(File file, ESObject thisObject)
+    public ESValue evaluate(File file, ESObject thisObject)
             throws EcmaScriptException, IOException {
         EvaluationSource es = new FileEvaluationSource(file.getPath(), null);
         BufferedReader fr = null;
@@ -1334,7 +1333,7 @@ public class Evaluator implements Serializable {
     }
 
     /**
-     * Top eval (synchronized) evaluate on an anonymous string
+     * Top eval evaluate on an anonymous string
      * 
      * @param theSource
      *            source to evaluate
@@ -1342,7 +1341,7 @@ public class Evaluator implements Serializable {
      * @exception EmcaScriptException
      *                In case of any error during evaluation
      */
-    synchronized public ESValue evaluate(String theSource)
+    public ESValue evaluate(String theSource)
             throws EcmaScriptException {
         return evaluate(theSource, null, false);
     }
@@ -1352,7 +1351,7 @@ public class Evaluator implements Serializable {
     // return evaluate(theSource, thisObject, false); // No return allowed
     // }
     /**
-     * Top eval (synchronized) evaluate on an anonymous string with thisObject
+     * Top eval evaluate on an anonymous string with thisObject
      * and acceptBoolean
      * 
      * @param theSource
@@ -1365,7 +1364,7 @@ public class Evaluator implements Serializable {
      * @exception EmcaScriptException
      *                In case of any error during evaluation
      */
-    synchronized public ESValue evaluate(String theSource, ESObject thisObject,
+    public ESValue evaluate(String theSource, ESObject thisObject,
             boolean returnAccepted) throws EcmaScriptException {
         java.io.StringReader is = null;
         ESValue v = null;
@@ -1442,7 +1441,7 @@ public class Evaluator implements Serializable {
         return ESObject.getObjectProfiler();
     }
 
-    public synchronized long generateObjectId() {
+    public long generateObjectId() {
         return nextObjectId++;
     }
 
@@ -1450,7 +1449,7 @@ public class Evaluator implements Serializable {
      * ONLY USE FOR TESTING. Allows the next object ID to be overridden,
      * primarily to help with assertions in test cases.
      */
-    public synchronized void setNextObjectId(long nextObjectId) {
+    public void setNextObjectId(long nextObjectId) {
         this.nextObjectId = nextObjectId;
     }
 

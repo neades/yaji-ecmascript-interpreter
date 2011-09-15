@@ -1,5 +1,6 @@
 package org.yaji.debugger;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
@@ -7,7 +8,9 @@ import java.net.ServerSocket;
 import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import FESI.Data.ArrayObject;
@@ -34,6 +37,7 @@ public class Debugger {
     }
 
     private Object latch = new Object();
+    private List<File> scripts = new ArrayList<File>();
     
     public void check(int lineNumber) {
         synchronized (latch) {
@@ -216,5 +220,13 @@ public class Debugger {
 
     public boolean isPaused() {
         return false;
+    }
+
+    public void addScript(File file) {
+        scripts.add(file);
+    }
+
+    public List<File> getScripts() {
+        return scripts;
     }
 }
