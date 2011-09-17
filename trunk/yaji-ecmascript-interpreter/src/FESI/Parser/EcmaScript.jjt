@@ -910,7 +910,9 @@ void Identifier() #Identifier :
   Token t;
 }
 {
-  t=<IDENTIFIER>
+  ( t=<IDENTIFIER>
+  | t=<GET>
+  | t=<SET> )
   {
     jjtThis.setName(t.image);
   }
@@ -1047,9 +1049,10 @@ void PropertyAssignment() #PropertyNameAndValue :
 {
 }
 {
-	PropertyName() ":" AssignmentExpression()
-	| LOOKAHEAD("get") "get" #GetAccessor PropertyName() "(" ")" Block()
-	| LOOKAHEAD("set") "set" #SetAccessor PropertyName() "(" Identifier() ")" Block()
+	
+	LOOKAHEAD(<GET> PropertyName()) <GET> #GetAccessor PropertyName() "(" ")" Block()
+	| LOOKAHEAD(<SET> PropertyName()) <SET> #SetAccessor PropertyName() "(" Identifier() ")" Block()
+	| PropertyName() ":" AssignmentExpression()
 }
 
 void PropertyName() #void :

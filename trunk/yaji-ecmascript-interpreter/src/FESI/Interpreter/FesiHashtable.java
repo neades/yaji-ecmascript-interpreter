@@ -643,7 +643,7 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         public boolean reject(String message) throws TypeError;
     }
     
-    public boolean defineProperty(String propertyName, FesiHashtable desc, IReporter reporter, boolean extensible) throws EcmaScriptException {
+    public boolean defineProperty(String propertyName, FesiHashtable desc, IReporter reporter, boolean extensible, Evaluator evaluator) throws EcmaScriptException {
         int propertNameHash = propertyName.hashCode();
         HashtableEntry e = getHashtableEntry(propertyName, propertNameHash);
         boolean enumerable = false;
@@ -656,6 +656,14 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         ESValue enumerableValue = desc.get(StandardProperty.ENUMERABLEstring, StandardProperty.ENUMERABLEhash);
         ESValue newValue = desc.get(StandardProperty.VALUEstring, StandardProperty.VALUEhash);
         ESValue writableValue = desc.get(StandardProperty.WRITABLEstring, StandardProperty.WRITABLEhash);
+        ESValue getter = desc.get(StandardProperty.GETstring, StandardProperty.GEThash);
+        ESValue setter = desc.get(StandardProperty.SETstring, StandardProperty.SEThash);
+        
+        if (newValue != null || writableValue != null) {
+            if (getter != null || setter != null) {
+                return reporter.reject("Cannot set both value and set/get for property "+propertyName);
+            }
+        }
         
         if (e != null) {
             enumerable = !e.hidden;
@@ -664,7 +672,7 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
             value = e.value;
             
             boolean valueIsAccessor = ESValue.isAccessorDescriptor(value);
-            boolean newValueIsAccessor = ESValue.isAccessorDescriptor(newValue);
+            boolean newValueIsAccessor = (setter != null || getter != null);
             if (!configurable) {
                 if (configurableValue != null && configurableValue.booleanValue()) {
                     return reporter.reject("Cannot change configurable state of property "+ propertyName+ " It is not configurable");
@@ -675,19 +683,17 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
                 if (writableValue != null && writableValue.booleanValue() && !writable) {
                     return reporter.reject("Cannot make property "+propertyName+" writable. It is not configurable.");
                 }
-                if (newValue != null) {
-                    if (valueIsAccessor != newValueIsAccessor) {
-                        return reporter.reject("Cannot change accessor state of property "+ propertyName+ " It is not configurable");
-                    } else if (valueIsAccessor && newValueIsAccessor) {
-                        if (ESValue.hasSetAccessorDescriptor(value) && !value.getSetAccessorDescriptor().equalsSameType(newValue.getSetAccessorDescriptor())) {
-                            return reporter.reject("Cannot change \"set\" accessor off property "+ propertyName+ " It is not configurable");
-                        }
-                        if (ESValue.hasGetAccessorDescriptor(value) && !value.getGetAccessorDescriptor().equalsSameType(newValue.getGetAccessorDescriptor())) {
-                            return reporter.reject("Cannot change \"get\" accessor off property "+ propertyName+ " It is not configurable");
-                        }
-                    } else if (!writable && !value.equalsSameType(newValue)) {
-                        return reporter.reject("Cannot change value of property "+propertyName+". It is not writable.");
+                if (valueIsAccessor != newValueIsAccessor) {
+                    return reporter.reject("Cannot change accessor state of property "+ propertyName+ " It is not configurable");
+                } else if (valueIsAccessor && newValueIsAccessor) {
+                    if (ESValue.hasSetAccessorDescriptor(value) && !value.getSetAccessorDescriptor().equalsSameType(setter)) {
+                        return reporter.reject("Cannot change \"set\" accessor off property "+ propertyName+ " It is not configurable");
                     }
+                    if (ESValue.hasGetAccessorDescriptor(value) && !value.getGetAccessorDescriptor().equalsSameType(getter)) {
+                        return reporter.reject("Cannot change \"get\" accessor off property "+ propertyName+ " It is not configurable");
+                    }
+                } else if (newValue != null && !writable && !value.equalsSameType(newValue)) {
+                    return reporter.reject("Cannot change value of property "+propertyName+". It is not writable.");
                 }
             }
         } else {
@@ -701,6 +707,10 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         writable = updateBoolean(writable, writableValue);
         if (newValue != null) {
             value = newValue;
+        } else if (setter != null || getter != null) {
+            value = ObjectObject.createObject(evaluator);
+            value.setGetAccessorDescriptor(getter);
+            value.setSetAccessorDescriptor(setter);
         }
         put(propertyName,propertNameHash,!enumerable,!writable,value,configurable);
         return true;

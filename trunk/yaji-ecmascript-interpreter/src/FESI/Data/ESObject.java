@@ -1145,11 +1145,15 @@ public abstract class ESObject extends ESValue {
             public boolean reject(String message) throws TypeError{
                 throw new TypeError("Cannot define property "+propertyName+" on Object : "+message);
             }
-        }, isExtensible());
+        }, isExtensible(), getEvaluator());
         return this;
     }
 
     private boolean isExtensible() {
         return extensible;
+    }
+
+    public Enumeration<String> getOwnPropertyNames() {
+        return getPropertyMap().keys();
     }
 }

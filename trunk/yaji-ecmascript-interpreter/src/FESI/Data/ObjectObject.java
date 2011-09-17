@@ -17,6 +17,8 @@
 
 package FESI.Data;
 
+import java.util.Enumeration;
+
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
@@ -96,6 +98,22 @@ public class ObjectObject extends BuiltinFunctionObject {
                 String propertyName = getArg(arguments,1).toString();
                 ESObject desc = getArgAsObject(arguments, 2);
                 return object.defineProperty(propertyName,desc);
+            }
+        });
+        putHiddenProperty("getOwnPropertyNames", new BuiltinFunctionObject(prototype, evaluator, "getOwnPropertyNames", 1) {
+            private static final long serialVersionUID = 7813753201649697905L;
+            
+            @Override
+            public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
+                    throws EcmaScriptException {
+                ESObject object = getArgAsObject(arguments,0);
+                ArrayPrototype array = ArrayObject.createArray(getEvaluator());
+                Enumeration<String> propertyNames = object.getOwnPropertyNames();
+                while (propertyNames.hasMoreElements()) {
+                    String propertyName = (String) propertyNames.nextElement();
+                    array.add(new ESString(propertyName));
+                }
+                return array;
             }
         });
     }

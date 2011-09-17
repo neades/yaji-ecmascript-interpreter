@@ -344,3 +344,54 @@ try {
 } catch (e) {
   "TypeError" === e.name;  
 }
+
+@Test defineProperty.Mozilla.Example.1
+var o = {}; // Creates a new object  
+  
+// Example of an object property added with defineProperty with a data property descriptor  
+Object.defineProperty(o, "a", {value : 37,  
+                               writable : true,  
+                               enumerable : true,  
+                               configurable : true});  
+// 'a' property exists in the o object and its value is 37  
+o.a === 37;
+  
+@Test defineProperty.Mozilla.Example.2
+// Example of an object property added with defineProperty with an accessor property descriptor  
+var bValue;  
+Object.defineProperty(o, "b", {get : function(){ return bValue; },  
+                               set : function(newValue){ bValue = newValue; },  
+                               enumerable : true,  
+                               configurable : true});  
+o.b = 38;  
+// 'b' property exists in the o object and its value is 38  
+// The value of o.b is now always identical to bValue, unless o.b is redefined
+o.b === bValue;
+  
+@Test defineProperty.Mozilla.Example.3
+try {
+  // You cannot try to mix both :  
+  Object.defineProperty(o, "conflict", { value: 0x9f91102,   
+                                       get: function() { return 0xdeadbeef; } });
+  false;
+} catch(e) {
+  // throws a TypeError: value appears only in data descriptors, get appears only in accessor descriptors
+  "TypeError" === e.name;  
+}
+
+//@Test getOwnPropertyNames.Mozilla.Example.1
+//var arr = ["a", "b", "c"];  
+//Object.getOwnPropertyNames(arr).sort().toString() === "0,1,2,length";  
+      
+@Test getOwnPropertyNames.Mozilla.Example.2
+// array-like object  
+var obj = { 0: "a", 1: "b", 2: "c"};  
+Object.getOwnPropertyNames(obj).sort().toString() === "0,1,2";  
+      
+@Test getOwnPropertyNames.Mozilla.Example.3
+// non-enumerable property  
+var my_obj = {};
+Object.defineProperty(my_obj, "getFoo", { value: function() { return this.foo; }, enumerable: false });  
+my_obj.foo = 1;  
+      
+Object.getOwnPropertyNames(my_obj).sort().toString() === "foo,getFoo";  
