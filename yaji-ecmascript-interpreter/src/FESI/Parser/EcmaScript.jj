@@ -1027,7 +1027,9 @@ void Identifier()             :
 {/*@bgen(jjtree) Identifier */
   try {
 /*@egen*/
-  t=<IDENTIFIER>/*@bgen(jjtree)*/
+  ( t=<IDENTIFIER>
+  | t=<GET>
+  | t=<SET> )/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
@@ -1805,39 +1807,40 @@ void PropertyAssignment()                       :
 {/*@bgen(jjtree) PropertyNameAndValue */
         try {
 /*@egen*/
-	PropertyName() ":" AssignmentExpression()
-	| LOOKAHEAD("get")/*@bgen(jjtree) GetAccessor */
-                           {
-                             ASTGetAccessor jjtn001 = new ASTGetAccessor(JJTGETACCESSOR);
-                             boolean jjtc001 = true;
-                             jjtree.openNodeScope(jjtn001);
-                             jjtreeOpenNodeScope(jjtn001);
-                           }
-                           try {
-/*@egen*/ "get"/*@bgen(jjtree)*/
-                           } finally {
-                             if (jjtc001) {
-                               jjtree.closeNodeScope(jjtn001, true);
-                               jjtreeCloseNodeScope(jjtn001);
-                             }
-                           }
+	
+	LOOKAHEAD(<GET> PropertyName())/*@bgen(jjtree) GetAccessor */
+                                        {
+                                          ASTGetAccessor jjtn001 = new ASTGetAccessor(JJTGETACCESSOR);
+                                          boolean jjtc001 = true;
+                                          jjtree.openNodeScope(jjtn001);
+                                          jjtreeOpenNodeScope(jjtn001);
+                                        }
+                                        try {
+/*@egen*/ <GET>/*@bgen(jjtree)*/
+                                        } finally {
+                                          if (jjtc001) {
+                                            jjtree.closeNodeScope(jjtn001, true);
+                                            jjtreeCloseNodeScope(jjtn001);
+                                          }
+                                        }
 /*@egen*/              PropertyName() "(" ")" Block()
-	| LOOKAHEAD("set")/*@bgen(jjtree) SetAccessor */
-                           {
-                             ASTSetAccessor jjtn002 = new ASTSetAccessor(JJTSETACCESSOR);
-                             boolean jjtc002 = true;
-                             jjtree.openNodeScope(jjtn002);
-                             jjtreeOpenNodeScope(jjtn002);
-                           }
-                           try {
-/*@egen*/ "set"/*@bgen(jjtree)*/
-                           } finally {
-                             if (jjtc002) {
-                               jjtree.closeNodeScope(jjtn002, true);
-                               jjtreeCloseNodeScope(jjtn002);
-                             }
-                           }
-/*@egen*/              PropertyName() "(" Identifier() ")" Block()/*@bgen(jjtree)*/
+	| LOOKAHEAD(<SET> PropertyName())/*@bgen(jjtree) SetAccessor */
+                                          {
+                                            ASTSetAccessor jjtn002 = new ASTSetAccessor(JJTSETACCESSOR);
+                                            boolean jjtc002 = true;
+                                            jjtree.openNodeScope(jjtn002);
+                                            jjtreeOpenNodeScope(jjtn002);
+                                          }
+                                          try {
+/*@egen*/ <SET>/*@bgen(jjtree)*/
+                                          } finally {
+                                            if (jjtc002) {
+                                              jjtree.closeNodeScope(jjtn002, true);
+                                              jjtreeCloseNodeScope(jjtn002);
+                                            }
+                                          }
+/*@egen*/              PropertyName() "(" Identifier() ")" Block()
+	| PropertyName() ":" AssignmentExpression()/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);

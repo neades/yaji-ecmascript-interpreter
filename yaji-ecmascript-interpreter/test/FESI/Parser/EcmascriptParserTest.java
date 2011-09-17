@@ -269,6 +269,30 @@ public class EcmascriptParserTest {
                     + "  VariableDeclaration" + eol
                     + "   <r>" + eol
                     + "   /[a-z]\\*/" + eol
+                },
+                { "var a = { get b() { return 1; } };",
+                    "Program" + eol
+                    +" Statement" + eol
+                    +"  VariableDeclaration" + eol
+                    +"   <a>" + eol
+                    +"   ObjectLiteral" + eol
+                    +"    PropertyNameAndValue" + eol
+                    +"     GetAccessor" + eol
+                    +"     <b>" + eol
+                    +"     StatementList" + eol
+                    +"      Statement" + eol
+                    +"       ReturnStatement" + eol
+                    +"        [1]" + eol
+                },
+                { "var a = { get : 1 };",
+                    "Program" + eol
+                    +" Statement" + eol
+                    +"  VariableDeclaration" + eol
+                    +"   <a>" + eol
+                    +"   ObjectLiteral" + eol
+                    +"    PropertyNameAndValue" + eol
+                    +"     <get>" + eol
+                    +"     [1]" + eol
                 }
             });
     }
