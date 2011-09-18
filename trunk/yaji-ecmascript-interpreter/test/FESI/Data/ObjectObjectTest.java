@@ -20,6 +20,7 @@ public class ObjectObjectTest {
     
     private Evaluator evaluator;
     private BuiltinFunctionObject objectObject;
+    private BuiltinFunctionObject arrayObject;
     @Before
     public void setUp() throws Exception {
         evaluator = new Evaluator();
@@ -32,6 +33,7 @@ public class ObjectObjectTest {
         });
         
         objectObject = (BuiltinFunctionObject) evaluator.getGlobalObject().getProperty("Object","Object".hashCode());
+        arrayObject = (BuiltinFunctionObject) evaluator.getGlobalObject().getProperty("Array","Array".hashCode());
     }
     
     @Test public void testNewObjectNotFrozen() throws Exception {
@@ -476,6 +478,39 @@ public class ObjectObjectTest {
         ArrayPrototype array = (ArrayPrototype) result;
         assertEquals(1,array.size());
         assertEquals("propertyName",array.getProperty(0).toString());
+    }
+
+
+    @Test
+    public void getOwnPropertyNamesShouldReturnIndicesForArray() throws Exception {
+        // 15.2.3.4.2
+        ESObject object = arrayObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        object.putProperty(StandardProperty.LENGTHstring, ESNumber.valueOf(3));
+        object.putProperty("another", ESNumber.valueOf(3));
+        
+        ESValue result = objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyNames", new ESValue[] { object });
+        ArrayPrototype array = (ArrayPrototype) result;
+        assertEquals(5,array.size());
+        assertEquals("0",array.getProperty(0).toString());
+        assertEquals("1",array.getProperty(1).toString());
+        assertEquals("2",array.getProperty(2).toString());
+        assertEquals("length",array.getProperty(3).toString());
+        assertEquals("another",array.getProperty(4).toString());
+    }
+
+    @Test
+    public void getOwnPropertyNamesShouldReturnIndicesForString() throws Exception {
+        // 15.2.3.4.NOTE
+        ESObject object = (new ESString("abc")).toESObject(evaluator);
+        object.putProperty(StandardProperty.LENGTHstring, ESNumber.valueOf(3));
+        
+        ESValue result = objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyNames", new ESValue[] { object });
+        ArrayPrototype array = (ArrayPrototype) result;
+        assertEquals(4,array.size());
+        assertEquals("0",array.getProperty(0).toString());
+        assertEquals("1",array.getProperty(1).toString());
+        assertEquals("2",array.getProperty(2).toString());
+        assertEquals("length",array.getProperty(3).toString());
     }
 
     private void definePropertyOnExistingProperty(String descPropertyName, boolean stateToTest)
