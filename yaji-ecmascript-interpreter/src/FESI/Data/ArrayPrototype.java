@@ -1234,4 +1234,9 @@ public class ArrayPrototype extends ESObject {
     public boolean canJson() {
         return true;
     }
+    
+    @Override
+    public Enumeration<String> getOwnPropertyNames() {
+        return new ArrayPropertyNamesEnumeration(super.getOwnPropertyNames(), theArray.size(), true);
+    }
 }

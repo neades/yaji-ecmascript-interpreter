@@ -379,9 +379,9 @@ try {
   "TypeError" === e.name;  
 }
 
-//@Test getOwnPropertyNames.Mozilla.Example.1
-//var arr = ["a", "b", "c"];  
-//Object.getOwnPropertyNames(arr).sort().toString() === "0,1,2,length";  
+@Test getOwnPropertyNames.Mozilla.Example.1
+var arr = ["a", "b", "c"];  
+Object.getOwnPropertyNames(arr).sort().toString() === "0,1,2,length";  
       
 @Test getOwnPropertyNames.Mozilla.Example.2
 // array-like object  

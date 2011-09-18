@@ -17,6 +17,8 @@
 
 package FESI.Data;
 
+import java.util.Enumeration;
+
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Interpreter.Evaluator;
 import FESI.Interpreter.ScopeChain;
@@ -111,4 +113,8 @@ class StringPrototype extends ESObject {
         return true;
     }
 
+    @Override
+    public Enumeration<String> getOwnPropertyNames() {
+        return new ArrayPropertyNamesEnumeration(super.getOwnPropertyNames(), value.getStringLength(), false);
+    }
 }
