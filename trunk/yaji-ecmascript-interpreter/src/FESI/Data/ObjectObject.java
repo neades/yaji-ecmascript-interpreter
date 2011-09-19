@@ -100,6 +100,23 @@ public class ObjectObject extends BuiltinFunctionObject {
                 return object.defineProperty(propertyName,desc);
             }
         });
+        putHiddenProperty("defineProperties", new BuiltinFunctionObject(prototype,evaluator, "defineProperties", 2) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
+                    throws EcmaScriptException {
+                ESObject object = getArgAsObject(arguments,0);
+                ESObject p = getArgAsObject(arguments, 1);
+                Enumeration<String> ownPropertyNames = p.getOwnPropertyNames();
+                while (ownPropertyNames.hasMoreElements()) {
+                    String propertyName = (String) ownPropertyNames.nextElement();
+                    ESValue desc = p.getProperty(propertyName);
+                    object.defineProperty(propertyName,desc.toESObject(getEvaluator()));
+                }
+                return object;
+            }
+        });
         putHiddenProperty("getOwnPropertyNames", new BuiltinFunctionObject(prototype, evaluator, "getOwnPropertyNames", 1) {
             private static final long serialVersionUID = 7813753201649697905L;
             

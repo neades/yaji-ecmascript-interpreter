@@ -394,4 +394,26 @@ var my_obj = {};
 Object.defineProperty(my_obj, "getFoo", { value: function() { return this.foo; }, enumerable: false });  
 my_obj.foo = 1;  
       
-Object.getOwnPropertyNames(my_obj).sort().toString() === "foo,getFoo";  
+Object.getOwnPropertyNames(my_obj).sort().toString() === "foo,getFoo";
+
+@Test defineProperties.MSDN.Example
+var obj = Object.defineProperties({}, {
+        newDataProperty: {
+            value: 101,
+            writable: true,
+            enumerable: true,
+            configurable: true
+        },
+        newAccessorProperty: {
+            set: function (x) {
+                this.newaccpropvalue = x + 1;
+            },
+            get: function () {
+                return this.newaccpropvalue;
+            },
+            enumerable: true,
+            configurable: true
+        },
+    });
+obj.newAccessorProperty = 4;
+obj.newDataProperty === 101 && obj.newAccessorProperty === 5;

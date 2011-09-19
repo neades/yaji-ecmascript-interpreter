@@ -336,7 +336,7 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
 
     public boolean isReadonly(String key, int hash, boolean extensible) {
         HashtableEntry e = getHashtableEntry(key, hash);
-        return e==null?!extensible:e.readonly;
+        return e==null?!extensible:(!ESValue.isAccessorDescriptor(e.value) && e.readonly);
     }
 
     /**
