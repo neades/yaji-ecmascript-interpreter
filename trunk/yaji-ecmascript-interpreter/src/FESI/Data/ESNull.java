@@ -117,4 +117,9 @@ public final class ESNull extends ESPrimitive {
     public boolean canJson() {
         return true;
     }
+    
+    @Override
+    boolean isObjectCoercible() {
+        return false;
+    }
 }

@@ -27,9 +27,38 @@ import FESI.Interpreter.Evaluator;
 import FESI.Util.IAppendable;
 
 /**
- * Implemements the EcmaScript String singleton.
+ * Implements the EcmaScript String singleton.
  */
 public class StringObject extends BuiltinFunctionObject {
+    private static final class StringPrototypeTrim extends
+            BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        private StringPrototypeTrim(String functionName,
+                Evaluator evaluator, ESObject functionPrototype) {
+            super(functionPrototype, evaluator, functionName, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,ESValue[] arguments) throws EcmaScriptException {
+            checkThisObjectCoercible(thisObject);
+            char[] s = thisObject.toString().toCharArray();
+            int start;
+            for( start=0; start < s.length && isWhitespace(s[start]); start++) {
+                //  loop
+            }
+            int end;
+            for( end=s.length-1; end > start && isWhitespace(s[end]); end --) {
+                // loop
+            }
+            return new ESString(new String(s,start,end-start+1));
+        }
+
+        private boolean isWhitespace(char c) {
+            return Character.isWhitespace(c) || Character.isSpaceChar(c);
+        }
+    }
+
     // For stringPrototype
     private static class StringPrototypeToString extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
@@ -556,6 +585,7 @@ public class StringObject extends BuiltinFunctionObject {
                     new StringPrototypeToLowerCase("toLowerCase", evaluator, functionPrototype));
             stringPrototype.putHiddenProperty("toUpperCase",
                     new StringPrototypeToUpperCase("toUpperCase", evaluator, functionPrototype));
+            stringPrototype.putHiddenProperty("trim", new StringPrototypeTrim("trim", evaluator, functionPrototype));
             
         } catch (EcmaScriptException e) {
             e.printStackTrace();

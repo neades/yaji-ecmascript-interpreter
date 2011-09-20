@@ -150,4 +150,9 @@ public final class ESUndefined extends ESPrimitive {
     public boolean equalsSameType(ESValue v2) {
         return true;
     }
+
+    @Override
+    boolean isObjectCoercible() {
+        return false;
+    }
 }

@@ -465,4 +465,8 @@ public abstract class ESValue implements java.io.Serializable {
     public boolean canJson() {
         return false;
     }
+
+    boolean isObjectCoercible() {
+        return true;
+    }
 }

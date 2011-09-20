@@ -69,12 +69,26 @@ public abstract class BuiltinFunctionObject extends FunctionPrototype {
         return (index<arguments.length)?arguments[index]:ESUndefined.theUndefined;
     }
 
+    protected ESValue getCoercibleArg(ESValue[] arguments, int index) throws TypeError {
+        ESValue arg = getArg(arguments,index);
+        if (!arg.isObjectCoercible()) {
+            throw new TypeError(getFunctionName()+" expects argument "+(index+1)+" to be convertable to Object");
+        }
+        return arg;
+    }
+
     protected ESObject getArgAsObject(ESValue[] arguments, int index) throws TypeError {
         ESValue object = getArg(arguments,index);
         if (object instanceof ESObject) {
             return (ESObject)object;
         }
         throw new TypeError(getFunctionName()+" expects argument "+(index+1)+" to be an Object");
+    }
+
+    protected void checkThisObjectCoercible(ESValue thisObject) throws TypeError {
+        if (!thisObject.isObjectCoercible()) {
+            throw new TypeError(getFunctionName()+" cannot be applied to null or undefined");
+        }
     }
 
 }
