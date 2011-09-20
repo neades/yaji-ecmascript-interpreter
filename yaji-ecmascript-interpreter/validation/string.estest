@@ -241,3 +241,22 @@ var r = s.replace(re, "$3$2$1");
 
 r === "quick The fox brown over jumps lazy the dog.";
 
+@test trim.1
+var s = "  a quick brown fox\r\n";
+"a quick brown fox" === s.trim();
+
+@test trim.null.1
+try {
+  String.prototype.trim.apply(null);
+  false;
+} catch( e ) {
+  "TypeError" === e.name;
+}
+
+@test trim.undefined.1
+try {
+  String.prototype.trim.apply(undefined);
+  false;
+} catch( e ) {
+  "TypeError" === e.name;
+}
