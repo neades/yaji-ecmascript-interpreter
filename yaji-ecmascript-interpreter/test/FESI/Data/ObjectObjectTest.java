@@ -1,6 +1,7 @@
 package FESI.Data;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -528,6 +529,45 @@ public class ObjectObjectTest {
         assertEquals(ES_FALSE,result.getProperty(StandardProperty.ENUMERABLEstring));
         assertEquals(ES_FALSE,result.getProperty(StandardProperty.CONFIGURABLEstring));
         assertEquals(new ESString("value"),result.getProperty(StandardProperty.VALUEstring));
+    }
+    
+    @Test
+    public void objectObjectCreateShouldReturnObject() throws Exception {
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        
+        ESValue objectCreated = objectObject.doIndirectCall(evaluator, objectObject, "create", new ESValue[] { object });
+        
+        assertSame(object,((ESObject)objectCreated).getPrototype());
+    }
+    
+    @Test
+    public void objectObjectCreateShouldReturnObjectWithNullPrototype() throws Exception {
+        
+        ESValue objectCreated = objectObject.doIndirectCall(evaluator, objectObject, "create", new ESValue[] { ESNull.theNull });
+        
+        assertNull(((ESObject)objectCreated).getPrototype());
+    }
+    
+    @Test(expected=TypeError.class)
+    public void objectObjectCreateShouldFail() throws Exception {
+        objectObject.doIndirectCall(evaluator, objectObject, "create", new ESValue[] { ESNumber.valueOf(1.0) });
+    }
+    
+    @Test
+    public void objectObjectCreateShouldDefineProperties() throws Exception {
+        ESString propertyName = new ESString("propertyName");
+        ESObject argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        argumentsObject.putProperty("propertyName", createArgumentsObject(new ESString("value"), ES_FALSE, ES_FALSE, ES_FALSE, null, null));
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESValue objectCreated = objectObject.doIndirectCall(evaluator, objectObject, "create", new ESValue[] { object, argumentsObject });
+        
+        ObjectPrototype result = (ObjectPrototype)objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyDescriptor", new ESValue[] { objectCreated, propertyName });
+        assertEquals(ES_FALSE,result.getProperty(StandardProperty.WRITABLEstring));
+        assertEquals(ES_FALSE,result.getProperty(StandardProperty.ENUMERABLEstring));
+        assertEquals(ES_FALSE,result.getProperty(StandardProperty.CONFIGURABLEstring));
+        assertEquals(new ESString("value"),result.getProperty(StandardProperty.VALUEstring));
+        
+        assertSame(object,((ESObject)objectCreated).getPrototype());
     }
     
     private void definePropertyOnExistingProperty(String descPropertyName, boolean stateToTest)
