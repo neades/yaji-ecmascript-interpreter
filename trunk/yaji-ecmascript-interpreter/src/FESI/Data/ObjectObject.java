@@ -108,13 +108,7 @@ public class ObjectObject extends BuiltinFunctionObject {
                     throws EcmaScriptException {
                 ESObject object = getArgAsObject(arguments,0);
                 ESObject p = getArgAsObject(arguments, 1);
-                Enumeration<String> ownPropertyNames = p.getOwnPropertyNames();
-                while (ownPropertyNames.hasMoreElements()) {
-                    String propertyName = (String) ownPropertyNames.nextElement();
-                    ESValue desc = p.getProperty(propertyName);
-                    object.defineProperty(propertyName,desc.toESObject(getEvaluator()));
-                }
-                return object;
+                return defineProperties(object, p);
             }
         });
         putHiddenProperty("getOwnPropertyNames", new BuiltinFunctionObject(prototype, evaluator, "getOwnPropertyNames", 1) {
@@ -131,6 +125,30 @@ public class ObjectObject extends BuiltinFunctionObject {
                     array.add(new ESString(propertyName));
                 }
                 return array;
+            }
+        });
+        putHiddenProperty("create", new BuiltinFunctionObject(prototype, evaluator, "create", 1) {
+            private static final long serialVersionUID = 7813753201649697905L;
+            
+            @Override
+            public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
+                    throws EcmaScriptException {
+                ESValue arg0 = getArg(arguments,0);
+                final Evaluator evaluator = getEvaluator();
+                ESObject op = null;
+                if (arg0 instanceof ESObject) {
+                    op = (ESObject)arg0;
+                } else if (arg0.getTypeOf() == EStypeNull) {
+                    op = null;
+                } else {
+                    throw new TypeError("ObjectCreate must be supplied a prototype object as first parameter");
+                }
+                final ObjectPrototype objectPrototype = new ObjectPrototype(op, evaluator);
+                ESValue p = getArg(arguments,1);
+                if (p.getTypeOf() != EStypeUndefined) {
+                    defineProperties(objectPrototype, p.toESObject(evaluator));
+                }
+                return objectPrototype;
             }
         });
     }
@@ -184,6 +202,17 @@ public class ObjectObject extends BuiltinFunctionObject {
             }
         }
         return theValue;
+    }
+
+    private ESValue defineProperties(ESObject object, ESObject p)
+            throws EcmaScriptException {
+        Enumeration<String> ownPropertyNames = p.getOwnPropertyNames();
+        while (ownPropertyNames.hasMoreElements()) {
+            String propertyName = (String) ownPropertyNames.nextElement();
+            ESValue desc = p.getProperty(propertyName);
+            object.defineProperty(propertyName,desc.toESObject(getEvaluator()));
+        }
+        return object;
     }
 
 }

@@ -417,3 +417,13 @@ var obj = Object.defineProperties({}, {
     });
 obj.newAccessorProperty = 4;
 obj.newDataProperty === 101 && obj.newAccessorProperty === 5;
+
+@Test object.create.1
+// create a new object whose prototype is a new, empty object  
+// and a adding single property 'p', with value 42  
+o = Object.create({}, { p: { value: 42 } })  
+  
+// by default properties ARE NOT writable, enumerable or configurable:  
+o.p = 24
+
+o.p === 42; 
