@@ -201,6 +201,57 @@ public class StringPrototypeTest {
     }
     
     @Test
+    public void  substringBasicOperation() throws Exception {
+        assertEquals("it",execSubstring(1, 3));
+    }
+
+    @Test
+    public void  substringEndPastEndSetToEnd() throws Exception {
+        assertEquals("le",execSubstring(3, 10));
+    }
+    
+    @Test
+    public void  substringStartPastEndSetToEndAndReversed() throws Exception {
+        assertEquals("le",execSubstring(10, 3));
+    }
+    
+    @Test
+    public void  substringStartNegativeSetToZero() throws Exception {
+        assertEquals("tit",execSubstring(-1, 3));
+    }
+    
+    @Test
+    public void  substringEndNegativeSetToZero() throws Exception {
+        assertEquals("tit",execSubstring(3, -1));
+    }
+    
+    @Test
+    public void  substringStartAsNanSetToZero() throws Exception {
+        ESObject originalObject = new ESString("title").toESObject(evaluator);
+        ESValue result = originalObject.doIndirectCall(evaluator, originalObject, "substring", new ESValue[] { ESNumber.valueOf(Double.NaN), ESNumber.valueOf(3) });
+        assertEquals("tit",result.toString());
+    }
+    
+    @Test
+    public void  substringEndAsNanSetToZero() throws Exception {
+        ESObject originalObject = new ESString("title").toESObject(evaluator);
+        ESValue result = originalObject.doIndirectCall(evaluator, originalObject, "substring", new ESValue[] { ESNumber.valueOf(3), ESNumber.valueOf(Double.NaN) });
+        assertEquals("tit",result.toString());
+    }
+    
+    @Test(expected=TypeError.class)
+    public void  substringAppliedToNullGeneratesError() throws Exception {
+        ESValue function = getStringPrototype().getProperty("substring");
+        function.callFunction(ESNull.theNull, ESValue.EMPTY_ARRAY);
+    }
+    
+    @Test(expected=TypeError.class)
+    public void  substringAppliedToUndefinedGeneratesError() throws Exception {
+        ESValue function = getStringPrototype().getProperty("substring");
+        function.callFunction(ESUndefined.theUndefined, ESValue.EMPTY_ARRAY);
+    }
+    
+    @Test
     public void toLocaleUpperCaseIsntLocaleAgnositic() throws Exception {
         Locale.setDefault(TURKISH);
         ESObject originalObject = new ESString("title").toESObject(evaluator);
@@ -212,6 +263,13 @@ public class StringPrototypeTest {
         ESObject stringObject = (ESObject) evaluator.getGlobalObject().getProperty("String","String".hashCode());
         ESObject stringPrototype = (ESObject) stringObject.getProperty(StandardProperty.PROTOTYPEstring,StandardProperty.PROTOTYPEhash);
         return stringPrototype;
+    }
+
+    private String execSubstring(int start, int end) throws EcmaScriptException, NoSuchMethodException {
+        ESObject originalObject = new ESString("title").toESObject(evaluator);
+        ESValue result = originalObject.doIndirectCall(evaluator, originalObject, "substring", new ESValue[] { ESNumber.valueOf(start), ESNumber.valueOf(end) });
+        String string = result.toString();
+        return string;
     }
 
 }

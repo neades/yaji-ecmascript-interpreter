@@ -408,18 +408,15 @@ public class StringObject extends BuiltinFunctionObject {
         }
     }
 
-    private static class StringPrototypeSubstring extends BuiltinFunctionObject {
+    private static class StringPrototypeSubstring extends CoercedStringFunction {
         private static final long serialVersionUID = 1L;
 
-        StringPrototypeSubstring(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+        StringPrototypeSubstring(String name, Evaluator evaluator, FunctionPrototype fp) {
             super(fp, evaluator, name, 1);
         }
 
         @Override
-        public ESValue callFunction(ESValue thisObject,
-                ESValue[] arguments) throws EcmaScriptException {
-            String str = thisObject.toString();
+        public ESValue invoke(String str, ESValue[] arguments) throws EcmaScriptException {
             int start = 0;
             int end = str.length();
             if (arguments.length > 0) {
