@@ -17,6 +17,7 @@
 
 package FESI.Data;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,8 +31,23 @@ import FESI.Util.IAppendable;
  * Implements the EcmaScript String singleton.
  */
 public class StringObject extends BuiltinFunctionObject {
-    private static final class StringPrototypeTrim extends
-            BuiltinFunctionObject {
+    private static abstract class CoercedStringFunction extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+        
+        public CoercedStringFunction(ESObject functionPrototype, Evaluator evaluator, String functionName, int length) {
+            super(functionPrototype,evaluator,functionName,length);
+        }
+        
+        @Override
+        public ESValue callFunction(ESValue thisObject,ESValue[] arguments) throws EcmaScriptException {
+            checkThisObjectCoercible(thisObject);
+            return invoke(thisObject.toString(),arguments);
+        }
+
+        protected abstract ESValue invoke(String string, ESValue[] arguments) throws EcmaScriptException;
+    }
+    
+    private static final class StringPrototypeTrim extends CoercedStringFunction {
         private static final long serialVersionUID = 1L;
 
         private StringPrototypeTrim(String functionName,
@@ -40,9 +56,8 @@ public class StringObject extends BuiltinFunctionObject {
         }
 
         @Override
-        public ESValue callFunction(ESValue thisObject,ESValue[] arguments) throws EcmaScriptException {
-            checkThisObjectCoercible(thisObject);
-            char[] s = thisObject.toString().toCharArray();
+        public ESValue invoke(String string, ESValue[] arguments) throws EcmaScriptException {
+            char[] s = string.toCharArray();
             int start;
             for( start=0; start < s.length && isWhitespace(s[start]); start++) {
                 //  loop
@@ -51,7 +66,8 @@ public class StringObject extends BuiltinFunctionObject {
             for( end=s.length-1; end > start && isWhitespace(s[end]); end --) {
                 // loop
             }
-            return new ESString(new String(s,start,end-start+1));
+            int length = end-start+1;
+            return new ESString((length == s.length)?string:new String(s,start,length));
         }
 
         private boolean isWhitespace(char c) {
@@ -431,36 +447,58 @@ public class StringObject extends BuiltinFunctionObject {
         }
     }
 
-    private static class StringPrototypeToLowerCase extends BuiltinFunctionObject {
+    private static class StringPrototypeToLowerCase extends CoercedStringFunction {
         private static final long serialVersionUID = 1L;
 
         StringPrototypeToLowerCase(String name, Evaluator evaluator,
                 FunctionPrototype fp) {
-            super(fp, evaluator, name, 1);
+            super(fp, evaluator, name, 0);
         }
 
         @Override
-        public ESValue callFunction(ESValue thisObject,
-                ESValue[] arguments) throws EcmaScriptException {
-            String str = thisObject.toString();
+        public ESValue invoke(String str, ESValue[] arguments) throws EcmaScriptException {
+            return new ESString(str.toLowerCase(Locale.ENGLISH));
+        }
+    }
 
+    private static class StringPrototypeToLocaleLowerCase extends CoercedStringFunction {
+        private static final long serialVersionUID = 1L;
+
+        StringPrototypeToLocaleLowerCase(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue invoke(String str, ESValue[] arguments) throws EcmaScriptException {
             return new ESString(str.toLowerCase());
         }
     }
 
-    private static class StringPrototypeToUpperCase extends BuiltinFunctionObject {
+    private static class StringPrototypeToUpperCase extends CoercedStringFunction {
         private static final long serialVersionUID = 1L;
 
         StringPrototypeToUpperCase(String name, Evaluator evaluator,
                 FunctionPrototype fp) {
-            super(fp, evaluator, name, 1);
+            super(fp, evaluator, name, 0);
         }
 
         @Override
-        public ESValue callFunction(ESValue thisObject,
-                ESValue[] arguments) throws EcmaScriptException {
-            String str = thisObject.toString();
+        public ESValue invoke(String str, ESValue[] arguments) throws EcmaScriptException {
+            return new ESString(str.toUpperCase(Locale.ENGLISH));
+        }
+    }
 
+    private static class StringPrototypeToLocaleUpperCase extends CoercedStringFunction {
+        private static final long serialVersionUID = 1L;
+
+        StringPrototypeToLocaleUpperCase(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue invoke(String str, ESValue[] arguments) throws EcmaScriptException {
             return new ESString(str.toUpperCase());
         }
     }
@@ -583,8 +621,12 @@ public class StringObject extends BuiltinFunctionObject {
                     new StringPrototypeSubstring("substring", evaluator, functionPrototype));
             stringPrototype.putHiddenProperty("toLowerCase",
                     new StringPrototypeToLowerCase("toLowerCase", evaluator, functionPrototype));
+            stringPrototype.putHiddenProperty("toLocaleLowerCase",
+                    new StringPrototypeToLocaleLowerCase("toLocaleLowerCase", evaluator, functionPrototype));
             stringPrototype.putHiddenProperty("toUpperCase",
                     new StringPrototypeToUpperCase("toUpperCase", evaluator, functionPrototype));
+            stringPrototype.putHiddenProperty("toLocaleUpperCase",
+                    new StringPrototypeToLocaleUpperCase("toLocaleUpperCase", evaluator, functionPrototype));
             stringPrototype.putHiddenProperty("trim", new StringPrototypeTrim("trim", evaluator, functionPrototype));
             
         } catch (EcmaScriptException e) {

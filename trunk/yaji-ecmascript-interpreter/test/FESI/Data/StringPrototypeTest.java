@@ -4,13 +4,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Locale;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import FESI.Exceptions.EcmaScriptException;
+import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
 
 public class StringPrototypeTest {
+    private static final Locale TURKISH = new Locale("tr");
+
     private Evaluator evaluator;
 
     private static final String NON_ASCII_WHITE_SPACE = 
@@ -37,11 +43,20 @@ public class StringPrototypeTest {
         +"\u2029";//   Paragraph separator
 
     private static final String ASCII_WHITE_SPACE = "\u0009\n\u000B\u000C\r\u0020";
+
+    private Locale defaultLocale;
     
     @Before
     public void setUp() {
         evaluator = new Evaluator();
+        defaultLocale = Locale.getDefault();
     }
+    
+    @After
+    public void tearDown() {
+        Locale.setDefault(defaultLocale);
+    }
+    
     @Test
     public void shouldDefinePrototype() throws Exception {
         ESObject stringObject = (ESObject) evaluator.getGlobalObject().getProperty("String","String".hashCode());
@@ -135,11 +150,68 @@ public class StringPrototypeTest {
         ESValue trimmed = originalObject.doIndirectCall(evaluator, originalObject, "trim", ESValue.EMPTY_ARRAY);
         assertEquals("",trimmed.toString());
     }
+
+    @Test
+    public void toLowerCaseIsLocaleAgnositic() throws Exception {
+        Locale.setDefault(TURKISH);
+        ESObject originalObject = new ESString("TITLE").toESObject(evaluator);
+        ESValue lowerCase = originalObject.doIndirectCall(evaluator, originalObject, "toLowerCase", ESValue.EMPTY_ARRAY);
+        assertEquals("title",lowerCase.toString());
+    }
+    
+    @Test(expected=TypeError.class)
+    public void toLowerCaseDisallowsNull() throws Exception {
+        ESValue function = getStringPrototype().getProperty("toLowerCase");
+        function.callFunction(ESNull.theNull, ESValue.EMPTY_ARRAY);
+    }
+    
+    @Test(expected=TypeError.class)
+    public void toLowerCaseDisallowsUndefined() throws Exception {
+        ESValue function = getStringPrototype().getProperty("toLowerCase");
+        function.callFunction(ESUndefined.theUndefined, ESValue.EMPTY_ARRAY);
+    }
+    
+    @Test
+    public void toLocaleLowerCaseIsntLocaleAgnositic() throws Exception {
+        Locale.setDefault(TURKISH);
+        ESObject originalObject = new ESString("TITLE").toESObject(evaluator);
+        ESValue lowerCase = originalObject.doIndirectCall(evaluator, originalObject, "toLocaleLowerCase", ESValue.EMPTY_ARRAY);
+        assertEquals("t\u0131tle",lowerCase.toString());
+    }
+    
+
+    @Test
+    public void toUpperCaseIsLocaleAgnositic() throws Exception {
+        Locale.setDefault(TURKISH);
+        ESObject originalObject = new ESString("title").toESObject(evaluator);
+        ESValue upperCase = originalObject.doIndirectCall(evaluator, originalObject, "toUpperCase", ESValue.EMPTY_ARRAY);
+        assertEquals("TITLE",upperCase.toString());
+    }
+    
+    @Test(expected=TypeError.class)
+    public void toUpperCaseDisallowsNull() throws Exception {
+        ESValue function = getStringPrototype().getProperty("toUpperCase");
+        function.callFunction(ESNull.theNull, ESValue.EMPTY_ARRAY);
+    }
+    
+    @Test(expected=TypeError.class)
+    public void toUpperCaseDisallowsUndefined() throws Exception {
+        ESValue function = getStringPrototype().getProperty("toUpperCase");
+        function.callFunction(ESUndefined.theUndefined, ESValue.EMPTY_ARRAY);
+    }
+    
+    @Test
+    public void toLocaleUpperCaseIsntLocaleAgnositic() throws Exception {
+        Locale.setDefault(TURKISH);
+        ESObject originalObject = new ESString("title").toESObject(evaluator);
+        ESValue lowerCase = originalObject.doIndirectCall(evaluator, originalObject, "toLocaleUpperCase", ESValue.EMPTY_ARRAY);
+        assertEquals("T\u0130TLE",lowerCase.toString());
+    }
     
     private ESObject getStringPrototype() throws EcmaScriptException {
         ESObject stringObject = (ESObject) evaluator.getGlobalObject().getProperty("String","String".hashCode());
         ESObject stringPrototype = (ESObject) stringObject.getProperty(StandardProperty.PROTOTYPEstring,StandardProperty.PROTOTYPEhash);
         return stringPrototype;
     }
-    
+
 }
