@@ -151,6 +151,48 @@ public class ObjectObject extends BuiltinFunctionObject {
                 return objectPrototype;
             }
         });
+        putHiddenProperty("seal", new BuiltinFunctionObject(prototype, evaluator, "seal", 1) {
+            private static final long serialVersionUID = 7813753201649697905L;
+            
+            @Override
+            public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
+                    throws EcmaScriptException {
+                ESObject object = getArgAsObject(arguments,0);
+                object.seal();
+                return object;
+            }
+        });
+        putHiddenProperty("isExtensible", new BuiltinFunctionObject(prototype, evaluator, "isExtensible", 1) {
+            private static final long serialVersionUID = 7813753201649697905L;
+            
+            @Override
+            public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
+                    throws EcmaScriptException {
+                ESObject object = getArgAsObject(arguments,0);
+                return ESBoolean.valueOf(object.isExtensible());
+            }
+        });
+        putHiddenProperty("isSealed", new BuiltinFunctionObject(prototype, evaluator, "isSealed", 1) {
+            private static final long serialVersionUID = 7813753201649697905L;
+            
+            @Override
+            public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
+                    throws EcmaScriptException {
+                ESObject object = getArgAsObject(arguments,0);
+                return ESBoolean.valueOf(object.isSealed());
+            }
+        });
+        putHiddenProperty("preventExtensions", new BuiltinFunctionObject(prototype, evaluator, "preventExtensions", 1) {
+            private static final long serialVersionUID = 7813753201649697905L;
+            
+            @Override
+            public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
+                    throws EcmaScriptException {
+                ESObject object = getArgAsObject(arguments,0);
+                object.setExtensible(false);
+                return object;
+            }
+        });
     }
 
     // overrides

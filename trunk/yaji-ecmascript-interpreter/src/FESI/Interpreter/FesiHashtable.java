@@ -557,6 +557,17 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         return frozen;
     }
 
+    public boolean isAnyConfigurable() {
+        boolean configurable = false;
+        HashtableEntry[] tab = getTable();
+        for (HashtableEntry hashtableEntry : tab) {
+            for (HashtableEntry e = hashtableEntry; e != null && !configurable; e = e.next) {
+                configurable = e.configurable;
+            }
+        }
+        return configurable;
+    }
+
     public void toJson(Appendable appendable, JsonState state, ESObject thisObject) throws IOException, EcmaScriptException {
         
         List<HashtableEntry> sortedList;
