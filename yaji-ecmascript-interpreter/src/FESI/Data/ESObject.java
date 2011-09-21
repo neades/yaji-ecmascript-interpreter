@@ -1109,7 +1109,7 @@ public abstract class ESObject extends ESValue {
     }
 
     public void freeze() {
-        extensible = false;
+        setExtensible(false);
         if (!hasNoPropertyMap()) {
             getPropertyMap().setAllNonConfigurable(true);
         }
@@ -1117,7 +1117,7 @@ public abstract class ESObject extends ESValue {
     }
 
     public boolean isFrozen() {
-        boolean frozen = !extensible;
+        boolean frozen = !isExtensible();
         if (frozen && !hasNoPropertyMap()) {
             frozen = getPropertyMap().isAllReadOnly();
         }
@@ -1149,11 +1149,30 @@ public abstract class ESObject extends ESValue {
         return this;
     }
 
-    private boolean isExtensible() {
+    protected boolean isExtensible() {
         return extensible;
     }
 
     public Enumeration<String> getOwnPropertyNames() {
         return getPropertyMap().keys();
+    }
+
+    public void seal() {
+        setExtensible(false);
+        if (hasPropertyMap()) {
+            getPropertyMap().setAllNonConfigurable(false);
+        }
+    }
+
+    public boolean isSealed() {
+        boolean sealed = !isExtensible();
+        if (sealed && !hasNoPropertyMap()) {
+            sealed = !getPropertyMap().isAnyConfigurable();
+        }
+        return sealed;
+    }
+
+    public void setExtensible(boolean extensible) {
+        this.extensible = extensible;
     }
 }

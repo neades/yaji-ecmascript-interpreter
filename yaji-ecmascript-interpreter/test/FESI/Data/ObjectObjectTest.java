@@ -553,6 +553,101 @@ public class ObjectObjectTest {
         objectObject.doIndirectCall(evaluator, objectObject, "create", new ESValue[] { ESNumber.valueOf(1.0) });
     }
     
+    @Test(expected=TypeError.class)
+    public void sealShouldFailForNonObjectNull() throws Exception {
+        objectObject.doIndirectCall(evaluator, objectObject, "seal", new ESValue[] { ESNull.theNull });
+    }
+    
+    @Test(expected=TypeError.class)
+    public void sealShouldFailForNonObjectUndefined() throws Exception {
+        objectObject.doIndirectCall(evaluator, objectObject, "seal", new ESValue[] { ESUndefined.theUndefined });
+    }
+    
+    @Test(expected=TypeError.class)
+    public void isSealedShouldFailForNonObjectUndefined() throws Exception {
+        objectObject.doIndirectCall(evaluator, objectObject, "isSealed", new ESValue[] { ESUndefined.theUndefined });
+    }
+    
+    @Test(expected=TypeError.class)
+    public void isExtensibleShouldFailForNonObjectUndefined() throws Exception {
+        objectObject.doIndirectCall(evaluator, objectObject, "isExtensible", new ESValue[] { ESUndefined.theUndefined });
+    }
+    
+    @Test
+    public void sealShouldReturnSuppliedObject() throws Exception {
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESValue result = objectObject.doIndirectCall(evaluator, objectObject, "seal", new ESValue[] { object });
+        assertSame(result,object);
+    }
+    
+    @Test
+    public void sealShouldSetNonExtensible() throws Exception {
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        assertEquals(ESBoolean.valueOf(true),objectObject.doIndirectCall(evaluator, objectObject, "isExtensible", new ESValue[] { object }));
+        ESValue result = objectObject.doIndirectCall(evaluator, objectObject, "seal", new ESValue[] { object });
+        assertEquals(ESBoolean.valueOf(false),objectObject.doIndirectCall(evaluator, objectObject, "isExtensible", new ESValue[] { result }));
+    }
+    
+    @Test
+    public void sealShouldMakePropertiesNonConfigurable() throws Exception {
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        object.putProperty("propertyName", ESNumber.valueOf(1));
+        objectObject.doIndirectCall(evaluator, objectObject, "seal", new ESValue[] { object });
+        ObjectPrototype result = (ObjectPrototype)objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyDescriptor", new ESValue[] { object, new ESString("propertyName") });
+        assertEquals(ES_FALSE,result.getProperty(StandardProperty.CONFIGURABLEstring));
+    }
+    
+    @Test
+    public void onceSealedIsSealedShouldBeTrue() throws Exception {
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        object.putProperty("propertyName", ESNumber.valueOf(1));
+        assertEquals(ESBoolean.valueOf(false),objectObject.doIndirectCall(evaluator, objectObject, "isSealed", new ESValue[] { object }));
+        ESValue result = objectObject.doIndirectCall(evaluator, objectObject, "seal", new ESValue[] { object });
+        assertEquals(ESBoolean.valueOf(true),objectObject.doIndirectCall(evaluator, objectObject, "isSealed", new ESValue[] { result }));
+    }
+    
+    @Test
+    public void changingPropertyOfSealedObjectToNonwritableMakesObjectFrozen() throws Exception {
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        object.putProperty("propertyName", ESNumber.valueOf(1));
+        ESValue result = objectObject.doIndirectCall(evaluator, objectObject, "seal", new ESValue[] { object });
+        assertEquals(ESBoolean.valueOf(false),objectObject.doIndirectCall(evaluator, objectObject, "isFrozen", new ESValue[] { result }));
+        
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, new ESString("propertyName"), createArgumentsObject(null, null, null, ES_FALSE, null, null) });
+        assertEquals(ESBoolean.valueOf(true),objectObject.doIndirectCall(evaluator, objectObject, "isFrozen", new ESValue[] { result }));
+    }
+    
+    @Test(expected=TypeError.class)
+    public void preventExtensionsShouldFailIfNotPassedObject() throws Exception {
+        objectObject.doIndirectCall(evaluator, objectObject, "preventExtensions", new ESValue[] { ESNumber.valueOf(1.0) });
+    }
+    
+    @Test
+    public void preventExtensionsShouldSetNonExtensible() throws Exception {
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        assertEquals(ESBoolean.valueOf(true),objectObject.doIndirectCall(evaluator, objectObject, "isExtensible", new ESValue[] { object }));
+        ESValue result = objectObject.doIndirectCall(evaluator, objectObject, "preventExtensions", new ESValue[] { object });
+        assertEquals(ESBoolean.valueOf(false),objectObject.doIndirectCall(evaluator, objectObject, "isExtensible", new ESValue[] { result }));
+    }
+    
+    @Test
+    public void preventExtensionsShouldReturnSameObject() throws Exception {
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESValue result = objectObject.doIndirectCall(evaluator, objectObject, "preventExtensions", new ESValue[] { object });
+        assertSame(result,object);
+    }
+    
+    @Test
+    public void changingPropertyOfNonExtensibleObjectToNonConfigurableMakesObjectSealed() throws Exception {
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        object.putProperty("propertyName", ESNumber.valueOf(1));
+        ESValue result = objectObject.doIndirectCall(evaluator, objectObject, "preventExtensions", new ESValue[] { object });
+        assertEquals(ESBoolean.valueOf(false),objectObject.doIndirectCall(evaluator, objectObject, "isSealed", new ESValue[] { result }));
+        
+        objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, new ESString("propertyName"), createArgumentsObject(null, ES_FALSE, null, null, null, null) });
+        assertEquals(ESBoolean.valueOf(true),objectObject.doIndirectCall(evaluator, objectObject, "isSealed", new ESValue[] { result }));
+    }
+    
     @Test
     public void objectObjectCreateShouldDefineProperties() throws Exception {
         ESString propertyName = new ESString("propertyName");

@@ -427,3 +427,121 @@ o = Object.create({}, { p: { value: 42 } })
 o.p = 24
 
 o.p === 42; 
+
+@test seal.mdn.1
+var obj = {  
+     prop: function () {},
+     foo: "bar"  
+};  
+      
+var o = Object.seal(obj);  
+o === obj && Object.isSealed(obj) === true;  
+      
+@test seal.mdn.2
+var obj = {  
+     prop: function () {},
+     foo: "bar"  
+};  
+Object.seal(obj);      
+
+// Changing property values on a sealed object still works.  
+obj.foo = "quux";  
+obj.foo === "quux";  
+      
+@test seal.mdn.3
+var obj = {  
+     prop: function () {},
+     foo: "bar"  
+};  
+Object.seal(obj);      
+// But you can't convert data properties to accessors, or vice versa.
+try {  
+    Object.defineProperty(obj, "foo", { get: function() { return "g"; } }); // throws a TypeError
+    false;
+} catch( e ) {
+  "TypeError" === e.name;  
+}  
+      
+@test seal.mdn.4
+var obj = {  
+     prop: function () {},
+     foo: "bar"  
+};  
+Object.seal(obj);      
+
+// Now any changes, other than to property values, will fail.  
+obj.quaxxor = "the friendly duck"; // silently doesn't add the property
+obj.quaxxor === undefined;
+  
+@test seal.mdn.5
+var obj = {  
+     prop: function () {},
+     foo: "bar"  
+};  
+Object.seal(obj);      
+
+delete obj.foo; // silently doesn't delete the property
+obj.foo === 'bar';  
+ 
+/*test seal.mdn.6
+var obj = {  
+     prop: function () {},
+     foo: "bar"  
+};  
+Object.seal(obj);      
+
+function fail() {  
+      "use strict";  
+      delete obj.foo; // throws a TypeError  
+}  
+try {  
+    fail();
+    false;
+} catch( e ) {
+  "TypeError" === e.name;  
+}  
+*/   
+/*test seal.mdn.7
+var obj = {  
+     prop: function () {},
+     foo: "bar"  
+};  
+Object.seal(obj);      
+
+function fail() {  
+      "use strict";  
+      obj.sparky = "arf"; // throws a TypeError  
+}  
+try {  
+    fail();
+    false;
+} catch( e ) {
+  "TypeError" === e.name;  
+}  
+*/
+    
+@test seal.mdn.8
+var obj = {  
+     prop: function () {},
+     foo: "bar"  
+};  
+Object.seal(obj);      
+
+try {  
+    Object.defineProperty(obj, "ohai", { value: 17 }); // throws a TypeError  
+    false;
+} catch( e ) {
+  "TypeError" === e.name;  
+}  
+      
+@test seal.mdn.9
+var obj = {  
+     prop: function () {},
+     foo: "bar"  
+};  
+Object.seal(obj);      
+
+// Attempted additions through Object.defineProperty will also throw  
+Object.defineProperty(obj, "foo", { value: "eit" }); 
+obj.foo === "eit";
+      
