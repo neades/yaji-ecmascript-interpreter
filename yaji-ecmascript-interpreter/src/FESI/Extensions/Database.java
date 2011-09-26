@@ -756,10 +756,18 @@ public class Database extends Extension {
 
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
-            return doConstruct(thisObject.toESObject(getEvaluator()), arguments);
+            return doConstruct(arguments);
         }
 
+        /**
+         * @deprecated Use {@link #doConstruct(ESValue[])} instead
+         */
         public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+                    return doConstruct(arguments);
+                }
+
+        public ESObject doConstruct(ESValue[] arguments)
                 throws EcmaScriptException {
             ESDatabase database = null;
             // System.out.println("esDatabasePrototype="+esDatabasePrototype);

@@ -61,16 +61,14 @@ public final class ESUndefined extends ESPrimitive {
     /**
      * Implements a specific error message if an undfined value is called via
      * new
-     * 
-     * @param thisObject
-     *            The object on which the call is made
      * @param arguments
      *            The arguments of the function
+     * 
      * @exception EcmaScriptException
      *                Thrown to indicate call on undefined value
      * @return never
      */
-    public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
+    public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
         throw new EcmaScriptException(
                 "'new' called on undefined value or property");

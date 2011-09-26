@@ -1086,7 +1086,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                 ASTFunctionCallParameters fc = (ASTFunctionCallParameters) compositor;
                 ESValue[] arguments = (ESValue[]) fc.jjtAccept(this, FOR_VALUE);
                 result = constr.doConstruct(
-                        evaluator.getThisObject(), arguments);
+                        arguments);
                 if (result == null) {
                     throw new EcmaScriptException("new " + compositor
                             + " did not return an object");
@@ -1776,7 +1776,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         ESObject result = null;
         try {
             result = evaluator.getValue("Array").doConstruct(
-                    evaluator.getThisObject(), ESValue.EMPTY_ARRAY);
+                    ESValue.EMPTY_ARRAY);
             
             int length = node.jjtGetNumChildren();
             for (int i = 0; i < length; i++) {

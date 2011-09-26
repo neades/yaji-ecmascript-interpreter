@@ -47,7 +47,7 @@ public class NumberObject extends BuiltinFunctionObject {
     }
 
     // overrides
-    public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
+    public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
         NumberPrototype theObject = null;
         ESObject np = getEvaluator().getNumberPrototype();

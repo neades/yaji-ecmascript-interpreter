@@ -58,15 +58,13 @@ public interface JSFunction extends Serializable{
     /**
      * Create a new object, using the specified EcmaScript method of this object
      * 
-     * @param thisObject
-     *            The object for which the function is called.
      * @param args
      *            An array of parameters.
      * @return The result of the evaluation
      * @exception JSException
      *                For any error during interpretation
      */
-    abstract public Object doNew(JSObject thisObject, Object args[])
+    abstract public Object doNew(Object args[])
             throws JSException;
 
 }

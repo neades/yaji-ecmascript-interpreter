@@ -47,7 +47,7 @@ public class BooleanObject extends BuiltinFunctionObject {
     }
 
     // overrides
-    public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
+    public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
         BooleanPrototype theObject = null;
         ESObject bp = getEvaluator().getBooleanPrototype();

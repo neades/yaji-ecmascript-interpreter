@@ -40,7 +40,7 @@ public class ObjectObjectTest {
     }
     
     @Test public void testNewObjectNotFrozen() throws Exception {
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         
         assertEquals("A new object is extensible, so it is not frozen.",ES_FALSE,
                 objectObject.doIndirectCall(evaluator, evaluator.getGlobalObject(), "isFrozen", new ESValue[] { object }));
@@ -94,7 +94,7 @@ public class ObjectObjectTest {
     assert(Object.isFrozen(accessor) === true);
 */
     @Test public void testFrozenAfterFreeze() throws Exception {
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         object.putProperty("1", ESString.valueOf("81"), "1".hashCode());
         object.freeze();
         objectObject.doIndirectCall(evaluator, evaluator.getGlobalObject(), "freeze", new ESValue[] { object });
@@ -137,7 +137,7 @@ public class ObjectObjectTest {
     
     @Test
     public void getOwnPropertyShouldReturnDataDescriptorObject() throws Exception {
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         object.putProperty("test", ESNull.theNull, "test".hashCode());
         ObjectPrototype result = (ObjectPrototype)objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyDescriptor", new ESValue[] { object, new ESString("test") });
         assertEquals(ES_TRUE,result.getProperty(StandardProperty.WRITABLEstring));
@@ -148,7 +148,7 @@ public class ObjectObjectTest {
     
     @Test
     public void getOwnPropertyShouldReturnIndicateFieldWritable() throws Exception {
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         object.putProperty("test", ESNull.theNull, "test".hashCode());
         object.freeze();
         ObjectPrototype result = (ObjectPrototype)objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyDescriptor", new ESValue[] { object, new ESString("test") });
@@ -157,7 +157,7 @@ public class ObjectObjectTest {
     
     @Test
     public void getOwnPropertyShouldIndicateFieldEnumerable() throws Exception {
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         object.putHiddenProperty("test", ESNull.theNull);
         ObjectPrototype result = (ObjectPrototype)objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyDescriptor", new ESValue[] { object, new ESString("test") });
         assertEquals(ES_FALSE,result.getProperty(StandardProperty.ENUMERABLEstring));
@@ -165,7 +165,7 @@ public class ObjectObjectTest {
     
     @Test
     public void getOwnPropertyReturnsUndefinedIfNotDefined() throws Exception {
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         object.putProperty("test", ESNull.theNull, "test".hashCode());
         ESValue result = objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyDescriptor", new ESValue[] { object, new ESString("not_test") });
         assertSame(ESUndefined.theUndefined,result);
@@ -173,8 +173,8 @@ public class ObjectObjectTest {
     
     @Test
     public void getOwnPropertyReturnsSetterAndGetter() throws Exception {
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
-        ESValue v = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
+        ESValue v = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         v.setGetAccessorDescriptor(createFunction("return null;"));
         v.setSetAccessorDescriptor(createFunction("return void 0;"));
         object.putProperty("test", v, "test".hashCode());
@@ -235,9 +235,9 @@ public class ObjectObjectTest {
     public void definePropertyCannotAddPropertyIfObjectNotExtensible() throws Exception {
         // 8.12.9.3
         ESString propertyName = new ESString("propertyName");
-        ESObject argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject argumentsObject = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         argumentsObject.putProperty(StandardProperty.CONFIGURABLEstring, ES_FALSE);
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         object.freeze();
         objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
     }
@@ -246,8 +246,8 @@ public class ObjectObjectTest {
     public void shouldInitialiseNoneExistentPropertyToDefaultValue() throws Exception {
         // 8.12.9.4 & 8.6.1 Table 7
         ESString propertyName = new ESString("propertyName");
-        ESObject argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject argumentsObject = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
         ObjectPrototype result = (ObjectPrototype)objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyDescriptor", new ESValue[] { object, propertyName });
         assertEquals(ES_FALSE,result.getProperty(StandardProperty.WRITABLEstring));
@@ -260,9 +260,9 @@ public class ObjectObjectTest {
     public void shouldRejectIfNotConfigurable() throws Exception {
         // 8.12.9.7a
         ESString propertyName = new ESString("propertyName");
-        ESObject argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject argumentsObject = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         argumentsObject.putProperty(StandardProperty.CONFIGURABLEstring, ES_FALSE);
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
         argumentsObject.putProperty(StandardProperty.CONFIGURABLEstring, ES_TRUE);
         objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
@@ -273,9 +273,9 @@ public class ObjectObjectTest {
         // 8.12.9.7b
         ESString propertyName = new ESString("propertyName");
         ESObject argumentsObject = createArgumentsObject(null, ES_FALSE, ES_TRUE, null, null, null);
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
-        argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        argumentsObject = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         argumentsObject.putProperty(StandardProperty.ENUMERABLEstring, ES_FALSE);
         objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
     }
@@ -285,7 +285,7 @@ public class ObjectObjectTest {
         // 8.12.9.9a
         ESString propertyName = new ESString("propertyName");
         ESObject argumentsObject = createArgumentsObject(ES_TRUE, ES_FALSE, null, null, null, null);
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         
         objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
         argumentsObject = createArgumentsObject(null, null, null, null, createFunction("return null;"), createFunction("return void 0;"));
@@ -297,7 +297,7 @@ public class ObjectObjectTest {
         // 8.12.9.9b
         ESString propertyName = new ESString("propertyName");
         ESObject argumentsObject = createArgumentsObject(ES_TRUE, ES_TRUE, ES_TRUE, null, null, null);
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
         
         argumentsObject = createArgumentsObject(null, null, null, null, createFunction("return null;"), createFunction("return void 0;"));
@@ -315,10 +315,10 @@ public class ObjectObjectTest {
         // 8.12.9.9b
         ESString propertyName = new ESString("propertyName");
         ESObject argumentsObject = createArgumentsObject(null, ES_TRUE, ES_TRUE, null, createFunction("return null;"), createFunction("return void 0;"));
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         
         objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
-        argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        argumentsObject = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         argumentsObject.putProperty(StandardProperty.VALUEstring,new ESString("changed"));
         
         objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
@@ -335,10 +335,10 @@ public class ObjectObjectTest {
         // 8.12.9.10.a.i
         ESString propertyName = new ESString("propertyName");
         ESObject argumentsObject = createArgumentsObject(ES_TRUE, ES_FALSE, ES_TRUE, ES_FALSE, null, null);
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
         
-        argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        argumentsObject = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         argumentsObject.putProperty(StandardProperty.WRITABLEstring, ES_TRUE);
         objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
     }
@@ -348,7 +348,7 @@ public class ObjectObjectTest {
         // 8.10.5.9
         ESString propertyName = new ESString("propertyName");
         ESObject argumentsObject = createArgumentsObject(ES_TRUE, ES_FALSE, ES_TRUE, ES_FALSE, null, createFunction("return null;"));
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
     }
 
@@ -358,10 +358,10 @@ public class ObjectObjectTest {
         // 8.12.9.10.a.ii.TRUE
         ESString propertyName = new ESString("propertyName");
         ESObject argumentsObject = createArgumentsObject(ES_TRUE, ES_FALSE, ES_TRUE, ES_FALSE, null, null);
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
         
-        argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        argumentsObject = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         argumentsObject.putProperty(StandardProperty.VALUEstring, ES_FALSE);
         objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
     }
@@ -369,10 +369,10 @@ public class ObjectObjectTest {
     @Test
     public void shouldAllowChangingValueIfNonConfigurableIfSameValue() throws Exception {
         // 8.12.9.10.a.ii.FALSE
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         ESString propertyName = defineValueProperty(object, "propertyName", false, true, false, ES_TRUE);
         
-        ESObject argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject argumentsObject = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         argumentsObject.putProperty(StandardProperty.VALUEstring, ES_TRUE);
         objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
     }
@@ -390,7 +390,7 @@ public class ObjectObjectTest {
     private ESObject createArgumentsObject(ESValue value,
             ESBoolean configurable, ESBoolean enumerable, ESBoolean writable, ESValue getter, ESValue setter)
             throws EcmaScriptException {
-        ESObject argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject argumentsObject = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         setPropertyIfValueNotNull(argumentsObject, StandardProperty.CONFIGURABLEstring, configurable);
         setPropertyIfValueNotNull(argumentsObject, StandardProperty.ENUMERABLEstring, enumerable);
         setPropertyIfValueNotNull(argumentsObject, StandardProperty.WRITABLEstring, writable);
@@ -413,7 +413,7 @@ public class ObjectObjectTest {
         // 8.12.9.11.a.i
         ESString propertyName = new ESString("propertyName");
         ESObject argumentsObject = createArgumentsObject(null, ES_FALSE, ES_TRUE, null, createFunction("return null;"), createFunction("return void 0;"));
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         
         objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
         argumentsObject = createArgumentsObject(null, null, null, null, createFunction("return null;"), createFunction("return void 0;"));
@@ -427,7 +427,7 @@ public class ObjectObjectTest {
         ESString propertyName = new ESString("propertyName");
         ESValue setFunction = createFunction("return void 0;");
         ESObject argumentsObject = createArgumentsObject(null, ES_FALSE, ES_TRUE, null, null, setFunction);
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         
         objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
         argumentsObject = createArgumentsObject(null, null, null, null, null, setFunction);
@@ -440,7 +440,7 @@ public class ObjectObjectTest {
         // 8.12.9.11.a.ii
         ESString propertyName = new ESString("propertyName");
         ESObject argumentsObject = createArgumentsObject(null, ES_FALSE, ES_TRUE, null, createFunction("return null;"), null);
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
 
         argumentsObject = createArgumentsObject(null, null, null, null, createFunction("return null;"), null);
@@ -454,7 +454,7 @@ public class ObjectObjectTest {
         ESString propertyName = new ESString("propertyName");
         ESValue getFunction = createFunction("return void 0;");
         ESObject argumentsObject = createArgumentsObject(null, ES_FALSE, ES_TRUE, null, getFunction, null);
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         
         objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
         argumentsObject = createArgumentsObject(null, null, null, null, getFunction, null);
@@ -465,7 +465,7 @@ public class ObjectObjectTest {
     @Test
     public void getOwnPropertyNamesShouldReturnArray() throws Exception {
         // 15.2.3.4.2
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         ESValue result = objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyNames", new ESValue[] { object });
         ArrayPrototype array = (ArrayPrototype) result;
         assertEquals(0,array.size());
@@ -474,7 +474,7 @@ public class ObjectObjectTest {
     @Test
     public void getOwnPropertyNamesShouldReturnArrayWithProperty() throws Exception {
         // 15.2.3.4.2
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         defineValueProperty(object, "propertyName", false, false, false, ES_TRUE);
         
         ESValue result = objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyNames", new ESValue[] { object });
@@ -487,7 +487,7 @@ public class ObjectObjectTest {
     @Test
     public void getOwnPropertyNamesShouldReturnIndicesForArray() throws Exception {
         // 15.2.3.4.2
-        ESObject object = arrayObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = arrayObject.doConstruct(ESValue.EMPTY_ARRAY);
         object.putProperty(StandardProperty.LENGTHstring, ESNumber.valueOf(3));
         object.putProperty("another", ESNumber.valueOf(3));
         
@@ -520,9 +520,9 @@ public class ObjectObjectTest {
     public void shouldDefineProperties() throws Exception {
         // 15.1.3.7
         ESString propertyName = new ESString("propertyName");
-        ESObject argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject argumentsObject = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         argumentsObject.putProperty("propertyName", createArgumentsObject(new ESString("value"), ES_FALSE, ES_FALSE, ES_FALSE, null, null));
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         objectObject.doIndirectCall(evaluator, objectObject, "defineProperties", new ESValue[] { object, argumentsObject });
         ObjectPrototype result = (ObjectPrototype)objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyDescriptor", new ESValue[] { object, propertyName });
         assertEquals(ES_FALSE,result.getProperty(StandardProperty.WRITABLEstring));
@@ -533,7 +533,7 @@ public class ObjectObjectTest {
     
     @Test
     public void objectObjectCreateShouldReturnObject() throws Exception {
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         
         ESValue objectCreated = objectObject.doIndirectCall(evaluator, objectObject, "create", new ESValue[] { object });
         
@@ -575,14 +575,14 @@ public class ObjectObjectTest {
     
     @Test
     public void sealShouldReturnSuppliedObject() throws Exception {
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         ESValue result = objectObject.doIndirectCall(evaluator, objectObject, "seal", new ESValue[] { object });
         assertSame(result,object);
     }
     
     @Test
     public void sealShouldSetNonExtensible() throws Exception {
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         assertEquals(ESBoolean.valueOf(true),objectObject.doIndirectCall(evaluator, objectObject, "isExtensible", new ESValue[] { object }));
         ESValue result = objectObject.doIndirectCall(evaluator, objectObject, "seal", new ESValue[] { object });
         assertEquals(ESBoolean.valueOf(false),objectObject.doIndirectCall(evaluator, objectObject, "isExtensible", new ESValue[] { result }));
@@ -590,7 +590,7 @@ public class ObjectObjectTest {
     
     @Test
     public void sealShouldMakePropertiesNonConfigurable() throws Exception {
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         object.putProperty("propertyName", ESNumber.valueOf(1));
         objectObject.doIndirectCall(evaluator, objectObject, "seal", new ESValue[] { object });
         ObjectPrototype result = (ObjectPrototype)objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyDescriptor", new ESValue[] { object, new ESString("propertyName") });
@@ -599,7 +599,7 @@ public class ObjectObjectTest {
     
     @Test
     public void onceSealedIsSealedShouldBeTrue() throws Exception {
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         object.putProperty("propertyName", ESNumber.valueOf(1));
         assertEquals(ESBoolean.valueOf(false),objectObject.doIndirectCall(evaluator, objectObject, "isSealed", new ESValue[] { object }));
         ESValue result = objectObject.doIndirectCall(evaluator, objectObject, "seal", new ESValue[] { object });
@@ -608,7 +608,7 @@ public class ObjectObjectTest {
     
     @Test
     public void changingPropertyOfSealedObjectToNonwritableMakesObjectFrozen() throws Exception {
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         object.putProperty("propertyName", ESNumber.valueOf(1));
         ESValue result = objectObject.doIndirectCall(evaluator, objectObject, "seal", new ESValue[] { object });
         assertEquals(ESBoolean.valueOf(false),objectObject.doIndirectCall(evaluator, objectObject, "isFrozen", new ESValue[] { result }));
@@ -624,7 +624,7 @@ public class ObjectObjectTest {
     
     @Test
     public void preventExtensionsShouldSetNonExtensible() throws Exception {
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         assertEquals(ESBoolean.valueOf(true),objectObject.doIndirectCall(evaluator, objectObject, "isExtensible", new ESValue[] { object }));
         ESValue result = objectObject.doIndirectCall(evaluator, objectObject, "preventExtensions", new ESValue[] { object });
         assertEquals(ESBoolean.valueOf(false),objectObject.doIndirectCall(evaluator, objectObject, "isExtensible", new ESValue[] { result }));
@@ -632,14 +632,14 @@ public class ObjectObjectTest {
     
     @Test
     public void preventExtensionsShouldReturnSameObject() throws Exception {
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         ESValue result = objectObject.doIndirectCall(evaluator, objectObject, "preventExtensions", new ESValue[] { object });
         assertSame(result,object);
     }
     
     @Test
     public void changingPropertyOfNonExtensibleObjectToNonConfigurableMakesObjectSealed() throws Exception {
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         object.putProperty("propertyName", ESNumber.valueOf(1));
         ESValue result = objectObject.doIndirectCall(evaluator, objectObject, "preventExtensions", new ESValue[] { object });
         assertEquals(ESBoolean.valueOf(false),objectObject.doIndirectCall(evaluator, objectObject, "isSealed", new ESValue[] { result }));
@@ -651,9 +651,9 @@ public class ObjectObjectTest {
     @Test
     public void objectObjectCreateShouldDefineProperties() throws Exception {
         ESString propertyName = new ESString("propertyName");
-        ESObject argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject argumentsObject = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         argumentsObject.putProperty("propertyName", createArgumentsObject(new ESString("value"), ES_FALSE, ES_FALSE, ES_FALSE, null, null));
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         ESValue objectCreated = objectObject.doIndirectCall(evaluator, objectObject, "create", new ESValue[] { object, argumentsObject });
         
         ObjectPrototype result = (ObjectPrototype)objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyDescriptor", new ESValue[] { objectCreated, propertyName });
@@ -667,7 +667,7 @@ public class ObjectObjectTest {
     
     @Test
     public void keysShouldReturnNamesOfEnumerableProperties() throws Exception {
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         object.putProperty("name",ES_TRUE);
         ArrayPrototype result = (ArrayPrototype) objectObject.doIndirectCall(evaluator, objectObject, "keys", new ESValue[] { object });
         assertEquals(1,result.size());
@@ -676,7 +676,7 @@ public class ObjectObjectTest {
     
     @Test
     public void keysShouldntIncludeHiddenProperties() throws Exception {
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         object.putProperty("name",ES_TRUE);
         object.putHiddenProperty("hidden",ES_TRUE);
         ArrayPrototype result = (ArrayPrototype) objectObject.doIndirectCall(evaluator, objectObject, "keys", new ESValue[] { object });
@@ -687,9 +687,9 @@ public class ObjectObjectTest {
     private void definePropertyOnExistingProperty(String descPropertyName, boolean stateToTest)
             throws EcmaScriptException, NoSuchMethodException {
         ESString propertyName = new ESString("propertyName");
-        ESObject argumentsObject = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject argumentsObject = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         argumentsObject.putProperty(descPropertyName, ESBoolean.valueOf(stateToTest));
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         object.putProperty("propertyName", ESUndefined.theUndefined);
         objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
         ObjectPrototype result = (ObjectPrototype)objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyDescriptor", new ESValue[] { object, propertyName });
@@ -702,7 +702,7 @@ public class ObjectObjectTest {
         for (String string : params) {
             paramArray.add(new ESString(string));
         }
-        ESObject function = functionObject.doConstruct(functionObject, paramArray.toArray(new ESValue[paramArray.size()]));
+        ESObject function = functionObject.doConstruct(paramArray.toArray(new ESValue[paramArray.size()]));
         return function;
     }
 

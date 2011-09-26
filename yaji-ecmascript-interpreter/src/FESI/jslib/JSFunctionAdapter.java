@@ -50,7 +50,7 @@ public class JSFunctionAdapter implements JSFunction {
      * @exception JSException
      *                For any error during interpretation
      */
-    public Object doNew(JSObject thisObject, Object args[]) throws JSException {
+    public Object doNew(Object args[]) throws JSException {
         throw new JSException("No constructor defined for this object");
     }
 

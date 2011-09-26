@@ -270,6 +270,9 @@ public abstract class ESValue implements java.io.Serializable {
         throw new TypeError("Function called on non object: " + this);
     }
 
+//    public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
+//    }
+
     /**
      * [[Construct]] support (to ease check of type)
      * 
@@ -277,8 +280,21 @@ public abstract class ESValue implements java.io.Serializable {
      * @param arguments
      * @return
      * @throws EcmaScriptException
+     * @deprecated Use {@link #doConstruct(ESValue[])} instead
      */
     public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
+            throws EcmaScriptException {
+                return doConstruct(arguments);
+            }
+
+    /**
+     * [[Construct]] support (to ease check of type)
+     * @param arguments
+     * 
+     * @return
+     * @throws EcmaScriptException
+     */
+    public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
         throw new TypeError("'new' called on non object: " + this);
     }

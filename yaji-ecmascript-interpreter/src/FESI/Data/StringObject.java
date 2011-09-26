@@ -551,7 +551,7 @@ public class StringObject extends BuiltinFunctionObject {
 
     // overrides
     @Override
-    public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
+    public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
         StringPrototype theObject = null;
         ESObject sp = getEvaluator().getStringPrototype();

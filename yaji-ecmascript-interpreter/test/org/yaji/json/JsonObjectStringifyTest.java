@@ -234,7 +234,7 @@ public class JsonObjectStringifyTest {
     private ESObject createFunction(String replacerBody)
             throws EcmaScriptException {
         ESObject functionObject = (ESObject) evaluator.getGlobalObject().getProperty("Function", "Function".hashCode());
-        ESObject function = functionObject.doConstruct(functionObject, new ESValue[] { new ESString("key"), new ESString("value"), new ESString(replacerBody) });
+        ESObject function = functionObject.doConstruct(new ESValue[] { new ESString("key"), new ESString("value"), new ESString(replacerBody) });
         return function;
     }
     

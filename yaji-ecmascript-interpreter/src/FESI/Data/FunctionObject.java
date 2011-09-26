@@ -139,11 +139,11 @@ public class FunctionObject extends BuiltinFunctionObject implements
     // overrides - call and new have the same effect
     public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
-        return doConstruct(thisObject.toESObject(getEvaluator()), arguments);
+        return doConstruct(arguments);
     }
 
     // overrides - build a new function
-    public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
+    public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
         ConstructedFunctionObject theFunction = null;
         ASTFormalParameterList fpl = null;

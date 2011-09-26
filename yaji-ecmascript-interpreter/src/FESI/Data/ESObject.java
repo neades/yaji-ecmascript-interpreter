@@ -745,17 +745,15 @@ public abstract class ESObject extends ESValue {
 
     /**
      * Call the constructor - not implemented on default object
-     * 
-     * @param thisObject
-     *            The current object
      * @param arguments
      *            Arguments to new
+     * 
      * @return The created obbjecr
      * @exception EcmaScriptException
      *                thrown because this function is not implemented
      */
     @Override
-    public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
+    public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
         throw new TypeError("No constructor defined on: " + this);
     }

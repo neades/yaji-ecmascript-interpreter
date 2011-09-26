@@ -31,11 +31,11 @@ public class NativeErrorObject extends BuiltinFunctionObject {
     @Override
     public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
-        return doConstruct(thisObject.toESObject(getEvaluator()),arguments);
+        return doConstruct(arguments);
     }
     
     @Override
-    public ESObject doConstruct(ESObject thisObject, final ESValue[] arguments)
+    public ESObject doConstruct(final ESValue[] arguments)
             throws EcmaScriptException {
         ESObject error = new ESObject(getPrototypeProperty(),getEvaluator()) {
             private static final long serialVersionUID = -5191230380035994792L;

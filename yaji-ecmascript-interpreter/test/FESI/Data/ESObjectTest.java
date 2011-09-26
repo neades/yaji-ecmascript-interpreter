@@ -26,14 +26,14 @@ public class ESObjectTest  {
     }
     
     @Test public void testNewObjectNotFrozen() throws Exception {
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         
         assertFalse("A new object is extensible, so it is not frozen.",object.isFrozen());
     }
 
     @Test public void testFrozenObjectShouldFailOnPut() throws Exception {
         evaluator.setStrictMode(true);
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         object.putProperty("x", ESString.valueOf("Y"), "x".hashCode());
         try {
             object.freeze();
@@ -45,14 +45,14 @@ public class ESObjectTest  {
     }
     
     @Test public void testShouldReturnNullEvaluatorAfterFreezingIfNotOtherwiseSpecified() throws Exception {
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         object.freeze();
         assertNull(object.getEvaluator());
     }
     
     @Test public void testShouldReturnEvaluatorSpecifiedThroughUtilAfterFreezing() throws Exception {
         final Evaluator localEvaluator = new Evaluator();
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         object.freeze();
         setUtilEvaluatorAccessor(localEvaluator);
         assertSame(localEvaluator,object.getEvaluator());
@@ -71,7 +71,7 @@ public class ESObjectTest  {
     @Test public void testFrozenObjectShouldIgnorePut() throws Exception {
         evaluator.setStrictMode(false);
         setUtilEvaluatorAccessor(evaluator);
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         object.putProperty("x", ESString.valueOf("Y"), "x".hashCode());
         object.freeze();
         object.putProperty("x", ESString.valueOf("Z"),  "x".hashCode());
@@ -80,7 +80,7 @@ public class ESObjectTest  {
     
     @Test public void testDeletingAFrozenPropertyShouldFail() throws Exception {
         evaluator.setStrictMode(true);
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         object.putProperty("x", ESString.valueOf("Y"), "x".hashCode());
         try {
             object.freeze();
@@ -94,7 +94,7 @@ public class ESObjectTest  {
     @Test public void testDeletingAFrozenPropertyShouldBeIgnored() throws Exception {
         evaluator.setStrictMode(false);
         setUtilEvaluatorAccessor(evaluator);
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         object.putProperty("x", ESString.valueOf("Y"), "x".hashCode());
         object.freeze();
         object.deleteProperty("x", "x".hashCode());
@@ -103,7 +103,7 @@ public class ESObjectTest  {
     
     @Test public void testFrozenObjectShouldFailOnAdd() throws Exception {
         evaluator.setStrictMode(true);
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         try {
             object.freeze();
             object.putProperty("x", ESString.valueOf("Z"),  "x".hashCode());
@@ -161,7 +161,7 @@ public class ESObjectTest  {
     assert(Object.isFrozen(accessor) === true);
 */
     @Test public void testFrozenAfterFreeze() throws Exception {
-        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         object.putProperty("1", ESString.valueOf("81"), "1".hashCode());
         object.freeze();
         
