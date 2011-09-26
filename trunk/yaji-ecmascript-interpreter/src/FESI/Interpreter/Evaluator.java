@@ -1479,7 +1479,7 @@ public class Evaluator implements Serializable {
     public ESValue newError(String errorType, ESString esString) throws EcmaScriptException {
         ESValue errorObject = globalObject.getProperty(errorType, errorType.hashCode());
         if (errorObject instanceof BuiltinFunctionObject) {
-            return errorObject.doConstruct((ESObject) errorObject, new ESValue[] { esString });
+            return errorObject.doConstruct(new ESValue[] { esString });
         }
         return ESUndefined.theUndefined;
     }

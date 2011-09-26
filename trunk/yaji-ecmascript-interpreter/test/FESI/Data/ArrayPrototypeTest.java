@@ -28,7 +28,7 @@ public class ArrayPrototypeTest {
 
     @Test
     public void keysShouldReturnIndices() throws Exception {
-        ESObject array = arrayObject.doConstruct(arrayObject, new ESValue[] { new ESString("a"), new ESString("b"), new ESString("c") });
+        ESObject array = arrayObject.doConstruct(new ESValue[] { new ESString("a"), new ESString("b"), new ESString("c") });
         ESValue value = objectObject.doIndirectCall(evaluator, array, "keys", new ESValue[] { array } );
         assertEquals("0,1,2",value.toESString().toString());
         assertEquals(new ESString("0"), ((ESObject)value).getProperty(0));

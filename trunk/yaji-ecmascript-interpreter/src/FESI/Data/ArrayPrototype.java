@@ -781,7 +781,7 @@ public class ArrayPrototype extends ESObject {
     private ArrayPrototype newEmptyArray() throws EcmaScriptException {
         Evaluator eval = getEvaluator();
         return (ArrayPrototype) eval.getValue("Array").doConstruct(
-                eval.getThisObject(), ESValue.EMPTY_ARRAY);
+                ESValue.EMPTY_ARRAY);
     }
 
     /**

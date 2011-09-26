@@ -104,7 +104,7 @@ public class ESBeans extends ESLoader {
 
     // overrides
     // instantiates a bean
-    public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
+    public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
 
         String beanName = buildPrefix();

@@ -229,7 +229,7 @@ public class ObjectObject extends BuiltinFunctionObject {
     }
 
     // overrides
-    public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
+    public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
         ESValue theValue;
         if (arguments.length == 0) {

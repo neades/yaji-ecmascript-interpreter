@@ -929,7 +929,7 @@ public class ESWrapper extends ESObject {
     }
 
     // overrides
-    public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
+    public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
         return constructOrCall(arguments, false);
     }

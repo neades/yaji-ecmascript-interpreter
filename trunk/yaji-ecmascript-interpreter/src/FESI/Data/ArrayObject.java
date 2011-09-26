@@ -50,11 +50,11 @@ public class ArrayObject extends BuiltinFunctionObject {
     // overrides
     public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
-        return doConstruct(thisObject.toESObject(getEvaluator()), arguments);
+        return doConstruct(arguments);
     }
 
     // overrides
-    public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
+    public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
         ESObject ap = getEvaluator().getArrayPrototype();
         ArrayPrototype theArray = new ArrayPrototype(ap, getEvaluator());

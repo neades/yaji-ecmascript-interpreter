@@ -291,7 +291,7 @@ public class JSWrapper implements JSObject {
                 esArgs[argLength] = new ESString(body); // body is the last
                                                         // value
                 ESObject fo = evaluator.getFunctionObject();
-                ESObject theFunction = fo.doConstruct(null, esArgs);
+                ESObject theFunction = fo.doConstruct(esArgs);
                 // Now call function
                 esArgs = new ESValue[argLength]; // just what is needed
                 for (int i = 0; i < argLength; i++) {
@@ -512,8 +512,7 @@ public class JSWrapper implements JSObject {
                     return value;
                 }
 
-                public ESObject doConstruct(ESObject thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
+                public ESObject doConstruct(ESValue[] arguments) throws EcmaScriptException {
                     ESObject value = null;
                     Object jsArguments[] = new Object[arguments.length];
                     for (int i = 0; i < arguments.length; i++) {
@@ -529,8 +528,7 @@ public class JSWrapper implements JSObject {
                         }
                     }
                     try {
-                        Object result = theFunction.doNew(new JSWrapper(
-                                thisObject, this.getEvaluator()), jsArguments);
+                        Object result = theFunction.doNew(jsArguments);
                         value = ESLoader.normalizeObject(result, this
                                 .getEvaluator());
                     } catch (JSException e) {

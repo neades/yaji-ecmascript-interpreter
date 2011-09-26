@@ -134,7 +134,7 @@ public class ConstructedFunctionObject extends FunctionPrototype {
     }
 
     @Override
-    public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
+    public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
         ESValue prototype = getProperty(PROTOTYPEstring, PROTOTYPEhash);
         ESObject op = getEvaluator().getObjectPrototype();

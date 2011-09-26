@@ -50,7 +50,7 @@ public class DateObject extends BuiltinFunctionObject {
 
     // overrides
     @Override
-    public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
+    public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
         DatePrototype theObject = null;
         ESObject dp = getEvaluator().getDatePrototype();

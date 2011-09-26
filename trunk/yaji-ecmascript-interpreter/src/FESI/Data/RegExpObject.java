@@ -63,7 +63,7 @@ class RegExpObject extends BuiltinFunctionObject {
         return doConstruct(arg0,arg1);
     }
 
-    public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
+    public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
         return doConstruct(getArg(arguments, 0), getArg(arguments, 1));
     }

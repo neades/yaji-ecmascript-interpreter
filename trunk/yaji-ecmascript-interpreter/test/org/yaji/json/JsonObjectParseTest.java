@@ -153,7 +153,7 @@ public class JsonObjectParseTest {
     private ESObject parseWithReviver(String reviverBody, String jsonText)
             throws EcmaScriptException, NoSuchMethodException {
         ESObject functionObject = (ESObject) evaluator.getGlobalObject().getProperty("Function", "Function".hashCode());
-        ESObject function = functionObject.doConstruct(functionObject, new ESValue[] { new ESString("key"), new ESString("value"), new ESString(reviverBody) });
+        ESObject function = functionObject.doConstruct(new ESValue[] { new ESString("key"), new ESString("value"), new ESString(reviverBody) });
         ESObject jsonObject = (ESObject) evaluator.getGlobalObject().getProperty(StandardProperty.JSONstring,StandardProperty.JSONhash);
         return (ESObject) jsonObject.doIndirectCall(evaluator, jsonObject, "parse", new ESValue[] { new ESString(jsonText), function });
     }

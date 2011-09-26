@@ -184,7 +184,7 @@ public abstract class ESLoader extends ESObject {
 
     // overrides
     @Override
-    public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
+    public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
         throw new EcmaScriptException("No contructor for loader object: "
                 + this);
