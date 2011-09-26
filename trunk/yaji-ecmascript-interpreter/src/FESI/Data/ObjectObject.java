@@ -193,6 +193,22 @@ public class ObjectObject extends BuiltinFunctionObject {
                 return object;
             }
         });
+        putHiddenProperty("keys", new BuiltinFunctionObject(prototype, evaluator, "keys", 1) {
+            private static final long serialVersionUID = 7813753201649697905L;
+            
+            @Override
+            public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
+                    throws EcmaScriptException {
+                ESObject object = getArgAsObject(arguments,0);
+                Enumeration<String> propertyNames = object.keys();
+                ArrayPrototype array = ArrayObject.createArray(getEvaluator());
+                while (propertyNames.hasMoreElements()) {
+                    String propertyName = (String) propertyNames.nextElement();
+                    array.add(new ESString(propertyName));
+                }
+                return array;
+            }
+        });
     }
 
     // overrides

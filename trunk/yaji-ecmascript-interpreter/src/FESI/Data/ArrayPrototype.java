@@ -1239,4 +1239,9 @@ public class ArrayPrototype extends ESObject {
     public Enumeration<String> getOwnPropertyNames() {
         return new ArrayPropertyNamesEnumeration(super.getOwnPropertyNames(), theArray.size(), true);
     }
+    
+    @Override
+    public Enumeration<String> keys() {
+        return new ArrayPropertyNamesEnumeration(super.keys(), theArray.size(), false);
+    }
 }
