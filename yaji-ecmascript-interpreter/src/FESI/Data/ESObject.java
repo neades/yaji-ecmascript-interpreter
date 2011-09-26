@@ -62,6 +62,18 @@ public abstract class ESObject extends ESValue {
     // 5th Edition - 15.2.3.9 - if false no properties may be added to object
     private boolean extensible = true;
 
+    private static final Enumeration<String> EMPTY_STRING_ENUMERATION = new Enumeration<String> () {
+
+        public boolean hasMoreElements() {
+            return false;
+        }
+
+        public String nextElement() {
+            throw new java.util.NoSuchElementException("FesiHashtableEnumerator");
+        }
+        
+    };
+
     /**
      * Create an object with a specific prototype (which may be null) in the
      * context of a specific evaluator (which may not be null) Uses the default
@@ -1166,7 +1178,7 @@ public abstract class ESObject extends ESValue {
 
     public boolean isSealed() {
         boolean sealed = !isExtensible();
-        if (sealed && !hasNoPropertyMap()) {
+        if (sealed && hasPropertyMap()) {
             sealed = !getPropertyMap().isAnyConfigurable();
         }
         return sealed;
@@ -1174,5 +1186,9 @@ public abstract class ESObject extends ESValue {
 
     public void setExtensible(boolean extensible) {
         this.extensible = extensible;
+    }
+
+    public Enumeration<String> keys() {
+        return hasPropertyMap() ? getPropertyMap().enumerableKeys() : EMPTY_STRING_ENUMERATION;
     }
 }

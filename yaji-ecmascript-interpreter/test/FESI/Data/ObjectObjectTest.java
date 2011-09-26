@@ -665,6 +665,25 @@ public class ObjectObjectTest {
         assertSame(object,((ESObject)objectCreated).getPrototype());
     }
     
+    @Test
+    public void keysShouldReturnNamesOfEnumerableProperties() throws Exception {
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        object.putProperty("name",ES_TRUE);
+        ArrayPrototype result = (ArrayPrototype) objectObject.doIndirectCall(evaluator, objectObject, "keys", new ESValue[] { object });
+        assertEquals(1,result.size());
+        assertEquals("name",result.getProperty(0).toString());
+    }
+    
+    @Test
+    public void keysShouldntIncludeHiddenProperties() throws Exception {
+        ESObject object = objectObject.doConstruct(null, ESValue.EMPTY_ARRAY);
+        object.putProperty("name",ES_TRUE);
+        object.putHiddenProperty("hidden",ES_TRUE);
+        ArrayPrototype result = (ArrayPrototype) objectObject.doIndirectCall(evaluator, objectObject, "keys", new ESValue[] { object });
+        assertEquals(1,result.size());
+        assertEquals("name",result.getProperty(0).toString());
+    }
+    
     private void definePropertyOnExistingProperty(String descPropertyName, boolean stateToTest)
             throws EcmaScriptException, NoSuchMethodException {
         ESString propertyName = new ESString("propertyName");

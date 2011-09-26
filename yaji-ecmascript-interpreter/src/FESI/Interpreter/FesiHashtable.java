@@ -735,6 +735,9 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         return configurable;
     }
 
+    public Enumeration<String> enumerableKeys() {
+        return new EnumerableHashtableKeyEnumerator(table);
+    }
 }
 
 /**
@@ -756,23 +759,35 @@ abstract class AbstractHashtableEnumerator implements java.io.Serializable {
         if (entry != null) {
             return true;
         }
+        advance();
+        return (entry != null);
+    }
+    
+    private void advance() {
         while (index-- > 0) {
             if ((entry = table[index]) != null) {
-                return true;
+                do {
+                    if (allowed(entry)) {
+                        return;
+                    }
+                } while ( (entry = entry.next) != null);
             }
         }
-        return false;
+    }
+    
+    protected boolean allowed(HashtableEntry entry) {
+        return true;
     }
 
     protected HashtableEntry nextEntry() {
         if (entry == null) {
-            while ((index-- > 0) && ((entry = table[index]) == null)) {
-                // just wait
-            }
+            advance();
         }
         if (entry != null) {
             HashtableEntry e = entry;
-            entry = e.next;
+            do {
+                entry = entry.next;
+            } while (!(entry == null || allowed(entry)));
             return e;
         }
         throw new java.util.NoSuchElementException("FesiHashtableEnumerator");
@@ -792,8 +807,25 @@ class HashtableKeyEnumerator extends AbstractHashtableEnumerator implements
     }
 }
 
+class EnumerableHashtableKeyEnumerator extends AbstractHashtableEnumerator implements
+Enumeration<String> {
+    private static final long serialVersionUID = -5151529369306332429L;
+
+    EnumerableHashtableKeyEnumerator(HashtableEntry table[]) {
+        super(table);
+    }
+
+    public String nextElement() {
+        return nextEntry().key;
+    }
+    
+    @Override
+    protected boolean allowed(HashtableEntry entry) {
+        return !entry.hidden;
+    }
+}
 class HashtableValueEnumerator extends AbstractHashtableEnumerator implements
-        Enumeration<ESValue> {
+Enumeration<ESValue> {
     private static final long serialVersionUID = -5151529369306332429L;
 
     HashtableValueEnumerator(HashtableEntry table[]) {
