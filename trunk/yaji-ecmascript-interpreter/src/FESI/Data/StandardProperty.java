@@ -48,4 +48,5 @@ public interface StandardProperty {
     public static final int SEThash = SETstring.hashCode();
     public static final String SOURCEstring = "source";
     public static final int SOURCEhash = SOURCEstring.hashCode();
+    public static final String TOLOCALESTRING = "toLocaleString";
 }

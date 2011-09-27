@@ -32,6 +32,60 @@ import FESI.Interpreter.Evaluator;
 public class ObjectPrototype extends ESObject {
 
     private static final long serialVersionUID = -4836187608032396557L;
+    private static class ObjectPrototypeToString extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        ObjectPrototypeToString(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            String result;
+            if (thisObject == ESUndefined.theUndefined) {
+                result = "[object Undefined]";
+            } else if (thisObject == ESNull.theNull) {
+                result = "[object Null]";
+            }
+            ESObject esObject = thisObject.toESObject(getEvaluator());
+            result = "[object " + esObject.getESClassName()
+                    + "]";
+            return new ESString(result);
+        }
+    }
+    
+    private static class ObjectPrototypeValueOf extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        ObjectPrototypeValueOf(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 1);
+        }
+
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            return thisObject;
+        }
+    }
+
+    private static class ObjectPrototypeToLocaleString extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        ObjectPrototypeToLocaleString(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            ESObject object = thisObject.toESObject(getEvaluator());
+            ESValue toStringFunction = object.getProperty(StandardProperty.TOSTRINGstring,StandardProperty.TOSTRINGhash);
+            return toStringFunction.callFunction(thisObject, ESValue.EMPTY_ARRAY);
+        }
+    }
+
+
 
     /**
      * Create a new Object with a specific prototype. This should be used by
@@ -77,4 +131,17 @@ public class ObjectPrototype extends ESObject {
         appendable.append('}');
     }
 
+    public void initialise(ESValue objectObject, Evaluator evaluator, FunctionPrototype functionPrototype) throws EcmaScriptException {
+        putHiddenProperty("constructor", objectObject);
+        putHiddenProperty(StandardProperty.TOSTRINGstring,
+                new ObjectPrototypeToString(StandardProperty.TOSTRINGstring, evaluator,
+                        functionPrototype));
+        putHiddenProperty(StandardProperty.VALUEOFstring,
+                new ObjectPrototypeValueOf(StandardProperty.VALUEOFstring, evaluator,
+                        functionPrototype));
+        putHiddenProperty(StandardProperty.TOLOCALESTRING,
+                new ObjectPrototypeToLocaleString(StandardProperty.TOLOCALESTRING, evaluator,
+                        functionPrototype));
+
+    }
 }
