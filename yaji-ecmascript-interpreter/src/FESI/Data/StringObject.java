@@ -204,7 +204,7 @@ public class StringObject extends BuiltinFunctionObject {
         }
     }
 
-    private static class StringPrototypeSplit extends BuiltinFunctionObject {
+    private static class StringPrototypeSplit extends CoercedStringFunction {
         private static final long serialVersionUID = 2991853591081656659L;
 
         StringPrototypeSplit(String name, Evaluator evaluator,
@@ -212,32 +212,53 @@ public class StringObject extends BuiltinFunctionObject {
             super(fp, evaluator, name, 1);
         }
 
-        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
+        private void split(Pattern pattern, ArrayPrototype matchList, CharSequence input, int limit) {
+            int index = 0;
+            boolean matchLimited = limit > 0;
+            Matcher m = pattern.matcher(input);
+
+            int groupCount = m.groupCount();
+            // Add segments before each match found
+            while(m.find()) {
+                String match = input.subSequence(index, m.start()).toString();
+                matchList.add(new ESString(match));
+                if (matchList.size() == limit) {
+                    return;
+                }
+                for (int i=1; i<=groupCount; i++) {
+                    String group = m.group(i);
+                    matchList.add((group == null)?ESUndefined.theUndefined:new ESString(group));
+                    if (matchList.size() == limit) {
+                        return;
+                    }
+                }
+                index = m.end();
+            }
+
+            // If no match was found, return complete string
+            if (index == 0) {
+                matchList.add(new ESString(input.toString()));
+            } else {
+                // Add remaining segment
+                if (!matchLimited || matchList.size() < limit) {
+                    matchList.add(new ESString(input.subSequence(index, input.length()).toString()));
+                }
+            }
+
+        }
+        public ESValue invoke(String str, ESValue[] arguments)
                 throws EcmaScriptException {
-            String str = thisObject.toString();
             ESObject ap = this.getEvaluator().getArrayPrototype();
             ArrayPrototype theArray = new ArrayPrototype(ap, this
                     .getEvaluator());
             if (arguments.length <= 0) {
                 theArray.setSize(1);
-                theArray.setElementAt(thisObject, 0);
+                theArray.setElementAt(new ESString(str), 0);
             } else {
                 if (arguments[0] instanceof RegExpPrototype) {
-                    RegExpPrototype pattern = (RegExpPrototype) arguments[0];
-                    Pattern spliter = pattern.getPattern();
-                    String[] result = null;
-                    if (arguments.length > 1) {
-                        int n = arguments[1].toUInt32();
-                        result = spliter.split(str, n);
-                    } else {
-                        result = spliter.split(str);
-                    }
-                    int l = result.length;
-                    theArray.setSize(l);
-                    for (int i = 0; i < l; i++) {
-                        theArray.setElementAt(new ESString(result[i]), i);
-                    }
-
+                    RegExpPrototype regexp = (RegExpPrototype) arguments[0];
+                    int limit = getArgAsInteger(arguments,1);
+                    split(regexp.getPattern(),theArray,str,limit);
                 } else { // ! instanceof ESJavaRegExp, using "normal" split
                     String sep = arguments[0].toString();
                     if (sep.length() == 0) {
@@ -263,9 +284,13 @@ public class StringObject extends BuiltinFunctionObject {
                             i++;
                         }
                     }
-                } // instanceof ESORORegExp
+                } 
             }
             return theArray;
+        }
+
+        private int getArgAsInteger(ESValue[] arguments, int i) throws EcmaScriptException {
+            return getArg(arguments,i).toInt32();
         }
     }
 
