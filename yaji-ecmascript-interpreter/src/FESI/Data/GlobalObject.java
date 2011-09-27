@@ -72,43 +72,6 @@ public class GlobalObject extends ObjectPrototype {
         try {
 
             // For objectPrototype
-            class ObjectPrototypeToString extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                ObjectPrototypeToString(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 1);
-                }
-
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    String result;
-                    if (thisObject == ESUndefined.theUndefined) {
-                        result = "[object Undefined]";
-                    } else if (thisObject == ESNull.theNull) {
-                        result = "[object Null]";
-                    }
-                    ESObject esObject = thisObject.toESObject(getEvaluator());
-                    result = "[object " + esObject.getESClassName()
-                            + "]";
-                    return new ESString(result);
-                }
-            }
-            class ObjectPrototypeValueOf extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                ObjectPrototypeValueOf(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 1);
-                }
-
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    return thisObject;
-                }
-            }
-
-
             // For GlobalObject
             class GlobalObjectThrowError extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
@@ -517,14 +480,8 @@ public class GlobalObject extends ObjectPrototype {
             // Set built-in properties
             objectObject.putHiddenProperty("prototype", objectPrototype);
 
-            objectPrototype.putHiddenProperty("constructor", objectObject);
-            objectPrototype.putHiddenProperty("toString",
-                    new ObjectPrototypeToString("toString", evaluator,
-                            functionPrototype));
-            objectPrototype.putHiddenProperty("valueOf",
-                    new ObjectPrototypeValueOf("valueOf", evaluator,
-                            functionPrototype));
-
+            objectPrototype.initialise(objectObject, evaluator, functionPrototype);
+            
             functionObject.putHiddenProperty("prototype", functionPrototype);
             functionObject.putHiddenProperty("length", ESNumber.valueOf(1));
             
