@@ -1,6 +1,7 @@
 package FESI.Data;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 import java.util.ArrayList;
 
@@ -59,6 +60,13 @@ public class ObjectPrototypeTest {
         assertEquals(new ESString("[object Math]"), result);
     }
     
+    @Test
+    public void valueOfObjectReturnsSelf() throws Exception {
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
+        ESValue result = object.doIndirectCall(evaluator, object, "valueOf", ESValue.EMPTY_ARRAY);
+        assertSame(object, result);
+    }
+
     private ESValue createFunction(String... params) throws EcmaScriptException {
         ESObject functionObject = (ESObject) evaluator.getGlobalObject().getProperty("Function", "Function".hashCode());
         ArrayList<ESValue> paramArray = new ArrayList<ESValue>();
