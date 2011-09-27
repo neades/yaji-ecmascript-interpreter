@@ -258,6 +258,110 @@ public class StringPrototypeTest {
         ESValue lowerCase = originalObject.doIndirectCall(evaluator, originalObject, "toLocaleUpperCase", ESValue.EMPTY_ARRAY);
         assertEquals("T\u0130TLE",lowerCase.toString());
     }
+
+    @Test
+    public void splitWithNoSeparatorReturnsString() throws Exception {
+        ESObject originalObject = new ESString("title").toESObject(evaluator);
+        ESValue splitResult = originalObject.doIndirectCall(evaluator, originalObject, "split", ESValue.EMPTY_ARRAY);
+        assertEquals(new ESString("title"),splitResult);
+    }
+    
+    @Test
+    public void splitWithStringReturnsArrayOfStrings() throws Exception {
+        ESObject originalObject = new ESString("a,b,c").toESObject(evaluator);
+        ArrayPrototype splitResult = (ArrayPrototype) originalObject.doIndirectCall(evaluator, originalObject, "split", new ESValue[] { new ESString(",") });
+        assertEquals("a",splitResult.getProperty(0).toString());
+        assertEquals("b",splitResult.getProperty(1).toString());
+        assertEquals("c",splitResult.getProperty(2).toString());
+        assertEquals(3,splitResult.size());
+    }
+    
+    @Test
+    public void splitWithEmptyStringReturnsArrayOfcharacters() throws Exception {
+        ESObject originalObject = new ESString("abc").toESObject(evaluator);
+        ArrayPrototype splitResult = (ArrayPrototype) originalObject.doIndirectCall(evaluator, originalObject, "split", new ESValue[] { new ESString("") });
+        assertEquals("a",splitResult.getProperty(0).toString());
+        assertEquals("b",splitResult.getProperty(1).toString());
+        assertEquals("c",splitResult.getProperty(2).toString());
+        assertEquals(3,splitResult.size());
+    }
+    @Test
+    public void splitAcceptsNonStringValue() throws Exception {
+        ESValue arrayObject = evaluator.getGlobalObject().getProperty("Array");
+        ArrayPrototype a = (ArrayPrototype) arrayObject.doConstruct((ESObject) arrayObject, new ESValue[] { new ESString("abc"), ESNumber.valueOf("123"), new ESString("xyz") });
+        ESValue function = getStringPrototype().getProperty("split");
+        ArrayPrototype splitResult = (ArrayPrototype) function.callFunction(a, new ESValue[] { new ESString(",") });
+        assertEquals("abc",splitResult.getProperty(0).toString());
+        assertEquals(new ESString("123"),splitResult.getProperty(1));
+        assertEquals("xyz",splitResult.getProperty(2).toString());
+        assertEquals(3,splitResult.size());
+    }
+
+
+    @Test(expected=TypeError.class)
+    public void splitRejectsNullAsThis() throws Exception {
+        ESValue function = getStringPrototype().getProperty("split");
+        function.callFunction(ESNull.theNull, new ESValue[] { new ESString(",") });
+    }
+    
+    @Test(expected=TypeError.class)
+    public void splitRejectsUndefinedAsThis() throws Exception {
+        ESValue function = getStringPrototype().getProperty("split");
+        function.callFunction(ESUndefined.theUndefined, new ESValue[] { new ESString(",") });
+    }
+    
+    @Test
+    public void splitWithRegexpReturnsArrayOfStrings() throws Exception {
+        ESObject originalObject = new ESString("A<B>bold</B>").toESObject(evaluator);
+        ArrayPrototype splitResult = (ArrayPrototype) originalObject.doIndirectCall(evaluator, originalObject, "split", new ESValue[] { createRegExp("[<>]") });
+        assertEquals("A",splitResult.getProperty(0).toString());
+        assertEquals("B",splitResult.getProperty(1).toString());
+        assertEquals("bold",splitResult.getProperty(2).toString());
+        assertEquals("/B",splitResult.getProperty(3).toString());
+        assertEquals("",splitResult.getProperty(4).toString());
+        assertEquals(5,splitResult.size());
+    }
+
+    @Test
+    public void splitWithRegexpReturnsLimitedArrayOfStrings() throws Exception {
+        ESObject originalObject = new ESString("A<B>bold</B>").toESObject(evaluator);
+        ArrayPrototype splitResult = (ArrayPrototype) originalObject.doIndirectCall(evaluator, originalObject, "split", new ESValue[] { createRegExp("[<>]"), ESNumber.valueOf(2) });
+        assertEquals("A",splitResult.getProperty(0).toString());
+        assertEquals("B",splitResult.getProperty(1).toString());
+        assertEquals(2,splitResult.size());
+    }
+
+    @Test
+    public void splitIncludesCaptureGroups() throws Exception {
+        ESObject originalObject = new ESString("A<B>bold</B>and<CODE>coded</CODE>").toESObject(evaluator);
+        ArrayPrototype splitResult = (ArrayPrototype) originalObject.doIndirectCall(evaluator, originalObject, "split", new ESValue[] { createRegExp("<(\\/)?([^<>]+)>") });
+        assertEquals("A,,B,bold,/,B,and,,CODE,coded,/,CODE,",splitResult.doIndirectCall(evaluator, splitResult, "toString", ESValue.EMPTY_ARRAY).toString());
+        assertEquals(13,splitResult.size());
+    }
+
+    @Test
+    public void splitBehavesSesnsiblyWithSimpleRegexp() throws Exception {
+        ESObject originalObject = new ESString("a,b:c").toESObject(evaluator);
+        ArrayPrototype splitResult = (ArrayPrototype) originalObject.doIndirectCall(evaluator, originalObject, "split", new ESValue[] { createRegExp("[,:]") });
+        assertEquals("a,b,c",splitResult.doIndirectCall(evaluator, splitResult, "toString", ESValue.EMPTY_ARRAY).toString());
+        assertEquals(3,splitResult.size());
+    }
+
+//    @Test
+//    public void splitDoesntBacktrack() throws Exception {
+//        ESObject originalObject = new ESString("ab").toESObject(evaluator);
+//        ArrayPrototype splitResult = (ArrayPrototype) originalObject.doIndirectCall(evaluator, originalObject, "split", new ESValue[] { createRegExp("a*?") });
+//        assertEquals("a,b",splitResult.doIndirectCall(evaluator, splitResult, "toString", ESValue.EMPTY_ARRAY).toString());
+//        assertEquals(2,splitResult.size());
+//    }
+//    
+//    @Test
+//    public void splitDoesntBacktrack2() throws Exception {
+//        ESObject originalObject = new ESString("ab").toESObject(evaluator);
+//        ArrayPrototype splitResult = (ArrayPrototype) originalObject.doIndirectCall(evaluator, originalObject, "split", new ESValue[] { createRegExp("a*") });
+//        assertEquals(",b",splitResult.doIndirectCall(evaluator, splitResult, "toString", ESValue.EMPTY_ARRAY).toString());
+//        assertEquals(2,splitResult.size());
+//    }
     
     private ESObject getStringPrototype() throws EcmaScriptException {
         ESObject stringObject = (ESObject) evaluator.getGlobalObject().getProperty("String","String".hashCode());
@@ -272,4 +376,10 @@ public class StringPrototypeTest {
         return string;
     }
 
+    private ESObject createRegExp(String regexp) throws EcmaScriptException {
+        ESValue regExpConstructor = evaluator.getGlobalObject().getProperty("RegExp");
+        ESObject regExp = regExpConstructor.doConstruct((ESObject)regExpConstructor, new ESValue[] { new ESString(regexp) });
+        return regExp;
+    }
+    
 }
