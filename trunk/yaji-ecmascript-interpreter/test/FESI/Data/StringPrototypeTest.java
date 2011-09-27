@@ -288,7 +288,7 @@ public class StringPrototypeTest {
     @Test
     public void splitAcceptsNonStringValue() throws Exception {
         ESValue arrayObject = evaluator.getGlobalObject().getProperty("Array");
-        ArrayPrototype a = (ArrayPrototype) arrayObject.doConstruct((ESObject) arrayObject, new ESValue[] { new ESString("abc"), ESNumber.valueOf("123"), new ESString("xyz") });
+        ArrayPrototype a = (ArrayPrototype) arrayObject.doConstruct(new ESValue[] { new ESString("abc"), ESNumber.valueOf("123"), new ESString("xyz") });
         ESValue function = getStringPrototype().getProperty("split");
         ArrayPrototype splitResult = (ArrayPrototype) function.callFunction(a, new ESValue[] { new ESString(",") });
         assertEquals("abc",splitResult.getProperty(0).toString());
@@ -363,6 +363,51 @@ public class StringPrototypeTest {
 //        assertEquals(2,splitResult.size());
 //    }
     
+    @Test
+    public void sliceShouldDoABasicSlice() throws Exception {
+        assertEquals(new ESString("bcd"),callSlice("abcdef", ESNumber.valueOf(1), ESNumber.valueOf(4)));
+    }
+
+    @Test
+    public void sliceNegativeStartShouldCountFromEnd() throws Exception {
+        assertEquals(new ESString("de"),callSlice("abcdef", ESNumber.valueOf(-3), ESNumber.valueOf(5)));
+    }
+    
+    @Test
+    public void sliceNegativeEndShouldCountFromEnd() throws Exception {
+        assertEquals(new ESString("abcde"),callSlice("abcdef", ESNumber.valueOf(0), ESNumber.valueOf(-1)));
+    }
+    
+    @Test
+    public void sliceUndefinedEndShouldBeStringLength() throws Exception {
+        assertEquals(new ESString("cdef"),callSlice("abcdef", ESNumber.valueOf(2), ESUndefined.theUndefined));
+    }
+    
+    @Test
+    public void sliceEndGreaterThanStartReturnsEmptyString() throws Exception {
+        assertEquals(new ESString(""),callSlice("abcdef", ESNumber.valueOf(2), ESNumber.valueOf(1)));
+    }
+    
+    @Test
+    public void sliceNegativeStartGreaterThenLengthIsZero() throws Exception {
+        assertEquals(new ESString("abc"),callSlice("abcdef", ESNumber.valueOf(-10), ESNumber.valueOf(3)));
+    }
+    
+    @Test
+    public void sliceStartGreaterThanEndIsEmptyString() throws Exception {
+        assertEquals(new ESString(""),callSlice("abcdef", ESNumber.valueOf(10), ESNumber.valueOf(13)));
+    }
+    
+    @Test
+    public void sliceNegativeEndBeforeStringStartReturnsEmptyString() throws Exception {
+        assertEquals(new ESString(""),callSlice("abcdef", ESNumber.valueOf(10), ESNumber.valueOf(-13)));
+    }
+    
+    @Test
+    public void sliceEndGreaterLengthShouldBeLength() throws Exception {
+        assertEquals(new ESString("def"),callSlice("abcdef", ESNumber.valueOf(3), ESNumber.valueOf(13)));
+    }
+    
     private ESObject getStringPrototype() throws EcmaScriptException {
         ESObject stringObject = (ESObject) evaluator.getGlobalObject().getProperty("String","String".hashCode());
         ESObject stringPrototype = (ESObject) stringObject.getProperty(StandardProperty.PROTOTYPEstring,StandardProperty.PROTOTYPEhash);
@@ -378,8 +423,14 @@ public class StringPrototypeTest {
 
     private ESObject createRegExp(String regexp) throws EcmaScriptException {
         ESValue regExpConstructor = evaluator.getGlobalObject().getProperty("RegExp");
-        ESObject regExp = regExpConstructor.doConstruct((ESObject)regExpConstructor, new ESValue[] { new ESString(regexp) });
+        ESObject regExp = regExpConstructor.doConstruct( new ESValue[] { new ESString(regexp) });
         return regExp;
     }
     
+    private ESValue callSlice(String string, ESValue start, ESValue end) throws EcmaScriptException, NoSuchMethodException {
+        ESObject originalObject = new ESString(string).toESObject(evaluator);
+        ESValue value = originalObject.doIndirectCall(evaluator, originalObject, "slice", new ESValue[] { start, end });
+        return value;
+    }
+
 }

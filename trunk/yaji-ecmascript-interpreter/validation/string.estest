@@ -260,3 +260,40 @@ try {
 } catch( e ) {
   "TypeError" === e.name;
 }
+
+@test slice.null
+try {
+  String.prototype.slice.apply(null);
+  false;
+} catch( e ) {
+  "TypeError" === e.name;
+}
+
+@test slice.undefined
+try {
+  String.prototype.slice.apply(undefined);
+  false;
+} catch( e ) {
+  "TypeError" === e.name;
+}
+
+@test slice.mdn.1
+var str1 = "The morning is upon us.";  
+var str2 = str1.slice(4, -2);  
+str2 === 'morning is upon u';
+
+@test slice.oneargument.1
+var carter = new String("I learn JavaScript.");
+carter.slice(7) === ' JavaScript.';
+
+@test slice.oneargument.2
+var carter = new String("I learn JavaScript.");
+carter.slice(-7) === 'Script.';
+
+@test slice.twoargs.1
+var carter = new String("I learn JavaScript.");
+carter.slice(8, 12) === 'Java';
+
+@test slice.twoargs.2
+var carter = new String("I learn JavaScript.");
+carter.slice(-11,-7) === 'Java';

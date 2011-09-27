@@ -94,6 +94,34 @@ public class StringObject extends BuiltinFunctionObject {
         }
     }
 
+    private static class StringPrototypeSlice extends CoercedStringFunction {
+        private static final long serialVersionUID = 1L;
+
+        StringPrototypeSlice(String name, Evaluator evaluator, FunctionPrototype fp) {
+            super(fp, evaluator, name, 2);
+        }
+
+        @Override
+        public ESValue invoke(String str, ESValue[] arguments) throws EcmaScriptException {
+            int strLength = str.length();
+            int start = getArgAsInteger(arguments,0);
+            if (start < 0) {
+                start = Math.max(strLength + start,0);
+            }
+            ESValue endValue = getArg(arguments,1);
+            int end = (endValue.getTypeOf() == EStypeUndefined) ? strLength : endValue.toInt32();
+            if (end < 0) {
+                end = Math.max(strLength + end,0);
+            } else {
+                end = Math.min(end,strLength);
+            }
+            if (end < start || start > strLength) {
+                return ESString.valueOf("");
+            }
+            return new ESString(str.substring(start, end));
+        }
+    }
+
     private static class StringPrototypeSearch extends BuiltinFunctionObject {
         private static final long serialVersionUID = -3110437308530985673L;
 
@@ -289,9 +317,6 @@ public class StringObject extends BuiltinFunctionObject {
             return theArray;
         }
 
-        private int getArgAsInteger(ESValue[] arguments, int i) throws EcmaScriptException {
-            return getArg(arguments,i).toInt32();
-        }
     }
 
 
@@ -637,6 +662,8 @@ public class StringObject extends BuiltinFunctionObject {
                     new StringPrototypeReplace("replace", evaluator, functionPrototype));
             stringPrototype.putHiddenProperty("search", 
                     new StringPrototypeSearch("search", evaluator, functionPrototype));
+            stringPrototype.putHiddenProperty("slice",
+                    new StringPrototypeSlice("slice", evaluator, functionPrototype));
             stringPrototype.putHiddenProperty("split",
                     new StringPrototypeSplit("split", evaluator, functionPrototype));
             stringPrototype.putHiddenProperty("substring",
