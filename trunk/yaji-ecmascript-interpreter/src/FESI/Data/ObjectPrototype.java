@@ -101,6 +101,30 @@ public class ObjectPrototype extends ESObject {
         }
     }
 
+    private static class ObjectPrototypeIsPrototypeOf extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        public ObjectPrototypeIsPrototypeOf(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            boolean isPrototype = false;
+            ESValue V = getArg(arguments,0);
+            if (V instanceof ESObject) {
+                ESObject v = (ESObject) V;
+                ESObject o = thisObject.toESObject(getEvaluator());
+                do {
+                    v = v.getPrototype();
+                    isPrototype = v == o;
+                } while (v != null && !isPrototype);
+            }
+            return ESBoolean.valueOf(isPrototype);
+        }
+    }
+
 
 
     /**
@@ -160,6 +184,9 @@ public class ObjectPrototype extends ESObject {
                         functionPrototype));
         putHiddenProperty(StandardProperty.HASOWNPROPERTYstring,
                 new ObjectPrototypeHasOwnProperty(StandardProperty.HASOWNPROPERTYstring, evaluator,
+                        functionPrototype));
+        putHiddenProperty(StandardProperty.ISPROTOTYPEOFstring,
+                new ObjectPrototypeIsPrototypeOf(StandardProperty.ISPROTOTYPEOFstring, evaluator,
                         functionPrototype));
     }
 }
