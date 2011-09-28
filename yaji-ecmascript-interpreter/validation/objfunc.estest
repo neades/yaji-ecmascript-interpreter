@@ -560,4 +560,40 @@ Object.keys(obj).sort().toString() === "0,1,2";
 var my_obj = Object.create({}, { getFoo : { value : function () { return this.foo } } });  
 my_obj.foo = 1;  
       
-Object.keys(my_obj).toString() === "foo"; 
+Object.keys(my_obj).toString() === "foo";
+
+@test hasOwnProperty.mdn.1
+var o = new Object();  
+o.prop = 'exists';  
+
+function changeO() {  
+   o.newprop = o.prop;  
+   delete o.prop;  
+}  
+      
+var r1 = o.hasOwnProperty('prop');   //returns true  
+changeO();  
+r1 === true && o.hasOwnProperty('prop') === false;   //returns false
+  
+@test hasOwnProperty.mdn.2
+o = new Object();  
+o.prop = 'exists';  
+o.hasOwnProperty('prop') === true &&             // returns true  
+o.hasOwnProperty('toString') === false &&         // returns false  
+o.hasOwnProperty('hasOwnProperty') === false;   // returns false 
+
+@test hasOwnProperty.mdn.3
+var buz = {  
+    fog: 'stack'  
+};  	
+      
+var own = '';
+var inherited = ''
+for (var name in buz) {  
+    if (buz.hasOwnProperty(name)) {  
+        own += name +"[" +buz[name] + "] ";  
+    } else {  
+        inherited += name;  
+    }  
+}
+own === 'fog[stack] '; 

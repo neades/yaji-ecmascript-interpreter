@@ -85,6 +85,22 @@ public class ObjectPrototype extends ESObject {
         }
     }
 
+    private static class ObjectPrototypeHasOwnProperty extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        ObjectPrototypeHasOwnProperty(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            String propertyName = getArg(arguments,0).toESString().toString();
+            ESObject object = thisObject.toESObject(getEvaluator());
+            return ESBoolean.valueOf(object.getOwnProperty(propertyName, propertyName.hashCode()) != null);
+        }
+    }
+
 
 
     /**
@@ -139,9 +155,11 @@ public class ObjectPrototype extends ESObject {
         putHiddenProperty(StandardProperty.VALUEOFstring,
                 new ObjectPrototypeValueOf(StandardProperty.VALUEOFstring, evaluator,
                         functionPrototype));
-        putHiddenProperty(StandardProperty.TOLOCALESTRING,
-                new ObjectPrototypeToLocaleString(StandardProperty.TOLOCALESTRING, evaluator,
+        putHiddenProperty(StandardProperty.TOLOCALESTRINGstring,
+                new ObjectPrototypeToLocaleString(StandardProperty.TOLOCALESTRINGstring, evaluator,
                         functionPrototype));
-
+        putHiddenProperty(StandardProperty.HASOWNPROPERTYstring,
+                new ObjectPrototypeHasOwnProperty(StandardProperty.HASOWNPROPERTYstring, evaluator,
+                        functionPrototype));
     }
 }

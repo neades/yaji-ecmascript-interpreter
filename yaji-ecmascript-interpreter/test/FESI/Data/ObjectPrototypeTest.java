@@ -67,6 +67,24 @@ public class ObjectPrototypeTest {
         assertSame(object, result);
     }
 
+    @Test
+    public void hasOwnPropertyReturnsTrueForProperty() throws Exception {
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
+        object.putProperty("aProperty", ESNull.theNull);
+        ESValue result = object.doIndirectCall(evaluator, object, "hasOwnProperty", new ESValue[] { new ESString("aProperty") });
+        assertSame(ESBoolean.valueOf(true), result);
+    }
+
+    @Test
+    public void hasOwnPropertyIgnoresInherited() throws Exception {
+        ESObject parentObject = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
+        parentObject.putProperty("aProperty", ESNull.theNull);
+        ESObject object = (ESObject) objectObject.doIndirectCall(evaluator, objectObject, "create", new ESValue[] { parentObject });
+        ESValue result = object.doIndirectCall(evaluator, object, "hasOwnProperty", new ESValue[] { new ESString("aProperty") });
+        
+        assertSame(ESBoolean.valueOf(false), result);
+    }
+
     private ESValue createFunction(String... params) throws EcmaScriptException {
         ESObject functionObject = (ESObject) evaluator.getGlobalObject().getProperty("Function", "Function".hashCode());
         ArrayList<ESValue> paramArray = new ArrayList<ESValue>();
