@@ -51,4 +51,5 @@ public interface StandardProperty {
     public static final String TOLOCALESTRINGstring = "toLocaleString";
     public static final String HASOWNPROPERTYstring = "hasOwnProperty";
     public static final String ISPROTOTYPEOFstring = "isPrototypeOf";
+    public static final String PROPERTYISENUMERABLEstring = "propertyIsEnumerable";
 }

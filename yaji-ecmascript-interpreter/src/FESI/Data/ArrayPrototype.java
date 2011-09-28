@@ -24,6 +24,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.yaji.json.JsonState;
 
@@ -1243,5 +1245,18 @@ public class ArrayPrototype extends ESObject {
     @Override
     public Enumeration<String> keys() {
         return new ArrayPropertyNamesEnumeration(super.keys(), theArray.size(), false);
+    }
+    
+    @Override
+    public boolean hasEnumerableProperty(String propertyName, int hashCode) {
+        Pattern pattern = Pattern.compile("[0-9]*");
+        Matcher matcher = pattern.matcher(propertyName);
+        if (matcher.matches()) {
+            int idx = Integer.valueOf(propertyName,10);
+            if (idx < theArray.size()) {
+                return true;
+            }
+        }
+        return super.hasEnumerableProperty(propertyName, hashCode);
     }
 }

@@ -90,7 +90,7 @@ public class ObjectPrototype extends ESObject {
 
         ObjectPrototypeHasOwnProperty(String name, Evaluator evaluator,
                 FunctionPrototype fp) {
-            super(fp, evaluator, name, 0);
+            super(fp, evaluator, name, 1);
         }
 
         public ESValue callFunction(ESValue thisObject,
@@ -106,7 +106,7 @@ public class ObjectPrototype extends ESObject {
 
         public ObjectPrototypeIsPrototypeOf(String name, Evaluator evaluator,
                 FunctionPrototype fp) {
-            super(fp, evaluator, name, 0);
+            super(fp, evaluator, name, 1);
         }
 
         public ESValue callFunction(ESValue thisObject,
@@ -122,6 +122,22 @@ public class ObjectPrototype extends ESObject {
                 } while (v != null && !isPrototype);
             }
             return ESBoolean.valueOf(isPrototype);
+        }
+    }
+
+    private static class ObjectPrototypePropertyIsEnumerable extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        public ObjectPrototypePropertyIsEnumerable(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 1);
+        }
+
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            String P = getArg(arguments,0).toESString().toString();
+            ESObject o = thisObject.toESObject(getEvaluator());
+            return ESBoolean.valueOf(o.hasEnumerableProperty(P, P.hashCode()));
         }
     }
 
@@ -187,6 +203,9 @@ public class ObjectPrototype extends ESObject {
                         functionPrototype));
         putHiddenProperty(StandardProperty.ISPROTOTYPEOFstring,
                 new ObjectPrototypeIsPrototypeOf(StandardProperty.ISPROTOTYPEOFstring, evaluator,
+                        functionPrototype));
+        putHiddenProperty(StandardProperty.PROPERTYISENUMERABLEstring,
+                new ObjectPrototypePropertyIsEnumerable(StandardProperty.PROPERTYISENUMERABLEstring, evaluator,
                         functionPrototype));
     }
 }

@@ -323,6 +323,12 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         return e==null?false:e.hidden;
     }
 
+
+    public boolean isEnumerable(String propertyName, int hashCode) {
+        HashtableEntry e = getHashtableEntry(propertyName, hashCode);
+        return e==null?false:!e.hidden;
+    }
+
     /**
      * Check if a property is readonly (return false if not present).
      * 

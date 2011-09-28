@@ -121,6 +121,35 @@ public class ObjectPrototypeTest {
         assertSame(ESBoolean.valueOf(false), result);
     }
 
+    @Test
+    public void propertyIsEnumerableReturnsTrueForStandardProperty() throws Exception {
+        ESObject protoObject = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
+        ESObject object = (ESObject) objectObject.doIndirectCall(evaluator, objectObject, "create", new ESValue[] { protoObject });
+        object.putProperty("aProperty", ESNull.theNull);
+        ESValue result = object.doIndirectCall(evaluator, object, "propertyIsEnumerable", new ESValue[] { new ESString("aProperty") });
+        
+        assertSame(ESBoolean.valueOf(true), result);
+    }
+
+    @Test
+    public void propertyIsEnumerableReturnsFalseForPrototype() throws Exception {
+        ESObject protoObject = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
+        protoObject.putProperty("aProperty", ESNull.theNull);
+        ESObject object = (ESObject) objectObject.doIndirectCall(evaluator, objectObject, "create", new ESValue[] { protoObject });
+        ESValue result = object.doIndirectCall(evaluator, object, "propertyIsEnumerable", new ESValue[] { new ESString("aProperty") });
+        
+        assertSame(ESBoolean.valueOf(false), result);
+    }
+
+    @Test
+    public void propertyIsEnumerableReturnsFalseForNonExistentProperty() throws Exception {
+        ESObject protoObject = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
+        ESObject object = (ESObject) objectObject.doIndirectCall(evaluator, objectObject, "create", new ESValue[] { protoObject });
+        ESValue result = object.doIndirectCall(evaluator, object, "propertyIsEnumerable", new ESValue[] { new ESString("aProperty") });
+        
+        assertSame(ESBoolean.valueOf(false), result);
+    }
+
     private ESValue createFunction(String... params) throws EcmaScriptException {
         ESObject functionObject = (ESObject) evaluator.getGlobalObject().getProperty("Function", "Function".hashCode());
         ArrayList<ESValue> paramArray = new ArrayList<ESValue>();
