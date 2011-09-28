@@ -85,6 +85,42 @@ public class ObjectPrototypeTest {
         assertSame(ESBoolean.valueOf(false), result);
     }
 
+    @Test
+    public void isPrototypeOfNonObjectReturnsFalse() throws Exception {
+        ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
+        ESValue result = object.doIndirectCall(evaluator, object, "isPrototypeOf", new ESValue[] { ESNull.theNull });
+        
+        assertSame(ESBoolean.valueOf(false), result);
+    }
+
+    @Test
+    public void isPrototypeOfCanReturnTrueForPrototype() throws Exception {
+        ESObject protoObject = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
+        ESObject object = (ESObject) objectObject.doIndirectCall(evaluator, objectObject, "create", new ESValue[] { protoObject });
+        ESValue result = protoObject.doIndirectCall(evaluator, protoObject, "isPrototypeOf", new ESValue[] { object });
+        
+        assertSame(ESBoolean.valueOf(true), result);
+    }
+
+    @Test
+    public void isPrototypeOfCanReturnTrueForChainedPrototype() throws Exception {
+        ESObject protoObject = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
+        ESObject proto1Object = (ESObject) objectObject.doIndirectCall(evaluator, objectObject, "create", new ESValue[] { protoObject });
+        ESObject object = (ESObject) objectObject.doIndirectCall(evaluator, objectObject, "create", new ESValue[] { proto1Object });
+        ESValue result = protoObject.doIndirectCall(evaluator, protoObject, "isPrototypeOf", new ESValue[] { object });
+        
+        assertSame(ESBoolean.valueOf(true), result);
+    }
+
+    @Test
+    public void isPrototypeOfCanReturnFalseIfNotPrototype() throws Exception {
+        ESObject protoObject = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
+        ESObject object = (ESObject) objectObject.doIndirectCall(evaluator, objectObject, "create", new ESValue[] { ESNull.theNull });
+        ESValue result = protoObject.doIndirectCall(evaluator, protoObject, "isPrototypeOf", new ESValue[] { object });
+        
+        assertSame(ESBoolean.valueOf(false), result);
+    }
+
     private ESValue createFunction(String... params) throws EcmaScriptException {
         ESObject functionObject = (ESObject) evaluator.getGlobalObject().getProperty("Function", "Function".hashCode());
         ArrayList<ESValue> paramArray = new ArrayList<ESValue>();
