@@ -622,4 +622,62 @@ Fum.prototype = new Fo();
 var fum = new Fum();
 
 Fi.prototype.isPrototypeOf(fum);
+
+
+@test propertyIsEnumerable.MDN.1
+var o = {};  
+var a = [];  
+o.prop = 'is enumerable';  
+a[0] = 'is enumerable';  
+      
+o.propertyIsEnumerable('prop') &&    // returns true  
+a.propertyIsEnumerable(0);           // returns true  
+
+@test propertyIsEnumerable.MDN.2
+// Example: User-defined versus built-in objects
+
+var a = ['is enumerable'];  
+      
+a.propertyIsEnumerable(0) &&           // returns true  
+!a.propertyIsEnumerable('length');   // returns false  
+      
+@test propertyIsEnumerable.MDN.3
+!Math.propertyIsEnumerable('random') &&    // returns false  
+!this.propertyIsEnumerable('Math');     // returns false  
+
+@test propertyIsEnumerable.MDN.4
+// Example: Direct versus inherited properties
+
+var a = [];  
+!a.propertyIsEnumerable('constructor');         // returns false  
+      
+@test propertyIsEnumerable.MDN.5
+function firstConstructor()  
+{  
+  this.property = 'is not enumerable';  
+}  
+firstConstructor.prototype.firstMethod = function () {};  
+      
+function secondConstructor()  
+{  
+  this.method = function method() { return 'is enumerable'; };  
+}  
+      
+secondConstructor.prototype = new firstConstructor;  
+secondConstructor.prototype.constructor = secondConstructor;  
+      
+var o = new secondConstructor();  
+o.arbitraryProperty = 'is enumerable';  
+      
+o.propertyIsEnumerable('arbitraryProperty') && // returns true  
+o.propertyIsEnumerable('method') &&            // returns true  
+!o.propertyIsEnumerable('property') &&         // returns false  
+      
+// These return false as they are on the prototype which   
+// propertyIsEnumerable does not consider (even though the last two  
+// are iteratable with for-in)  
+!o.propertyIsEnumerable('prototype') && // returns false (as of JS 1.8.1/FF3.6)  
+!o.propertyIsEnumerable('constructor') && // returns false  
+!o.propertyIsEnumerable('firstMethod'); // returns false  
+
  

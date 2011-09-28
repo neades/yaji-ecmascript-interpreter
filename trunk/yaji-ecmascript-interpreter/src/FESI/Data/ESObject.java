@@ -332,6 +332,11 @@ public abstract class ESObject extends ESValue {
                 && getPropertyMap().isHidden(propertyName, hash);
     }
 
+    public boolean hasEnumerableProperty(String propertyName, int hashCode) {
+        return properties != null
+                && getPropertyMap().isEnumerable(propertyName, hashCode);
+    }
+
     /**
      * Indicates that the getProperties return an enumerator to the index rather
      * rather than to the value index (see ESWrapper).
