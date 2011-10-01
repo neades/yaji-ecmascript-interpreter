@@ -106,3 +106,12 @@ vn == 15 && typeof(vn)=="number";
 @test number.16
 1/-0 === -Infinity && Number.NEGATIVE_INFINITY && 0.2e309
 
+@test number.toPrecision.1
+var anumber=123.45
+anumber.toPrecision(6) === '123.450' &&
+anumber.toPrecision(4) === '123.5' &&
+anumber.toPrecision(2) === '1.2e+2';
+
+@test number.toPrecision.2
+// Should really be 162.30 - but we are using standard Floating point
+(162.295).toPrecision(5) === '162.29';

@@ -19,6 +19,7 @@ package FESI.Data;
 
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
+import FESI.Exceptions.RangeError;
 import FESI.Interpreter.Evaluator;
 
 /**
@@ -60,6 +61,86 @@ public class NumberObject extends BuiltinFunctionObject {
         return theObject;
     }
 
+
+    // For numberPrototype
+    private static abstract class NumberPrototypeFunctionObject extends BuiltinFunctionObject {
+        private static final long serialVersionUID = -1279666619140046881L;
+
+        public NumberPrototypeFunctionObject(FunctionPrototype fp, Evaluator evaluator, String name, int length) {
+            super(fp,evaluator,name,length);
+        }
+        
+        @Override
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            return invoke((NumberPrototype)thisObject, arguments);
+        }
+
+        protected abstract ESValue invoke(NumberPrototype thisObject, ESValue[] arguments) throws EcmaScriptException;
+    }
+    private static class NumberPrototypeToString extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        NumberPrototypeToString(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 1);
+        }
+
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            ESValue v = ((NumberPrototype) thisObject).value;
+            String s = v.toString();
+            if (arguments.length > 0) {
+                double d = arguments[0].doubleValue();
+                if (!Double.isNaN(d)) {
+                    s = Long
+                            .toString(((long) v.doubleValue()), (int) d);
+                }
+            }
+            return new ESString(s);
+        }
+    }
+    
+    private static class NumberPrototypeValueOf extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        NumberPrototypeValueOf(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 1);
+        }
+
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            return ((NumberPrototype) thisObject).value;
+        }
+    }
+    
+    private static class NumberPrototypeToPrecision extends NumberPrototypeFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        NumberPrototypeToPrecision(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 1);
+        }
+
+        public ESValue invoke(NumberPrototype thisNumber,
+                ESValue[] arguments) throws EcmaScriptException {
+            Double d = thisNumber.doubleValue();
+            ESValue precision = getArg(arguments,0);
+            String s;
+            if (d.isNaN() || d.isInfinite() || precision.getTypeOf() == EStypeUndefined) {
+                s = thisNumber.toString();
+            } else {
+                int p = precision.toInt32();
+                if (p<1 || p > 21) {
+                    throw new RangeError("precision should be in range 1-21");
+                }
+                s = thisNumber.toString(p);
+            }
+            return new ESString(s);
+        }
+    }
+    
     /**
      * Utility function to create the single Number object
      * 
@@ -81,43 +162,7 @@ public class NumberObject extends BuiltinFunctionObject {
                 evaluator);
 
         try {
-
-            // For numberPrototype
-            class NumberPrototypeToString extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                NumberPrototypeToString(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 1);
-                }
-
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    ESValue v = ((NumberPrototype) thisObject).value;
-                    String s = v.toString();
-                    if (arguments.length > 0) {
-                        double d = arguments[0].doubleValue();
-                        if (!Double.isNaN(d)) {
-                            s = Long
-                                    .toString(((long) v.doubleValue()), (int) d);
-                        }
-                    }
-                    return new ESString(s);
-                }
-            }
-            class NumberPrototypeValueOf extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                NumberPrototypeValueOf(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 1);
-                }
-
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    return ((NumberPrototype) thisObject).value;
-                }
-            }
+            
 
             numberObject.putHiddenProperty("prototype", numberPrototype);
             numberObject.putHiddenProperty("length", ESNumber.valueOf(1));
@@ -137,6 +182,9 @@ public class NumberObject extends BuiltinFunctionObject {
                             functionPrototype));
             numberPrototype.putHiddenProperty("valueOf",
                     new NumberPrototypeValueOf("valueOf", evaluator,
+                            functionPrototype));
+            numberPrototype.putHiddenProperty("toPrecision",
+                    new NumberPrototypeToPrecision("toPrecision", evaluator,
                             functionPrototype));
         } catch (EcmaScriptException e) {
             e.printStackTrace();
