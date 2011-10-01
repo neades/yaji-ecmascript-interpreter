@@ -105,7 +105,7 @@ class NumberPrototype extends ESObject {
             e = 0;
         } else {
             double log10 = Math.log10(x);
-            e = (int)log10;
+            e = (int) Math.floor(log10);
             double n = x/Math.pow(10, e - p + 1);
             String m = toString(n,p);
             if (e < -6 || e >= p) {
