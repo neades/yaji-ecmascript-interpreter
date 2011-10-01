@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
+import FESI.Exceptions.RangeError;
 import FESI.Interpreter.Evaluator;
 
 public class NumberPrototypeTest {
@@ -79,6 +80,47 @@ public class NumberPrototypeTest {
         assertEquals(new ESString("123.5"), value);
     }
     
+    @Test
+    public void toPrecisonShouldReturnExactValue() throws Exception {
+        ESObject number = ESNumber.valueOf(123).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toPrecision", new ESValue[] { ESNumber.valueOf(3) });
+        assertEquals(new ESString("123"), value);
+    }
+    
+    @Test
+    public void toPrecisonShouldHandleLeadingZeroPadded() throws Exception {
+        ESObject number = ESNumber.valueOf(123.3456e-4).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toPrecision", new ESValue[] { ESNumber.valueOf(4) });
+        assertEquals(new ESString("0.01233"), value);
+    }
+    
+    @Test
+    public void toPrecisonShouldHandleVerySmall() throws Exception {
+        ESObject number = ESNumber.valueOf(-123.3456e-21).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toPrecision", new ESValue[] { ESNumber.valueOf(4) });
+        assertEquals(new ESString("-1.233e-19"), value);
+    }
+    
+    @Test
+    public void toPrecisonWithUndefinedShouldReturnSameAsToString() throws Exception {
+        ESObject number = ESNumber.valueOf(-123.3456e-21).toESObject(evaluator);
+        ESValue toPrecisionValue = number.doIndirectCall(evaluator, number, "toPrecision", new ESValue[] { ESUndefined.theUndefined });
+        ESValue toStringValue = number.doIndirectCall(evaluator, number, "toString", new ESValue[] { } );
+        assertEquals(toStringValue,toPrecisionValue);
+    }
+    
+    @Test(expected=RangeError.class)
+    public void toPrecisonThrowsRangeErrorForPrecisionForGreaterThan21() throws Exception {
+        ESObject number = ESNumber.valueOf(123.450).toESObject(evaluator);
+        number.doIndirectCall(evaluator, number, "toPrecision", new ESValue[] { ESNumber.valueOf(22) });
+    }
+    
+    @Test(expected=RangeError.class)
+    public void toPrecisonThrowsRangeErrorForPrecisionForLessThan1() throws Exception {
+        ESObject number = ESNumber.valueOf(123.450).toESObject(evaluator);
+        number.doIndirectCall(evaluator, number, "toPrecision", new ESValue[] { ESNumber.valueOf(0) });
+    }
+    
 //    @Test
 //    public void performance() throws Exception {
 //        Random r = new Random(1);
@@ -89,5 +131,11 @@ public class NumberPrototypeTest {
 //            ESValue result = number.doIndirectCall(evaluator, number, "toPrecision", new ESValue[] { ESNumber.valueOf(precision) });
 ////            System.out.println(d + " ("+precision+") "+result);
 //        }
+//    }
+    
+//    @Test(expected=RangeError.class)
+//    public void toFixedThrowsRangeErrorForFractionDigitsForGreaterThan20() throws Exception {
+//        ESObject number = ESNumber.valueOf(123.450).toESObject(evaluator);
+//        number.doIndirectCall(evaluator, number, "toFixed", new ESValue[] { ESNumber.valueOf(21) });
 //    }
 }
