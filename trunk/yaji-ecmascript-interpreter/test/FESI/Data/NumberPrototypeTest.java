@@ -120,22 +120,100 @@ public class NumberPrototypeTest {
         ESObject number = ESNumber.valueOf(123.450).toESObject(evaluator);
         number.doIndirectCall(evaluator, number, "toPrecision", new ESValue[] { ESNumber.valueOf(0) });
     }
+
+    @Test(expected=RangeError.class)
+    public void toFixedThrowsRangeErrorForFractionDigitsForGreaterThan20() throws Exception {
+        ESObject number = ESNumber.valueOf(123.456).toESObject(evaluator);
+        number.doIndirectCall(evaluator, number, "toFixed", new ESValue[] { ESNumber.valueOf(21) });
+    }
     
-//    @Test
-//    public void performance() throws Exception {
-//        Random r = new Random(1);
-//        for( int i=0; i<1000000; i++) {
-//            double d = (r.nextDouble()-0.5) * Double.MAX_VALUE;
-//            int precision = r.nextInt(20)+1;
-//            ESObject number = ESNumber.valueOf(d).toESObject(evaluator);
-//            ESValue result = number.doIndirectCall(evaluator, number, "toPrecision", new ESValue[] { ESNumber.valueOf(precision) });
-////            System.out.println(d + " ("+precision+") "+result);
-//        }
-//    }
+    @Test(expected=RangeError.class)
+    public void toFixedThrowsRangeErrorForFractionDigitsForLessThan0() throws Exception {
+        ESObject number = ESNumber.valueOf(123.456).toESObject(evaluator);
+        number.doIndirectCall(evaluator, number, "toFixed", new ESValue[] { ESNumber.valueOf(-1) });
+    }
     
-//    @Test(expected=RangeError.class)
-//    public void toFixedThrowsRangeErrorForFractionDigitsForGreaterThan20() throws Exception {
-//        ESObject number = ESNumber.valueOf(123.450).toESObject(evaluator);
-//        number.doIndirectCall(evaluator, number, "toFixed", new ESValue[] { ESNumber.valueOf(21) });
-//    }
+    @Test
+    public void toFixedHandlesSimpleTrimming() throws Exception {
+        ESObject number = ESNumber.valueOf(123.453).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toFixed", new ESValue[] { ESNumber.valueOf(2) });
+        assertEquals(new ESString("123.45"),value);
+    }
+
+    @Test
+    public void toFixedRoundUp() throws Exception {
+        ESObject number = ESNumber.valueOf(123.456).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toFixed", new ESValue[] { ESNumber.valueOf(2) });
+        assertEquals(new ESString("123.46"),value);
+    }
+
+    @Test
+    public void toFixedAddsTrailingZeros() throws Exception {
+        ESObject number = ESNumber.valueOf(123.456).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toFixed", new ESValue[] { ESNumber.valueOf(5) });
+        assertEquals(new ESString("123.45600"),value);
+    }
+
+    @Test
+    public void toFixedWithFraction() throws Exception {
+        ESObject number = ESNumber.valueOf(0.01).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toFixed", new ESValue[] { ESNumber.valueOf(5) });
+        assertEquals(new ESString("0.01000"),value);
+    }
+
+    @Test
+    public void toFixedWithFraction1() throws Exception {
+        ESObject number = ESNumber.valueOf(0.001).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toFixed", new ESValue[] { ESNumber.valueOf(5) });
+        assertEquals(new ESString("0.00100"),value);
+    }
+
+    @Test
+    public void toFixedForNegative() throws Exception {
+        ESObject number = ESNumber.valueOf(-0.001).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toFixed", new ESValue[] { ESNumber.valueOf(5) });
+        assertEquals(new ESString("-0.00100"),value);
+    }
+
+    @Test
+    public void toFixedForTooLarge() throws Exception {
+        ESObject number = ESNumber.valueOf(1e21).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toFixed", new ESValue[] { ESNumber.valueOf(5) });
+        assertEquals(new ESString("1.0E21"),value);
+    }
+    
+    @Test
+    public void toFixedForUpperLimit() throws Exception {
+        ESObject number = ESNumber.valueOf(999999999999999L).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toFixed", new ESValue[] { ESNumber.valueOf(20) });
+        assertEquals(new ESString("999999999999999.00000000000000000000"),value);
+    }
+    
+    @Test
+    public void toFixedForUpperLimit2() throws Exception {
+        ESObject number = ESNumber.valueOf(0.00000999999999999999).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toFixed", new ESValue[] { ESNumber.valueOf(20) });
+        assertEquals(new ESString("0.00000999999999999999"),value);
+    }
+    
+    @Test
+    public void toFixedZeroPlaces() throws Exception {
+        ESObject number = ESNumber.valueOf(0.00000999999999999999).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toFixed", new ESValue[] { ESNumber.valueOf(0) });
+        assertEquals(new ESString("0"),value);
+    }
+    
+    @Test
+    public void toFixedNaN() throws Exception {
+        ESObject number = ESNumber.valueOf(Double.NaN).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toFixed", new ESValue[] { ESNumber.valueOf(0) });
+        assertEquals(new ESString("NaN"),value);
+    }
+
+    @Test
+    public void toFixedRoundingHalf() throws Exception {
+        ESObject number = ESNumber.valueOf(930.9805).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toFixed", new ESValue[] { ESNumber.valueOf(3) });
+        assertEquals(new ESString("930.981"),value);
+    }
 }
