@@ -145,12 +145,42 @@ class NumberPrototype extends ESObject {
         formatter.format(format, d);
         return sb.toString();
 
-      }
+    }
 
-      private void pad(StringBuilder s, int count, char ch) {
-          for(int i=0; i<count; i++) {
-              s.append(ch);
-          }
-      }
+    private void pad(StringBuilder s, int count, char ch) {
+        for(int i=0; i<count; i++) {
+            s.append(ch);
+        }
+    }
+
+    public String toFixed(int fractionDigits) {
+        double d = doubleValue();
+        
+        StringBuilder s = new StringBuilder(21);
+        
+        if (d >= 1e21 || Double.isNaN(d)) {
+            return toString();
+        }
+        if (d < 0) {
+            s.append('-');
+            d = -d;
+        }
+        if (d > 1) {
+            s.append(Long.toString((long)d));
+        } else {
+            s.append("0");
+        }
+        if (fractionDigits > 0) {
+            s.append('.');
+            long n = (long) Math.round((d- (long)d) * Math.pow(10, fractionDigits));
+            String afterPoint = Long.toString(n);
+            int k = afterPoint.length();
+            if (k < fractionDigits) {
+                pad(s,fractionDigits-k,'0');
+            }
+            s.append(afterPoint);
+        }
+        return s.toString();
+    }
       
 }

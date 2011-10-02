@@ -140,6 +140,24 @@ public class NumberObject extends BuiltinFunctionObject {
             return new ESString(s);
         }
     }
+
+    private static class NumberPrototypeToFixed extends NumberPrototypeFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        NumberPrototypeToFixed(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 1);
+        }
+
+        public ESValue invoke(NumberPrototype thisNumber,
+                ESValue[] arguments) throws EcmaScriptException {
+            int fractionDigits = getArg(arguments,0).toInt32();
+            if (fractionDigits < 0 || fractionDigits > 20) {
+                throw new RangeError("fractionDigits should be in range 0-20");
+            }
+            return new ESString(thisNumber.toFixed(fractionDigits));
+        }
+    }
     
     /**
      * Utility function to create the single Number object
@@ -185,6 +203,9 @@ public class NumberObject extends BuiltinFunctionObject {
                             functionPrototype));
             numberPrototype.putHiddenProperty("toPrecision",
                     new NumberPrototypeToPrecision("toPrecision", evaluator,
+                            functionPrototype));
+            numberPrototype.putHiddenProperty("toFixed",
+                    new NumberPrototypeToFixed("toFixed", evaluator,
                             functionPrototype));
         } catch (EcmaScriptException e) {
             e.printStackTrace();

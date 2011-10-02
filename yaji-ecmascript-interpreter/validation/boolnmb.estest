@@ -115,3 +115,7 @@ anumber.toPrecision(2) === '1.2e+2';
 @test number.toPrecision.2
 // Should really be 162.30 - but we are using standard Floating point
 (162.295).toPrecision(5) === '162.29';
+
+@test number.toFixed.1
+(10).toFixed(2) === '10.00' &&
+930.9805.toFixed(3) === '930.981';
