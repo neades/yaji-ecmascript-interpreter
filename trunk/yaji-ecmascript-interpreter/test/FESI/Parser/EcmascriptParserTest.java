@@ -293,6 +293,43 @@ public class EcmascriptParserTest {
                     +"    PropertyNameAndValue" + eol
                     +"     <get>" + eol
                     +"     [1]" + eol
+                },
+                { "var d1 = BI_FV/yt, d2 = (1<<BI_F1)/yt, e = 1<<BI_F2;",
+                    "Program" + eol
+                    +" Statement" + eol
+                    +"  StatementList" + eol
+                    +"   VariableDeclaration" + eol
+                    +"    <d1>" + eol
+                    +"    BinaryExpressionSequence" + eol
+                    +"     <BI_FV>" + eol
+                    +"     <\"/\">" + eol
+                    +"     <yt>" + eol
+                    +"   VariableDeclaration" + eol
+                    +"    <d2>" + eol
+                    +"    BinaryExpressionSequence" + eol
+                    +"     BinaryExpressionSequence" + eol
+                    +"      [1]" + eol
+                    +"      <\"<<\">" + eol
+                    +"      <BI_F1>" + eol
+                    +"     <\"/\">" + eol
+                    +"     <yt>" + eol
+                    +"   VariableDeclaration" + eol
+                    +"    <e>" + eol
+                    +"    BinaryExpressionSequence" + eol
+                    +"     [1]" + eol
+                    +"     <\"<<\">" + eol
+                    +"     <BI_F2>" + eol
+                },
+                { "x /= y/z;",
+                   "Program" + eol
+                   +" Statement" + eol
+                   +"  AssignmentExpression" + eol
+                   +"   <x>" + eol
+                   +"   <\"/=\">" + eol
+                   +"   BinaryExpressionSequence" + eol
+                   +"    <y>" + eol
+                   +"    <\"/\">" + eol
+                   +"    <z>" + eol
                 }
             });
     }
