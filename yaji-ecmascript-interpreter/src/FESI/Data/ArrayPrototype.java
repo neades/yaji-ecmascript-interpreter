@@ -708,7 +708,7 @@ public class ArrayPrototype extends ESObject {
             }
 
             ESValue[] callArgs = { elem, ESNumber.valueOf(i), this };
-            ESValue ret = callbackfn.callFunction((ESObject) thisArg, callArgs);
+            ESValue ret = callbackfn.callFunction(thisArg, callArgs);
             switch (type) {
             case EVERY:
                 if (!ret.booleanValue()) {
@@ -1252,7 +1252,7 @@ public class ArrayPrototype extends ESObject {
         Pattern pattern = Pattern.compile("[0-9]*");
         Matcher matcher = pattern.matcher(propertyName);
         if (matcher.matches()) {
-            int idx = Integer.valueOf(propertyName,10);
+            int idx = Integer.parseInt(propertyName,10);
             if (idx < theArray.size()) {
                 return true;
             }

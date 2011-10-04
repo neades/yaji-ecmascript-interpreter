@@ -44,6 +44,7 @@ public final class ESBoolean extends ESPrimitive {
      * @deprecated Replaced by ESBoolean.valueOf
      * @return either trueValue or falseValue
      */
+    @Deprecated
     static public ESBoolean makeBoolean(boolean value) {
         return valueOf(value);
     }

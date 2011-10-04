@@ -564,8 +564,7 @@ public class SwingConsole extends JFrame implements ExtendedConsole {
             // in buffer.
             if (byteArray != null && arrayOffset < arrayLength)
                 return byteArray[arrayOffset++];
-            else
-                return -1;
+            return -1;
         }
 
         synchronized public int read(byte bytes[], int offset, int length)
@@ -713,8 +712,7 @@ public class SwingConsole extends JFrame implements ExtendedConsole {
                     // theConsoleArea.append(String.valueOf(ch));
                     out.write(ch);
                     nbrOfKeyTyped++;
-                } else if (ch == 13) {
-                } else {
+                } else if (ch != 13) {
                     // theConsoleArea.append("?");
                     out.write('?');
                     nbrOfKeyTyped++;

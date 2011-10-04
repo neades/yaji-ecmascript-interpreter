@@ -1,8 +1,8 @@
 package FESI.Data;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,10 +19,6 @@ public class RegExpObjectTest {
     public void setUp() throws Exception {
         evaluator = new Evaluator();
         regExpObject = (RegExpObject)evaluator.getGlobalObject().getProperty("RegExp");
-    }
-
-    @After
-    public void tearDown() throws Exception {
     }
 
     @Test

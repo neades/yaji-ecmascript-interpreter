@@ -631,7 +631,7 @@ class URIHandler {
         StringBuilder sb = new StringBuilder(len);
         
         for (int i = 0; i < len; i++) {
-            int c = (int) s.charAt(i);
+            int c = s.charAt(i);
             if (escapeReserved ? UNESCAPED_AND_RESERVED_SET.get(c)
                     : UNESCAPED_SET.get(c)) {
                 sb.append((char) c);
@@ -648,7 +648,7 @@ class URIHandler {
                              * in range. Otherwise, just continue and pick it up
                              * as the next character.
                              */
-                            int c2 = (int) s.charAt(i + 1);
+                            int c2 = s.charAt(i + 1);
                             if (c2 >= 0xDC00 && c2 <= 0xDFFF) {
                                 writer.write(c2);
                                 i++;
@@ -663,7 +663,7 @@ class URIHandler {
                
                 // Convert to hex
                 for (byte b : buf.toByteArray()) {
-                    sb.append("%"+String.format("%02X", b));
+                    sb.append("%"+String.format("%02X", Byte.valueOf(b)));
                 }
                 buf.reset();
             }

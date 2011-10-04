@@ -93,10 +93,11 @@ public final class ESNumber extends ESPrimitive {
     }
 
     public static ESNumber valueOf(double d) {
-        if (DOUBLE_ZERO.equals(d)) {
+        Double dObject = Double.valueOf(d);
+        if (DOUBLE_ZERO.equals(dObject)) {
             return ESNumber.ZERO;
         }
-        else if (DOUBLE_NEGATIVE_ZERO.equals(d)) {
+        else if (DOUBLE_NEGATIVE_ZERO.equals(dObject)) {
             return ESNumber.NEGATIVE_ZERO;
         } else if (((long) d) == d) {
             return ESNumber.valueOf((long) d);

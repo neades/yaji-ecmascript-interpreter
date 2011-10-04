@@ -94,9 +94,8 @@ public abstract class JsonIndent {
                 }
 
             };
-        } else {
-            return NULL_INDENT;
         }
+        return NULL_INDENT;
     }
 
     public static JsonIndent create() {

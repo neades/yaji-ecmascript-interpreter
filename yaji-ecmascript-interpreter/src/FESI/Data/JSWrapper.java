@@ -271,6 +271,7 @@ public class JSWrapper implements JSObject {
      * @exception JSException
      *                For any error during interpretation
      */
+    @SuppressWarnings("null")
     public Object evalAsFunction(String body, String[] names, Object values[])
             throws JSException {
         Object obj = null;
@@ -278,7 +279,7 @@ public class JSWrapper implements JSObject {
             try {
                 // Create function
                 int argLength = (names == null ? 0 : names.length);
-                int checkLength = (values == null ? 0 : names.length);
+                int checkLength = (values == null ? 0 : values.length);
                 if (argLength != checkLength) {
                     throw new JSException(
                             "argument names and values arrays must have the same length, now: "

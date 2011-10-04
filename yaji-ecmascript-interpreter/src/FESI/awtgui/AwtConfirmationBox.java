@@ -113,6 +113,7 @@ public class AwtConfirmationBox implements ConfirmationBox {
             try {
                 wait();
             } catch (Exception e) {
+                // Ignored
             }
         }
         return response;

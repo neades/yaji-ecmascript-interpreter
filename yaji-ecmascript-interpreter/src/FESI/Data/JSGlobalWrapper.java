@@ -91,14 +91,12 @@ public class JSGlobalWrapper extends JSWrapper implements JSGlobalObject {
                 if (esobject != null && esobject instanceof ESWrapper) {
                     ESWrapper eswrapper = (ESWrapper) esobject;
                     return eswrapper.getJavaObject();
-                } else {
-                    throw new JSException(
-                            "getWrappedObject call on an object not created by makeWrappedObject");
                 }
-            } else {
                 throw new JSException(
                         "getWrappedObject call on an object not created by makeWrappedObject");
             }
+            throw new JSException(
+                    "getWrappedObject call on an object not created by makeWrappedObject");
         }
     }
 
@@ -117,13 +115,11 @@ public class JSGlobalWrapper extends JSWrapper implements JSGlobalObject {
                 ESWrapper eswrapper = (ESWrapper) object;
                 if (eswrapper.isBean()) {
                     return eswrapper;
-                } else {
-                    return new ESWrapper(eswrapper.getJavaObject(), eswrapper
-                            .getEvaluator(), true);
                 }
-            } else {
-                return new ESWrapper(object, evaluator, true);
+                return new ESWrapper(eswrapper.getJavaObject(), eswrapper
+                        .getEvaluator(), true);
             }
+            return new ESWrapper(object, evaluator, true);
         }
     }
 
@@ -146,14 +142,12 @@ public class JSGlobalWrapper extends JSWrapper implements JSGlobalObject {
                 ESWrapper eswrapper = (ESWrapper) object;
                 if (eswrapper.isBean()) {
                     return eswrapper.getJavaObject();
-                } else {
-                    throw new JSException(
-                            "getWrappedBean call on an object not created by makeWrappedBean");
                 }
-            } else {
                 throw new JSException(
                         "getWrappedBean call on an object not created by makeWrappedBean");
             }
+            throw new JSException(
+                    "getWrappedBean call on an object not created by makeWrappedBean");
         }
     }
 

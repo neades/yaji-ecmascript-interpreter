@@ -49,7 +49,7 @@ public class JJTEcmaScriptState {
      stack.  */
   public Node popNode() {
     if (--sp < mk) {
-      mk = marks.remove(marks.size()-1);
+      mk = marks.remove(marks.size()-1).intValue();
     }
     return nodes.remove(nodes.size()-1);
   }
@@ -70,12 +70,12 @@ public class JJTEcmaScriptState {
     while (sp > mk) {
       popNode();
     }
-    mk = marks.remove(marks.size()-1);
+    mk = marks.remove(marks.size()-1).intValue();
   }
 
 
   public void openNodeScope(Node n) {
-    marks.add(mk);
+    marks.add(Integer.valueOf(mk));
     mk = sp;
     n.jjtOpen();
   }
@@ -86,7 +86,7 @@ public class JJTEcmaScriptState {
      made the children of the definite node.  Then the definite node
      is pushed on to the stack. */
   public void closeNodeScope(Node n, int num) {
-    mk = marks.remove(marks.size()-1);
+    mk = marks.remove(marks.size()-1).intValue();
     while (num-- > 0) {
       Node c = popNode();
       c.jjtSetParent(n);
@@ -106,7 +106,7 @@ public class JJTEcmaScriptState {
   public void closeNodeScope(Node n, boolean condition) {
     if (condition) {
       int a = nodeArity();
-      mk = marks.remove(marks.size()-1);
+      mk = marks.remove(marks.size()-1).intValue();
       while (a-- > 0) {
         Node c = popNode();
         c.jjtSetParent(n);
@@ -116,7 +116,7 @@ public class JJTEcmaScriptState {
       pushNode(n);
       node_created = true;
     } else {
-      mk = marks.remove(marks.size()-1);
+      mk = marks.remove(marks.size()-1).intValue();
       node_created = false;
     }
   }

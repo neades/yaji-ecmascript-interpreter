@@ -158,9 +158,8 @@ public class RegExpPrototype extends ESObject {
             } // for
             lastIndex = matcher.end() + startIndex;
             return resultArray;
-        } else {
-            lastIndex = 0;
-            return ESNull.theNull;
         }
+        lastIndex = 0;
+        return ESNull.theNull;
     }
 }

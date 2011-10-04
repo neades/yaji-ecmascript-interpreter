@@ -56,9 +56,8 @@ public class EcmaScriptLexicalException extends EcmaScriptException implements
 
         if (evaluationSource != null) {
             return evaluationSource.getLineNumber();
-        } else {
-            return -1;
         }
+        return -1;
     }
 
     /**

@@ -121,7 +121,7 @@ public class ObjectObject extends BuiltinFunctionObject {
                 ArrayPrototype array = ArrayObject.createArray(getEvaluator());
                 Enumeration<String> propertyNames = object.getOwnPropertyNames();
                 while (propertyNames.hasMoreElements()) {
-                    String propertyName = (String) propertyNames.nextElement();
+                    String propertyName = propertyNames.nextElement();
                     array.add(new ESString(propertyName));
                 }
                 return array;
@@ -138,9 +138,7 @@ public class ObjectObject extends BuiltinFunctionObject {
                 ESObject op = null;
                 if (arg0 instanceof ESObject) {
                     op = (ESObject)arg0;
-                } else if (arg0.getTypeOf() == EStypeNull) {
-                    op = null;
-                } else {
+                } else if (arg0.getTypeOf() != EStypeNull) {
                     throw new TypeError("ObjectCreate must be supplied a prototype object as first parameter");
                 }
                 final ObjectPrototype objectPrototype = new ObjectPrototype(op, evaluator);
@@ -203,7 +201,7 @@ public class ObjectObject extends BuiltinFunctionObject {
                 Enumeration<String> propertyNames = object.keys();
                 ArrayPrototype array = ArrayObject.createArray(getEvaluator());
                 while (propertyNames.hasMoreElements()) {
-                    String propertyName = (String) propertyNames.nextElement();
+                    String propertyName = propertyNames.nextElement();
                     array.add(new ESString(propertyName));
                 }
                 return array;
@@ -266,7 +264,7 @@ public class ObjectObject extends BuiltinFunctionObject {
             throws EcmaScriptException {
         Enumeration<String> ownPropertyNames = p.getOwnPropertyNames();
         while (ownPropertyNames.hasMoreElements()) {
-            String propertyName = (String) ownPropertyNames.nextElement();
+            String propertyName = ownPropertyNames.nextElement();
             ESValue desc = p.getProperty(propertyName);
             object.defineProperty(propertyName,desc.toESObject(getEvaluator()));
         }

@@ -661,7 +661,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         try {
             ESValue ob = acceptNull(node.jjtGetChild(1).jjtAccept(this,
                     FOR_VALUE));
-            ESObject obj = (ESObject) ob.toESObject(evaluator);
+            ESObject obj = ob.toESObject(evaluator);
             boolean directEnumeration = obj.isDirectEnumerator();
             for (Enumeration<String> e = obj.getProperties(); e
                     .hasMoreElements();) {
@@ -720,7 +720,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
 
             ESValue ob = acceptNull(node.jjtGetChild(2).jjtAccept(this,
                     FOR_VALUE));
-            ESObject obj = (ESObject) ob.toESObject(evaluator);
+            ESObject obj = ob.toESObject(evaluator);
             boolean directEnumeration = obj.isDirectEnumerator();
             for (Enumeration<String> e = obj.getProperties(); e
                     .hasMoreElements();) {
@@ -780,7 +780,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
             ESValue scopeValue = acceptNull(node.jjtGetChild(0).jjtAccept(this,
                     FOR_VALUE));
             ASTStatement statementNode = (ASTStatement) (node.jjtGetChild(1));
-            ESObject scopeObject = (ESObject) scopeValue.toESObject(evaluator);
+            ESObject scopeObject = scopeValue.toESObject(evaluator);
             result = evaluator.evaluateWith(statementNode, scopeObject, es);
         } catch (EcmaScriptException e) {
             throw new PackagedException(e, node);
@@ -865,8 +865,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                                         + "' has an undefined value");
                             }
                         } else {
-                            ESObject currentBase = (ESObject) lastResult
-                                    .toESObject(evaluator);
+                            ESObject currentBase = lastResult.toESObject(evaluator);
                             // ****
                             // System.out.println("--->CB *** " +
                             // currentBase.getClass() + " " + propertyName +
@@ -925,8 +924,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                             // System.out.println("--->GO: " + thisObject +
                             // "<---"); // *************
                         } else {
-                            thisObject = (ESObject) lastResult
-                                    .toESObject(evaluator); // if function is
+                            thisObject = lastResult.toESObject(evaluator); // if function is
                                                             // called via an
                                                             // object
                         }
@@ -973,8 +971,9 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                         }
                         currentProperty = null;
                     } else {
-                        System.out.println("--->Last result: " + lastResult
-                                + " " + lastResult.getClass() + "<---"); // ********
+                        if (lastResult == null) {
+                            throw new ProgrammingError("lastResult is null. Cannot invoke function");
+                        }
                         // Via global or WITH, use current object
                         ESValue theFunction = lastResult
                                 .toESObject(evaluator); // Conversion needed ?
@@ -1006,8 +1005,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                         throw new EcmaScriptException(
                                 "'undefined' is not an object with properties");
                     }
-                    ESObject currentBase = (ESObject) lastResult
-                            .toESObject(evaluator);
+                    ESObject currentBase = lastResult.toESObject(evaluator);
                     String propertyName = currentProperty.toString();
                     // System.out.println("--->getProperty in cb: " +
                     // currentBase + " pn: " + propertyName + "<---"); //
@@ -1029,8 +1027,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                     throw new EcmaScriptException("'" + lastResult.toString()
                             + "' is not an assignable value");
                 }
-                ESObject currentBase = (ESObject) lastResult
-                        .toESObject(evaluator);
+                ESObject currentBase = lastResult.toESObject(evaluator);
                 String propertyName = currentProperty.toString();
                 // System.out.println("--->Build ref cb: " + currentBase +
                 // " pn: " + propertyName + "<---"); // ********
@@ -1635,10 +1632,9 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         if (v == null) {
             // Accept null (could generate an optional exception).
             return ESUndefined.theUndefined;
-        } else {
-            // Take advantage to convert...
-            return (ESValue) v;
         }
+        // Take advantage to convert...
+        return (ESValue) v;
     }
 
     public Object visit(ASTObjectLiteral node, Object data) {

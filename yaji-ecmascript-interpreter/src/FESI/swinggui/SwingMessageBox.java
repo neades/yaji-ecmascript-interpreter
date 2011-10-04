@@ -43,6 +43,7 @@ public class SwingMessageBox implements MessageBox {
      * Wait that the user confirmed reception of the message
      */
     public synchronized void waitOK() {
+        // or not
     }
 
 }

@@ -827,7 +827,7 @@ public class ESWrapper extends ESObject {
                 }
             }
         }
-        if (nearestMethodFound != null) {
+        if (nearestMethodFound != null  && descriptorOfNearestMethodFound != null) {
             if (multipleAtSameDistance) {
                 throw new EcmaScriptException("Ambiguous method '"
                         + functionName + "' matching parameters in " + this);
@@ -1034,7 +1034,7 @@ public class ESWrapper extends ESObject {
                     }
                 }
                 // We have found
-                if (nearestConstructorFound != null) {
+                if (nearestConstructorFound != null && descriptorOfNearestConstructorFound != null) {
                     if (multipleAtSameDistance) {
                         throw new EcmaScriptException(
                                 "Ambiguous constructor for "

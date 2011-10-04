@@ -291,7 +291,7 @@ public abstract class ESLoader extends ESObject {
     public static ESObject normalizeObject(Object obj, Evaluator evaluator)
             throws EcmaScriptException {
         ESValue value = normalizeValue(obj, evaluator);
-        return (ESObject) value.toESObject(evaluator);
+        return value.toESObject(evaluator);
     }
 
     /**

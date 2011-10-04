@@ -27,7 +27,7 @@ import FESI.swinggui.SwingPromptBox;
 /**
  * Swing based basic IO for FESI - See BasicIO
  */
-public class BasicIOs extends AbstractBasicIO implements BasicIOInterface {
+public class BasicIOs extends AbstractBasicIO {
     private static final long serialVersionUID = 1116259511136516569L;
 
     @Override

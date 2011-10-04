@@ -29,6 +29,7 @@ public class ProgrammingError extends Error {
      * Create an anonymous programming error exception
      */
     public ProgrammingError() {
+        // no-arg constructor
     }
 
     /**
