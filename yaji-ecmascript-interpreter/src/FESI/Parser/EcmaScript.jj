@@ -112,7 +112,7 @@ PARSER_END(EcmaScript)
 
 
 /* WHITE SPACE - 7.1*/
-
+<DEFAULT,NOREGEXP>
 SKIP :
 {
   " "      /* SPACE */
@@ -146,6 +146,7 @@ SKIP :
  * Handled especialyl due to the EOL as semicolon rules
  * Splical token do not impact parse, but are available for examination 
  */
+<DEFAULT,NOREGEXP>
 SPECIAL_TOKEN :
 {
   <EOL: (["\n","\r"])+ >
@@ -155,6 +156,7 @@ SPECIAL_TOKEN :
  * Use states to skip until EOL
  */
 
+<DEFAULT,NOREGEXP>
 MORE :
 {
   "//" : IN_SINGLE_LINE_COMMENT
@@ -182,50 +184,51 @@ MORE :
 
 /* RESERVED WORDS AND LITERALS EcmaScript 7.4 */
 
+<DEFAULT,NOREGEXP>
 TOKEN :
 {
-  < BREAK: "break" >
-| < CONTINUE: "continue" >
-| < DELETE: "delete" >
-| < ELSE: "else" >
-| < FOR: "for" >
-| < FUNCTION: "function" >
-| < IF: "if" >
-| < IN: "in" >
-| < NEW: "new" >
-| < RETURN: "return" >
-| < THIS: "this" >
-| < TYPEOF: "typeof" >
-| < VAR: "var" >
-| < VOID: "void" >
-| < WHILE: "while" >
-| < WITH: "with" >
+  < BREAK: "break" > : DEFAULT
+| < CONTINUE: "continue" > : DEFAULT
+| < DELETE: "delete" > : DEFAULT
+| < ELSE: "else" > : DEFAULT
+| < FOR: "for" > : DEFAULT
+| < FUNCTION: "function" > : DEFAULT
+| < IF: "if" > : DEFAULT
+| < IN: "in" > : DEFAULT
+| < NEW: "new" > : DEFAULT
+| < RETURN: "return" > : DEFAULT
+| < THIS: "this" > : DEFAULT
+| < TYPEOF: "typeof" > : DEFAULT
+| < VAR: "var" > : DEFAULT
+| < VOID: "void" > : DEFAULT
+| < WHILE: "while" > : DEFAULT
+| < WITH: "with" > : DEFAULT
 
 
-| < CASE: "case" >
-| < CATCH: "catch" >
-| < CLASS: "class" >
-| < CONST: "const" >
-| < DEBUGGER: "debugger" >
-| < _DEFAULT: "default" >
-| < DO: "do" >
-| < ENUM: "enum" >
-| < EXPORT: "export" >
-| < EXTENDS: "extends" >
-| < FINALLY: "finally" >
-| < IMPORT: "import" >
-| < SUPER: "super" >
-| < SWITCH: "switch" >
-| < THROW: "throw" >
-| < TRY: "try" >
-| < INSTANCEOF: "instanceof" >
+| < CASE: "case" > : DEFAULT
+| < CATCH: "catch" > : DEFAULT
+| < CLASS: "class" > : DEFAULT
+| < CONST: "const" > : DEFAULT
+| < DEBUGGER: "debugger" > : DEFAULT
+| < _DEFAULT: "default" > : DEFAULT
+| < DO: "do" > : DEFAULT
+| < ENUM: "enum" > : DEFAULT
+| < EXPORT: "export" > : DEFAULT
+| < EXTENDS: "extends" > : DEFAULT
+| < FINALLY: "finally" > : DEFAULT
+| < IMPORT: "import" > : DEFAULT
+| < SUPER: "super" > : DEFAULT
+| < SWITCH: "switch" > : DEFAULT
+| < THROW: "throw" > : DEFAULT
+| < TRY: "try" > : DEFAULT
+| < INSTANCEOF: "instanceof" > : DEFAULT
 
 // They are not supposed to be keywords
-| < TRUE: "true" >
-| < FALSE: "false" >
-| < NULL: "null" >
-| < GET: "get" >
-| < SET: "set" >
+| < TRUE: "true" > : DEFAULT
+| < FALSE: "false" > : DEFAULT
+| < NULL: "null" > : DEFAULT
+| < GET: "get" > : DEFAULT
+| < SET: "set" > : DEFAULT
 }
 
 /* LITERALS EcmaScript 7.7 
@@ -233,19 +236,20 @@ TOKEN :
  * FLoating points literals are too permissive (ONLY ONE LEADING ZERO ALLOWED)
  */
 
+<DEFAULT,NOREGEXP>
 TOKEN :
 {
-  < DECIMAL_LITERAL: ["1"-"9"] (["0"-"9"])* >
+  < DECIMAL_LITERAL: ["1"-"9"] (["0"-"9"])* > : NOREGEXP
 |
-  < HEX_LITERAL: "0" ["x","X"] (["0"-"9","a"-"f","A"-"F"])+ >
+  < HEX_LITERAL: "0" ["x","X"] (["0"-"9","a"-"f","A"-"F"])+ > : NOREGEXP
 |
-  < OCTAL_LITERAL: "0" (["0"-"7"])* >
+  < OCTAL_LITERAL: "0" (["0"-"7"])* > : NOREGEXP
 |
   < FLOATING_POINT_LITERAL:
         (["0"-"9"])+ "." (["0"-"9"])* (<EXPONENT>)? 
       | "." (["0"-"9"])+ (<EXPONENT>)? 
       | (["0"-"9"])+ (<EXPONENT>)? 
-  >
+  > : NOREGEXP
 |
   < #EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+ >
 |
@@ -256,7 +260,7 @@ TOKEN :
       | "'"
         <SINGLE_STRING_LITERAL_BODY>
         "'"
-  >
+  > : NOREGEXP
 |
   < #SINGLE_STRING_LITERAL_BODY:(   
           ( "\\" ~[ "\r" , "\n" , "\u2028" , "\u2029"] )
@@ -280,7 +284,10 @@ TOKEN :
         <SINGLE_STRING_LITERAL_BODY>
         (["\n","\r","\u2028","\u2029"])
   >
-|
+}
+
+<DEFAULT>
+TOKEN: {
   < REGULAR_EXPRESSION_LITERAL:
     "/"
     <REGULAR_EXPRESSION_BODY>
@@ -315,9 +322,10 @@ TOKEN :
 
 /* IDENTIFIERS */
 
+<DEFAULT,NOREGEXP>
 TOKEN :
 {
-  < IDENTIFIER: <IDENTIFIER_START> (<IDENTIFIER_PART>)* >
+  < IDENTIFIER: <IDENTIFIER_START> (<IDENTIFIER_PART>)* > : NOREGEXP
 |
   < #IDENTIFIER_START:
     	<UNICODE_LETTER>
@@ -759,13 +767,14 @@ TOKEN :
   < #ZWJ: "\u200c"> /* Zero width non-joiner (ZWNJ) */
 }
 
+<DEFAULT,NOREGEXP>
 TOKEN : 
 {
   < HEX_DIGIT: ["0"-"9"] | ["a"-"f"] | ["A"-"F"] >
 }
 
 /* SEPARATORS */
-
+<DEFAULT,NOREGEXP>
 TOKEN :
 {
   < LPAREN: "(" >
@@ -780,48 +789,48 @@ TOKEN :
 }
 
 /* OPERATORS */
-
+<DEFAULT,NOREGEXP>
 TOKEN :
 {
-  < ASSIGN: "=" >
-| < GT: ">" >
-| < LT: "<" >
-| < BANG: "!" >
-| < TILDE: "~" >
-| < HOOK: "?" >
-| < COLON: ":" >
-| < STRICT_EQ: "===" >
-| < STRICT_NEQ: "!==" >
-| < EQ: "==" >
-| < LE: "<=" >
-| < GE: ">=" >
-| < NE: "!=" >
-| < SC_OR: "||" >
-| < SC_AND: "&&" >
-| < INCR: "++" >
-| < DECR: "--" >
-| < PLUS: "+" >
-| < MINUS: "-" >
-| < STAR: "*" >
-| < SLASH: "/" >
-| < BIT_AND: "&" >
-| < BIT_OR: "|" >
-| < XOR: "^" >
-| < REM: "%" >
-| < LSHIFT: "<<" >
-| < RSIGNEDSHIFT: ">>" >
-| < RUNSIGNEDSHIFT: ">>>" >
-| < PLUSASSIGN: "+=" >
-| < MINUSASSIGN: "-=" >
-| < STARASSIGN: "*=" >
-| < SLASHASSIGN: "/=" >
-| < ANDASSIGN: "&=" >
-| < ORASSIGN: "|=" >
-| < XORASSIGN: "^=" >
-| < REMASSIGN: "%=" >
-| < LSHIFTASSIGN: "<<=" >
-| < RSIGNEDSHIFTASSIGN: ">>=" >
-| < RUNSIGNEDSHIFTASSIGN: ">>>=" >
+  < ASSIGN: "=" > : DEFAULT
+| < GT: ">" > : DEFAULT
+| < LT: "<" > : DEFAULT
+| < BANG: "!" > : DEFAULT
+| < TILDE: "~" > : DEFAULT
+| < HOOK: "?" > : DEFAULT
+| < COLON: ":" > : DEFAULT
+| < STRICT_EQ: "===" > : DEFAULT
+| < STRICT_NEQ: "!==" > : DEFAULT
+| < EQ: "==" > : DEFAULT
+| < LE: "<=" > : DEFAULT
+| < GE: ">=" > : DEFAULT
+| < NE: "!=" > : DEFAULT
+| < SC_OR: "||" > : DEFAULT
+| < SC_AND: "&&" > : DEFAULT
+| < INCR: "++" > : DEFAULT
+| < DECR: "--" > : DEFAULT
+| < PLUS: "+" > : DEFAULT
+| < MINUS: "-" > : DEFAULT
+| < STAR: "*" > : DEFAULT
+| < SLASH: "/" > : DEFAULT
+| < BIT_AND: "&" > : DEFAULT
+| < BIT_OR: "|" > : DEFAULT
+| < XOR: "^" > : DEFAULT
+| < REM: "%" > : DEFAULT
+| < LSHIFT: "<<" > : DEFAULT
+| < RSIGNEDSHIFT: ">>" > : DEFAULT
+| < RUNSIGNEDSHIFT: ">>>" > : DEFAULT
+| < PLUSASSIGN: "+=" > : DEFAULT
+| < MINUSASSIGN: "-=" > : DEFAULT
+| < STARASSIGN: "*=" > : DEFAULT
+| < SLASHASSIGN: "/=" > : DEFAULT
+| < ANDASSIGN: "&=" > : DEFAULT
+| < ORASSIGN: "|=" > : DEFAULT
+| < XORASSIGN: "^=" > : DEFAULT
+| < REMASSIGN: "%=" > : DEFAULT
+| < LSHIFTASSIGN: "<<=" > : DEFAULT
+| < RSIGNEDSHIFTASSIGN: ">>=" > : DEFAULT
+| < RUNSIGNEDSHIFTASSIGN: ">>>=" > : DEFAULT
 }
 
 

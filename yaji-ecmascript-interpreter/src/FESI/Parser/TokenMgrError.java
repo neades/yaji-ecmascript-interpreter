@@ -124,6 +124,7 @@ public class TokenMgrError extends Error {
      */
 
     public TokenMgrError() {
+        /* no-arg constructor */
     }
 
     public TokenMgrError(String message, int reason) {

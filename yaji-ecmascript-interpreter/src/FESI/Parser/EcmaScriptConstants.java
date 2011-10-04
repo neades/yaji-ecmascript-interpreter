@@ -246,9 +246,11 @@ public interface EcmaScriptConstants {
   /** Lexical state. */
   int DEFAULT = 0;
   /** Lexical state. */
-  int IN_SINGLE_LINE_COMMENT = 1;
+  int NOREGEXP = 1;
   /** Lexical state. */
-  int IN_MULTI_LINE_COMMENT = 2;
+  int IN_SINGLE_LINE_COMMENT = 2;
+  /** Lexical state. */
+  int IN_MULTI_LINE_COMMENT = 3;
 
   /** Literal token values. */
   String[] tokenImage = {
