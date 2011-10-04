@@ -131,6 +131,7 @@ public class TokenMgrError extends Error
 
   /** No arg constructor. */
   public TokenMgrError() {
+      // no-arg constructor
   }
 
   /** Constructor with message and reason. */

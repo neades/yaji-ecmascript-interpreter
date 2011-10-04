@@ -21,7 +21,7 @@ public class GlobalObjectTest  {
     @Before
     public void setUp() throws Exception {
         evaluator = new Evaluator();
-        globalObject = (GlobalObject) evaluator.getGlobalObject();
+        globalObject = evaluator.getGlobalObject();
     }
 
     @After 

@@ -185,37 +185,37 @@ public class Interpret implements InterpreterCommands {
             try {
                 basicIOw = (BasicIOInterface) evaluator
                         .addMandatoryExtension("FESI.Extensions.BasicIOw");
+                document = basicIOw.getDocument();
             } catch (EcmaScriptException e) {
                 errorStream.println("Cannot initialize BasicIOw - exiting: "
                         + eol + e);
                 e.printStackTrace();
                 errorExit();
             }
-            document = basicIOw.getDocument();
         } else if (windowOnly && !isAWT) {
             BasicIOInterface basicIOs = null;
             try {
                 basicIOs = (BasicIOInterface) evaluator
                         .addMandatoryExtension("FESI.Extensions.BasicIOs");
+                document = basicIOs.getDocument();
             } catch (EcmaScriptException e) {
                 errorStream.println("Cannot initialize BasicIOs - exiting: "
                         + eol + e);
                 e.printStackTrace();
                 errorExit();
             }
-            document = basicIOs.getDocument();
         } else {
             BasicIOInterface basicIO = null;
             try {
                 basicIO = (BasicIOInterface) evaluator
                         .addMandatoryExtension("FESI.Extensions.BasicIO");
+                document = basicIO.getDocument();
             } catch (EcmaScriptException e) {
                 errorStream.println("Cannot initialize BasicIO - exiting: "
                         + eol + e);
                 e.printStackTrace();
                 errorExit();
             }
-            document = basicIO.getDocument();
         }
 
         loadCommonExtensions();
@@ -474,14 +474,13 @@ public class Interpret implements InterpreterCommands {
                                     errorExit();
                                 return;
                             }
-                        } else {
-                            if (!windowOnly)
-                                usage();
-                            finalMessage("-o requires a file parameter");
-                            if (interactive)
-                                errorExit();
-                            return;
                         }
+                        if (!windowOnly)
+                            usage();
+                        finalMessage("-o requires a file parameter");
+                        if (interactive)
+                            errorExit();
+                        return;
 
                     } else if (c == 'i') { // already handle
                         continue INTWO;
@@ -1138,18 +1137,16 @@ public class Interpret implements InterpreterCommands {
             if (interactive)
                 printStream.println("@@ Expanding html file '" + file.getPath()
                         + "' . . .");
-            boolean inScript = false;
             StringBuilder script = null;
             String src = lr.readLine();
             while (src != null) {
                 String srclc = src.toLowerCase();
-                if (inScript && srclc.indexOf("</script>") != -1) {
-                    inScript = false;
+                if (script != null && srclc.indexOf("</script>") != -1) {
                     evaluator.evaluate(script.toString());
-                } else if (inScript) {
+                    script = null;
+                } else if (script != null) {
                     script.append(src).append(eol);
                 } else if (srclc.indexOf("<script>") != -1) {
-                    inScript = true;
                     script = new StringBuilder();
                 } else {
                     printStream.println(src);
@@ -1157,7 +1154,7 @@ public class Interpret implements InterpreterCommands {
                 src = lr.readLine();
             }
 
-            if (inScript) {
+            if (script != null) {
                 errorStream
                         .println("[[Error - end of file reached with openened <script>]]");
             }
@@ -1175,11 +1172,13 @@ public class Interpret implements InterpreterCommands {
                 document.putHiddenProperty("URL",
                         new ESString("file://<stdin>"));
             } catch (EcmaScriptException e) {
+                System.err.println("Exception ignored; "+e.getMessage());
             }
             if (lr != null) {
                 try {
                     lr.close();
                 } catch (IOException e) {
+                    System.err.println("Exception ignored; "+e.getMessage());
                 }
             }
         }
@@ -1269,6 +1268,7 @@ public class Interpret implements InterpreterCommands {
                 try {
                     lr.close();
                 } catch (IOException e) {
+                    System.err.println("Exception ignored; "+e.getMessage());
                 }
             }
 
@@ -1532,6 +1532,7 @@ public class Interpret implements InterpreterCommands {
     /**
      * Setup the command array
      */
+    @SuppressWarnings("unused")
     protected void setupCommands() {
         // Add commands in alphabetic order preferably
         new Command("about", "display general information") {

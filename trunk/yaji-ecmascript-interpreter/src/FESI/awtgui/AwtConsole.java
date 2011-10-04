@@ -174,6 +174,8 @@ public class AwtConsole extends Frame implements Console {
                 String tk = System.getProperty("awt.toolkit", "");
                 needsAppend = (tk == null) || (tk.indexOf("com.ms") < 0);
             } catch (SecurityException ignore) {
+                ignore.printStackTrace();
+                System.err.println("Exception ignored");
             }
         }
         return needsAppend;
@@ -214,8 +216,7 @@ public class AwtConsole extends Frame implements Console {
             // in buffer.
             if (byteArray != null && arrayOffset < arrayLength)
                 return byteArray[arrayOffset++];
-            else
-                return -1;
+            return -1;
         }
 
         synchronized public int read(byte bytes[], int offset, int length)
@@ -371,8 +372,7 @@ public class AwtConsole extends Frame implements Console {
                         theTextArea.append(String.valueOf(ch));
                     out.write(ch);
                     nbrOfKeyTyped++;
-                } else if (ch == 13) {
-                } else {
+                } else if (ch != 13) {
                     theTextArea.append("?");
                     out.write('?');
                     nbrOfKeyTyped++;
@@ -472,9 +472,11 @@ public class AwtConsole extends Frame implements Console {
         }
 
         public void keyPressed(KeyEvent e) {
+            // ignored
         }
 
         public void keyReleased(KeyEvent e) {
+            // ignored
         }
     }
     /*

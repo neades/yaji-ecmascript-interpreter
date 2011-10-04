@@ -1,9 +1,7 @@
 package org.yaji.json;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import FESI.Data.ESNumber;
@@ -11,14 +9,6 @@ import FESI.Data.ESString;
 import FESI.Exceptions.EcmaScriptException;
 
 public class JsonIndentTest {
-
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
-    }
 
     @Test
     public void testNullJsonIndent() {

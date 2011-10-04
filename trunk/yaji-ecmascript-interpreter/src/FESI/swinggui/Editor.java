@@ -141,9 +141,8 @@ public class Editor extends JPanel {
             } else {
                 return false; // assume no
             }
-        } else {
-            return false; // We can continue
         }
+        return false; // We can continue
     }
 
     /**

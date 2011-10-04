@@ -125,10 +125,10 @@ public class NumberObject extends BuiltinFunctionObject {
 
         public ESValue invoke(NumberPrototype thisNumber,
                 ESValue[] arguments) throws EcmaScriptException {
-            Double d = thisNumber.doubleValue();
+            double d = thisNumber.doubleValue();
             ESValue precision = getArg(arguments,0);
             String s;
-            if (d.isNaN() || d.isInfinite() || precision.getTypeOf() == EStypeUndefined) {
+            if (Double.isNaN(d) || Double.isInfinite(d) || precision.getTypeOf() == EStypeUndefined) {
                 s = thisNumber.toString();
             } else {
                 int p = precision.toInt32();

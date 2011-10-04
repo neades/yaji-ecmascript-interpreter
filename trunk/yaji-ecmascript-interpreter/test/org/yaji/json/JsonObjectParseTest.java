@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Enumeration;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,10 +30,6 @@ public class JsonObjectParseTest {
     @Before
     public void setUp() throws Exception {
         evaluator = new Evaluator();
-    }
-
-    @After
-    public void tearDown() throws Exception {
     }
 
     @Test

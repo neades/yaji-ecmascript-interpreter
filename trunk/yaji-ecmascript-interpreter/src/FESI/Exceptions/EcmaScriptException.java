@@ -133,9 +133,8 @@ public class EcmaScriptException extends Exception {
         if (evaluationSources.size() > 0) {
             EvaluationSource es = evaluationSources.get(0);
             return es.getLineNumber();
-        } else {
-            return -1;
         }
+        return -1;
     }
 
     /**

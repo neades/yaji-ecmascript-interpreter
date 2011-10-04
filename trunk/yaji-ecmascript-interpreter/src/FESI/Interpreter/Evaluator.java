@@ -482,14 +482,14 @@ public class Evaluator implements Serializable {
                     return null;
                 }
                 extensions.put(name, extension);
-            } catch (ClassNotFoundException e) { // return null
-                extension = null;
-            } catch (NoClassDefFoundError e) { // return null
-                extension = null;
-            } catch (IllegalAccessException e) { // return null
-                extension = null;
-            } catch (InstantiationException e) { // return null
-                extension = null;
+            } catch (ClassNotFoundException e) { 
+                // return null
+            } catch (NoClassDefFoundError e) { 
+                // return null
+            } catch (IllegalAccessException e) { 
+                // return null
+            } catch (InstantiationException e) { 
+                // return null
             }
         }
         return extension;
@@ -1326,6 +1326,7 @@ public class Evaluator implements Serializable {
                 try {
                     fr.close();
                 } catch (IOException ignore) {
+                    System.err.println("Exception ignored: "+ignore.getMessage());
                 }
             }
         }

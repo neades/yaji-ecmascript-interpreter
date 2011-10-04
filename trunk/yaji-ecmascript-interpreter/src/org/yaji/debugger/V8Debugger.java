@@ -113,26 +113,31 @@ public class V8Debugger {
             put("lookup", new CommandHandler() {
                 @Override
                 public void invoke(ESObject request, ESObject response) {
+                    // TODO
                 }
             });
             put("backtrace", new CommandHandler() {
                 @Override
                 public void invoke(ESObject request, ESObject response) {
+                    // TODO
                 }
             });
             put("frame", new CommandHandler() {
                 @Override
                 public void invoke(ESObject request, ESObject response) {
+                    // TODO
                 }
             });
             put("scope", new CommandHandler() {
                 @Override
                 public void invoke(ESObject request, ESObject response) {
+                    // TODO
                 }
             });
             put("scopes", new CommandHandler() {
                 @Override
                 public void invoke(ESObject request, ESObject response) {
+                    // TODO
                 }
             });
             put("scripts", new CommandHandler() {
@@ -163,46 +168,55 @@ public class V8Debugger {
             put("source", new CommandHandler() {
                 @Override
                 public void invoke(ESObject request, ESObject response) {
-                }
+                    // TODO
+}
             });
             put("setbreakpoint", new CommandHandler() {
                 @Override
                 public void invoke(ESObject request, ESObject response) {
+                    // TODO
                 }
             });
             put("changebreakpoint", new CommandHandler() {
                 @Override
                 public void invoke(ESObject request, ESObject response) {
+                    // TODO
                 }
             });
             put("clearbreakpoint", new CommandHandler() {
                 @Override
                 public void invoke(ESObject request, ESObject response) {
+                    // TODO
                 }
             });
             put("setexceptionbreak", new CommandHandler() {
                 @Override
                 public void invoke(ESObject request, ESObject response) {
+                    // TODO
                 }
             });
             put("v8flags", new CommandHandler() {
                 @Override
                 public void invoke(ESObject request, ESObject response) {
+                    // TODO
                 }
             });
             put("profile", new CommandHandler() {
                 @Override
                 public void invoke(ESObject request, ESObject response) {
+                    // TODO
                 }
             });
             put("disconnect", new CommandHandler() {
                 @Override
                 public void invoke(ESObject request, ESObject response) {
+                    // TODO
                 }
             });
             put("gc", new CommandHandler() {
                 @Override
                 public void invoke(ESObject request, ESObject response) {
+                    // TODO
                 }
             });
             put("listbreakpoints", new CommandHandler() {

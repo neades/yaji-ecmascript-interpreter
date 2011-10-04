@@ -81,9 +81,8 @@ public class JsonState {
     public ESValue callReplacerFunction(ESValue thisObject, ESValue key, ESValue value) throws EcmaScriptException {
         if (replacerFunction != ESUndefined.theUndefined) {
             return replacerFunction.callFunction(thisObject, new ESValue[] { key, value });
-        } else {
-            return value;
         }
+        return value;
     }
 
     public void pushCyclicCheck(ESValue object) throws TypeError {

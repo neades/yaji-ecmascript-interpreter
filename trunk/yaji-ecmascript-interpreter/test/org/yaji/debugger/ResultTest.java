@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.GatheringByteChannel;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import FESI.Interpreter.Evaluator;
@@ -23,6 +21,7 @@ public class ResultTest {
         }
 
         public void close() throws IOException {
+            // not used
         }
 
         public boolean isOpen() {
@@ -43,15 +42,7 @@ public class ResultTest {
             return 0;
         }
     }
-
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
-    }
-
+    
     @Test
     public void testWriteTo() throws Exception {
         String message = "Tool:DevToolsService\r\n" + 

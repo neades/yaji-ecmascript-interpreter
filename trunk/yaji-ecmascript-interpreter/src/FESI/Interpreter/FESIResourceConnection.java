@@ -56,12 +56,7 @@ public class FESIResourceConnection extends URLConnection {
             System.out.println(" ** Connect: cookie: " + cookie + ", name: "
                     + name);
         Object o = LocalClassLoader.getLocalResource(cookie, name);
-        if (o == null) {
-            resource = null;
-            return;
-        } else {
-            resource = o;
-        }
+        resource = o;
     }
 
     public Object getContent() throws IOException {

@@ -3,7 +3,6 @@ package FESI.Data;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,10 +20,6 @@ public class ArrayPrototypeTest {
         
         objectObject = (BuiltinFunctionObject) evaluator.getGlobalObject().getProperty("Object","Object".hashCode());
         arrayObject = (BuiltinFunctionObject) evaluator.getGlobalObject().getProperty("Array","Array".hashCode());
-    }
-
-    @After
-    public void tearDown() throws Exception {
     }
 
     @Test

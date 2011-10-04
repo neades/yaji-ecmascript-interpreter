@@ -55,6 +55,7 @@ public class TestJavaAccess implements Runnable {
 
     // Object is Runnable just to be use as a parameter in some routine
     public void run() {
+        // so not really runnable
     }
 
     // Test static fields

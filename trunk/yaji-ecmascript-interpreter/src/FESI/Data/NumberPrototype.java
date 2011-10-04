@@ -142,7 +142,7 @@ class NumberPrototype extends ESObject {
         Appendable sb = new StringBuilder();
         Formatter formatter = new Formatter(sb,Locale.US);
         String format = "%."+p+"g";
-        formatter.format(format, d);
+        formatter.format(format, Double.valueOf(d));
         return sb.toString();
 
     }
@@ -172,7 +172,7 @@ class NumberPrototype extends ESObject {
         }
         if (fractionDigits > 0) {
             s.append('.');
-            long n = (long) Math.round((d- (long)d) * Math.pow(10, fractionDigits));
+            long n = Math.round((d- (long)d) * Math.pow(10, fractionDigits));
             String afterPoint = Long.toString(n);
             int k = afterPoint.length();
             if (k < fractionDigits) {

@@ -98,6 +98,7 @@ public class AwtMessageBox implements MessageBox {
             try {
                 wait();
             } catch (Exception e) {
+                System.err.println("Exception ignored "+e.getMessage());
             }
         }
     }

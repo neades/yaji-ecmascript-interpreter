@@ -1,8 +1,7 @@
 package FESI.Data;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,10 +15,6 @@ public class RegExpPrototypeTest {
     @Before
     public void setUp() throws Exception {
         evaluator = new Evaluator();
-    }
-
-    @After
-    public void tearDown() throws Exception {
     }
 
     @Test

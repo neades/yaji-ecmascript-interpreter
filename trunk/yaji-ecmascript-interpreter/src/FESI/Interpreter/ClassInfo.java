@@ -73,6 +73,7 @@ public class ClassInfo {
      * Ensure that ClassInfo objects can only be created via the factory.
      */
     private ClassInfo() {
+        // no-arg constructor
     }
 
     /**

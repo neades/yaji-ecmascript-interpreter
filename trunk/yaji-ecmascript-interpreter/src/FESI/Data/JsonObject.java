@@ -79,7 +79,7 @@ public class JsonObject extends ESObject {
             return holder.getProperty(idx.intValue());
         }
         protected ESValue toESValue(Integer idx) {
-            return new ESString(Integer.toString(idx));
+            return new ESString(idx.toString());
         }
     };
     
@@ -113,7 +113,7 @@ public class JsonObject extends ESObject {
                 throws EcmaScriptException {
             Enumeration<String> allProperties = object.getAllProperties();
             while (allProperties.hasMoreElements()) {
-                String key = (String) allProperties.nextElement();
+                String key = allProperties.nextElement();
                 ESValue newElement = stringWalker.walk(object,key,reviver);
                 if (newElement.getTypeOf() == EStypeUndefined) {
                     object.deleteProperty(key, key.hashCode());

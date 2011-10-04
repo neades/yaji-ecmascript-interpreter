@@ -81,8 +81,7 @@ public class ValueDescription {
 
         if (name == null) {
             return type + ": " + propertyValue;
-        } else {
-            return name + ": [" + type + "]: " + propertyValue;
         }
+        return name + ": [" + type + "]: " + propertyValue;
     }
 }

@@ -60,7 +60,7 @@ public class V8DebuggerTest {
             return 0;
         }
         
-    };
+    }
     
     @Before
     public void setUp() throws Exception {

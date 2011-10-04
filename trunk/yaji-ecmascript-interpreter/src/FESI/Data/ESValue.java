@@ -282,6 +282,7 @@ public abstract class ESValue implements java.io.Serializable {
      * @throws EcmaScriptException
      * @deprecated Use {@link #doConstruct(ESValue[])} instead
      */
+    @Deprecated
     public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
             throws EcmaScriptException {
                 return doConstruct(arguments);

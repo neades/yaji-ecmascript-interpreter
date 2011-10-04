@@ -67,7 +67,7 @@ public class BsfEngine extends BSFEngineImpl {
      * This is used by an application to evaluate a string containing some
      * function. It can be used as well for a piece of code using return
      */
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "null" })
     public Object apply(String source, int lineNo, int columnNo,
             Object funcBody, Vector paramNames, Vector arguments)
             throws BSFException {
@@ -179,10 +179,9 @@ public class BsfEngine extends BSFEngineImpl {
             // corrected the situation by aborting the loop and
             // a long stacktrace would end up on the user's console
             throw (Error) t;
-        } else {
-            throw new BSFException(BSFException.REASON_OTHER_ERROR,
-                    "EcmaScript Error: " + message, target);
         }
+        throw new BSFException(BSFException.REASON_OTHER_ERROR,
+                "EcmaScript Error: " + message, target);
     }
 
     /**

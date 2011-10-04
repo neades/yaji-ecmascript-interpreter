@@ -28,6 +28,7 @@ public class ESTestFilesTest {
         }
     }
 
+    @SuppressWarnings("null")
     @Parameters
     public static List<Object[]> data() {
         File validationDirectory = findValidationDirectory();

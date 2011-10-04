@@ -171,7 +171,7 @@ public class LocalClassLoader extends ClassLoader {
      * @exception ClassNotFoundException
      *                If class cannot be loaded
      **/
-    public Class<?> loadClass(String classname, boolean resolve)
+    public synchronized Class<?> loadClass(String classname, boolean resolve)
             throws ClassNotFoundException {
         // if (ESLoader.isDebugLoader()) System.out.println(" ** loadClass: " +
         // classname);
@@ -214,14 +214,13 @@ public class LocalClassLoader extends ClassLoader {
                                 + "' not loaded");
                     throw new ClassNotFoundException("Class '" + classname
                             + "' not foud by " + this);
-                } else {
-                    if (ESLoader.isDebugLoader())
-                        System.out.println(" ** class '" + classname
-                                + "' loaded");
-                    // Now call an inherited method to convert those bytes into
-                    // a Class
-                    c = defineClass(classname, classbytes, 0, classbytes.length);
                 }
+                if (ESLoader.isDebugLoader())
+                    System.out.println(" ** class '" + classname
+                            + "' loaded");
+                // Now call an inherited method to convert those bytes into
+                // a Class
+                c = defineClass(classname, classbytes, 0, classbytes.length);
             }
 
             // If the resolve argument is true, call the inherited resolveClass
@@ -365,12 +364,11 @@ public class LocalClassLoader extends ClassLoader {
                 System.out.println(" ** Returning image resource: " + image);
             return image;
             // return new ByteArrayImageSource(buf); // SUN specific method
-        } else {
-            ByteArrayInputStream s = new ByteArrayInputStream(buf);
-            if (ESLoader.isDebugLoader())
-                System.out.println(" ** Returning stream resource: " + s);
-            return s;
         }
+        ByteArrayInputStream s = new ByteArrayInputStream(buf);
+        if (ESLoader.isDebugLoader())
+            System.out.println(" ** Returning stream resource: " + s);
+        return s;
     }
 
     private InputStream getLocalResourceAsStream(String name) {

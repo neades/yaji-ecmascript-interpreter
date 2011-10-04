@@ -147,9 +147,8 @@ public class StringObject extends BuiltinFunctionObject {
             Matcher matcher = pattern.getPattern().matcher(str);
             if (matcher.find()) {
                 return ESNumber.valueOf(matcher.start());
-            } else {
-                return ESNumber.valueOf(-1);
             }
+            return ESNumber.valueOf(-1);
         }
     }
 
@@ -180,9 +179,8 @@ public class StringObject extends BuiltinFunctionObject {
 
             if (pattern.isGlobal()) {
                 return new ESString(matcher.replaceAll(replacement));
-            } else {
-                return new ESString(matcher.replaceFirst(replacement));
             }
+            return new ESString(matcher.replaceFirst(replacement));
         }
     }
 
@@ -226,9 +224,8 @@ public class StringObject extends BuiltinFunctionObject {
                             new ESString(matcher.group(i)), i);
                 } // for
                 return resultArray;
-            } else {
-                return ESNull.theNull;
             }
+            return ESNull.theNull;
         }
     }
 

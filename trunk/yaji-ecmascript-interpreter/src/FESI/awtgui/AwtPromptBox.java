@@ -119,6 +119,7 @@ public class AwtPromptBox implements PromptBox {
             try {
                 wait();
             } catch (Exception e) {
+                System.err.println("Exception ignored "+e.getMessage());
             }
         }
         return response;
