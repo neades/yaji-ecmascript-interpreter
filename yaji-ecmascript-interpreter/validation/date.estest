@@ -99,3 +99,17 @@ d5.valueOf()>100000;
 // Just checking that it works - only in western hemisphere...
 @test date.16
 d5.getTimezoneOffset() < 24*60;
+
+@test date.toISOString.1
+var dt = new Date();
+dt.setUTCFullYear(2010,6,30);
+dt.setUTCHours(15,5,0,0);
+writeln(dt.toISOString());
+dt.toISOString() === '2010-07-30T15:05:00.000Z';
+
+@test date.toJSON.1
+var dt = new Date();
+dt.setUTCFullYear(2010,6,30);
+dt.setUTCHours(15,5,0,0);
+writeln(dt.toISOString());
+dt.toJSON() === '2010-07-30T15:05:00.000Z';

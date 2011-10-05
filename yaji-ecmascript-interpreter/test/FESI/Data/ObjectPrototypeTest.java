@@ -3,12 +3,10 @@ package FESI.Data;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
-import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
 
@@ -41,7 +39,7 @@ public class ObjectPrototypeTest {
     @Test
     public void toLocaleStringShouldInvokeToString() throws Exception {
         ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
-        object.putProperty("toString", createFunction("return '[myobject Object]';"));
+        object.putProperty("toString", TestHelpers.createFunction(evaluator, "return '[myobject Object]';"));
         ESValue result = object.doIndirectCall(evaluator, object, "toLocaleString", ESValue.EMPTY_ARRAY);
         assertEquals(new ESString("[myobject Object]"), result);
     }
@@ -148,15 +146,5 @@ public class ObjectPrototypeTest {
         ESValue result = object.doIndirectCall(evaluator, object, "propertyIsEnumerable", new ESValue[] { new ESString("aProperty") });
         
         assertSame(ESBoolean.valueOf(false), result);
-    }
-
-    private ESValue createFunction(String... params) throws EcmaScriptException {
-        ESObject functionObject = (ESObject) evaluator.getGlobalObject().getProperty("Function", "Function".hashCode());
-        ArrayList<ESValue> paramArray = new ArrayList<ESValue>();
-        for (String string : params) {
-            paramArray.add(new ESString(string));
-        }
-        ESObject function = functionObject.doConstruct(paramArray.toArray(new ESValue[paramArray.size()]));
-        return function;
     }
 }

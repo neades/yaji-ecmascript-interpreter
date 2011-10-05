@@ -18,6 +18,7 @@
 package FESI.Data;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -25,11 +26,733 @@ import java.util.TimeZone;
 
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
+import FESI.Exceptions.RangeError;
+import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
 
 public class DateObject extends BuiltinFunctionObject {
 
     private static final long serialVersionUID = -4299764407542326480L;
+    // For datePrototype
+    private static class DatePrototypeToString extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeToString(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return (aDate.date == null) ? new ESString("NaN")
+                    : new ESString(aDate.date.toString());
+        }
+    }
+
+    private static class DatePrototypeToISOString extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeToISOString(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+           if (aDate.date == null) {
+               throw new RangeError("Date is not valid");
+           }
+           DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+           df.setTimeZone(TimeZone.getTimeZone("UTC"));
+           return new ESString(df.format(aDate.date));
+        }
+    }
+
+    private static class DatePrototypeToJSON extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeToJSON(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            ESObject object = thisObject.toESObject(getEvaluator());
+            if (!object.toESNumber().isFinite()) {
+                return ESNull.theNull;
+            }
+            try {
+                return object.doIndirectCall(getEvaluator(), object, "toISOString", EMPTY_ARRAY);
+            } catch (NoSuchMethodException e) {
+                throw new TypeError("toJSON: toISOString does not exists on object");
+            }
+        }
+    }
+
+    private static class DatePrototypeValueOf extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeValueOf(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            if (aDate.date == null) {
+                return ESNumber.valueOf(Double.NaN);
+            }
+            long t = aDate.date.getTime();
+            return ESNumber.valueOf(t);
+
+        }
+    }
+
+    private static class DatePrototypeToLocaleString extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeToLocaleString(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            DateFormat df = DateFormat.getDateTimeInstance();
+            df.setTimeZone(TimeZone.getDefault());
+            return (aDate.date == null) ? new ESString("NaN")
+                    : new ESString(df.format(aDate.date));
+        }
+    }
+
+    private static class DatePrototypeToGMTString extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeToGMTString(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            DateFormat df = DateFormat.getDateTimeInstance(
+                    DateFormat.MEDIUM, DateFormat.FULL);
+            df.setTimeZone(TimeZone.getTimeZone("GMT"));
+            return (aDate.date == null) ? new ESString("NaN")
+                    : new ESString(df.format(aDate.date));
+        }
+    }
+
+    private static class DatePrototypeGetYear extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeGetYear(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            ESValue v = aDate.get(Calendar.YEAR);
+            return ESNumber.valueOf(v.doubleValue() - 1900);
+        }
+    }
+
+    private static class DatePrototypeGetFullYear extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeGetFullYear(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.get(Calendar.YEAR);
+        }
+    }
+
+    private static class DatePrototypeGetUTCFullYear extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeGetUTCFullYear(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.getUTC(Calendar.YEAR);
+        }
+    }
+
+    private static class DatePrototypeGetMonth extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeGetMonth(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.get(Calendar.MONTH);
+        }
+    }
+
+    private static class DatePrototypeGetUTCMonth extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeGetUTCMonth(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.getUTC(Calendar.MONTH);
+        }
+    }
+
+    private static class DatePrototypeGetDate extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeGetDate(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.get(Calendar.DAY_OF_MONTH);
+        }
+    }
+
+    private static class DatePrototypeGetUTCDate extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeGetUTCDate(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.getUTC(Calendar.DAY_OF_MONTH);
+        }
+    }
+
+    private static class DatePrototypeGetDay extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeGetDay(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            // EcmaScript has SUNDAY=0, java SUNDAY=1 - converted in
+            // DatePrototype
+            return aDate.get(Calendar.DAY_OF_WEEK);
+        }
+    }
+
+    private static class DatePrototypeGetUTCDay extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeGetUTCDay(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.getUTC(Calendar.DAY_OF_WEEK);
+        }
+    }
+
+    private static class DatePrototypeGetHours extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeGetHours(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.get(Calendar.HOUR_OF_DAY);
+        }
+    }
+
+    private static class DatePrototypeGetUTCHours extends BuiltinFunctionObject {
+
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeGetUTCHours(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.getUTC(Calendar.HOUR_OF_DAY);
+        }
+    }
+
+    private static class DatePrototypeGetMinutes extends BuiltinFunctionObject {
+
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeGetMinutes(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.get(Calendar.MINUTE);
+        }
+    }
+
+    private static class DatePrototypeGetUTCMinutes extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeGetUTCMinutes(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.getUTC(Calendar.MINUTE);
+        }
+    }
+
+    private static class DatePrototypeGetSeconds extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeGetSeconds(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.get(Calendar.SECOND);
+        }
+    }
+
+    private static class DatePrototypeGetUTCSeconds extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeGetUTCSeconds(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.getUTC(Calendar.SECOND);
+        }
+    }
+
+    private static class DatePrototypeGetMilliseconds extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeGetMilliseconds(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.get(Calendar.MILLISECOND);
+        }
+    }
+
+    private static class DatePrototypeGetUTCMilliseconds extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeGetUTCMilliseconds(String name,
+                Evaluator evaluator, FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.getUTC(Calendar.MILLISECOND);
+        }
+    }
+
+    private static class DatePrototypeSetYear extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeSetYear(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.setYear(arguments);
+        }
+    }
+
+    private static class DatePrototypeSetFullYear extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeSetFullYear(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.setTime(arguments, new int[] { Calendar.YEAR,
+                    Calendar.MONTH, Calendar.DAY_OF_MONTH });
+        }
+    }
+
+    private static class DatePrototypeSetUTCFullYear extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeSetUTCFullYear(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.setUTCTime(arguments, new int[] {
+                    Calendar.YEAR, Calendar.MONTH,
+                    Calendar.DAY_OF_MONTH });
+        }
+    }
+
+    private static class DatePrototypeSetMonth extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeSetMonth(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.setTime(arguments, new int[] { Calendar.MONTH,
+                    Calendar.DAY_OF_MONTH });
+        }
+    }
+
+    private static class DatePrototypeSetUTCMonth extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeSetUTCMonth(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.setUTCTime(arguments, new int[] {
+                    Calendar.MONTH, Calendar.DAY_OF_MONTH });
+        }
+    }
+
+    private static class DatePrototypeSetDate extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeSetDate(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.setTime(arguments,
+                    new int[] { Calendar.DAY_OF_MONTH });
+        }
+    }
+
+    private static class DatePrototypeSetUTCDate extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeSetUTCDate(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.setUTCTime(arguments,
+                    new int[] { Calendar.DAY_OF_MONTH });
+        }
+    }
+
+    private static class DatePrototypeSetHours extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeSetHours(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.setTime(arguments, new int[] {
+                    Calendar.HOUR_OF_DAY, Calendar.MINUTE,
+                    Calendar.SECOND, Calendar.MILLISECOND });
+        }
+    }
+
+    private static class DatePrototypeSetUTCHours extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeSetUTCHours(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.setUTCTime(arguments, new int[] {
+                    Calendar.HOUR_OF_DAY, Calendar.MINUTE,
+                    Calendar.SECOND, Calendar.MILLISECOND });
+        }
+    }
+
+    private static class DatePrototypeSetMinutes extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeSetMinutes(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.setTime(arguments, new int[] {
+                    Calendar.MINUTE, Calendar.SECOND,
+                    Calendar.MILLISECOND });
+        }
+    }
+
+    private static class DatePrototypeSetUTCMinutes extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeSetUTCMinutes(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.setUTCTime(arguments, new int[] {
+                    Calendar.MINUTE, Calendar.SECOND,
+                    Calendar.MILLISECOND });
+        }
+    }
+
+    private static class DatePrototypeSetSeconds extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeSetSeconds(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.setTime(arguments, new int[] {
+                    Calendar.SECOND, Calendar.MILLISECOND });
+        }
+    }
+
+    private static class DatePrototypeSetUTCSeconds extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeSetUTCSeconds(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.setUTCTime(arguments, new int[] {
+                    Calendar.SECOND, Calendar.MILLISECOND });
+        }
+    }
+
+    private static class DatePrototypeSetMilliseconds extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeSetMilliseconds(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.setTime(arguments,
+                    new int[] { Calendar.MILLISECOND });
+        }
+    }
+
+    private static class DatePrototypeSetUTCMilliseconds extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeSetUTCMilliseconds(String name,
+                Evaluator evaluator, FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            return aDate.setUTCTime(arguments,
+                    new int[] { Calendar.MILLISECOND });
+        }
+    }
+
+    private static class DatePrototypeGetTimezoneOffset extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeGetTimezoneOffset(String name,
+                Evaluator evaluator, FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            GregorianCalendar cal = new GregorianCalendar(TimeZone
+                    .getDefault());
+            cal.setTime(aDate.date);
+            TimeZone tz = cal.getTimeZone();
+
+            int millis = cal.get(Calendar.MILLISECOND)
+                    + cal.get(Calendar.SECOND) * 1000
+                    + cal.get(Calendar.MINUTE) * 60 * 1000
+                    + cal.get(Calendar.HOUR_OF_DAY) * 60 * 60 * 1000;
+
+            int offset = tz.getOffset(cal.get(Calendar.ERA), cal
+                    .get(Calendar.YEAR), cal.get(Calendar.MONTH), cal
+                    .get(Calendar.DAY_OF_MONTH), cal
+                    .get(Calendar.DAY_OF_WEEK), millis);
+
+            // int offset = TimeZone.getDefault().getRawOffset();
+            // System.out.println("TimeZone.getDefault().getID(): " +
+            // TimeZone.getDefault().getID());
+            // System.out.println("TimeZone.getDefault().getRawOffset(): "
+            // + TimeZone.getDefault().getRawOffset());
+
+            int minutes = -(offset / 1000 / 60); // convert to minutes
+            return ESNumber.valueOf(minutes);
+        }
+    }
+
+    private static class DatePrototypeSetTime extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeSetTime(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            DatePrototype aDate = (DatePrototype) thisObject;
+            double dateValue = Double.NaN;
+            if (arguments.length > 0) {
+                dateValue = arguments[0].doubleValue();
+            }
+            if (Double.isNaN(dateValue)) {
+                aDate.setDate(null);
+            } else {
+                aDate.setDate(new Date((long) dateValue));
+            }
+            return ESNumber.valueOf(dateValue);
+        }
+    }
 
     protected DateObject(ESObject prototype, Evaluator evaluator) {
         super(prototype, evaluator, "Date", 7);
@@ -126,683 +849,7 @@ public class DateObject extends BuiltinFunctionObject {
             DatePrototype datePrototype) throws ProgrammingError {
         try {
 
-            // For datePrototype
-            class DatePrototypeToString extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeToString(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return (aDate.date == null) ? new ESString("NaN")
-                            : new ESString(aDate.date.toString());
-                }
-            }
-
-            class DatePrototypeValueOf extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeValueOf(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    if (aDate.date == null) {
-                        return ESNumber.valueOf(Double.NaN);
-                    }
-                    long t = aDate.date.getTime();
-                    return ESNumber.valueOf(t);
-
-                }
-            }
-
-            class DatePrototypeToLocaleString extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeToLocaleString(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    DateFormat df = DateFormat.getDateTimeInstance();
-                    df.setTimeZone(TimeZone.getDefault());
-                    return (aDate.date == null) ? new ESString("NaN")
-                            : new ESString(df.format(aDate.date));
-                }
-            }
-
-            class DatePrototypeToGMTString extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeToGMTString(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    DateFormat df = DateFormat.getDateTimeInstance(
-                            DateFormat.MEDIUM, DateFormat.FULL);
-                    df.setTimeZone(TimeZone.getTimeZone("GMT"));
-                    return (aDate.date == null) ? new ESString("NaN")
-                            : new ESString(df.format(aDate.date));
-                }
-            }
-
-            class DatePrototypeGetYear extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeGetYear(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    ESValue v = aDate.get(Calendar.YEAR);
-                    return ESNumber.valueOf(v.doubleValue() - 1900);
-                }
-            }
-
-            class DatePrototypeGetFullYear extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeGetFullYear(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.get(Calendar.YEAR);
-                }
-            }
-
-            class DatePrototypeGetUTCFullYear extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeGetUTCFullYear(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.getUTC(Calendar.YEAR);
-                }
-            }
-
-            class DatePrototypeGetMonth extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeGetMonth(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.get(Calendar.MONTH);
-                }
-            }
-
-            class DatePrototypeGetUTCMonth extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeGetUTCMonth(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.getUTC(Calendar.MONTH);
-                }
-            }
-
-            class DatePrototypeGetDate extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeGetDate(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.get(Calendar.DAY_OF_MONTH);
-                }
-            }
-
-            class DatePrototypeGetUTCDate extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeGetUTCDate(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.getUTC(Calendar.DAY_OF_MONTH);
-                }
-            }
-
-            class DatePrototypeGetDay extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeGetDay(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    // EcmaScript has SUNDAY=0, java SUNDAY=1 - converted in
-                    // DatePrototype
-                    return aDate.get(Calendar.DAY_OF_WEEK);
-                }
-            }
-
-            class DatePrototypeGetUTCDay extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeGetUTCDay(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.getUTC(Calendar.DAY_OF_WEEK);
-                }
-            }
-
-            class DatePrototypeGetHours extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeGetHours(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.get(Calendar.HOUR_OF_DAY);
-                }
-            }
-
-            class DatePrototypeGetUTCHours extends BuiltinFunctionObject {
-
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeGetUTCHours(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.getUTC(Calendar.HOUR_OF_DAY);
-                }
-            }
-
-            class DatePrototypeGetMinutes extends BuiltinFunctionObject {
-
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeGetMinutes(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.get(Calendar.MINUTE);
-                }
-            }
-
-            class DatePrototypeGetUTCMinutes extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeGetUTCMinutes(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.getUTC(Calendar.MINUTE);
-                }
-            }
-
-            class DatePrototypeGetSeconds extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeGetSeconds(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.get(Calendar.SECOND);
-                }
-            }
-
-            class DatePrototypeGetUTCSeconds extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeGetUTCSeconds(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.getUTC(Calendar.SECOND);
-                }
-            }
-
-            class DatePrototypeGetMilliseconds extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeGetMilliseconds(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.get(Calendar.MILLISECOND);
-                }
-            }
-
-            class DatePrototypeGetUTCMilliseconds extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeGetUTCMilliseconds(String name,
-                        Evaluator evaluator, FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.getUTC(Calendar.MILLISECOND);
-                }
-            }
-
-            class DatePrototypeSetYear extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeSetYear(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.setYear(arguments);
-                }
-            }
-
-            class DatePrototypeSetFullYear extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeSetFullYear(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.setTime(arguments, new int[] { Calendar.YEAR,
-                            Calendar.MONTH, Calendar.DAY_OF_MONTH });
-                }
-            }
-
-            class DatePrototypeSetUTCFullYear extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeSetUTCFullYear(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.setUTCTime(arguments, new int[] {
-                            Calendar.YEAR, Calendar.MONTH,
-                            Calendar.DAY_OF_MONTH });
-                }
-            }
-
-            class DatePrototypeSetMonth extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeSetMonth(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.setTime(arguments, new int[] { Calendar.MONTH,
-                            Calendar.DAY_OF_MONTH });
-                }
-            }
-
-            class DatePrototypeSetUTCMonth extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeSetUTCMonth(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.setUTCTime(arguments, new int[] {
-                            Calendar.MONTH, Calendar.DAY_OF_MONTH });
-                }
-            }
-
-            class DatePrototypeSetDate extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeSetDate(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.setTime(arguments,
-                            new int[] { Calendar.DAY_OF_MONTH });
-                }
-            }
-
-            class DatePrototypeSetUTCDate extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeSetUTCDate(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.setUTCTime(arguments,
-                            new int[] { Calendar.DAY_OF_MONTH });
-                }
-            }
-
-            class DatePrototypeSetHours extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeSetHours(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.setTime(arguments, new int[] {
-                            Calendar.HOUR_OF_DAY, Calendar.MINUTE,
-                            Calendar.SECOND, Calendar.MILLISECOND });
-                }
-            }
-
-            class DatePrototypeSetUTCHours extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeSetUTCHours(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.setUTCTime(arguments, new int[] {
-                            Calendar.HOUR_OF_DAY, Calendar.MINUTE,
-                            Calendar.SECOND, Calendar.MILLISECOND });
-                }
-            }
-
-            class DatePrototypeSetMinutes extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeSetMinutes(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.setTime(arguments, new int[] {
-                            Calendar.MINUTE, Calendar.SECOND,
-                            Calendar.MILLISECOND });
-                }
-            }
-
-            class DatePrototypeSetUTCMinutes extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeSetUTCMinutes(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.setUTCTime(arguments, new int[] {
-                            Calendar.MINUTE, Calendar.SECOND,
-                            Calendar.MILLISECOND });
-                }
-            }
-
-            class DatePrototypeSetSeconds extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeSetSeconds(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.setTime(arguments, new int[] {
-                            Calendar.SECOND, Calendar.MILLISECOND });
-                }
-            }
-
-            class DatePrototypeSetUTCSeconds extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeSetUTCSeconds(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.setUTCTime(arguments, new int[] {
-                            Calendar.SECOND, Calendar.MILLISECOND });
-                }
-            }
-
-            class DatePrototypeSetMilliseconds extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeSetMilliseconds(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.setTime(arguments,
-                            new int[] { Calendar.MILLISECOND });
-                }
-            }
-
-            class DatePrototypeSetUTCMilliseconds extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeSetUTCMilliseconds(String name,
-                        Evaluator evaluator, FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    return aDate.setUTCTime(arguments,
-                            new int[] { Calendar.MILLISECOND });
-                }
-            }
-
-            class DatePrototypeGetTimezoneOffset extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeGetTimezoneOffset(String name,
-                        Evaluator evaluator, FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    GregorianCalendar cal = new GregorianCalendar(TimeZone
-                            .getDefault());
-                    cal.setTime(aDate.date);
-                    TimeZone tz = cal.getTimeZone();
-
-                    int millis = cal.get(Calendar.MILLISECOND)
-                            + cal.get(Calendar.SECOND) * 1000
-                            + cal.get(Calendar.MINUTE) * 60 * 1000
-                            + cal.get(Calendar.HOUR_OF_DAY) * 60 * 60 * 1000;
-
-                    int offset = tz.getOffset(cal.get(Calendar.ERA), cal
-                            .get(Calendar.YEAR), cal.get(Calendar.MONTH), cal
-                            .get(Calendar.DAY_OF_MONTH), cal
-                            .get(Calendar.DAY_OF_WEEK), millis);
-
-                    // int offset = TimeZone.getDefault().getRawOffset();
-                    // System.out.println("TimeZone.getDefault().getID(): " +
-                    // TimeZone.getDefault().getID());
-                    // System.out.println("TimeZone.getDefault().getRawOffset(): "
-                    // + TimeZone.getDefault().getRawOffset());
-
-                    int minutes = -(offset / 1000 / 60); // convert to minutes
-                    return ESNumber.valueOf(minutes);
-                }
-            }
-
-            class DatePrototypeSetTime extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DatePrototypeSetTime(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 0);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    DatePrototype aDate = (DatePrototype) thisObject;
-                    double dateValue = Double.NaN;
-                    if (arguments.length > 0) {
-                        dateValue = arguments[0].doubleValue();
-                    }
-                    if (Double.isNaN(dateValue)) {
-                        aDate.setDate(null);
-                    } else {
-                        aDate.setDate(new Date((long) dateValue));
-                    }
-                    return ESNumber.valueOf(dateValue);
-                }
-            }
-
+ 
             // For dateObject
             class DateObjectParse extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
@@ -889,6 +936,12 @@ public class DateObject extends BuiltinFunctionObject {
                             functionPrototype));
             datePrototype.putHiddenProperty("toUTCString",
                     new DatePrototypeToGMTString("toUTCString", evaluator,
+                            functionPrototype));
+            datePrototype.putHiddenProperty("toISOString",
+                    new DatePrototypeToISOString("toISOString", evaluator,
+                            functionPrototype));
+            datePrototype.putHiddenProperty("toJSON",
+                    new DatePrototypeToJSON("toJSON", evaluator,
                             functionPrototype));
 
             datePrototype.putHiddenProperty("valueOf",
