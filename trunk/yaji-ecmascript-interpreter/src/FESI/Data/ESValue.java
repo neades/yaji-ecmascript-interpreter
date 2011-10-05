@@ -486,4 +486,8 @@ public abstract class ESValue implements java.io.Serializable {
     boolean isObjectCoercible() {
         return true;
     }
+
+    public boolean isFinite() {
+        return false;
+    }
 }

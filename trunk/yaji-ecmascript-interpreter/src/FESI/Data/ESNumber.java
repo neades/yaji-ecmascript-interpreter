@@ -333,8 +333,7 @@ public final class ESNumber extends ESPrimitive {
 
     @Override
     public void toJson(Appendable appendable, JsonState state, String parentPropertyName) throws IOException, EcmaScriptException {
-        if (!isLongValue
-          && (Double.isNaN(value) || Double.isInfinite(value)) ) {
+        if (!isFinite()) {
             appendable.append("null");
         } else {
             super.toJson(appendable, state, parentPropertyName);
@@ -344,5 +343,10 @@ public final class ESNumber extends ESPrimitive {
     @Override
     public boolean canJson() {
         return true;
+    }
+    
+    @Override
+    public boolean isFinite() {
+        return isLongValue || !(Double.isNaN(value) || Double.isInfinite(value));
     }
 }

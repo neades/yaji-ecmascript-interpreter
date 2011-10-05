@@ -656,6 +656,17 @@ public abstract class ESObject extends ESValue {
                 + " and hint " + hint);
     }
 
+    @Override
+    /**
+     * Implements abstract operation ToNumber 
+     * See 9.3
+     * 
+     * @return Number
+     */
+    public ESValue toESNumber() throws EcmaScriptException {
+        return toESPrimitive(ESValue.EStypeNumber).toESNumber();
+    }
+    
     /**
      * Implements [[DefaultValue]] with no hint
      * <P>
