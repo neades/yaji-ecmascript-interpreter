@@ -486,6 +486,7 @@ public class JSWrapper implements JSObject {
                     this.theFunction = theFunction;
                 }
 
+                @Override
                 public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     ESValue value = ESUndefined.theUndefined;
@@ -513,6 +514,7 @@ public class JSWrapper implements JSObject {
                     return value;
                 }
 
+                @Override
                 public ESObject doConstruct(ESValue[] arguments) throws EcmaScriptException {
                     ESObject value = null;
                     Object jsArguments[] = new Object[arguments.length];
@@ -548,6 +550,7 @@ public class JSWrapper implements JSObject {
      * 
      * @return The string value
      */
+    @Override
     public String toString() {
         return object.toString();
     }

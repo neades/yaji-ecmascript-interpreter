@@ -1,26 +1,27 @@
 package FESI.Data;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import FESI.Exceptions.EcmaScriptException;
-import FESI.Interpreter.Evaluator;
 import FESI.Util.EvaluatorAccess;
 
-public class MathObjectTest {
+public class MathObjectTest extends EvaluatorTestCase {
     
         private static final ESValue[] NAN_ARGS = new ESValue[] {ESNumber.valueOf(2), new ESString("string"), ESNumber.valueOf(1.34)};
         private static final ESValue[] MULTI_ARGS = new ESValue[] {ESNumber.valueOf(-3.2), ESNumber.valueOf(3.2), ESNumber.valueOf(0) , ESNumber.valueOf(-1)};
         private static final ESValue[] NO_ARGS = new ESValue[] {};
-        private Evaluator evaluator;
         private MathObject mathObject;
+        
+        @Override
         @Before
         public void setUp() throws Exception {
-            evaluator = new Evaluator();
-            mathObject = (MathObject)evaluator.getGlobalObject().getProperty("Math", "Math".hashCode());
+            super.setUp();
+            mathObject = (MathObject)globalObject.getProperty("Math", "Math".hashCode());
             
         }
 

@@ -12,12 +12,9 @@ import org.junit.Test;
 
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.TypeError;
-import FESI.Interpreter.Evaluator;
 
-public class StringPrototypeTest {
+public class StringPrototypeTest extends EvaluatorTestCase  {
     private static final Locale TURKISH = new Locale("tr");
-
-    private Evaluator evaluator;
 
     private static final String NON_ASCII_WHITE_SPACE = 
          "\u00A0" //   no-break space
@@ -46,9 +43,10 @@ public class StringPrototypeTest {
 
     private Locale defaultLocale;
     
+    @Override
     @Before
-    public void setUp() {
-        evaluator = new Evaluator();
+    public void setUp() throws Exception {
+        super.setUp();
         defaultLocale = Locale.getDefault();
     }
     
@@ -347,6 +345,7 @@ public class StringPrototypeTest {
         assertEquals(3,splitResult.size());
     }
 
+//    Current behaviour doesn't meet spec. The folling two tests should work
 //    @Test
 //    public void splitDoesntBacktrack() throws Exception {
 //        ESObject originalObject = new ESString("ab").toESObject(evaluator);

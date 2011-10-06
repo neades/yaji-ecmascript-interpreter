@@ -59,11 +59,13 @@ public class ESBeans extends ESLoader {
     }
 
     // overrides
+    @Override
     public ESObject getPrototype() {
         throw new ProgrammingError("Cannot get prototype of Beans");
     }
 
     // overrides
+    @Override
     public String getESClassName() {
         return "Beans";
     }
@@ -85,6 +87,7 @@ public class ESBeans extends ESLoader {
     // overrides
     // Establish a bean classloader
     // The parameter is the directory or jar to load from
+    @Override
     public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
         if (previousPackage == null && classLoader == null) {
@@ -104,6 +107,7 @@ public class ESBeans extends ESLoader {
 
     // overrides
     // instantiates a bean
+    @Override
     public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
 
@@ -132,11 +136,13 @@ public class ESBeans extends ESLoader {
     }
 
     // overrides
+    @Override
     public String getTypeofString() {
         return "JavaBeans";
     }
 
     // overrides
+    @Override
     public String toDetailString() {
         return "ES:<" + getESClassName() + ":'" + buildPrefix() + "'"
                 + ((classLoader == null) ? "" : (",@" + classLoader)) + ">";

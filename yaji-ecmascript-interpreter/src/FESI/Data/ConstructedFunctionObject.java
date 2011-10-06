@@ -70,6 +70,7 @@ public class ConstructedFunctionObject extends FunctionPrototype {
      * 
      * @return the source string
      */
+    @Override
     public String getFunctionImplementationString() {
         if (functionSource == null) {
             StringBuilder str = new StringBuilder();
@@ -104,6 +105,7 @@ public class ConstructedFunctionObject extends FunctionPrototype {
      * 
      * @return the function parameter string as (a,b,c)
      */
+    @Override
     public String getFunctionParametersString() {
         StringBuilder str = new StringBuilder();
         str.append('(');
@@ -235,6 +237,7 @@ public class ConstructedFunctionObject extends FunctionPrototype {
     }
 
     // overrides
+    @Override
     public void putProperty(String propertyName, ESValue propertyValue, int hash)
             throws EcmaScriptException {
         if (hash != ARGUMENTShash || ! propertyName.equals(ARGUMENTSstring)) {

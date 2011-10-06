@@ -150,6 +150,7 @@ public class LocalClassLoader extends ClassLoader {
      * @exception ClassNotFoundException
      *                If class cannot be loaded
      */
+    @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
         return loadClass(name, true);
     }
@@ -171,6 +172,7 @@ public class LocalClassLoader extends ClassLoader {
      * @exception ClassNotFoundException
      *                If class cannot be loaded
      **/
+    @Override
     public synchronized Class<?> loadClass(String classname, boolean resolve)
             throws ClassNotFoundException {
         // if (ESLoader.isDebugLoader()) System.out.println(" ** loadClass: " +
@@ -240,6 +242,7 @@ public class LocalClassLoader extends ClassLoader {
         }
     }
 
+    @Override
     public URL getResource(String name) {
         if (ESLoader.isDebugLoader())
             System.out.println(" ** getResource: '" + name + "' asked to: "
@@ -263,6 +266,7 @@ public class LocalClassLoader extends ClassLoader {
         return url;
     }
 
+    @Override
     public InputStream getResourceAsStream(String name) {
         if (ESLoader.isDebugLoader())
             System.out.println(" ** getResourceAsStream: '" + name
@@ -450,6 +454,7 @@ public class LocalClassLoader extends ClassLoader {
         return cl.getLocalResource(name);
     }
 
+    @Override
     public String toString() {
         return "LocalClassLoader["
                 + myCookie

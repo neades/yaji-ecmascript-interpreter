@@ -6,20 +6,13 @@ import static org.junit.Assert.assertSame;
 import org.junit.Before;
 import org.junit.Test;
 
-import FESI.Interpreter.Evaluator;
 
-public class ArrayPrototypeTest {
+public class ArrayPrototypeTest extends EvaluatorTestCase{
 
-    private Evaluator evaluator;
-    private BuiltinFunctionObject arrayObject;
-    private BuiltinFunctionObject objectObject;
-
+    @Override
     @Before
     public void setUp() throws Exception {
-        evaluator = new Evaluator();
-        
-        objectObject = (BuiltinFunctionObject) evaluator.getGlobalObject().getProperty("Object","Object".hashCode());
-        arrayObject = (BuiltinFunctionObject) evaluator.getGlobalObject().getProperty("Array","Array".hashCode());
+        super.setUp();
     }
 
     @Test

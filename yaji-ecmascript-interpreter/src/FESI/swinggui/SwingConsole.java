@@ -321,6 +321,7 @@ public class SwingConsole extends JFrame implements ExtendedConsole {
         // Support controlled closing
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent ev) {
                 boolean abort = false;
                 int nWindows = editorWindows.size();
@@ -336,6 +337,7 @@ public class SwingConsole extends JFrame implements ExtendedConsole {
                     dispose(); // will call exit
             }
 
+            @Override
             public void windowClosed(WindowEvent ev) {
                 itrp.exit();
             }
@@ -394,6 +396,7 @@ public class SwingConsole extends JFrame implements ExtendedConsole {
         // Support controlled closing
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent ev) {
                 if (!editor.checkDirty()) {
                     frame.dispose();
@@ -401,6 +404,7 @@ public class SwingConsole extends JFrame implements ExtendedConsole {
                 }
             }
 
+            @Override
             public void windowClosed(WindowEvent ev) {
                 SwingConsole.this.editorWindowClosed(editor);
             }
@@ -549,6 +553,7 @@ public class SwingConsole extends JFrame implements ExtendedConsole {
         // this.out = out;
         // }
 
+        @Override
         synchronized public int read() throws IOException {
             // If there are data in buffer the return the first character
             // in buffer.
@@ -567,6 +572,7 @@ public class SwingConsole extends JFrame implements ExtendedConsole {
             return -1;
         }
 
+        @Override
         synchronized public int read(byte bytes[], int offset, int length)
                 throws IOException {
             if (byteArray != null && arrayOffset < arrayLength) {
@@ -596,6 +602,7 @@ public class SwingConsole extends JFrame implements ExtendedConsole {
             return length;
         }
 
+        @Override
         synchronized public int available() throws IOException {
             return arrayLength - arrayOffset + super.available();
         }
@@ -666,6 +673,7 @@ public class SwingConsole extends JFrame implements ExtendedConsole {
          * Add the contents in the internal buffer to the TextArea and delete
          * the buffer.
          */
+        @Override
         synchronized public void flush() {
             theConsoleArea.append(buffer);
             buffer = "";
@@ -674,6 +682,7 @@ public class SwingConsole extends JFrame implements ExtendedConsole {
         /**
          * Write to the internal buffer.
          */
+        @Override
         synchronized public void write(int b) {
             // if (b == 13) {
             // buffer += eol;

@@ -10,15 +10,12 @@ import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
 import FESI.Util.EvaluatorAccess;
 
-public class ESObjectTest  {
+public class ESObjectTest extends EvaluatorTestCase {
 
-    private Evaluator evaluator;
-    private BuiltinFunctionObject objectObject;
+    @Override
     @Before
     public void setUp() throws Exception {
-        evaluator = new Evaluator();
-        
-        objectObject = (BuiltinFunctionObject) evaluator.getGlobalObject().getProperty("Object","Object".hashCode());
+        super.setUp();
     }
     
     @After public void tearDown() throws Exception {

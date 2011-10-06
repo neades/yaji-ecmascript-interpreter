@@ -46,6 +46,7 @@ public abstract class ESPrimitive extends ESValue {
      * 
      * @return true
      */
+    @Override
     public final boolean isPrimitive() {
         return true;
     }
@@ -55,6 +56,7 @@ public abstract class ESPrimitive extends ESValue {
      * 
      * @return false
      */
+    @Override
     public boolean isComposite() {
         return false;
     }
@@ -66,6 +68,7 @@ public abstract class ESPrimitive extends ESValue {
      * @exception EcmaScriptException
      *                not thrown
      */
+    @Override
     public final ESValue toESPrimitive() throws EcmaScriptException {
         return this;
     }
@@ -79,6 +82,7 @@ public abstract class ESPrimitive extends ESValue {
      * @exception EcmaScriptException
      *                not thrown
      */
+    @Override
     public final ESValue toESPrimitive(int hint) throws EcmaScriptException {
         return this;
     }
@@ -91,6 +95,7 @@ public abstract class ESPrimitive extends ESValue {
      * 
      * @return the description of this value
      */
+    @Override
     public ValueDescription getDescription(String name) {
         return new ValueDescription(name, "PRIMITIVE", this.toString());
     }

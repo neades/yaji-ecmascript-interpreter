@@ -60,6 +60,7 @@ public class HtmlPane extends JEditorPane {
         enableEvents(AWTEvent.MOUSE_EVENT_MASK);
     }
 
+    @Override
     public void processMouseEvent(MouseEvent event) {
         if (event.isPopupTrigger()) {
             popupMenu.show(event.getComponent(), event.getX(), event.getY());

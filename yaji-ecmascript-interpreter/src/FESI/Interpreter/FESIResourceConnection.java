@@ -51,6 +51,7 @@ public class FESIResourceConnection extends URLConnection {
             System.out.println(" ** cookie: " + cookie + ", name: " + name);
     }
 
+    @Override
     public void connect() throws IOException {
         if (ESLoader.isDebugLoader())
             System.out.println(" ** Connect: cookie: " + cookie + ", name: "
@@ -59,6 +60,7 @@ public class FESIResourceConnection extends URLConnection {
         resource = o;
     }
 
+    @Override
     public Object getContent() throws IOException {
         if (!connected) {
             connect();
@@ -66,6 +68,7 @@ public class FESIResourceConnection extends URLConnection {
         return resource;
     }
 
+    @Override
     public InputStream getInputStream() throws IOException {
         if (!connected) {
             connect();

@@ -40,6 +40,7 @@ public class BasicIO extends AbstractBasicIO {
         System.err.println(message);
     }
 
+    @Override
     protected String displayPrompt(String prompt, String defaultValue) {
         System.out.print(prompt + " [" + defaultValue + "] ? ");
         System.out.flush();
@@ -55,6 +56,7 @@ public class BasicIO extends AbstractBasicIO {
         return response;
     }
 
+    @Override
     protected boolean displayConfirm(String prompt) {
         System.out.print(prompt + " [y/n] ? ");
         System.out.flush();

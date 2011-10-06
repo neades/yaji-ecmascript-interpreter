@@ -39,36 +39,43 @@ public final class ESNull extends ESPrimitive {
     }
 
     // overrides
+    @Override
     public String toDetailString() {
         return "ES:<null>";
     }
 
     // overrides
+    @Override
     public int getTypeOf() {
         return EStypeNull;
     }
 
     // overrides
+    @Override
     public String toString() {
         return "null";
     }
 
     // overrides
+    @Override
     public String getTypeofString() {
         return "object";
     }
 
     // overrides
+    @Override
     public double doubleValue() {
         return 0;
     }
 
     // overrides
+    @Override
     public boolean booleanValue() {
         return false;
     }
 
     // overrides
+    @Override
     public Object toJavaObject() {
         return null;
     }
@@ -105,10 +112,12 @@ public final class ESNull extends ESPrimitive {
      * 
      * @see java.lang.Object#hashCode()
      */
+    @Override
     public int hashCode() {
         return 0;
     }
 
+    @Override
     public boolean equalsSameType(ESValue v2) {
         return true;
     }

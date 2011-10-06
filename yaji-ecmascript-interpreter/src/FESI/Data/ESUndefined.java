@@ -52,6 +52,7 @@ public final class ESUndefined extends ESPrimitive {
      *                Thrown to indicate call on undefined value
      * @return never
      */
+    @Override
     public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
         throw new EcmaScriptException(
@@ -68,6 +69,7 @@ public final class ESUndefined extends ESPrimitive {
      *                Thrown to indicate call on undefined value
      * @return never
      */
+    @Override
     public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
         throw new EcmaScriptException(
@@ -75,36 +77,43 @@ public final class ESUndefined extends ESPrimitive {
     }
 
     // overrides
+    @Override
     public String toDetailString() {
         return "ES:<undefined>";
     }
 
     // overrides
+    @Override
     public int getTypeOf() {
         return EStypeUndefined;
     }
 
     // overrides
+    @Override
     public String getTypeofString() {
         return "undefined";
     }
 
     // overrides
+    @Override
     public String toString() {
         return "undefined";
     }
 
     // overrides
+    @Override
     public double doubleValue() {
         return Double.NaN;
     }
 
     // overrides
+    @Override
     public boolean booleanValue() {
         return false;
     }
 
     // overrides
+    @Override
     public Object toJavaObject() {
         return null; // should throw an error
     }
@@ -141,10 +150,12 @@ public final class ESUndefined extends ESPrimitive {
      * 
      * @see java.lang.Object#hashCode()
      */
+    @Override
     public int hashCode() {
         return 1;
     }
 
+    @Override
     public boolean equalsSameType(ESValue v2) {
         return true;
     }

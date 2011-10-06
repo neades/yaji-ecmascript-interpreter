@@ -135,6 +135,7 @@ public class JConsoleArea extends JTextArea {
     /**
      * Override the standard PASTE command with a PASTE AT END
      */
+    @Override
     public void paste() {
 
         // Move at end
@@ -152,6 +153,7 @@ public class JConsoleArea extends JTextArea {
      * Trape append (WHICH MUST BE THE ONLY WAY TO ADD TEXT) to keep track of
      * the last output character location.
      */
+    @Override
     public void append(String str) {
         super.append(str);
         Document doc = getDocument();

@@ -90,11 +90,13 @@ public class EcmaScriptFunctionVisitor extends AbstractEcmaScriptVisitor impleme
         throw new ProgrammingError("Bad AST walk in EcmaScriptFunctionVisitor");
     }
 
+    @Override
     public Object visit(ASTProgram node, Object data) {
         data = node.childrenAccept(this, data);
         return data;
     }
 
+    @Override
     public Object visit(ASTFunctionDeclaration node, Object data) {
         int nChildren = node.jjtGetNumChildren();
         if (nChildren != 3) {
@@ -132,7 +134,8 @@ public class EcmaScriptFunctionVisitor extends AbstractEcmaScriptVisitor impleme
         return data;
     }
 
-     public Object visit(ASTStatement node, Object data) {
+     @Override
+    public Object visit(ASTStatement node, Object data) {
         // Ignore statements for function declaration visitors
         return data;
     }

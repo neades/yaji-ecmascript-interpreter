@@ -9,20 +9,16 @@ import java.util.TimeZone;
 import org.junit.Before;
 import org.junit.Test;
 
-import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.RangeError;
 import FESI.Exceptions.TypeError;
-import FESI.Interpreter.Evaluator;
 
 
-public class DatePrototypeTest {
-    private Evaluator evaluator;
-    private BuiltinFunctionObject dateObject;
+public class DatePrototypeTest extends EvaluatorTestCase {
 
+    @Override
     @Before
-    public void setUp() throws EcmaScriptException {
-        evaluator = new Evaluator();
-        dateObject = (BuiltinFunctionObject) evaluator.getGlobalObject().getProperty("Date");
+    public void setUp() throws Exception {
+        super.setUp();
     }
     
     @Test

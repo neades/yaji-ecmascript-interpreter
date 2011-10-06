@@ -24,6 +24,7 @@ public class BsfEngine extends BSFEngineImpl {
      * initialize the engine. put the manager into the context -> manager map
      * hashtable too.
      */
+    @Override
     @SuppressWarnings({ "rawtypes" })
     public void initialize(BSFManager mgr, String lang, Vector declaredBeans)
             throws BSFException {
@@ -67,6 +68,7 @@ public class BsfEngine extends BSFEngineImpl {
      * This is used by an application to evaluate a string containing some
      * function. It can be used as well for a piece of code using return
      */
+    @Override
     @SuppressWarnings({ "rawtypes", "null" })
     public Object apply(String source, int lineNo, int columnNo,
             Object funcBody, Vector paramNames, Vector arguments)
@@ -121,6 +123,7 @@ public class BsfEngine extends BSFEngineImpl {
         return theReturnValue;
     }
 
+    @Override
     public void declareBean(BSFDeclaredBean bean) throws BSFException {
         try {
             global.setMember(bean.name, bean.bean);
@@ -129,6 +132,7 @@ public class BsfEngine extends BSFEngineImpl {
         }
     }
 
+    @Override
     public void undeclareBean(BSFDeclaredBean bean) throws BSFException {
         try {
             global.removeMember(bean.name);

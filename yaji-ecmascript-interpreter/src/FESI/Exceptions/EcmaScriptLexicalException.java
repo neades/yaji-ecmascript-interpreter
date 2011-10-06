@@ -52,6 +52,7 @@ public class EcmaScriptLexicalException extends EcmaScriptException implements
     /**
      * Get the line number of the error if possible
      */
+    @Override
     public int getLineNumber() {
 
         if (evaluationSource != null) {
@@ -63,6 +64,7 @@ public class EcmaScriptLexicalException extends EcmaScriptException implements
     /**
      * Return the text of the token error and the location
      */
+    @Override
     public String getMessage() {
         String retval = tokenMgrError.getMessage();
         retval += eol + evaluationSource;
@@ -73,6 +75,7 @@ public class EcmaScriptLexicalException extends EcmaScriptException implements
      * Return true in case of unclosed comment, as in this case the statement is
      * not complete and the user may be prompted to complete the statement.
      */
+    @Override
     public boolean isIncomplete() {
         String s = tokenMgrError.getMessage();
         return s.indexOf(".  Probably unclosed comment.") != -1;

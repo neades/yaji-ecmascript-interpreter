@@ -202,6 +202,7 @@ public class JSGlobalWrapper extends JSWrapper implements JSGlobalObject {
      * 
      * @return The string value
      */
+    @Override
     public String toString() {
         return object.toString();
     }

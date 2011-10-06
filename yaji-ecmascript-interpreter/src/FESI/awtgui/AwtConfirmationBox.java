@@ -72,6 +72,7 @@ public class AwtConfirmationBox implements ConfirmationBox {
                 dimScreen.height / 2 - dimWindow.height / 2);
 
         frame.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 frame.setVisible(false);
                 frame.dispose();

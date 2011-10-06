@@ -35,11 +35,13 @@ public class BasicIOw extends AbstractBasicIO {
         super();
     }
 
+    @Override
     protected void displayAlert(String message) {
         MessageBox mb = new AwtMessageBox("EcmaScript Alert", message);
         mb.waitOK();
     }
 
+    @Override
     protected String displayPrompt(String prompt, String defaultResponse) {
         PromptBox pb = new AwtPromptBox("EcmaScript promt", prompt,
                 defaultResponse);
@@ -47,6 +49,7 @@ public class BasicIOw extends AbstractBasicIO {
         return response;
     }
 
+    @Override
     protected boolean displayConfirm(String message) {
         ConfirmationBox mb = new AwtConfirmationBox("EcmaScript Confirm",
                 message);

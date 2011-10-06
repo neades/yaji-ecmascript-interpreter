@@ -40,6 +40,7 @@ public class ObjectPrototype extends ESObject {
             super(fp, evaluator, name, 0);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
             String result;
@@ -63,6 +64,7 @@ public class ObjectPrototype extends ESObject {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
             return thisObject;
@@ -77,6 +79,7 @@ public class ObjectPrototype extends ESObject {
             super(fp, evaluator, name, 0);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
             ESObject object = thisObject.toESObject(getEvaluator());
@@ -93,6 +96,7 @@ public class ObjectPrototype extends ESObject {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
             String propertyName = getArg(arguments,0).toESString().toString();
@@ -109,6 +113,7 @@ public class ObjectPrototype extends ESObject {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
             boolean isPrototype = false;
@@ -133,6 +138,7 @@ public class ObjectPrototype extends ESObject {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
             String P = getArg(arguments,0).toESString().toString();

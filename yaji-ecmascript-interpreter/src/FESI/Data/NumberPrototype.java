@@ -40,26 +40,31 @@ class NumberPrototype extends ESObject {
     }
 
     // overrides
+    @Override
     public String getESClassName() {
         return "Number";
     }
 
     // overrides
+    @Override
     public boolean isNumberValue() {
         return true;
     }
 
     // overrides
+    @Override
     public double doubleValue() {
         return value.doubleValue();
     }
 
     // overrides
+    @Override
     public boolean booleanValue() {
         return value.booleanValue();
     }
 
     // overrides
+    @Override
     public String toString() {
         if (value == null)
             return super.toString();
@@ -67,16 +72,19 @@ class NumberPrototype extends ESObject {
     }
 
     // overrides
+    @Override
     public ESValue toESNumber() throws EcmaScriptException {
         return value;
     }
 
     // overrides
+    @Override
     public Object toJavaObject() {
         return new Double(value.doubleValue());
     }
 
     // overrides
+    @Override
     public String toDetailString() {
         return "ES:[Object: builtin " + this.getClass().getName() + ":"
                 + ((value == null) ? "null" : value.toString()) + "]";

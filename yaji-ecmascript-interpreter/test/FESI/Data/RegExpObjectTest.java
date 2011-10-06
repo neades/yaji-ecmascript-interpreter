@@ -8,17 +8,16 @@ import org.junit.Test;
 
 import FESI.Exceptions.SyntaxError;
 import FESI.Exceptions.TypeError;
-import FESI.Interpreter.Evaluator;
 
-public class RegExpObjectTest {
+public class RegExpObjectTest extends EvaluatorTestCase {
 
-    private Evaluator evaluator;
     private RegExpObject regExpObject;
 
+    @Override
     @Before
     public void setUp() throws Exception {
-        evaluator = new Evaluator();
-        regExpObject = (RegExpObject)evaluator.getGlobalObject().getProperty("RegExp");
+        super.setUp();
+        regExpObject = (RegExpObject)globalObject.getProperty("RegExp");
     }
 
     @Test

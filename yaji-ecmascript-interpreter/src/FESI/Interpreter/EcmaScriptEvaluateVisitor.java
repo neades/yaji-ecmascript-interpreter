@@ -116,6 +116,7 @@ class PackagedException extends RuntimeException {
         this.node = node;
     }
 
+    @Override
     public String getMessage() {
         return exception.getMessage();
     }
@@ -386,6 +387,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
 
     // The dispatching is by node type - if the specific visitor
     // is not implemented, then this routine is called
+    @Override
     public Object visit(SimpleNode node, Object data) {
         throw new ProgrammingError("Visitor not implemented for node type "
                 + node.getClass());
@@ -395,6 +397,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
     // children and then iterate the children appropriately, taking the
     // the appropritate action for each children. Recursing the evaluation
     // is done via the routine jjtAccept.
+    @Override
     public Object visit(ASTProgram node, Object data) {
         int n = node.jjtGetNumChildren();
         if (n <= 0)
@@ -407,6 +410,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return result;
     }
 
+    @Override
     public Object visit(ASTStatementList node, Object data) {
         int n = node.jjtGetNumChildren();
         // Return ESUndefined for empty statement lists (for
@@ -424,15 +428,18 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return result;
     }
 
+    @Override
     public Object visit(ASTFunctionDeclaration node, Object data) {
         return null; // Ignored during interpretation
     }
 
+    @Override
     public Object visit(ASTFormalParameterList node, Object data) {
         // Should not occur during interpretation as we skip parent node
         throw new ProgrammingError("Should not visit this");
     }
 
+    @Override
     public Object visit(ASTStatement node, Object data) {
         Object result = null;
         int nChildren = node.jjtGetNumChildren();
@@ -444,6 +451,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return result;
     }
 
+    @Override
     public Object visit(ASTVariableDeclaration node, Object data) {
         int nChildren = assertInRange(node, 1, 2, "variable declaration");
         if (nChildren == 2) {
@@ -476,6 +484,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return null;
     }
 
+    @Override
     public Object visit(ASTIfStatement node, Object data) {
         Object result = null;
         int nChildren = assertInRange(node, 2, 3, "IF statement");
@@ -505,6 +514,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return nChildren;
     }
 
+    @Override
     public Object visit(ASTWhileStatement node, Object data) {
         Object result = null;
         node.assertTwoChildren();
@@ -533,6 +543,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return result;
     }
 
+    @Override
     public Object visit(ASTDoWhileStatement node, Object data) {
         Object result = null;
         node.assertTwoChildren();
@@ -559,6 +570,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return result;
     }
 
+    @Override
     public Object visit(ASTForStatement node, Object data) {
         Object result = null;
         try {
@@ -608,6 +620,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
     }
 
     // Assume that in 12.6.2, for var, step 7, should be goto 17
+    @Override
     public Object visit(ASTForVarStatement node, Object data) {
         Object result = null; // No value by default
         try {
@@ -655,6 +668,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return result;
     }
 
+    @Override
     public Object visit(ASTForInStatement node, Object data) {
         Object result = null; // No value by default
         node.assertThreeChildren();
@@ -700,6 +714,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return result;
     }
 
+    @Override
     public Object visit(ASTForVarInStatement node, Object data) {
         Object result = null; // No value by default
         node.assertFourChildren();
@@ -753,18 +768,21 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return result;
     }
 
+    @Override
     public Object visit(ASTContinueStatement node, Object data) {
         node.assertNoChildren();
         completionCode = C_CONTINUE;
         return null;
     }
 
+    @Override
     public Object visit(ASTBreakStatement node, Object data) {
         node.assertNoChildren();
         completionCode = C_BREAK;
         return null;
     }
 
+    @Override
     public Object visit(ASTReturnStatement node, Object data) {
         node.assertOneChild();
         Object result = node.jjtGetChild(0).jjtAccept(this, FOR_VALUE);
@@ -772,6 +790,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return result;
     }
 
+    @Override
     public Object visit(ASTWithStatement node, Object data) {
         node.assertTwoChildren();
         ESValue result = null;
@@ -788,11 +807,13 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return result;
     }
 
+    @Override
     public Object visit(ASTThisReference node, Object data) {
         node.assertNoChildren();
         return evaluator.getThisObject();
     }
 
+    @Override
     public Object visit(ASTSuperReference node, Object data) {
         node.assertNoChildren();
         return evaluator.getSuperObject();
@@ -806,6 +827,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
      * (which is the last result returned). If the last Result is null, this
      * indicates access to the global environment.
      */
+    @Override
     public Object visit(ASTCompositeReference node, Object forWhat) {
         int nChildren = node.jjtGetNumChildren();
         if (nChildren < 2)
@@ -1042,6 +1064,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         }
     }
 
+    @Override
     public Object visit(ASTFunctionCallParameters node, Object data) {
 
         int nChildren = node.jjtGetNumChildren();
@@ -1053,11 +1076,13 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return arguments;
     }
 
+    @Override
     public Object visit(ASTPropertyValueReference node, Object data) {
         node.assertOneChild();
         return acceptNull(node.jjtGetChild(0).jjtAccept(this, FOR_VALUE));
     }
 
+    @Override
     public Object visit(ASTPropertyIdentifierReference node, Object data) {
         node.assertOneChild();
         Object result = null;
@@ -1070,6 +1095,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return result;
     }
 
+    @Override
     public Object visit(ASTAllocationExpression node, Object data) {
         node.assertTwoChildren();
         ESValue result = null;
@@ -1098,10 +1124,12 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return result;
     }
 
+    @Override
     public Object visit(ASTOperator node, Object data) {
         throw new ProgrammingError("Bad AST walk");
     }
 
+    @Override
     public Object visit(ASTPostfixExpression node, Object data) {
         ESValue result;
         try {
@@ -1131,6 +1159,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return result;
     }
 
+    @Override
     public Object visit(ASTUnaryExpression node, Object data) {
         ESValue r = null;
         try {
@@ -1245,6 +1274,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return r;
     }
 
+    @Override
     public Object visit(ASTBinaryExpressionSequence node, Object data) {
         ESValue result = null;
         try {
@@ -1376,6 +1406,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return result;
     }
 
+    @Override
     public Object visit(ASTAndExpressionSequence node, Object data) {
         ESValue result = null;
         int nChildren = node.jjtGetNumChildren();
@@ -1395,6 +1426,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return result;
     }
 
+    @Override
     public Object visit(ASTOrExpressionSequence node, Object data) {
         int nChildren = node.jjtGetNumChildren();
         ESValue result = null;
@@ -1415,11 +1447,13 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return result;
     }
 
+    @Override
     public Object visit(ASTEmptyExpression node, Object data) {
         node.assertNoChildren();
         return ESUndefined.theUndefined;
     }
 
+    @Override
     public Object visit(ASTConditionalExpression node, Object data) {
         node.assertThreeChildren();
         Object result = null;
@@ -1438,6 +1472,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return result;
     }
 
+    @Override
     public Object visit(ASTAssignmentExpression node, Object data) {
         node.assertThreeChildren();
         ESValue result = null;
@@ -1579,6 +1614,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return new ESString(appendable);
     }
 
+    @Override
     public Object visit(ASTExpressionList node, Object data) {
         int n = node.jjtGetNumChildren();
         Object result = null;
@@ -1593,11 +1629,13 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return result;
     }
 
+    @Override
     public Object visit(ASTLiteral node, Object data) {
         node.assertNoChildren();
         return node.getValue();
     }
 
+    @Override
     public Object visit(ASTIdentifier node, Object forWhat) {
         Object result;
         try {
@@ -1637,6 +1675,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return (ESValue) v;
     }
 
+    @Override
     public Object visit(ASTObjectLiteral node, Object data) {
         ESObject result = ObjectObject.createObject(evaluator);
         int numChildren = node.jjtGetNumChildren();
@@ -1646,6 +1685,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return result;
     }
 
+    @Override
     public Object visit(ASTPropertyNameAndValue node, Object data) {
         Node nameNode = node.jjtGetChild(0);
         if (nameNode == null) {
@@ -1732,6 +1772,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         }
     }
 
+    @Override
     public Object visit(ASTFunctionExpression node, Object data) {
         int nChildren = node.jjtGetNumChildren();
         if (nChildren != 2 && nChildren != 3) {
@@ -1760,14 +1801,17 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return func;
     }
 
+    @Override
     public Object visit(ASTGetAccessor node, Object data) {
         return ESUndefined.theUndefined;
     }
     
+    @Override
     public Object visit(ASTSetAccessor node, Object data) {
         return ESUndefined.theUndefined;
     }
 
+    @Override
     public Object visit(ASTArrayLiteral node, Object data) {
         ESObject result = null;
         try {
@@ -1787,10 +1831,12 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return result != null ? result : ESUndefined.theUndefined;
     }
 
+    @Override
     public Object visit(ASTElision node, Object data) {
         return ESUndefined.theUndefined;
     }
     
+    @Override
     public Object visit(ASTTryStatement node, Object data) {
         ASTCatch catchStatement = null;
         ASTFinally finallyStatement = null;
@@ -1836,6 +1882,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return data;
     }
     
+    @Override
     public Object visit(ASTCatch node, Object data) {
         node.assertTwoChildren();
         ESValue result = null;
@@ -1856,11 +1903,13 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return result;
     }
     
+    @Override
     public Object visit(ASTFinally node, Object data) {
         node.assertOneChild();
         return node.jjtGetChild(0).jjtAccept(this, data);
     }
 
+    @Override
     public Object visit(ASTThrowStatement node, Object data) {
         node.assertOneChild();
         EcmaScriptException exception = new EcmaScriptException("throw");
@@ -1874,6 +1923,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         ESValue input;
         ESValue result;
     }
+    @Override
     public Object visit(ASTSwitchStatement node, Object data) {
         node.assertAtLeastOneChild();
         
@@ -1909,6 +1959,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         return switchState.result;
     }
     
+    @Override
     public Object visit(ASTCaseClause node, Object data) {
         node.assertAtLeastOneChild();
         int n = node.jjtGetNumChildren();

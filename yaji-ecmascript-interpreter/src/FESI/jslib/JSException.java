@@ -88,6 +88,7 @@ public class JSException extends Exception {
      * Prints this <code>Throwable</code> and its backtrace to the standard
      * error stream.
      */
+    @Override
     public void printStackTrace() {
         System.err.println(this);
         printStackTrace0(new PrintWriter(System.err));
@@ -97,6 +98,7 @@ public class JSException extends Exception {
      * Prints this <code>Throwable</code> and its backtrace to the specified
      * print stream.
      */
+    @Override
     public void printStackTrace(java.io.PrintStream s) {
         s.println(this);
         PrintWriter w = new PrintWriter(s);
@@ -107,6 +109,7 @@ public class JSException extends Exception {
      * Prints this <code>Throwable</code> and its backtrace to the specified
      * print writer.
      */
+    @Override
     public void printStackTrace(java.io.PrintWriter w) {
         w.println(this);
         printStackTrace0(w);

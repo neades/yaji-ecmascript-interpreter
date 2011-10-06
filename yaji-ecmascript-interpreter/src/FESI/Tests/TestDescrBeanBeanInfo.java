@@ -30,10 +30,12 @@ import java.beans.SimpleBeanInfo;
 
 public class TestDescrBeanBeanInfo extends SimpleBeanInfo {
 
+    @Override
     public BeanDescriptor getBeanDescriptor() {
         return new BeanDescriptor(TestDescrBean.class);
     }
 
+    @Override
     public PropertyDescriptor[] getPropertyDescriptors() {
         try {
             PropertyDescriptor intValue = new PropertyDescriptor("intValue",

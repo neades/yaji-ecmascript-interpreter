@@ -19,6 +19,7 @@ class RegExpObject extends BuiltinFunctionObject {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESValue string = (arguments.length < 1)?ESUndefined.theUndefined:arguments[0];
@@ -35,6 +36,7 @@ class RegExpObject extends BuiltinFunctionObject {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESValue string = (arguments.length < 1)?ESUndefined.theUndefined:arguments[0];
@@ -53,6 +55,7 @@ class RegExpObject extends BuiltinFunctionObject {
                 "exec", evaluator, fp));
     }
 
+    @Override
     public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
         ESValue arg0 = getArg(arguments,0);
@@ -63,6 +66,7 @@ class RegExpObject extends BuiltinFunctionObject {
         return doConstruct(arg0,arg1);
     }
 
+    @Override
     public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
         return doConstruct(getArg(arguments, 0), getArg(arguments, 1));

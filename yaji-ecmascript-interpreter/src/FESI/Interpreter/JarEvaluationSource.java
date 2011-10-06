@@ -42,6 +42,7 @@ public class JarEvaluationSource extends EvaluationSource {
         this.theEntryName = theEntryName;
     }
 
+    @Override
     protected String getEvaluationSourceText() {
         return "in entry: '" + theEntryName + "' of jar: '" + theJarName + "'";
     }

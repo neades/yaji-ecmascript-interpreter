@@ -551,6 +551,7 @@ public class Editor extends JPanel {
             this.doc = doc;
         }
 
+        @Override
         public void run() {
             try {
                 /*

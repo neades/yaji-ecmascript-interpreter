@@ -34,6 +34,7 @@ public abstract class BuiltinFunctionObject extends FunctionPrototype {
     }
 
     // overrides
+    @Override
     public void putProperty(String propertyName, ESValue propertyValue, int hash)
             throws EcmaScriptException {
         if (!propertyName.equals("prototype")) {
@@ -46,6 +47,7 @@ public abstract class BuiltinFunctionObject extends FunctionPrototype {
      * 
      * @return a string indicating that the function is native
      */
+    @Override
     public String getFunctionImplementationString() {
         return "{[native: " + this.getClass().getName() + "]}";
     }
@@ -55,11 +57,13 @@ public abstract class BuiltinFunctionObject extends FunctionPrototype {
      * 
      * @return the function parameter string as (a,b,c)
      */
+    @Override
     public String getFunctionParametersString() {
         return "(<" + getLengthProperty() + " args>)";
     }
 
     // overrides
+    @Override
     public String toString() {
         return "<" + this.getFunctionName() + ":" + this.getClass().getName()
                 + ">";

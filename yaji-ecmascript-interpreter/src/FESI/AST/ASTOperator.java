@@ -29,6 +29,7 @@ public class ASTOperator extends SimpleNode {
     }
 
     /** Accept the visitor. **/
+    @Override
     public Object jjtAccept(EcmaScriptVisitor visitor, Object data) {
         return visitor.visit(this, data);
     }
@@ -42,6 +43,7 @@ public class ASTOperator extends SimpleNode {
         return operatorCode;
     }
 
+    @Override
     public String toString() {
         return "<" + tokenImage[operatorCode] + ">";
     }

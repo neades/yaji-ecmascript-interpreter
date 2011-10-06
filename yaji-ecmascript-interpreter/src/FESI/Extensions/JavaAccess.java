@@ -41,6 +41,7 @@ public class JavaAccess extends Extension {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
 
@@ -62,6 +63,7 @@ public class JavaAccess extends Extension {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
 
@@ -78,6 +80,7 @@ public class JavaAccess extends Extension {
         super();
     }
 
+    @Override
     public void initializeExtension(Evaluator evaluator)
             throws EcmaScriptException {
 

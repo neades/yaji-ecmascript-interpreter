@@ -19,7 +19,8 @@ class ASTTryStatement extends SimpleNode {
 
 
   /** Accept the visitor. **/
-  public Object jjtAccept(EcmaScriptVisitor visitor, Object data) {
+  @Override
+public Object jjtAccept(EcmaScriptVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
 }

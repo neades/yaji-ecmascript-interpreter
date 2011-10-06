@@ -43,6 +43,7 @@ public class LineEvaluationSource extends EvaluationSource {
     /**
      * Return the string describing the line number
      */
+    @Override
     protected String getEvaluationSourceText() {
         return "at line " + theLineNumber + " "
                 + (previousSource == null ? "" :previousSource.getEvaluationSourceText());
@@ -51,6 +52,7 @@ public class LineEvaluationSource extends EvaluationSource {
     /**
      * Get the line number of the error if possible
      */
+    @Override
     public int getLineNumber() {
         return theLineNumber;
     }

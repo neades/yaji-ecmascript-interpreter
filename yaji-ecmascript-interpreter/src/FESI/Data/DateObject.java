@@ -33,6 +33,82 @@ import FESI.Interpreter.Evaluator;
 public class DateObject extends BuiltinFunctionObject {
 
     private static final long serialVersionUID = -4299764407542326480L;
+    
+    private static final String SIMPLIFIED_ISO8601_DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+
+    public static final String UTC_FORMAT_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS zzz";
+
+    private static class DateObjectParse extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DateObjectParse(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 1);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            String dateString = getArg(arguments,0).toString();
+            String [] formats = { SIMPLIFIED_ISO8601_DATE_FORMAT_PATTERN, UTC_FORMAT_PATTERN, "EEE MMM dd HH:mm:ss zzz yyyy", null };
+            for (String format : formats) {
+                DateFormat df;
+                if (format == null) {
+                    df = DateFormat.getDateInstance();
+                } else {
+                    df = new SimpleDateFormat(format);
+                    df.setTimeZone(TimeZone.getTimeZone("UTC"));
+                }
+                try {
+                    Date date = df.parse(dateString);
+                    return ESNumber.valueOf(date.getTime());
+                } catch (java.text.ParseException e) {
+                    // fail try next format
+                }
+            }
+            return ESNumber.valueOf(Double.NaN);
+        }
+    }
+
+    private static class DateObjectUTC extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DateObjectUTC(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 7);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            int l = arguments.length;
+            if (l <= 2) {
+                throw new EcmaScriptException("Missing argument");
+            }
+            int year = arguments[0].toInt32();
+            if (0 <= year && year <= 99) {
+                year += 1900;
+            }
+            int month = arguments[1].toInt32();
+            int day = arguments[2].toInt32();
+            int hour = (l > 3) ? arguments[3].toInt32() : 0;
+            int minute = (l > 4) ? arguments[4].toInt32() : 0;
+            int second = (l > 5) ? arguments[5].toInt32() : 0;
+            int ms = (l > 6) ? arguments[6].toInt32() : 0;
+            Calendar cal = new GregorianCalendar(TimeZone
+                    .getTimeZone("GMT"));
+            cal.set(Calendar.YEAR, year);
+            cal.set(Calendar.MONTH, month);
+            cal.set(Calendar.DAY_OF_MONTH, day);
+            cal.set(Calendar.HOUR_OF_DAY, hour);
+            cal.set(Calendar.MINUTE, minute);
+            cal.set(Calendar.SECOND, second);
+            cal.set(Calendar.MILLISECOND, ms);
+            long timeinms = cal.getTime().getTime();
+            return ESNumber.valueOf(timeinms);
+        }
+    }
+
     // For datePrototype
     private static class DatePrototypeToString extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
@@ -66,7 +142,7 @@ public class DateObject extends BuiltinFunctionObject {
            if (aDate.date == null) {
                throw new RangeError("Date is not valid");
            }
-           DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+           DateFormat df = new SimpleDateFormat(SIMPLIFIED_ISO8601_DATE_FORMAT_PATTERN);
            df.setTimeZone(TimeZone.getTimeZone("UTC"));
            return new ESString(df.format(aDate.date));
         }
@@ -147,8 +223,7 @@ public class DateObject extends BuiltinFunctionObject {
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
             DatePrototype aDate = (DatePrototype) thisObject;
-            DateFormat df = DateFormat.getDateTimeInstance(
-                    DateFormat.MEDIUM, DateFormat.FULL);
+            DateFormat df = new SimpleDateFormat(UTC_FORMAT_PATTERN);
             df.setTimeZone(TimeZone.getTimeZone("GMT"));
             return (aDate.date == null) ? new ESString("NaN")
                     : new ESString(df.format(aDate.date));
@@ -851,72 +926,6 @@ public class DateObject extends BuiltinFunctionObject {
 
  
             // For dateObject
-            class DateObjectParse extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DateObjectParse(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 1);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    if (arguments.length <= 0) {
-                        throw new EcmaScriptException("Missing argument");
-                    }
-                    String dateString = arguments[0].toString();
-                    DateFormat df = DateFormat.getDateInstance();
-                    ESValue dateValue = null;
-                    try {
-                        Date date = df.parse(dateString);
-                        dateValue = ESNumber.valueOf(date.getTime());
-                    } catch (java.text.ParseException e) {
-                        dateValue = ESNumber.valueOf(Double.NaN);
-                    }
-                    return dateValue;
-                }
-            }
-
-            class DateObjectUTC extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                DateObjectUTC(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
-                    super(fp, evaluator, name, 7);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    int l = arguments.length;
-                    if (l <= 2) {
-                        throw new EcmaScriptException("Missing argument");
-                    }
-                    int year = arguments[0].toInt32();
-                    if (0 <= year && year <= 99) {
-                        year += 1900;
-                    }
-                    int month = arguments[1].toInt32();
-                    int day = arguments[2].toInt32();
-                    int hour = (l > 3) ? arguments[3].toInt32() : 0;
-                    int minute = (l > 4) ? arguments[4].toInt32() : 0;
-                    int second = (l > 5) ? arguments[5].toInt32() : 0;
-                    int ms = (l > 6) ? arguments[6].toInt32() : 0;
-                    Calendar cal = new GregorianCalendar(TimeZone
-                            .getTimeZone("GMT"));
-                    cal.set(Calendar.YEAR, year);
-                    cal.set(Calendar.MONTH, month);
-                    cal.set(Calendar.DAY_OF_MONTH, day);
-                    cal.set(Calendar.HOUR_OF_DAY, hour);
-                    cal.set(Calendar.MINUTE, minute);
-                    cal.set(Calendar.SECOND, second);
-                    cal.set(Calendar.MILLISECOND, ms);
-                    long timeinms = cal.getTime().getTime();
-                    return ESNumber.valueOf(timeinms);
-                }
-            }
-
             dateObject.putHiddenProperty("prototype", datePrototype);
             dateObject.putHiddenProperty("length", ESNumber.valueOf(7));
             dateObject.putHiddenProperty("parse", new DateObjectParse("parse",

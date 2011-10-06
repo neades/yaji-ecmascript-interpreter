@@ -32,28 +32,34 @@ class StringPrototype extends ESObject {
         super(prototype, evaluator);
     }
 
+    @Override
     public String getESClassName() {
         return "String";
     }
 
+    @Override
     public String toString() {
         if (value == null)
             return super.toString();
         return value.toString();
     }
 
+    @Override
     public ESValue toESString() {
         return value;
     }
 
+    @Override
     public boolean booleanValue() throws EcmaScriptException {
         return value.booleanValue();
     }
 
+    @Override
     public double doubleValue() throws EcmaScriptException {
         return value.doubleValue();
     }
 
+    @Override
     public ESValue getPropertyInScope(String propertyName,
             ScopeChain previousScope, int hash) throws EcmaScriptException {
         if (hash == StandardProperty.LENGTHhash && propertyName.equals(StandardProperty.LENGTHstring)) {
@@ -89,15 +95,18 @@ class StringPrototype extends ESObject {
         return allDigits;
     }
 
+    @Override
     public String[] getSpecialPropertyNames() {
         String[] ns = { StandardProperty.LENGTHstring };
         return ns;
     }
 
+    @Override
     public Object toJavaObject() {
         return value.toString();
     }
 
+    @Override
     public String toDetailString() {
         return "ES:[Object: builtin " + this.getClass().getName() + ":"
                 + ((value == null) ? "null" : value.toString()) + "]";
@@ -109,6 +118,7 @@ class StringPrototype extends ESObject {
      * 
      * @return true
      */
+    @Override
     public boolean isStringValue() {
         return true;
     }
