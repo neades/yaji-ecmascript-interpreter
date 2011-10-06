@@ -173,10 +173,12 @@ class ESDatabase extends ESObject {
         driverOK = false; // Avoid usage of this object
     }
 
+    @Override
     public String getESClassName() {
         return "Database";
     }
 
+    @Override
     public String toString() {
         if (driverName == null)
             return "[database protoype]";
@@ -186,6 +188,7 @@ class ESDatabase extends ESObject {
                         : " - connected]") : " - in error]");
     }
 
+    @Override
     public String toDetailString() {
         return "ES:[Object: builtin " + this.getClass().getName() + ":"
                 + this.toString() + "]";
@@ -401,10 +404,12 @@ class ESRowSet extends ESObject {
         }
     }
 
+    @Override
     public String getESClassName() {
         return "RowSet";
     }
 
+    @Override
     public String toDetailString() {
         return "ES:[Object: builtin " + this.getClass().getName() + ":"
                 + this.toString() + "]";
@@ -533,6 +538,7 @@ class ESRowSet extends ESObject {
         return ESUndefined.theUndefined;
     }
 
+    @Override
     public ESValue getPropertyIfAvailable(String propertyName, int hash)
             throws EcmaScriptException {
         // System.err.println(" &&& Getting property '" + propertyName + "'");
@@ -583,6 +589,7 @@ class ESRowSet extends ESObject {
         return ESUndefined.theUndefined;
     }
 
+    @Override
     public ESValue getPropertyIfAvailable(int index) throws EcmaScriptException {
         if (!firstRowSeen) {
             throw new EcmaScriptException(
@@ -611,6 +618,7 @@ class ESRowSet extends ESObject {
      * @return the enumerator - may have 0 length of coulmn names where not
      * found
      */
+    @Override
     public Enumeration<String> getProperties() {
         if (resultSet == null) {
             return (new Vector<String>()).elements();
@@ -628,6 +636,7 @@ class ESRowSet extends ESObject {
      * 
      * @return An enumeration of all properties (visible and hidden).
      */
+    @Override
     public Enumeration<String> getAllProperties() {
         return new Enumeration<String>() {
             String[] specialProperties = getSpecialPropertyNames();
@@ -696,6 +705,7 @@ class ESRowSet extends ESObject {
         };
     }
 
+    @Override
     public String[] getSpecialPropertyNames() {
         String[] ns = { "length" };
         return ns;
@@ -726,6 +736,7 @@ class ESRowSet extends ESObject {
         return ESBoolean.valueOf(status);
     }
 
+    @Override
     public String toString() {
         return "[RowSet: '"
                 + sql
@@ -754,11 +765,13 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             return doConstruct(arguments);
         }
 
+        @Override
         public ESObject doConstruct(ESValue[] arguments)
                 throws EcmaScriptException {
             ESDatabase database = null;
@@ -788,6 +801,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESDatabase database = (ESDatabase) thisObject;
@@ -802,6 +816,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESDatabase database = (ESDatabase) thisObject;
@@ -816,6 +831,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESDatabase database = (ESDatabase) thisObject;
@@ -831,6 +847,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESDatabase database = (ESDatabase) thisObject;
@@ -846,6 +863,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESDatabase database = (ESDatabase) thisObject;
@@ -861,6 +879,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESDatabase database = (ESDatabase) thisObject;
@@ -876,6 +895,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESDatabase database = (ESDatabase) thisObject;
@@ -890,6 +910,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESRowSet rowSet = (ESRowSet) thisObject;
@@ -904,6 +925,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESRowSet rowSet = (ESRowSet) thisObject;
@@ -919,6 +941,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESRowSet rowSet = (ESRowSet) thisObject;
@@ -934,6 +957,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESRowSet rowSet = (ESRowSet) thisObject;
@@ -959,6 +983,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESRowSet rowSet = (ESRowSet) thisObject;
@@ -979,6 +1004,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESRowSet rowSet = (ESRowSet) thisObject;
@@ -999,6 +1025,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESRowSet rowSet = (ESRowSet) thisObject;
@@ -1025,6 +1052,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESRowSet rowSet = (ESRowSet) thisObject;
@@ -1039,6 +1067,7 @@ public class Database extends Extension {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             ESRowSet rowSet = (ESRowSet) thisObject;
@@ -1046,6 +1075,7 @@ public class Database extends Extension {
         }
     }
 
+    @Override
     public void initializeExtension(Evaluator evaluator)
             throws EcmaScriptException {
 

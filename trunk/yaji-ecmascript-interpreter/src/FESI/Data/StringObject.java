@@ -130,6 +130,7 @@ public class StringObject extends BuiltinFunctionObject {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             if (arguments.length < 1) {
@@ -160,6 +161,7 @@ public class StringObject extends BuiltinFunctionObject {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             if (arguments.length < 2) {
@@ -192,6 +194,7 @@ public class StringObject extends BuiltinFunctionObject {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
             if (arguments.length < 1) {
@@ -271,6 +274,7 @@ public class StringObject extends BuiltinFunctionObject {
             }
 
         }
+        @Override
         public ESValue invoke(String str, ESValue[] arguments)
                 throws EcmaScriptException {
             ESObject ap = this.getEvaluator().getArrayPrototype();

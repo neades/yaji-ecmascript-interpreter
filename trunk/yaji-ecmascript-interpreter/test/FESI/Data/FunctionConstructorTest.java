@@ -11,18 +11,17 @@ import org.junit.Test;
 import FESI.AST.ASTProgram;
 import FESI.Exceptions.TypeError;
 import FESI.Interpreter.EcmaScriptFunctionVisitor;
-import FESI.Interpreter.Evaluator;
 import FESI.Parser.EcmaScript;
 
 
-public class FunctionConstructorTest {
+public class FunctionConstructorTest extends EvaluatorTestCase {
 
-    private Evaluator evaluator;
     private ESObject function;
+    @Override
     @Before
     public void setUp() throws Exception {
-        evaluator = new Evaluator();
-
+        super.setUp();
+        
         EcmaScript es = new EcmaScript(new StringReader("function blah() { var result = 'Called:';for( var i=0; i<arguments.length; i++ ) { result += arguments[i]; } return result; }"));
         EcmaScriptFunctionVisitor functionVisitor = new EcmaScriptFunctionVisitor(evaluator);
         functionVisitor.visit((ASTProgram)es.Program(), null);

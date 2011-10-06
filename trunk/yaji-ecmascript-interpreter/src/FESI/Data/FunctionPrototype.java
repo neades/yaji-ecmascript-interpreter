@@ -43,6 +43,7 @@ public class FunctionPrototype extends ESObject {
     }
 
     // overrides
+    @Override
     public String getESClassName() {
         return "Function";
     }
@@ -80,6 +81,7 @@ public class FunctionPrototype extends ESObject {
     }
 
     // overrides
+    @Override
     public ESValue getPropertyInScope(String propertyName,
             ScopeChain previousScope, int hash) throws EcmaScriptException {
         if (hash == StandardProperty.LENGTHhash && propertyName.equals(StandardProperty.LENGTHstring)) {
@@ -98,6 +100,7 @@ public class FunctionPrototype extends ESObject {
     }
 
     // overrides
+    @Override
     public void putProperty(String propertyName, ESValue propertyValue, int hash)
             throws EcmaScriptException {
         if (!(hash == StandardProperty.LENGTHhash && propertyName.equals(StandardProperty.LENGTHstring))) {
@@ -106,23 +109,27 @@ public class FunctionPrototype extends ESObject {
     }
 
     // overrides
+    @Override
     public String[] getSpecialPropertyNames() {
         String[] ns = { StandardProperty.LENGTHstring };
         return ns;
     }
 
     // overrides
+    @Override
     public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
         return ESUndefined.theUndefined;
     }
 
     // overrides
+    @Override
     public String getTypeofString() {
         return "function";
     }
 
     // overrides
+    @Override
     public String toString() {
         return "<" + getESClassName() + ":" + this.getFunctionName() + ">";
     }

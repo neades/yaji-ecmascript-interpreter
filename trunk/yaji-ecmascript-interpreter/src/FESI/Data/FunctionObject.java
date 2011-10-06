@@ -48,6 +48,7 @@ public class FunctionObject extends BuiltinFunctionObject implements
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
             String s = "function "
@@ -67,6 +68,7 @@ public class FunctionObject extends BuiltinFunctionObject implements
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
             ESValue[] functionArguments;
@@ -90,6 +92,7 @@ public class FunctionObject extends BuiltinFunctionObject implements
             super(fp, evaluator, name, 2);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
             ESValue[] functionArguments = ESValue.EMPTY_ARRAY;
@@ -132,17 +135,20 @@ public class FunctionObject extends BuiltinFunctionObject implements
     }
 
     // overrides
+    @Override
     public String getESClassName() {
         return "Function";
     }
 
     // overrides - call and new have the same effect
+    @Override
     public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
         return doConstruct(arguments);
     }
 
     // overrides - build a new function
+    @Override
     public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
         ConstructedFunctionObject theFunction = null;
@@ -225,6 +231,7 @@ public class FunctionObject extends BuiltinFunctionObject implements
     }
 
     // overrides
+    @Override
     public String toString() {
         return "<Function>";
     }

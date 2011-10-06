@@ -6,15 +6,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import FESI.Exceptions.RangeError;
-import FESI.Interpreter.Evaluator;
 
-public class NumberPrototypeTest {
+public class NumberPrototypeTest extends EvaluatorTestCase {
 
-    private Evaluator evaluator;
-
+    @Override
     @Before
     public void setUp() throws Exception {
-        evaluator = new Evaluator();
+        super.setUp();
     }
 
     @Test

@@ -38,6 +38,7 @@ public class SwingGuiFactory extends GuiFactory {
     /**
      * Display an error message using the AWT message box
      */
+    @Override
     public MessageBox displayMessageBox(String title, String msg) {
 
         return new SwingMessageBox(title, msg);
@@ -46,6 +47,7 @@ public class SwingGuiFactory extends GuiFactory {
     /**
      * Create aa new console
      */
+    @Override
     public Console makeConsole(InterpreterCommands itrpParam, String title,
             int rows, int columns) {
         return new SwingConsole(itrpParam, title, rows, columns);

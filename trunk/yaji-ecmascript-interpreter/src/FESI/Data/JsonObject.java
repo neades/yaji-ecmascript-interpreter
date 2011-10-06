@@ -66,18 +66,22 @@ public class JsonObject extends ESObject {
     }
 
     private static Walker<String> stringWalker = new Walker<String>() {
+        @Override
         protected ESValue get(ESObject holder, String name) throws EcmaScriptException {
             return holder.getProperty(name);
         }
+        @Override
         protected ESValue toESValue(String name) {
             return new ESString(name);
         }
     };
     
     private static Walker<Integer> integerWalker = new Walker<Integer>() {
+        @Override
         protected ESValue get(ESObject holder, Integer idx) throws EcmaScriptException {
             return holder.getProperty(idx.intValue());
         }
+        @Override
         protected ESValue toESValue(Integer idx) {
             return new ESString(idx.toString());
         }

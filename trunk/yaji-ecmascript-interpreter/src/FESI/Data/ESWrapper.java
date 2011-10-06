@@ -130,16 +130,19 @@ public class ESWrapper extends ESObject {
     }
 
     // overrides
+    @Override
     public ESObject getPrototype() {
         throw new ProgrammingError("Cannot get prototype of Wrapper");
     }
 
     // overrides
+    @Override
     public String getESClassName() {
         return "Java Object";
     }
 
     // overrides
+    @Override
     public int getTypeOf() {
         return EStypeObject;
     }
@@ -147,6 +150,7 @@ public class ESWrapper extends ESObject {
     // overrides
     // Get either a bean or an object property - for objects attempt bean access
     // if object access failed
+    @Override
     public ESValue getPropertyInScope(String propertyName,
             ScopeChain previousScope, int hash) throws EcmaScriptException {
         ESValue value;
@@ -407,6 +411,7 @@ public class ESWrapper extends ESObject {
     }
 
     // overrides
+    @Override
     public boolean isHiddenProperty(String propertyName, int hash) {
         return false;
     }
@@ -414,6 +419,7 @@ public class ESWrapper extends ESObject {
     // overrides
     // Put either a bean or an object property - for objects attempt bean access
     // if object access failed
+    @Override
     public void putProperty(String propertyName, ESValue propertyValue, int hash)
             throws EcmaScriptException {
         if (propertyValue == ESUndefined.theUndefined) {
@@ -642,12 +648,14 @@ public class ESWrapper extends ESObject {
     }
 
     // overrides
+    @Override
     public void putHiddenProperty(String propertyName, ESValue propertyValue)
             throws EcmaScriptException {
         throw new ProgrammingError("Cannot put hidden property in " + this);
     }
 
     // overrides
+    @Override
     public boolean deleteProperty(String propertyName, int hash)
             throws EcmaScriptException {
         // Well, in fact it should use a hasProperty, but as
@@ -661,6 +669,7 @@ public class ESWrapper extends ESObject {
      * 
      * Return true
      */
+    @Override
     public boolean isDirectEnumerator() {
         return true;
     }
@@ -674,6 +683,7 @@ public class ESWrapper extends ESObject {
      * 
      * @returns the enumerator or a dummy enumerator
      */
+    @Override
     @SuppressWarnings("unchecked")
     public Enumeration<String> getProperties() {
         if (javaObject instanceof Enumeration<?>) {
@@ -693,12 +703,14 @@ public class ESWrapper extends ESObject {
     }
 
     // No property list supported - yet
+    @Override
     public Enumeration<String> getAllProperties() {
         return getProperties();
     }
 
 
     // overrides
+    @Override
     public ESValue getDefaultValue(int hint) throws EcmaScriptException {
         if (hint == EStypeString) {
             return new ESString(javaObject.toString());
@@ -709,6 +721,7 @@ public class ESWrapper extends ESObject {
     }
 
     // overrides
+    @Override
     public ESValue getDefaultValue() throws EcmaScriptException {
         return this.getDefaultValue(EStypeString);
     }
@@ -850,6 +863,7 @@ public class ESWrapper extends ESObject {
     }
 
     // overrides
+    @Override
     public ESValue doIndirectCall(Evaluator evaluator, ESObject target,
             String functionName, ESValue[] arguments)
             throws EcmaScriptException, NoSuchMethodException {
@@ -902,6 +916,7 @@ public class ESWrapper extends ESObject {
     }
 
     // overrides
+    @Override
     public ESValue doIndirectCallInScope(Evaluator evaluator,
             ScopeChain previousScope, ESObject thisObject, String functionName,
             int hash, ESValue[] arguments) throws EcmaScriptException {
@@ -923,12 +938,14 @@ public class ESWrapper extends ESObject {
     }
 
     // overrides
+    @Override
     public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
         return constructOrCall(arguments, true);
     }
 
     // overrides
+    @Override
     public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
         return constructOrCall(arguments, false);
@@ -1085,23 +1102,27 @@ public class ESWrapper extends ESObject {
     }
 
     // overrides
+    @Override
     public double doubleValue() {
         double d = Double.NaN; // should check if doubleValue is present
         return d;
     }
 
     // overrides
+    @Override
     public boolean booleanValue() {
         return true; // Should check if booleanValue is present
     }
 
     // overrides
+    @Override
     public String toString() {
         return (javaObject == null) ? "<?Wrapper to null?>" : javaObject
                 .toString();
     }
 
     // overrides
+    @Override
     public Object toJavaObject() {
         return javaObject;
     }
@@ -1113,6 +1134,7 @@ public class ESWrapper extends ESObject {
     // Routines to describe this object
 
     // overrides
+    @Override
     public String toDetailString() {
         if (asBean)
             return "ES:[BEAN:" + getESClassName() + ":" + javaObject.toString()
@@ -1148,6 +1170,7 @@ public class ESWrapper extends ESObject {
     }
 
     // overrides
+    @Override
     public Enumeration<ValueDescription> getAllDescriptions() {
         return new Enumeration<ValueDescription>() {
             Class<? extends Object> clazz = javaObject.getClass();
@@ -1336,6 +1359,7 @@ public class ESWrapper extends ESObject {
      * 
      * @return the description of this value
      */
+    @Override
     public ValueDescription getDescription(String name) {
         return new ValueDescription(name, "JAVAOBJ", this.toString());
     }

@@ -138,26 +138,31 @@ public class EcmaScriptVariableVisitor extends AbstractEcmaScriptVisitor impleme
         throw new ProgrammingError("Bad AST walk in EcmaScriptVariableVisitor");
     }
 
+    @Override
     public Object visit(ASTProgram node, Object data) {
         data = node.childrenAccept(this, data);
         return data;
     }
 
+    @Override
     public Object visit(ASTStatementList node, Object data) {
         data = node.childrenAccept(this, data);
         return data;
     }
 
+    @Override
     public Object visit(ASTFunctionDeclaration node, Object data) {
         // ignore function declarations in this mode
         return data;
     }
 
+    @Override
     public Object visit(ASTStatement node, Object data) {
         data = node.childrenAccept(this, data);
         return data;
     }
 
+    @Override
     public Object visit(ASTVariableDeclaration node, Object data) {
         int nChildren = node.jjtGetNumChildren();
         if (nChildren < 1 || nChildren > 2) {
@@ -176,210 +181,251 @@ public class EcmaScriptVariableVisitor extends AbstractEcmaScriptVisitor impleme
         return data;
     }
 
+    @Override
     public Object visit(ASTIfStatement node, Object data) {
         data = node.childrenAccept(this, data);
         return data;
     }
 
+    @Override
     public Object visit(ASTContinueStatement node, Object data) {
         // no internal variable declarations possible
         return data;
     }
 
+    @Override
     public Object visit(ASTWhileStatement node, Object data) {
         data = node.childrenAccept(this, data);
         return data;
     }
 
+    @Override
     public Object visit(ASTDoWhileStatement node, Object data) {
         data = node.childrenAccept(this, data);
         return data;
     }
 
+    @Override
     public Object visit(ASTForStatement node, Object data) {
         data = node.childrenAccept(this, data);
         return data;
     }
 
+    @Override
     public Object visit(ASTForInStatement node, Object data) {
         data = node.childrenAccept(this, data);
         return data;
     }
 
+    @Override
     public Object visit(ASTForVarStatement node, Object data) {
         data = node.childrenAccept(this, data);
         return data;
     }
 
+    @Override
     public Object visit(ASTForVarInStatement node, Object data) {
         data = node.childrenAccept(this, data);
         return data;
     }
 
+    @Override
     public Object visit(ASTBreakStatement node, Object data) {
         // no internal variable declarations possible
         return data;
     }
 
+    @Override
     public Object visit(ASTReturnStatement node, Object data) {
         // no internal variable declarations possible
         return data;
     }
 
+    @Override
     public Object visit(ASTWithStatement node, Object data) {
         node.setEvaluationSource(data);
         data = node.childrenAccept(this, data);
         return data;
     }
 
+    @Override
     public Object visit(ASTThisReference node, Object data) {
         // no internal variable declarations possible
         return data;
     }
 
+    @Override
     public Object visit(ASTSuperReference node, Object data) {
         // no internal variable declarations possible
         return data;
     }
 
+    @Override
     public Object visit(ASTCompositeReference node, Object data) {
         // no internal variable declarations possible
         return data;
     }
 
+    @Override
     public Object visit(ASTFunctionCallParameters node, Object data) {
         // no internal variable declarations possible
         return data;
     }
 
+    @Override
     public Object visit(ASTPropertyValueReference node, Object data) {
         // no internal variable declarations possible
         return data;
     }
 
+    @Override
     public Object visit(ASTPropertyIdentifierReference node, Object data) {
         // no internal variable declarations possible
         return data;
     }
 
+    @Override
     public Object visit(ASTAllocationExpression node, Object data) {
         // no internal variable declarations possible
         return data;
     }
 
+    @Override
     public Object visit(ASTPostfixExpression node, Object data) {
         // no internal variable declarations possible
         return data;
     }
 
+    @Override
     public Object visit(ASTUnaryExpression node, Object data) {
         // no internal variable declarations possible
         return data;
     }
 
+    @Override
     public Object visit(ASTBinaryExpressionSequence node, Object data) {
         // no internal variable declarations possible
         return data;
     }
 
+    @Override
     public Object visit(ASTAndExpressionSequence node, Object data) {
         // no internal variable declarations possible
         return data;
     }
 
+    @Override
     public Object visit(ASTOrExpressionSequence node, Object data) {
         // no internal variable declarations possible
         return data;
     }
 
+    @Override
     public Object visit(ASTConditionalExpression node, Object data) {
         // no internal variable declarations possible
         return data;
     }
 
     // Can we really have a cascade ?
+    @Override
     public Object visit(ASTAssignmentExpression node, Object data) {
         // no internal variable declarations possible
         return data;
     }
 
+    @Override
     public Object visit(ASTExpressionList node, Object data) {
         // no internal variable declarations possible
         return data;
     }
 
+    @Override
     public Object visit(ASTEmptyExpression node, Object data) {
         // no internal variable declarations possible
         return data;
     }
 
+    @Override
     public Object visit(ASTLiteral node, Object data) {
         // no internal variable declarations possible
         return data;
     }
 
+    @Override
     public Object visit(ASTIdentifier node, Object data) {
         // no internal variable declarations possible
         return data;
     }
 
+    @Override
     public Object visit(ASTObjectLiteral node, Object data) {
         // no internal variable declarations possible
         return data;
     }
 
+    @Override
     public Object visit(ASTPropertyNameAndValue node, Object data) {
         // no internal variable declarations possible
         return data;
     }
 
+    @Override
     public Object visit(ASTFunctionExpression node, Object data) {
         // Ignored in this mode
         return data;
     }
 
+    @Override
     public Object visit(ASTArrayLiteral node, Object data) {
         // no internal variable declarations possible
         return data;
     }
     
+    @Override
     public Object visit(ASTTryStatement node, Object data) {
         data = node.childrenAccept(this, data);
         return data;
     }
     
+    @Override
     public Object visit(ASTCatch node, Object data) {
         node.setEvaluationSource(data);
         data = node.childrenAccept(this, data);
         return data;
     }
     
+    @Override
     public Object visit(ASTFinally node, Object data) {
         node.setEvaluationSource(data);
         data = node.childrenAccept(this, data);
         return data;
     }
 
+    @Override
     public Object visit(ASTElision node, Object data) {
         // no internal variable declarations possible
         return data;
     }
     
+    @Override
     public Object visit(ASTGetAccessor node, Object data) {
         // no internal variable declarations possible
         return data;
     }
     
+    @Override
     public Object visit(ASTSetAccessor node, Object data) {
         // no internal variable declarations possible
         return data;
     }
     
+    @Override
     public Object visit(ASTThrowStatement node, Object data) {
         // TODO is this correct
         return data;
     }
     
+    @Override
     public Object visit(ASTSwitchStatement node, Object data) {
         // TODO is this correct
         return data;

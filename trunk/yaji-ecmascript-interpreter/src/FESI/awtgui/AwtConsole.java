@@ -112,6 +112,7 @@ public class AwtConsole extends Frame implements Console {
         System.setErr(consoleOut);
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 itrp.exit();
                 // System.exit(0);
@@ -201,6 +202,7 @@ public class AwtConsole extends Frame implements Console {
         // this.out = out;
         // }
 
+        @Override
         synchronized public int read() throws IOException {
             // If there are data in buffer the return the first character
             // in buffer.
@@ -219,6 +221,7 @@ public class AwtConsole extends Frame implements Console {
             return -1;
         }
 
+        @Override
         synchronized public int read(byte bytes[], int offset, int length)
                 throws IOException {
             if (byteArray != null && arrayOffset < arrayLength) {
@@ -248,6 +251,7 @@ public class AwtConsole extends Frame implements Console {
             return length;
         }
 
+        @Override
         synchronized public int available() throws IOException {
             return arrayLength - arrayOffset + super.available();
         }
@@ -318,6 +322,7 @@ public class AwtConsole extends Frame implements Console {
          * Add the contents in the internal buffer to the TextArea and delete
          * the buffer.
          */
+        @Override
         synchronized public void flush() {
             theTextArea.append(buffer);
             String text = theTextArea.getText();
@@ -328,6 +333,7 @@ public class AwtConsole extends Frame implements Console {
         /**
          * Write to the internal buffer.
          */
+        @Override
         synchronized public void write(int b) {
             // if (b == 13) {
             // buffer += eol;

@@ -78,6 +78,7 @@ public class AwtPromptBox implements PromptBox {
                 dimScreen.height / 2 - dimWindow.height / 2);
 
         frame.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 response = "";
                 frame.setVisible(false);

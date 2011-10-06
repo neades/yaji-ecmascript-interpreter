@@ -39,6 +39,7 @@ public class GlobalObject extends ObjectPrototype {
         super(prototype, evaluator);
     }
 
+    @Override
     public void putProperty(String propertyName, ESValue propertyValue, int hash)
             throws EcmaScriptException {
         StringBuilder sb = new StringBuilder(64);
@@ -81,6 +82,7 @@ public class GlobalObject extends ObjectPrototype {
                     super(fp, evaluator, name, 1);
                 }
 
+                @Override
                 public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     ObjectObject.createObject(this.getEvaluator());
@@ -110,6 +112,7 @@ public class GlobalObject extends ObjectPrototype {
                     super(fp, evaluator, name, 1);
                 }
 
+                @Override
                 public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     ESObject result = ObjectObject.createObject(this
@@ -165,6 +168,7 @@ public class GlobalObject extends ObjectPrototype {
                     super(fp, evaluator, name, 1);
                 }
 
+                @Override
                 public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     if (arguments.length < 1)
@@ -191,6 +195,7 @@ public class GlobalObject extends ObjectPrototype {
                     super(fp, evaluator, name, 2);
                 }
 
+                @Override
                 public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     if (arguments.length < 1)
@@ -262,6 +267,7 @@ public class GlobalObject extends ObjectPrototype {
                     super(fp, evaluator, name, 1);
                 }
 
+                @Override
                 public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     if (arguments.length < 1)
@@ -310,6 +316,7 @@ public class GlobalObject extends ObjectPrototype {
                     super(fp, evaluator, name, 1);
                 }
 
+                @Override
                 public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     if (arguments.length <= 0) {
@@ -349,6 +356,7 @@ public class GlobalObject extends ObjectPrototype {
                     super(fp, evaluator, name, 1);
                 }
 
+                @Override
                 public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     if (arguments.length <= 0) {
@@ -393,6 +401,7 @@ public class GlobalObject extends ObjectPrototype {
                     super(fp, evaluator, name, 1);
                 }
 
+                @Override
                 public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     if (arguments.length < 1)
@@ -409,6 +418,7 @@ public class GlobalObject extends ObjectPrototype {
                     super(fp, evaluator, name, 1);
                 }
 
+                @Override
                 public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     if (arguments.length < 1)
@@ -432,6 +442,7 @@ public class GlobalObject extends ObjectPrototype {
                     this.opts = opts;
                 }
 
+                @Override
                 public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     if (arguments.length >= 1) {

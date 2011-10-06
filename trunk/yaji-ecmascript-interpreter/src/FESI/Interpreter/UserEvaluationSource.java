@@ -38,6 +38,7 @@ public class UserEvaluationSource extends EvaluationSource {
         this.theDescription = theDescription;
     }
 
+    @Override
     protected String getEvaluationSourceText() {
         return "in: '" + theDescription + "'";
     }

@@ -17,6 +17,7 @@ class ASTArrayLiteral extends SimpleNode {
     }
 
     /** Accept the visitor. **/
+    @Override
     public Object jjtAccept(EcmaScriptVisitor visitor, Object data) {
         return visitor.visit(this, data);
     }

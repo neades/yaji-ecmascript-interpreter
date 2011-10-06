@@ -3,23 +3,18 @@ package FESI.Data;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
-
 import org.junit.Before;
 import org.junit.Test;
 
 import FESI.Exceptions.TypeError;
-import FESI.Interpreter.Evaluator;
 
-public class ObjectPrototypeTest {
+public class ObjectPrototypeTest extends EvaluatorTestCase {
 
-    private Evaluator evaluator;
-    private BuiltinFunctionObject objectObject;
 
+    @Override
     @Before
     public void setUp() throws Exception {
-        evaluator = new Evaluator();
-        
-        objectObject = (BuiltinFunctionObject) evaluator.getGlobalObject().getProperty("Object","Object".hashCode());
+        super.setUp();
     }
 
     @Test

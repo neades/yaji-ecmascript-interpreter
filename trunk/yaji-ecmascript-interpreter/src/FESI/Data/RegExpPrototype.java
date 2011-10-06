@@ -65,10 +65,12 @@ public class RegExpPrototype extends ESObject {
         }
     }
 
+    @Override
     public String getESClassName() {
         return "RegExp";
     }
 
+    @Override
     public String toString() {
         if (regExpString == null)
             return "/<null>/";
@@ -78,17 +80,20 @@ public class RegExpPrototype extends ESObject {
                 + (multiline?"m":"");
     }
 
+    @Override
     public String toDetailString() {
         return "ES:[Object: builtin " + this.getClass().getName() + ":"
                 + this.toString() + "]";
     }
 
+    @Override
     public ESValue getPropertyInScope(String propertyName,
             ScopeChain previousScope, int hash) throws EcmaScriptException {
         ESValue result = getLocalProperty(propertyName, hash);
         return (result == null) ? super.getPropertyInScope(propertyName, previousScope, hash) : result;
     }
 
+    @Override
     public ESValue getPropertyIfAvailable(String propertyName, int hash)
             throws EcmaScriptException {
         ESValue result = getLocalProperty(propertyName, hash);
@@ -110,6 +115,7 @@ public class RegExpPrototype extends ESObject {
         return null;
     }
 
+    @Override
     public void putProperty(String propertyName, ESValue propertyValue, int hash)
             throws EcmaScriptException {
         if ((hash == StandardProperty.IGNORE_CASEhash && propertyName.equals(StandardProperty.IGNORE_CASEstring))
@@ -124,6 +130,7 @@ public class RegExpPrototype extends ESObject {
         }
     }
 
+    @Override
     public String[] getSpecialPropertyNames() {
         String[] ns = { StandardProperty.GLOBALstring, StandardProperty.IGNORE_CASEstring, StandardProperty.MULTILINEstring, StandardProperty.LAST_INDEXstring, StandardProperty.SOURCEstring };
         return ns;

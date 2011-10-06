@@ -7,21 +7,19 @@ import org.junit.Before;
 import org.junit.Test;
 
 import FESI.Exceptions.EcmaScriptException;
-import FESI.Interpreter.Evaluator;
 import FESI.Util.EvaluatorAccess;
 
 
-public class GlobalObjectTest  {
+public class GlobalObjectTest extends EvaluatorTestCase {
     
 
     private static final ESValue[] UNDEFINED_ARGS = new ESValue[] {ESUndefined.theUndefined};
     private static final ESValue[] NO_ARGS = new ESValue[] {};
-    private Evaluator evaluator;
-    private GlobalObject globalObject;
+
+    @Override
     @Before
     public void setUp() throws Exception {
-        evaluator = new Evaluator();
-        globalObject = evaluator.getGlobalObject();
+        super.setUp();
     }
 
     @After 

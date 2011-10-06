@@ -48,6 +48,7 @@ public class TestJavaAccess implements Runnable {
             n = ++counter;
         }
 
+        @Override
         public String toString() {
             return "This is image " + n;
         }
@@ -211,6 +212,7 @@ public class TestJavaAccess implements Runnable {
             JSFunction jsf = new JSFunctionAdapter() {
                 private static final long serialVersionUID = -4070423414417723904L;
 
+                @Override
                 public Object doCall(JSObject thisObject, Object args[])
                         throws JSException {
                     String sep = thisObject.getMember("separator").toString();
@@ -417,6 +419,7 @@ public class TestJavaAccess implements Runnable {
 
 // A non public subclass of a public class
 class SomeLocalSubclass extends TestJavaAccess {
+    @Override
     public String whichOne() {
         return "sub";
     }
@@ -426,6 +429,7 @@ class SomeLocalSubclass extends TestJavaAccess {
 // (in this case Object) can be called.
 
 class SomeLocalStuff {
+    @Override
     public String toString() {
         return "local";
     }

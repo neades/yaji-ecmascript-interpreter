@@ -242,6 +242,7 @@ public class WrappedStringBuilder implements IAppendable, Serializable,
         return stringBuilder.subSequence(start, end);
     }
 
+    @Override
     public String toString() {
         return stringBuilder.toString();
     }

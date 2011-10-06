@@ -1536,36 +1536,42 @@ public class Interpret implements InterpreterCommands {
     protected void setupCommands() {
         // Add commands in alphabetic order preferably
         new Command("about", "display general information") {
+            @Override
             boolean doCommand(Interpret interpreter, String parameter) {
                 interpreter.printAbout();
                 return false;
             }
         };
         new Command("clear", "Clear console output") {
+            @Override
             boolean doCommand(Interpret interpreter, String parameter) {
                 interpreter.clearConsole();
                 return false;
             }
         };
         new Command("debugEvent", "Toggle debug flag for event processing") {
+            @Override
             boolean doCommand(Interpret interpreter, String parameter) {
                 interpreter.toggleDebugEvent();
                 return false;
             }
         };
         new Command("debugLoader", "Toggle debug flag for dynamic loading") {
+            @Override
             boolean doCommand(Interpret interpreter, String parameter) {
                 interpreter.toggleDebugLoader();
                 return false;
             }
         };
         new Command("debugJavaAccess", "Toggle debug flag for java interfacing") {
+            @Override
             boolean doCommand(Interpret interpreter, String parameter) {
                 interpreter.toggleDebugJavaAccess();
                 return false;
             }
         };
         new Command("debugParse", "Toggle debug flag for parsing") {
+            @Override
             boolean doCommand(Interpret interpreter, String parameter) {
                 interpreter.toggleDebugParse();
                 return false;
@@ -1573,24 +1579,28 @@ public class Interpret implements InterpreterCommands {
         };
         new Command("describe",
                 "Display details on the value given as parameter") {
+            @Override
             boolean doCommand(Interpret interpreter, String parameter) {
                 interpreter.describe(parameter);
                 return false;
             }
         };
         new Command("detail", "Display details on last result of an evaluation") {
+            @Override
             boolean doCommand(Interpret interpreter, String parameter) {
                 interpreter.printDetail();
                 return false;
             }
         };
         new Command("exit", "Exit the interpreter") {
+            @Override
             boolean doCommand(Interpret interpreter, String parameter) {
                 return true;
             }
         };
         new Command("expand",
                 "Expand between <script></script> in an .html file") {
+            @Override
             boolean doCommand(Interpret interpreter, String parameter) {
                 interpreter.clearLastResult();
                 interpreter.doExpand(parameter);
@@ -1598,30 +1608,35 @@ public class Interpret implements InterpreterCommands {
             }
         };
         new Command("extensions", "Display the list of loaded extensions") {
+            @Override
             boolean doCommand(Interpret interpreter, String parameter) {
                 interpreter.listExtensions();
                 return false;
             }
         };
         new Command("help", "Display the list of commands") {
+            @Override
             boolean doCommand(Interpret interpreter, String parameter) {
                 interpreter.printHelp();
                 return false;
             }
         };
         new Command("list", "List the enumerated properties of the object") {
+            @Override
             boolean doCommand(Interpret interpreter, String parameter) {
                 interpreter.listProperties(parameter);
                 return false;
             }
         };
         new Command("listAll", "List all properties of the object") {
+            @Override
             boolean doCommand(Interpret interpreter, String parameter) {
                 interpreter.listAllProperties(parameter);
                 return false;
             }
         };
         new Command("load", "Load a .js, .es or .esw file") {
+            @Override
             boolean doCommand(Interpret interpreter, String parameter) {
                 interpreter.clearLastResult();
                 // interpreter.doLoad(parameter); // Loading via module
@@ -1630,6 +1645,7 @@ public class Interpret implements InterpreterCommands {
             }
         };
         new Command("module", "Load a .js, .es or .esw file via the FESI.path") {
+            @Override
             boolean doCommand(Interpret interpreter, String parameter) {
                 interpreter.clearLastResult();
                 interpreter.doLoad(parameter); // Loading via module
@@ -1637,24 +1653,28 @@ public class Interpret implements InterpreterCommands {
             }
         };
         new Command("memory", "Give information on available memory") {
+            @Override
             boolean doCommand(Interpret interpreter, String parameter) {
                 interpreter.listMemory();
                 return false;
             }
         };
         new Command("path", "Display the current load path") {
+            @Override
             boolean doCommand(Interpret interpreter, String parameter) {
                 interpreter.doPath();
                 return false;
             }
         };
         new Command("pwd", "Display the current user directory") {
+            @Override
             boolean doCommand(Interpret interpreter, String parameter) {
                 interpreter.doPwd();
                 return false;
             }
         };
         new Command("reset", "Restore the interpreter to the initial state") {
+            @Override
             boolean doCommand(Interpret interpreter, String parameter) {
                 interpreter.clearLastResult();
                 interpreter.resetEvaluator();
@@ -1662,6 +1682,7 @@ public class Interpret implements InterpreterCommands {
             }
         };
         new Command("test", "Execute a test file (.estest)") {
+            @Override
             boolean doCommand(Interpret interpreter, String parameter) {
                 interpreter.clearLastResult();
                 interpreter.doTest(parameter);
@@ -1669,6 +1690,7 @@ public class Interpret implements InterpreterCommands {
             }
         };
         new Command("version", "Display the version of the interpreter") {
+            @Override
             boolean doCommand(Interpret interpreter, String parameter) {
                 interpreter.printVersion();
                 return false;

@@ -41,6 +41,7 @@ public class ObjectObject extends BuiltinFunctionObject {
 
             private static final long serialVersionUID = 1L;
 
+            @Override
             public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                     throws EcmaScriptException {
                 if (arguments.length == 0
@@ -56,6 +57,7 @@ public class ObjectObject extends BuiltinFunctionObject {
 
             private static final long serialVersionUID = 1L;
 
+            @Override
             public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                     throws EcmaScriptException {
                 if (arguments.length == 0
@@ -210,6 +212,7 @@ public class ObjectObject extends BuiltinFunctionObject {
     }
 
     // overrides
+    @Override
     public String toString() {
         return "<Object>";
     }
@@ -227,6 +230,7 @@ public class ObjectObject extends BuiltinFunctionObject {
     }
 
     // overrides
+    @Override
     public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
         ESValue theValue;
@@ -244,6 +248,7 @@ public class ObjectObject extends BuiltinFunctionObject {
     }
 
     // overrides
+    @Override
     public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
         ESValue theValue;

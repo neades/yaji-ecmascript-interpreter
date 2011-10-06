@@ -17,16 +17,14 @@ import FESI.Interpreter.Evaluator;
 import FESI.Util.EvaluatorAccess;
 import FESI.Util.IEvaluatorAccess;
 
-public class ObjectObjectTest {
+public class ObjectObjectTest extends EvaluatorTestCase {
     
     private static final ESBoolean ES_TRUE = ESBoolean.valueOf(true);
     private static final ESBoolean ES_FALSE = ESBoolean.valueOf(false);
-    private Evaluator evaluator;
-    private BuiltinFunctionObject objectObject;
-    private BuiltinFunctionObject arrayObject;
+    @Override
     @Before
     public void setUp() throws Exception {
-        evaluator = new Evaluator();
+        super.setUp();
         
         EvaluatorAccess.setAccessor(new IEvaluatorAccess() {
             

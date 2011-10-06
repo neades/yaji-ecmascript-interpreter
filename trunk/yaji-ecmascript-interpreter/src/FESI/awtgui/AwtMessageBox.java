@@ -69,6 +69,7 @@ public class AwtMessageBox implements MessageBox {
                 dimScreen.height / 2 - dimWindow.height / 2);
 
         frame.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 frame.setVisible(false);
                 frame.dispose();

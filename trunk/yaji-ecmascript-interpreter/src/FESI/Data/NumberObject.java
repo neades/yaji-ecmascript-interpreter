@@ -33,11 +33,13 @@ public class NumberObject extends BuiltinFunctionObject {
     }
 
     // overrides
+    @Override
     public String toString() {
         return "<Number>";
     }
 
     // overrides
+    @Override
     public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
         if (arguments.length == 0) {
@@ -48,6 +50,7 @@ public class NumberObject extends BuiltinFunctionObject {
     }
 
     // overrides
+    @Override
     public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
         NumberPrototype theObject = null;
@@ -86,6 +89,7 @@ public class NumberObject extends BuiltinFunctionObject {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
             ESValue v = ((NumberPrototype) thisObject).value;
@@ -109,6 +113,7 @@ public class NumberObject extends BuiltinFunctionObject {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
             return ((NumberPrototype) thisObject).value;
@@ -123,6 +128,7 @@ public class NumberObject extends BuiltinFunctionObject {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue invoke(NumberPrototype thisNumber,
                 ESValue[] arguments) throws EcmaScriptException {
             double d = thisNumber.doubleValue();
@@ -149,6 +155,7 @@ public class NumberObject extends BuiltinFunctionObject {
             super(fp, evaluator, name, 1);
         }
 
+        @Override
         public ESValue invoke(NumberPrototype thisNumber,
                 ESValue[] arguments) throws EcmaScriptException {
             int fractionDigits = getArg(arguments,0).toInt32();

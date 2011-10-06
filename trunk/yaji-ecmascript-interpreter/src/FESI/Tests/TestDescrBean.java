@@ -65,6 +65,7 @@ public class TestDescrBean {
         return intIndexed[index];
     }
 
+    @Override
     public String toString() {
         StringBuffer v = new StringBuffer("TestDescrBean: intValue=" + intValue
                 + ", intArray=[");

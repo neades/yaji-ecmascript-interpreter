@@ -45,6 +45,7 @@ public class ProgrammingError extends Error {
     /**
      * Display the internal error asking to contact the author
      */
+    @Override
     public String getMessage() {
         String m = super.getMessage();
         m += eol + "*** FESI Internal error - contact the author ***";

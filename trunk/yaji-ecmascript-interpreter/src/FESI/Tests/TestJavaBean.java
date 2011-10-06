@@ -51,6 +51,7 @@ public class TestJavaBean {
         return -both;
     }
 
+    @Override
     public String toString() {
         return "TestJavaBean: visible=" + visible + ", hidden=" + hidden
                 + ", both=" + both;

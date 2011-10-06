@@ -39,6 +39,7 @@ public class FunctionEvaluationSource extends EvaluationSource {
         this.theFunctionName = theFunctionName;
     }
 
+    @Override
     protected String getEvaluationSourceText() {
         return "of function '" + theFunctionName + "' "
                 + previousSource.getEvaluationSourceText();

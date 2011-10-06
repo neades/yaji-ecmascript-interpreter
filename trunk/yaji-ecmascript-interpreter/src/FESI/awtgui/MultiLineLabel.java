@@ -90,12 +90,14 @@ class MultiLineLabel extends Canvas {
         repaint(); // Request a redraw
     }
 
+    @Override
     public void setFont(Font f) {
         super.setFont(f); // tell our superclass about the new font
         measured = false; // Note that we need to remeasure lines
         repaint(); // Request a redraw
     }
 
+    @Override
     public void setForeground(Color c) {
         super.setForeground(c); // tell our superclass about the new color
         repaint(); // Request a redraw (size is unchanged)
@@ -136,6 +138,7 @@ class MultiLineLabel extends Canvas {
      * This method is called by a layout manager when it wants to know how big
      * we'd like to be.
      */
+    @Override
     public Dimension getPreferredSize() {
         if (!measured)
             measure();
@@ -147,6 +150,7 @@ class MultiLineLabel extends Canvas {
      * This method is called when the layout manager wants to know the bare
      * minimum amount of space we need to get by.
      */
+    @Override
     public Dimension getMinimumSize() {
         return getPreferredSize();
     }
@@ -157,6 +161,7 @@ class MultiLineLabel extends Canvas {
      * about the color or font--the superclass takes care of setting those in
      * the Graphics object we're passed.
      */
+    @Override
     public void paint(Graphics g) {
         int x, y;
         Dimension size = this.getSize();

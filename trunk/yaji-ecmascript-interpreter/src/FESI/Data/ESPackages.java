@@ -56,11 +56,13 @@ public class ESPackages extends ESLoader {
     }
 
     // overrides
+    @Override
     public ESObject getPrototype() {
         throw new ProgrammingError("Cannot get prototype of Package");
     }
 
     // overrides
+    @Override
     public String getESClassName() {
         return "Packages";
     }
@@ -77,6 +79,7 @@ public class ESPackages extends ESLoader {
     // Getting a property dynamically creates a new Package prefix object
     // If the resulting name represents a class then the class object is created
     // and returned (and will be used for example by the "new" operator).
+    @Override
     public ESValue getPropertyIfAvailable(String propertyName, int hash)
             throws EcmaScriptException {
         ESValue value = getPropertyMap().get(propertyName, hash);
@@ -107,6 +110,7 @@ public class ESPackages extends ESLoader {
     // overrides
     // Establish a bean classloader
     // The parameter is the directory or jar to load from
+    @Override
     public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
         if (previousPackage == null && classLoader == null) {
@@ -126,11 +130,13 @@ public class ESPackages extends ESLoader {
     }
 
     // overrides
+    @Override
     public String getTypeofString() {
         return "JavaPackage";
     }
 
     // overrides
+    @Override
     public String toDetailString() {
         return "ES:<" + getESClassName() + ":'" + buildPrefix() + "'"
                 + ((classLoader == null) ? "" : (",@" + classLoader)) + ">";

@@ -154,6 +154,7 @@ public class ESReference {
      * 
      * @return The string naming the reference.
      */
+    @Override
     public String toString() {
         return ((base == null) ? "" : ("{" + base.toString() + "}."))
                 + propertyName;
