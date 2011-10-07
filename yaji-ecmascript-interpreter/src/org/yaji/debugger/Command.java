@@ -124,7 +124,7 @@ class Command {
         Set<Entry<String, String>> entrySet = headers.entrySet();
         for (Entry<String, String> entry : entrySet) {
             String key = entry.getKey();
-            builder.append(key).append(":");
+            builder.append(key).append(':');
             if (entry.getKey().equals("Content-Length")) {
                 builder.append(contentLength);
             } else {

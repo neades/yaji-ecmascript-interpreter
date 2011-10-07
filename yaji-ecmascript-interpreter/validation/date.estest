@@ -39,7 +39,7 @@ d3.getMonth()==0 && d3.getDate()==3 && d3.getDay()==6 &&
 d3.getHours()==12 && d3.getMinutes()==30 &&
 d3.getSeconds()==5 && d3.getMilliseconds()==10;
 
-@test date.3
+@test date.3a
 d3.getUTCFullYear()==1998  &&
 d3.getUTCMonth()==0 && d3.getUTCDate()==3 && d3.getUTCDay()==6 &&
 d3.getUTCHours()==11 && d3.getUTCMinutes()==30 &&
@@ -116,10 +116,10 @@ dt.toJSON() === '2010-07-30T15:05:00.000Z';
 var dt = new Date();
 dt.setUTCFullYear(2010,6,30);
 dt.setUTCHours(15,5,0,0);
-//writeln("dt.valueOf() "+dt.valueOf() );
-//writeln("Date.parse(dt.toString())" + dt.toString() + " -> " + Date.parse(dt.toString()) );
-//writeln("Date.parse(dt.toUTCString())" + dt.toUTCString() + " -> " +  + Date.parse(dt.toUTCString()) );
-//writeln("Date.parse(dt.toISOString()) " + dt.toISOString() + " -> " + Date.parse(dt.toISOString()) );
+writeln("dt.valueOf() "+dt.valueOf() );
+writeln("Date.parse(dt.toString())" + dt.toString() + " -> " + Date.parse(dt.toString()) );
+writeln("Date.parse(dt.toUTCString())" + dt.toUTCString() + " -> " +  + Date.parse(dt.toUTCString()) );
+writeln("Date.parse(dt.toISOString()) " + dt.toISOString() + " -> " + Date.parse(dt.toISOString()) );
 var t = dt.valueOf()
 t === Date.parse(dt.toString()) &&
 t === Date.parse(dt.toUTCString()) &&

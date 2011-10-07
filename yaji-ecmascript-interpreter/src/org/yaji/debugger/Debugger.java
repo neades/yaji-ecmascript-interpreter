@@ -33,7 +33,7 @@ public class Debugger {
 
     public void setEvaluator(Evaluator evaluator) {
         this.v8debugger = new V8Debugger(this,evaluator);
-        new Thread(new DebugListener(this, port, evaluator)).start();
+        new Thread(new DebugListener(this, port, evaluator),"YAJI Debugger").start();
     }
 
     private Object latch = new Object();

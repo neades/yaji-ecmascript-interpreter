@@ -29,7 +29,9 @@ import java.io.StringReader;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Locale;
 import java.util.StringTokenizer;
+import java.util.TimeZone;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -971,6 +973,10 @@ public class Evaluator implements Serializable {
 
     private Debugger debugger;
 
+    private Locale defaultLocale;
+
+    private TimeZone defaultTimeZone;
+
     /**
      * subevaluator - Evaluate a function node (inside a program evaluation)
      * 
@@ -1490,4 +1496,26 @@ public class Evaluator implements Serializable {
         this.debugger.setEvaluator(this);
     }
 
+    
+    public Locale getDefaultLocale() {
+        if (defaultLocale == null) {
+            return Locale.getDefault();
+        }
+        return defaultLocale;
+    }
+    
+    public  TimeZone getDefaultTimeZone() {
+        if (defaultTimeZone == null) {
+            return TimeZone.getDefault();
+        }
+        return defaultTimeZone;
+    }
+    
+    public void setDefaultLocale( Locale locale) {
+        defaultLocale = locale;
+    }
+    
+    public void setDefaultTimeZone( TimeZone timeZone) {
+        defaultTimeZone = timeZone;
+    }
 }

@@ -189,6 +189,9 @@ public final class ESString extends ESPrimitive {
 
     @Override
     public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
         // handle the special cases of ESNull and ESUndefined
         if (o == ESNull.theNull || o == ESUndefined.theUndefined) {
             return false;

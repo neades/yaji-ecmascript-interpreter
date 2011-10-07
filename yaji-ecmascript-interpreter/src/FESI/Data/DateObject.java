@@ -18,6 +18,7 @@
 package FESI.Data;
 
 import java.text.DateFormat;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -32,11 +33,21 @@ import FESI.Interpreter.Evaluator;
 
 public class DateObject extends BuiltinFunctionObject {
 
+    private static final int YEAR_POSITION = 0;
+    private static final int MONTH_POSITION = 1;
+    private static final int DAY_POSITION = 2;
+    private static final int HOUR_POSITION = 3;
+    private static final int MINUTE_POSITION = 4;
+    private static final int SECOND_POSITION = 5;
+    private static final int MILLISECOND_POSITION = 6;
+
     private static final long serialVersionUID = -4299764407542326480L;
     
     private static final String SIMPLIFIED_ISO8601_DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
     public static final String UTC_FORMAT_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS zzz";
+    
+    public static final String TO_STRING_PATTERN = "EEE MMM dd HH:mm:ss zzz yyyy";
 
     private static class DateObjectParse extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
@@ -50,23 +61,8 @@ public class DateObject extends BuiltinFunctionObject {
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
             String dateString = getArg(arguments,0).toString();
-            String [] formats = { SIMPLIFIED_ISO8601_DATE_FORMAT_PATTERN, UTC_FORMAT_PATTERN, "EEE MMM dd HH:mm:ss zzz yyyy", null };
-            for (String format : formats) {
-                DateFormat df;
-                if (format == null) {
-                    df = DateFormat.getDateInstance();
-                } else {
-                    df = new SimpleDateFormat(format);
-                    df.setTimeZone(TimeZone.getTimeZone("UTC"));
-                }
-                try {
-                    Date date = df.parse(dateString);
-                    return ESNumber.valueOf(date.getTime());
-                } catch (java.text.ParseException e) {
-                    // fail try next format
-                }
-            }
-            return ESNumber.valueOf(Double.NaN);
+            long result = parse(dateString, getEvaluator().getDefaultTimeZone());
+            return result == -1L ? ESNumber.NaN : ESNumber.valueOf(result);
         }
     }
 
@@ -122,8 +118,13 @@ public class DateObject extends BuiltinFunctionObject {
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
             DatePrototype aDate = (DatePrototype) thisObject;
-            return (aDate.date == null) ? new ESString("NaN")
-                    : new ESString(aDate.date.toString());
+            if (aDate.date == null) {
+                return new ESString("NaN");
+            }
+            Evaluator evaluator = getEvaluator();
+            DateFormat df = new SimpleDateFormat(TO_STRING_PATTERN);
+            df.setTimeZone(evaluator.getDefaultTimeZone());
+            return new ESString(df.format(aDate.date));
         }
     }
 
@@ -861,36 +862,68 @@ public class DateObject extends BuiltinFunctionObject {
             ESValue[] arguments) throws EcmaScriptException {
         int l = arguments.length;
 
-        if (l == 2 || l == 0) {
+        if (l == 0) {
             theObject.date = new Date();
         } else if (l == 1) {
-            double d = arguments[0].doubleValue();
-            if (Double.isNaN(d)) {
-                theObject.date = null;
+            ESValue v = getArg(arguments,0).toESPrimitive();
+            long time;
+            if (v.getTypeOf() == EStypeString) {
+                time = parse(v.toString(), getEvaluator().getDefaultTimeZone());
             } else {
-                theObject.date = new Date((long) d);
+                double d = arguments[0].doubleValue();
+                time = (Double.isNaN(d)) ? -1 : (long) d;
             }
+            theObject.date = (time == -1) ? null : new Date(time);
         } else {
-            int year = arguments[0].toInt32();
-            if (0 <= year && year <= 99) {
-                year += 1900;
-            }
-            int month = arguments[1].toInt32();
-            int day = arguments[2].toInt32();
-            int hour = (l > 3) ? arguments[3].toInt32() : 0;
-            int minute = (l > 4) ? arguments[4].toInt32() : 0;
-            int second = (l > 5) ? arguments[5].toInt32() : 0;
-            int ms = (l > 6) ? arguments[6].toInt32() : 0;
-            // Using current current locale, set it to the specified time
-            // System.out.println("YEAR IS " + year);
-            GregorianCalendar cal = new GregorianCalendar(year, month, day,
-                    hour, minute, second);
-            if (ms != 0) {
-                cal.set(Calendar.MILLISECOND, ms);
-            }
-            theObject.date = cal.getTime();
+            Date time = dateFromComponents(arguments,getEvaluator().getDefaultTimeZone());
+            theObject.date = time;
         }
     }
+
+    private Date dateFromComponents(ESValue[] arguments, TimeZone timeZone)
+            throws EcmaScriptException {
+        int [] dateComponents = new int[7];
+        for( int i=0; i<7; i++) {
+            if (i >= arguments.length) {
+                if (i<=MONTH_POSITION) {
+                    return null;
+                }
+                if (i == DAY_POSITION) {
+                    dateComponents[i] = 1;
+                } else {
+                    dateComponents[i] = 0;
+                }
+            } else {
+                double v = arguments[i].doubleValue();
+                if (Double.isNaN(v)) {
+                    return null;
+                }
+                dateComponents[i] = (int)v;
+            }
+        }
+        int year = dateComponents[YEAR_POSITION];
+        if (0 <= year && year <= 99) {
+            year += 1900;
+        }
+        int month = dateComponents[MONTH_POSITION];
+        int day = dateComponents[DAY_POSITION];
+        int hour = dateComponents[HOUR_POSITION];
+        int minute = dateComponents[MINUTE_POSITION];
+        int second = dateComponents[SECOND_POSITION];
+        int ms = dateComponents[MILLISECOND_POSITION];
+        // Using current current locale, set it to the specified time
+        // System.out.println("YEAR IS " + year);
+        GregorianCalendar cal = new GregorianCalendar(timeZone);
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month);
+        cal.set(Calendar.DAY_OF_MONTH, day);
+        cal.set(Calendar.HOUR_OF_DAY, hour);
+        cal.set(Calendar.MINUTE, minute);
+        cal.set(Calendar.SECOND, second);
+        cal.set(Calendar.MILLISECOND, ms);
+        return cal.getTime();
+    }
+
 
     /**
      * Utility function to create the single Date object
@@ -1069,5 +1102,73 @@ public class DateObject extends BuiltinFunctionObject {
             e.printStackTrace();
             throw new ProgrammingError(e.getMessage());
         }
+    }
+
+    private static abstract class DateParser {
+        
+        public Date parse(String dateString, TimeZone timeZone) {
+            DateFormat formatter = getFormatter(timeZone);
+            ParsePosition initialPosition = new ParsePosition(0);
+            return formatter.parse(dateString,initialPosition);
+        }
+
+        protected abstract DateFormat getFormatter(TimeZone timeZone);
+    }
+    
+    private static class UTCDateParser extends DateParser {
+        private final String pattern;
+        private static final TimeZone UTC_TIME_ZONE = TimeZone.getTimeZone("UTC");
+
+        public UTCDateParser(String  pattern) {
+            this.pattern = pattern;
+        }
+        
+        @Override
+        public DateFormat getFormatter(TimeZone timeZone) {
+            SimpleDateFormat df = new SimpleDateFormat(pattern);
+            df.setTimeZone(UTC_TIME_ZONE);
+            return df;
+        }
+    }
+    
+    private static class TZDateParser extends DateParser {
+        private final String pattern;
+
+        public TZDateParser(String  pattern) {
+            this.pattern = pattern;
+        }
+        
+        @Override
+        public DateFormat getFormatter(TimeZone timeZone) {
+            SimpleDateFormat df = new SimpleDateFormat(pattern);
+            df.setTimeZone(timeZone);
+            return df;
+        }
+    }
+    
+    private static class DefaultDateParser extends DateParser {
+
+        @Override
+        protected DateFormat getFormatter(TimeZone timeZone) {
+            DateFormat df = DateFormat.getDateTimeInstance();
+            df.setTimeZone(timeZone);
+            return df;
+        }
+        
+    }
+    
+    private static DateParser [] parsers = {
+            new UTCDateParser(SIMPLIFIED_ISO8601_DATE_FORMAT_PATTERN),
+            new UTCDateParser(UTC_FORMAT_PATTERN),
+            new TZDateParser(TO_STRING_PATTERN), 
+            new DefaultDateParser() };
+    private static long parse(String dateString, TimeZone timeZone) {
+        for (DateParser parser : parsers) {
+            Date date = parser.parse(dateString,timeZone);
+            if (date != null) {
+                return date.getTime();
+            }
+        }
+        return -1L;
     }
 }

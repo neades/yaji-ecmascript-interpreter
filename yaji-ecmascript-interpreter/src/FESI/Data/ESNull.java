@@ -106,6 +106,12 @@ public final class ESNull extends ESPrimitive {
         }
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        // We mean this - there is only one null
+        return super.equals(obj);
+    }
+    
     /**
      * Advanced FESI GT Modified: 12/10/2004 Support for subtypes (storing
      * values in hashset)

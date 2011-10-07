@@ -37,6 +37,7 @@ public final class ESNumber extends ESPrimitive {
     public static final ESNumber NEGATIVE_ZERO;
     public static final Double DOUBLE_ZERO;
     public static final Double DOUBLE_NEGATIVE_ZERO;
+    public static final ESNumber NaN;
     
     // The value
     private final double value;
@@ -66,6 +67,8 @@ public final class ESNumber extends ESPrimitive {
         
         ZERO = ESNumber.valueOf(DOUBLE_ZERO.longValue());
         NEGATIVE_ZERO = new ESNumber(DOUBLE_NEGATIVE_ZERO.doubleValue());
+        
+        NaN = ESNumber.valueOf(Double.NaN);
     }
 
     /**

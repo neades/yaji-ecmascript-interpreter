@@ -144,6 +144,12 @@ public final class ESUndefined extends ESPrimitive {
         }
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        // we mean this - there is only one undefined
+        return super.equals(obj);
+    }
+    
     /**
      * Advanced FESI GT Modified: 12/10/2004 Support for subtypes (storing
      * values in hashset)
