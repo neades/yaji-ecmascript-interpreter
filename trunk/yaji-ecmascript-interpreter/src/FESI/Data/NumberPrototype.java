@@ -104,7 +104,7 @@ class NumberPrototype extends ESObject {
         double x = value.doubleValue();
         StringBuilder s = new StringBuilder();
         if (x < 0.0) {
-            s.append("-");
+            s.append('-');
             x = -x;
         }
         int e;
@@ -176,7 +176,7 @@ class NumberPrototype extends ESObject {
         if (d > 1) {
             s.append(Long.toString((long)d));
         } else {
-            s.append("0");
+            s.append('0');
         }
         if (fractionDigits > 0) {
             s.append('.');
