@@ -20,6 +20,7 @@ package FESI.Data;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
 import FESI.Exceptions.RangeError;
+import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
 
 /**
@@ -81,6 +82,7 @@ public class NumberObject extends BuiltinFunctionObject {
 
         protected abstract ESValue invoke(NumberPrototype thisObject, ESValue[] arguments) throws EcmaScriptException;
     }
+    
     private static class NumberPrototypeToString extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
@@ -92,16 +94,37 @@ public class NumberObject extends BuiltinFunctionObject {
         @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
-            ESValue v = ((NumberPrototype) thisObject).value;
-            String s = v.toString();
+            String s;
             if (arguments.length > 0) {
                 double d = arguments[0].doubleValue();
                 if (!Double.isNaN(d)) {
                     s = Long
-                            .toString(((long) v.doubleValue()), (int) d);
+                            .toString(((long) thisObject.doubleValue()), (int) d);
+                } else {
+                    s = thisObject.toString();
                 }
+            } else {
+                s = thisObject.toString();
             }
             return new ESString(s);
+        }
+    }
+    
+    private static class NumberPrototypeToExponential extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        NumberPrototypeToExponential(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 1);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            if (! (thisObject instanceof NumberPrototype) ) {
+                throw new TypeError("toPrecision can only be applied to Numbers");
+            }
+            return new ESString(((NumberPrototype)thisObject).toExponential(getArg(arguments,0)));
         }
     }
     
@@ -213,6 +236,9 @@ public class NumberObject extends BuiltinFunctionObject {
                             functionPrototype));
             numberPrototype.putHiddenProperty("toFixed",
                     new NumberPrototypeToFixed("toFixed", evaluator,
+                            functionPrototype));
+            numberPrototype.putHiddenProperty("toExponential",
+                    new NumberPrototypeToExponential("toExponential", evaluator,
                             functionPrototype));
         } catch (EcmaScriptException e) {
             e.printStackTrace();

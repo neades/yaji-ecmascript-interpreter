@@ -121,3 +121,11 @@ anumber.toPrecision(2) === '1.2e+2';
 @test number.toFixed.1
 (10).toFixed(2) === '10.00' &&
 930.9805.toFixed(3) === '930.981';
+
+@test number.toExponential.1
+var num=77.1234;
+num.toExponential() === '7.71234e+1' &&
+num.toExponential(4) === '7.7123e+1' &&
+num.toExponential(2) === '7.71e+1' &&
+77.1234.toExponential() === '7.71234e+1' &&
+77 .toExponential() === '7.7e+1';

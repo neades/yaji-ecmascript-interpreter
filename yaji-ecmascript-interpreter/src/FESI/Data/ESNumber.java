@@ -18,6 +18,8 @@
 package FESI.Data;
 
 import java.io.IOException;
+import java.util.Formatter;
+import java.util.Locale;
 
 import org.yaji.json.JsonState;
 
@@ -151,18 +153,68 @@ public final class ESNumber extends ESPrimitive {
     @Override
     public String toString() {
         if (isLongValue) {
-            if (longValue < 128 && longValue >= 0) {
-                int intValue = (int) longValue;
-                String stringValue = toStringCache[intValue];
-                if (stringValue == null) {
-                    stringValue = Integer.toString(intValue);
-                    toStringCache[intValue] = stringValue;
-                }
-                return stringValue;
-            }
-            return Long.toString(longValue);
+            return toLongString();
         }
-        return Double.toString(doubleValue());
+        double d = doubleValue();
+        if (Double.isNaN(d)) {
+            return "NaN";
+        }
+        StringBuilder sb = new StringBuilder();
+        if (d < 0) {
+            sb.append('-');
+            d = -d;
+        }
+        if (Double.isInfinite(d)) {
+            sb.append("Infinity");
+        } else { 
+            int n = (int)Math.floor(Math.log10(d));
+            double sd = (d/Math.pow(10, n))/10.0d;
+            String s = toString(sd,16);
+            int distinctLength;
+            for ( distinctLength = s.length()-1; s.charAt(distinctLength) == '0'; distinctLength --) {
+                //
+            }
+            s = s.substring(2, distinctLength+1);
+            int k = s.length();
+            if (k <= n && n <= 21) {
+                sb.append(s);
+                pad(sb,n-k+1,'0');
+            } else if (0 <= n && n <= 21) {
+                sb.append(s.substring(0,n+1)).append('.').append(s.substring(n+1));
+            } else if (-6 < n && n < 0) {
+                sb.append("0.");
+                pad(sb,-n-1,'0');
+                sb.append(s);
+            } else {
+                if (k == 1) {
+                    sb.append(s);
+                } else {
+                    sb.append(s.charAt(0)).append('.').append(s.substring(1));
+                }
+                sb.append('e');
+                if (n >= 0) {
+                    sb.append('+');
+                }
+                sb.append(n);
+            }
+        }
+        return sb.toString();
+    }
+
+    private String toLongString() {
+        String string;
+        if (longValue < 128 && longValue >= 0) {
+            int intValue = (int) longValue;
+            String stringValue = toStringCache[intValue];
+            if (stringValue == null) {
+                stringValue = Integer.toString(intValue);
+                toStringCache[intValue] = stringValue;
+            }
+            string = stringValue;
+        } else {
+            string = Long.toString(longValue);
+        }
+        return string;
     }
 
     // overrides
@@ -346,6 +398,21 @@ public final class ESNumber extends ESPrimitive {
     @Override
     public boolean canJson() {
         return true;
+    }
+    
+    static void pad(StringBuilder s, int count, char ch) {
+        for(int i=0; i<count; i++) {
+            s.append(ch);
+        }
+    }
+
+    static String toString(double d,int p) {
+        Appendable sb = new StringBuilder();
+        Formatter formatter = new Formatter(sb,Locale.US);
+        String format = "%."+p+"g";
+        formatter.format(format, Double.valueOf(d));
+        return sb.toString();
+    
     }
     
     @Override
