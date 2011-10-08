@@ -101,6 +101,7 @@ isNaN(parseFloat());
 isNaN(parseFloat(undefined));
 
 @test parseFloat.3
+writeln(parseFloat(3.14));
 parseFloat(3.14)==3.14;
 
 @test parseInt.1

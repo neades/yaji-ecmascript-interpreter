@@ -2,6 +2,8 @@ package FESI.Data;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Random;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -9,10 +11,20 @@ import FESI.Exceptions.RangeError;
 
 public class NumberPrototypeTest extends EvaluatorTestCase {
 
+    private ESObject [] toTest;
+    private boolean performance = false;
+
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
+        if (performance) {
+            Random r = new Random(1);
+            toTest = new ESObject[100000];
+            for (int i=0; i<toTest.length; i++) {
+                toTest[i] = ESNumber.valueOf(Double.longBitsToDouble(r.nextLong())).toESObject(evaluator);
+            }
+        }
     }
 
     @Test
@@ -177,7 +189,7 @@ public class NumberPrototypeTest extends EvaluatorTestCase {
     public void toFixedForTooLarge() throws Exception {
         ESObject number = ESNumber.valueOf(1e21).toESObject(evaluator);
         ESValue value = number.doIndirectCall(evaluator, number, "toFixed", new ESValue[] { ESNumber.valueOf(5) });
-        assertEquals(new ESString("1.0E21"),value);
+        assertEquals(new ESString("1000000000000000000000"),value);
     }
     
     @Test
@@ -213,5 +225,196 @@ public class NumberPrototypeTest extends EvaluatorTestCase {
         ESObject number = ESNumber.valueOf(930.9805).toESObject(evaluator);
         ESValue value = number.doIndirectCall(evaluator, number, "toFixed", new ESValue[] { ESNumber.valueOf(3) });
         assertEquals(new ESString("930.981"),value);
+    }
+    
+    @Test
+    public void toStringForNaN() throws Exception {
+        ESObject number = ESNumber.valueOf(Double.NaN).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toString", ESValue.EMPTY_ARRAY);
+        assertEquals(new ESString("NaN"),value);
+    }
+    
+    @Test
+    public void toStringForZero() throws Exception {
+        ESObject number = ESNumber.valueOf(0).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toString", ESValue.EMPTY_ARRAY);
+        assertEquals(new ESString("0"),value);
+    }
+    
+    @Test
+    public void toStringForNegativeZero() throws Exception {
+        ESObject number = ESNumber.valueOf(-0).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toString", ESValue.EMPTY_ARRAY);
+        assertEquals(new ESString("0"),value);
+    }
+    
+    @Test
+    public void toStringForNegativeInfinity() throws Exception {
+        ESObject number = ESNumber.valueOf(Double.NEGATIVE_INFINITY).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toString", ESValue.EMPTY_ARRAY);
+        assertEquals(new ESString("-Infinity"),value);
+    }
+    
+    @Test
+    public void toStringForPositiveInfinity() throws Exception {
+        ESObject number = ESNumber.valueOf(Double.POSITIVE_INFINITY).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toString", ESValue.EMPTY_ARRAY);
+        assertEquals(new ESString("Infinity"),value);
+    }
+    
+    @Test
+    public void toStringFor9_8_1_6() throws Exception {
+        ESObject number = ESNumber.valueOf(123456000).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toString", ESValue.EMPTY_ARRAY);
+        assertEquals(new ESString("123456000"),value);
+    }
+    
+    @Test
+    public void toStringFor9_8_1_7() throws Exception {
+        ESObject number = ESNumber.valueOf(123.456).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toString", ESValue.EMPTY_ARRAY);
+        assertEquals(new ESString("123.456"),value);
+    }
+    
+    @Test
+    public void toStringFor9_8_1_8() throws Exception {
+        ESObject number = ESNumber.valueOf(0.0123456).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toString", ESValue.EMPTY_ARRAY);
+        assertEquals(new ESString("0.0123456"),value);
+    }
+    
+    @Test
+    public void toStringFor9_8_1_8_lowerlimit() throws Exception {
+        ESObject number = ESNumber.valueOf(1.23456e-5).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toString", ESValue.EMPTY_ARRAY);
+        assertEquals(new ESString("0.0000123456"),value);
+    }
+    
+    @Test
+    public void toStringFor9_8_1_8_lowerlimit_exceeded() throws Exception {
+        ESObject number = ESNumber.valueOf(1.23456e-6).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toString", ESValue.EMPTY_ARRAY);
+        assertEquals(new ESString("1.23456e-6"),value);
+    }
+    
+    @Test
+    public void toStringFor9_8_1_8_upperlimit() throws Exception {
+        ESObject number = ESNumber.valueOf(0.123456).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toString", ESValue.EMPTY_ARRAY);
+        assertEquals(new ESString("0.123456"),value);
+    }
+    
+    @Test
+    public void parseFloatGeneratesCorrectValue() throws Exception {
+        ESValue value = globalObject.doIndirectCall(evaluator, globalObject, "parseFloat", new ESValue[] { ESNumber.valueOf(3.14) });
+        assertEquals(3.14,value.doubleValue(),1e-18);
+    }
+    
+    @Test
+    public void toStringPadsWithZeros() throws Exception {
+        ESObject number = ESNumber.valueOf(3.668E19).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toString", ESValue.EMPTY_ARRAY);
+        assertEquals(new ESString("36680000000000000000"),value);
+    }
+    
+    @Test
+    public void toStringPositiveZero() throws Exception {
+        ESObject number = ESNumber.valueOf(0).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toString", ESValue.EMPTY_ARRAY);
+        assertEquals(new ESString("0"),value);
+    }
+    
+    @Test
+    public void toStringNegativeZero() throws Exception {
+        ESObject number = ESNumber.valueOf(-0).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toString", ESValue.EMPTY_ARRAY);
+        assertEquals(new ESString("0"),value);
+    }
+    
+    @Test
+    public void performanceOfToString() throws Exception {
+        if (performance) {
+            for (ESObject d : toTest) {
+                double parsedValue = Double.parseDouble(d.doIndirectCall(evaluator, d, "toString", ESValue.EMPTY_ARRAY).toString());
+                double delta = Math.pow(10, (int)Math.log10(Math.abs(d.doubleValue()))-6);
+                assertEquals("Precision:"+delta,parsedValue,d.doubleValue(),delta);
+            }
+        }
+    }
+    
+    @Test
+    public void toExponentialReturnsEFormatForIntegers() throws Exception {
+        ESObject number = ESNumber.valueOf(3668).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toExponential", ESValue.EMPTY_ARRAY);
+        assertEquals(new ESString("3.668e+3"),value);
+    }
+    
+    @Test
+    public void toExponentialReturnsClips() throws Exception {
+        ESObject number = ESNumber.valueOf(3668).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toExponential", new ESValue[] { ESNumber.valueOf(1) });
+        assertEquals(new ESString("3.7e+3"),value);
+    }
+
+    @Test(expected=RangeError.class)
+    public void toExponentialThrowsRangeErrorIfFractionDigitsNegative() throws Exception {
+        ESObject number = ESNumber.valueOf(3668).toESObject(evaluator);
+        number.doIndirectCall(evaluator, number, "toExponential", new ESValue[] { ESNumber.valueOf(-1) });
+    }
+
+    @Test(expected=RangeError.class)
+    public void toExponentialThrowsRangeErrorIfFractionDigitsTooGreat() throws Exception {
+        ESObject number = ESNumber.valueOf(3668).toESObject(evaluator);
+        number.doIndirectCall(evaluator, number, "toExponential", new ESValue[] { ESNumber.valueOf(21) });
+    }
+
+    @Test
+    public void toExponentialpads() throws Exception {
+        ESObject number = ESNumber.valueOf(3668).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toExponential", new ESValue[] { ESNumber.valueOf(7) });
+        assertEquals(new ESString("3.6680000e+3"),value);
+    }
+
+    @Test
+    public void toExponentialOmitsPeriodForZeroFractionDigits() throws Exception {
+        ESObject number = ESNumber.valueOf(3668).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toExponential", new ESValue[] { ESNumber.valueOf(0) });
+        assertEquals(new ESString("4e+3"),value);
+    }
+
+    @Test
+    public void toExponentialForNegative() throws Exception {
+        ESObject number = ESNumber.valueOf(-36.68).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toExponential", new ESValue[] { ESNumber.valueOf(4) });
+        assertEquals(new ESString("-3.6680e+1"),value);
+    }
+
+    @Test
+    public void toExponentialForNegativeExponent() throws Exception {
+        ESObject number = ESNumber.valueOf(-0.03668).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toExponential", new ESValue[] { ESNumber.valueOf(4) });
+        assertEquals(new ESString("-3.6680e-2"),value);
+    }
+
+
+    @Test
+    public void toExponentialForPositiveInfinity() throws Exception {
+        ESObject number = ESNumber.valueOf(Double.POSITIVE_INFINITY).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toExponential", new ESValue[] { ESNumber.valueOf(4) });
+        assertEquals(new ESString("Infinity"),value);
+    }
+
+    @Test
+    public void toExponentialForNaN() throws Exception {
+        ESObject number = ESNumber.NaN.toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toExponential", new ESValue[] { ESNumber.valueOf(4) });
+        assertEquals(new ESString("NaN"),value);
+    }
+
+    @Test
+    public void toExponentialZero() throws Exception {
+        ESObject number = ESNumber.valueOf(0).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toExponential", new ESValue[] { ESNumber.valueOf(3) });
+        assertEquals(new ESString("0.000e+0"),value);
     }
 }
