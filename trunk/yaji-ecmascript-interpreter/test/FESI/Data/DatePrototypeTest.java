@@ -1,6 +1,7 @@
 package FESI.Data;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -83,4 +84,10 @@ public class DatePrototypeTest extends EvaluatorTestCase {
         assertEquals(ESNull.theNull,value);
     }
     
+    
+    @Test
+    public void constructorShouldBeSet() throws Exception {
+        DatePrototype dp = (DatePrototype) dateObject.doConstruct(ESValue.EMPTY_ARRAY);
+        assertSame(dateObject,dp.getProperty("constructor"));
+    }
 }
