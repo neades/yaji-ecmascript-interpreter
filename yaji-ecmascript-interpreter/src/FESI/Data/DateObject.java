@@ -830,6 +830,82 @@ public class DateObject extends BuiltinFunctionObject {
         }
     }
 
+    private static class DatePrototypeToDateString extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeToDateString(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            
+            DatePrototype aDate = (DatePrototype) thisObject;
+            DateFormat dateFormat = new SimpleDateFormat("EEE MMM dd yyyy");
+            dateFormat.setTimeZone(getEvaluator().getDefaultTimeZone());
+            return new ESString(dateFormat.format(aDate.date));
+        }
+    }
+
+    private static class DatePrototypeToTimeString extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeToTimeString(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            
+            DatePrototype aDate = (DatePrototype) thisObject;
+            DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss 'UTC'ZZZ");
+            dateFormat.setTimeZone(getEvaluator().getDefaultTimeZone());
+            return new ESString(dateFormat.format(aDate.date));
+        }
+    }
+
+    private static class DatePrototypeToLocaleDateString extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeToLocaleDateString(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            
+            DatePrototype aDate = (DatePrototype) thisObject;
+            DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, getEvaluator().getDefaultLocale());
+            dateFormat.setTimeZone(getEvaluator().getDefaultTimeZone());
+            return new ESString(dateFormat.format(aDate.date));
+        }
+    }
+
+    private static class DatePrototypeToLocaleTimeString extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        DatePrototypeToLocaleTimeString(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            
+            DatePrototype aDate = (DatePrototype) thisObject;
+            DateFormat dateFormat = DateFormat.getTimeInstance(DateFormat.LONG, getEvaluator().getDefaultLocale());
+            dateFormat.setTimeZone(getEvaluator().getDefaultTimeZone());
+            return new ESString(dateFormat.format(aDate.date));
+        }
+    }
+
     protected DateObject(ESObject prototype, Evaluator evaluator) {
         super(prototype, evaluator, "Date", 7);
     }
@@ -1096,6 +1172,18 @@ public class DateObject extends BuiltinFunctionObject {
 
             datePrototype.putHiddenProperty("setTime",
                     new DatePrototypeSetTime("setTime", evaluator,
+                            functionPrototype));
+            datePrototype.putHiddenProperty("toDateString",
+                    new DatePrototypeToDateString("toDateString", evaluator,
+                            functionPrototype));
+            datePrototype.putHiddenProperty("toTimeString",
+                    new DatePrototypeToTimeString("toTimeString", evaluator,
+                            functionPrototype));
+            datePrototype.putHiddenProperty("toLocaleDateString",
+                    new DatePrototypeToLocaleDateString("toLocaleDateString", evaluator,
+                            functionPrototype));
+            datePrototype.putHiddenProperty("toLocaleTimeString",
+                    new DatePrototypeToLocaleTimeString("toLocaleTimeString", evaluator,
                             functionPrototype));
 
         } catch (EcmaScriptException e) {
