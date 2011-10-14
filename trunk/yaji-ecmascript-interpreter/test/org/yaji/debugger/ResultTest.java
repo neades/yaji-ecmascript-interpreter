@@ -13,7 +13,7 @@ import FESI.Interpreter.Evaluator;
 
 public class ResultTest {
 
-    private final class TestByteChannel implements GatheringByteChannel {
+    private static class TestByteChannel implements GatheringByteChannel {
         private byte[] output;
 
         public int write(ByteBuffer arg0) throws IOException {
