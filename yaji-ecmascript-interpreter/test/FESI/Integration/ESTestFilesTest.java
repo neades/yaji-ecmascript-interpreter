@@ -18,7 +18,7 @@ import FESI.Interpreter.Interpret;
 @RunWith(Parameterized.class)
 public class ESTestFilesTest {
     private final String filename;
-    private final class TestInterpret extends Interpret {
+    private static class TestInterpret extends Interpret {
         boolean hasErrored() {
             return anyError;
         }

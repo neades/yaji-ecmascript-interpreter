@@ -971,7 +971,7 @@ public class Evaluator implements Serializable {
 
     private boolean strictMode;
 
-    private Debugger debugger;
+    private transient Debugger debugger;
 
     private Locale defaultLocale;
 
