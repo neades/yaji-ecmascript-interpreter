@@ -117,7 +117,7 @@ public class EcmaScriptParseException extends EcmaScriptException implements
                         + "' reserved for future extension near line "
                         + next.beginLine + ", column " + next.beginColumn;
             } else {
-                retval = "Syntax error detected";
+                retval = "Syntax error detected " + parseException.getMessage();
                 if (next != null) {
                     retval += " near line " + next.beginLine + ", column " + next.beginColumn;
                 }

@@ -17,6 +17,7 @@
 
 package FESI.Data;
 
+import java.text.Collator;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,6 +26,7 @@ import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
 import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
+import FESI.Interpreter.ILocaleListener;
 import FESI.Util.IAppendable;
 
 /**
@@ -551,6 +553,29 @@ public class StringObject extends BuiltinFunctionObject {
         }
     }
 
+    private static class StringPrototypeLocaleCompare extends CoercedStringFunction implements ILocaleListener {
+        private static final long serialVersionUID = 1L;
+        private Collator collator;
+
+        StringPrototypeLocaleCompare(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+            evaluator.setLocaleListener(this);
+            collator = Collator.getInstance(evaluator.getDefaultLocale());
+        }
+
+        @Override
+        public ESValue invoke(String str, ESValue[] arguments) throws EcmaScriptException {
+            ESValue arg = getArg(arguments, 0);
+            String that = arg.toESString().toString();
+            return ESNumber.valueOf(collator.compare(str, that));
+        }
+
+        public void notify(Locale locale) {
+            collator = Collator.getInstance(locale);
+        }
+    }
+
     // For stringObject
     private static class StringObjectFromCharCode extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
@@ -678,6 +703,8 @@ public class StringObject extends BuiltinFunctionObject {
             stringPrototype.putHiddenProperty("toLocaleUpperCase",
                     new StringPrototypeToLocaleUpperCase("toLocaleUpperCase", evaluator, functionPrototype));
             stringPrototype.putHiddenProperty("trim", new StringPrototypeTrim("trim", evaluator, functionPrototype));
+            stringPrototype.putHiddenProperty("localeCompare",
+                    new StringPrototypeLocaleCompare("localeCompare", evaluator, functionPrototype));
             
         } catch (EcmaScriptException e) {
             e.printStackTrace();
