@@ -406,7 +406,39 @@ public class StringPrototypeTest extends EvaluatorTestCase  {
     public void sliceEndGreaterLengthShouldBeLength() throws Exception {
         assertEquals(new ESString("def"),callSlice("abcdef", ESNumber.valueOf(3), ESNumber.valueOf(13)));
     }
+
+    @Test
+    public void localeCompareReturnsZeroForSameValue() throws Exception {
+        ESObject theThis = new ESString("aaaaaa").toESObject(evaluator);
+        assertEquals(ESNumber.valueOf(0), theThis.doIndirectCall(evaluator, theThis, "localeCompare", new ESValue[] { new ESString("aaaaaa") }));
+    }
     
+    @Test
+    public void localeCompareReturnsGreaterZeroForThisGreaterThanThatValue() throws Exception {
+        ESObject theThis = new ESString("bbbbbb").toESObject(evaluator);
+        assertTrue(theThis.doIndirectCall(evaluator, theThis, "localeCompare", new ESValue[] { new ESString("aaaaaa") }).toInt32() > 0);
+    }
+    
+    @Test
+    public void localeCompareReturnsLessThanZeroForThisLessThanThatValue() throws Exception {
+        ESObject theThis = new ESString("bbbbbb").toESObject(evaluator);
+        assertTrue(theThis.doIndirectCall(evaluator, theThis, "localeCompare", new ESValue[] { new ESString("cccccc") }).toInt32() < 0);
+    }
+    
+//    @Test
+//    public void localeCompareComparesInEnglish() throws Exception {
+//        evaluator.setDefaultLocale(Locale.ENGLISH);
+//        ESObject theThis = new ESString("p").toESObject(evaluator);
+//        assertTrue(theThis.doIndirectCall(evaluator, theThis, "localeCompare", new ESValue[] { new ESString("\u00F6") }).toInt32() < 0);
+//    }
+//    
+//    @Test
+//    public void localeCompareComparesInGerman() throws Exception {
+//        evaluator.setDefaultLocale(new Locale("sv_SE"));
+//        ESObject theThis = new ESString("p").toESObject(evaluator);
+//        assertTrue(theThis.doIndirectCall(evaluator, theThis, "localeCompare", new ESValue[] { new ESString("\u00F6") }).toInt32() < 0);
+//    }
+//    
     private ESObject getStringPrototype() throws EcmaScriptException {
         ESObject stringObject = (ESObject) evaluator.getGlobalObject().getProperty("String","String".hashCode());
         ESObject stringPrototype = (ESObject) stringObject.getProperty(StandardProperty.PROTOTYPEstring,StandardProperty.PROTOTYPEhash);

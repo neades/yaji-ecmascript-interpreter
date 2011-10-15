@@ -39,7 +39,6 @@ public class ASTIdentifier extends SimpleNode {
         StringBuilder sb = new StringBuilder(len);
 
         // Unicode escape processing
-        boolean identifierStart = true;
         parent: 
             for (int i = 0; i < len; i++) {
             char c = identifierName.charAt(i);
@@ -59,16 +58,6 @@ public class ASTIdentifier extends SimpleNode {
                 }
             }
             
-            if (identifierStart) {
-                identifierStart = false;
-                if (!Character.isUnicodeIdentifierStart(c)) {
-                    throw new ParseException("Invalid identifier starting character");
-                }
-            } else {
-                if (!Character.isUnicodeIdentifierPart(c)) {
-                    throw new ParseException("Invalid identifier character");
-                }
-            }
             sb.append(c);
         }
 

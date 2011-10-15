@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -977,6 +978,8 @@ public class Evaluator implements Serializable {
 
     private TimeZone defaultTimeZone;
 
+    private List<ILocaleListener> localeListeners = new ArrayList<ILocaleListener>();
+
     /**
      * subevaluator - Evaluate a function node (inside a program evaluation)
      * 
@@ -1513,9 +1516,16 @@ public class Evaluator implements Serializable {
     
     public void setDefaultLocale( Locale locale) {
         defaultLocale = locale;
+        for (ILocaleListener listener : localeListeners) {
+            listener.notify(locale);
+        }
     }
     
     public void setDefaultTimeZone( TimeZone timeZone) {
         defaultTimeZone = timeZone;
+    }
+
+    public void setLocaleListener(ILocaleListener localeListener) {
+        localeListeners.add(localeListener);
     }
 }

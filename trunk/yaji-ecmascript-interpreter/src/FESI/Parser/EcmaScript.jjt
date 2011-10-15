@@ -771,15 +771,15 @@ TOKEN :
 <DEFAULT,NOREGEXP>
 TOKEN :
 {
-  < LPAREN: "(" >
-| < RPAREN: ")" >
-| < LBRACE: "{" >
-| < RBRACE: "}" >
-| < LBRACKET: "[" >
-| < RBRACKET: "]" >
-| < SEMICOLON: ";" >
-| < COMMA: "," >
-| < DOT: "." >
+  < LPAREN: "(" > : DEFAULT
+| < RPAREN: ")" > : DEFAULT
+| < LBRACE: "{" > : DEFAULT
+| < RBRACE: "}" > : DEFAULT
+| < LBRACKET: "[" > : DEFAULT
+| < RBRACKET: "]" > : DEFAULT
+| < SEMICOLON: ";" > : DEFAULT
+| < COMMA: "," > : DEFAULT
+| < DOT: "." > : DEFAULT
 }
 
 /* OPERATORS */
