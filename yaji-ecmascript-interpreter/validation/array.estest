@@ -220,3 +220,23 @@ b.length == 4 && b == '2,8,32,256'
 a = [12, 5, 8, 130, 44];
 b = a.filter(function(a, b, c) {return (a >= 10);})
 b.length == 3 && b == '12,130,44'
+
+@test array.prototype.toString.1
+a = new Array(a,b,c);
+Array.prototype.toString = function myToString() { return '' };
+result = a.toString();
+result.length === 0 && result === ''
+
+@test array.prototype.toString.2
+a = new Array(a,b,c);
+Array.prototype.toString = function myToString() { return 'x,y,z' };
+result = a.toString();
+result.length === 5 && result === 'x,y,z'
+
+@test array.prototype.toString.3
+a = new Array(a,b,c);
+a.join = "disabled";
+Object.prototype.toString = function myToString() { return 'x,y,z' };
+result = a.toString();
+result === 'x,y,z';
+

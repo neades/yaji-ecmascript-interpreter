@@ -101,7 +101,7 @@ public class ArrayObject extends BuiltinFunctionObject {
      */
 
     public static ArrayObject makeArrayObject(Evaluator evaluator,
-            ObjectPrototype objectPrototype, FunctionPrototype functionPrototype) {
+            final ObjectPrototype objectPrototype, FunctionPrototype functionPrototype) {
 
         ArrayPrototype arrayPrototype = new ArrayPrototype(objectPrototype,
                 evaluator);
@@ -120,13 +120,17 @@ public class ArrayObject extends BuiltinFunctionObject {
                 }
 
                 @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    BuiltinFunctionObject join = (BuiltinFunctionObject) thisObject.toESObject(getEvaluator())
-                            .getProperty(JOINstring, JOINhash);
-                    return join.callFunction(thisObject, EMPTY_ARRAY);
+                public ESValue callFunction(ESValue thisObject, ESValue[] arguments) throws EcmaScriptException {
+                    ESValue function = thisObject.toESObject(getEvaluator()).getProperty(JOINstring, JOINhash);
+
+                    if (!(function instanceof FunctionPrototype)) {
+                        function = getEvaluator().getObjectPrototype().getProperty(StandardProperty.TOSTRINGstring, StandardProperty.TOSTRINGhash);
+                        System.out.println(function.toString());
+                    }
+                    return function.callFunction(thisObject, EMPTY_ARRAY);
                 }
             }
+
             class ArrayPrototypeJoin extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
