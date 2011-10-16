@@ -124,3 +124,7 @@ var t = dt.valueOf()
 t === Date.parse(dt.toString()) &&
 t === Date.parse(dt.toUTCString()) &&
 t === Date.parse(dt.toISOString());
+
+@test date.valueof.allocation
+var n = new Date().valueOf();
+n > 10000;

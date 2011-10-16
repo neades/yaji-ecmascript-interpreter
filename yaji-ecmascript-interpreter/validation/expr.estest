@@ -533,3 +533,22 @@ x instanceof F1;
 @test in.11.8.7
 var o = { p:'x' };
 'p' in o;
+
+@test new.this.dereference.1
+var o = {
+          dateFactory: {
+            construct: Date
+          },
+          now: function() {
+           return new this.dateFactory.construct().valueOf();
+          }
+        };
+o.now() > 10000;
+
+@test new.dereference.1
+var o = {
+          dateFactory: {
+            construct: Date
+          }
+        };
+new o.dateFactory.construct().valueOf() > 10000;

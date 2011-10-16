@@ -145,7 +145,14 @@ public class EcmaScriptException extends Exception {
      */
     @Override
     public String getMessage() {
-        StringBuilder msg = new StringBuilder("Runtime error " + super.getMessage());
+        StringBuilder msg;
+        if (this.errorObject == null) {
+            msg = new StringBuilder("Runtime error ");
+            msg.append(super.getMessage());
+        } else {
+            msg = new StringBuilder("Runtime error ");
+            msg.append(errorObject.toString());
+        }
         if (originatingException != null) {
             msg.append(eol).append("Caused by exception: ").append(eol).append("  ").append(originatingException.getMessage());
         }
