@@ -50,4 +50,11 @@ public class ArrayPrototypeTest extends EvaluatorTestCase{
         assertSame(ESBoolean.valueOf(false), result);
     }
 
+    @Test
+    public void toStringReturnsArrayContents() throws Exception {
+        ESObject object = arrayObject.doConstruct(new ESValue[] { new ESString("a"), new ESString("b"), new ESString("c") });
+        ESValue value = object.doIndirectCall(evaluator, object, "toString", null);
+
+        assertEquals("a,b,c", value.toESString().toString());
+    }
 }
