@@ -952,7 +952,7 @@ void PrimaryExpressionInES() #void :
 |   ( ( Identifier() ( PrimarySuffix() )* ) #CompositeReference(>1) )
 |	( ( Literal() ( PrimarySuffix() )* ) #CompositeReference(>1) )
 |	( ( "(" Expression() ")" ( PrimarySuffix() )* ) #CompositeReference(>1) )
-|	AllocationExpression()  
+|	AllocationExpression()  #CompositeReference(>1)
 }
 
 void FunctionExpression() #FunctionExpression :
@@ -1013,17 +1013,42 @@ void NewSuffix() #void :
 {}
 {
     ( ( "." Identifier() ) # PropertyIdentifierReference )
+| 	( ( "[" Expression() "]" ) #PropertyValueReference )
 }
 
-void AllocationExpression() #AllocationExpression :
-{}
+void AllocationExpression() #void :
 {
-    // "new"  Identifier()  ( ( Arguments() ) #FunctionCallParameters )
-    // "new"  PrimaryExpression() 
-    "new" ( ( ( ( ("this") #ThisReference) ( NewSuffix() )* ) #CompositeReference(>1) ) ( ( Arguments() )? #FunctionCallParameters )
-
-          | ( ( Identifier() ( NewSuffix() )* ) #CompositeReference(>1) ) ( ( Arguments() )? #FunctionCallParameters ) )
-  
+    java.util.ArrayList<Node> stack;
+}
+{
+    { stack = new java.util.ArrayList<Node>(); }
+    "new" ( 
+           (
+            (
+             ( ( ("this") #ThisReference ) ( NewSuffix() )* ) #CompositeReference(>1) 
+            ) 
+            ( 
+             (
+              ( Arguments() #FunctionCallParameters ) ( PrimarySuffix() {  stack.add(jjtree.popNode()); } )* 
+             )? #FunctionCallParameters( jjtree.nodeArity() == 0 ) 
+            )
+            #AllocationExpression( 2 )
+           )
+         | (
+            ( ( Identifier() ( NewSuffix() )* ) #CompositeReference(>1) )
+            ( 
+             ( 
+              (Arguments() #FunctionCallParameters) ( PrimarySuffix() {  stack.add(jjtree.popNode()); } )* ) 
+             )? #FunctionCallParameters( jjtree.nodeArity() == 0 
+            ) 
+           )
+           #AllocationExpression( 2 )
+          )
+    {
+      for( Node node : stack ) {
+        jjtree.pushNode(node);
+      }
+    }
 }
 	
 // ES5 -11.1.4 Array Initialiser

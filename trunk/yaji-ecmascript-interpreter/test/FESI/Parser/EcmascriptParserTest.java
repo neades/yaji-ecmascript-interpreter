@@ -339,17 +339,18 @@ public class EcmascriptParserTest {
                     + "   FunctionCallParameters" + eol 
                     + "    /ab/g" + eol
                 },
-//                {
-//                    "new Date().getTimezoneOffset()",
-//                    "Program" + eol
-//                    + " Statement" + eol
-//                    + "  CompositeReference" + eol 
-//                    + "   AllocationExpression" + eol
-//                    + "    <Date>" + eol
-//                    + "    FunctionCallParameters" + eol
-//                    + "    <getTimezoneOffset>" + eol
-//                    + "    FunctionCallParameters" + eol 
-//                }
+                {
+                    "new Date().getTimezoneOffset()",
+                    "Program" + eol
+                    + " Statement" + eol
+                    + "  CompositeReference" + eol 
+                    + "   AllocationExpression" + eol
+                    + "    <Date>" + eol
+                    + "    FunctionCallParameters" + eol
+                    + "   PropertyIdentifierReference" + eol
+                    + "    <getTimezoneOffset>" + eol
+                    + "   FunctionCallParameters" + eol 
+                }
             });
     }
 
