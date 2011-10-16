@@ -101,7 +101,7 @@ public class ArrayObject extends BuiltinFunctionObject {
      */
 
     public static ArrayObject makeArrayObject(Evaluator evaluator,
-            final ObjectPrototype objectPrototype, FunctionPrototype functionPrototype) {
+            ObjectPrototype objectPrototype, FunctionPrototype functionPrototype) {
 
         ArrayPrototype arrayPrototype = new ArrayPrototype(objectPrototype,
                 evaluator);
