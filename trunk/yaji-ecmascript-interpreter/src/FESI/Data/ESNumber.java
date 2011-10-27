@@ -170,9 +170,9 @@ public final class ESNumber extends ESPrimitive {
             int n = (int)Math.floor(Math.log10(d));
             double sd = (d/Math.pow(10, n))/10.0d;
             String s = toString(sd,16);
-            int distinctLength;
-            for ( distinctLength = s.length()-1; s.charAt(distinctLength) == '0'; distinctLength --) {
-                //
+            int distinctLength = s.length()-1; 
+            while (s.charAt(distinctLength) == '0') {
+                distinctLength --;
             }
             s = s.substring(2, distinctLength+1);
             int k = s.length();
