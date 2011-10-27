@@ -89,7 +89,7 @@ class NumberPrototype extends ESObject {
                 throw new RangeError("toExponential: fractionDigits must lie between 0 and 20 inclusive");
             }
             if (d == 0.0) {
-                sb.append("0");
+                sb.append('0');
                 if (f > 0) {
                     sb.append('.');
                     ESNumber.pad(sb, f, '0');
@@ -104,9 +104,9 @@ class NumberPrototype extends ESObject {
                     s = s.substring(2);
                 } else {
                     s = ESNumber.toString(sd,16);
-                    int distinctLength;
-                    for ( distinctLength = s.length()-1; s.charAt(distinctLength) == '0'; distinctLength --) {
-                        //
+                    int distinctLength = s.length()-1;
+                    while (s.charAt(distinctLength) == '0') {
+                        distinctLength --;
                     }
                     s = s.substring(2, distinctLength+1);
                 }
