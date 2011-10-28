@@ -139,7 +139,7 @@ public class Runner {
     private void runTest(File rootDirectory, File file) {
         String testName = getTestName(rootDirectory, file);
         
-        String testId = testName.substring(testName.lastIndexOf('/'));
+        String testId = testName.substring(testName.lastIndexOf(File.separatorChar));
         if (!excludes.contains(testId)) {
             testCount ++;
             boolean passed = executeTest(file, testName);
