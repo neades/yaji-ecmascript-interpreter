@@ -55,8 +55,20 @@ public class ESTestFilesTest {
             if (dir.isDirectory()) {
                 return dir;
             }
-            cwd = dir.getParentFile();
+            cwd = cwd.getParentFile();
         } while (cwd != null);
+        String pathSeparator = System.getProperty("path.separator");
+        String [] paths = System.getProperty("java.class.path").split(pathSeparator);
+        for (String path : paths) {
+            cwd = new File(path);
+            do {
+                File dir = new File(cwd, "validation");
+                if (dir.isDirectory()) {
+                    return dir;
+                }
+                cwd = cwd.getParentFile();
+            } while (cwd != null);
+        }
         return null;
     }
     
