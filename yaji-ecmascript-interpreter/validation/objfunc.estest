@@ -20,6 +20,16 @@ writeln ("// " + Date());
 writeln ("// Test Object and Function");
 writeln();
 
+@test function.length.in.scope
+
+var f1 = function(p) {
+  var length = p;
+  var f2 = function f2() {
+    return length;
+  }
+  return f2();
+}
+123 === f1(123);
 
 // 15.2
 @test object.1
@@ -680,4 +690,4 @@ o.propertyIsEnumerable('method') &&            // returns true
 !o.propertyIsEnumerable('constructor') && // returns false  
 !o.propertyIsEnumerable('firstMethod'); // returns false  
 
- 
+
