@@ -6,7 +6,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -692,16 +691,6 @@ public class ObjectObjectTest extends EvaluatorTestCase {
         objectObject.doIndirectCall(evaluator, objectObject, "defineProperty", new ESValue[] { object, propertyName, argumentsObject });
         ObjectPrototype result = (ObjectPrototype)objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyDescriptor", new ESValue[] { object, propertyName });
         assertEquals(ESBoolean.valueOf(stateToTest),result.getProperty(descPropertyName));
-    }
-    
-    private ESValue createFunction(String... params) throws EcmaScriptException {
-        ESObject functionObject = (ESObject) evaluator.getGlobalObject().getProperty("Function", "Function".hashCode());
-        ArrayList<ESValue> paramArray = new ArrayList<ESValue>();
-        for (String string : params) {
-            paramArray.add(new ESString(string));
-        }
-        ESObject function = functionObject.doConstruct(paramArray.toArray(new ESValue[paramArray.size()]));
-        return function;
     }
 
     

@@ -18,6 +18,11 @@
 
 package FESI.Data;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
 import FESI.Exceptions.ReferenceError;
@@ -32,8 +37,70 @@ public class ESArguments extends ESObject {
     private final ESObject callee; // Called object
     private final int length; // Number of arguments
     protected String[] argumentNames; // Argument names from 0 to n
+    private ESArgumentsObject argumentsObject;
     
-    
+    private class ESArgumentsObject extends ESObject {
+        private static final long serialVersionUID = 7532306514655719417L;
+        private Map<String,String> argumentMap = new HashMap<String, String>();
+        private HashSet<String> argumentNameSet;
+
+        protected ESArgumentsObject(Evaluator evaluator) throws EcmaScriptException {
+            super(evaluator.getObjectPrototype(), evaluator);
+            putHiddenProperty(StandardProperty.LENGTHstring, ESNumber.valueOf(length));
+            putHiddenProperty(StandardProperty.CALLEEstring, callee);
+            int i=0;
+            for (String argumentName : argumentNames) {
+                argumentMap .put(Integer.toString(i++),argumentName);
+            }
+            argumentNameSet = new HashSet<String>(Arrays.asList(argumentNames));
+        }
+
+        @Override
+        public ESValue getPropertyIfAvailable(String propertyName, int hash)
+                throws EcmaScriptException {
+            ESValue result = super.getPropertyIfAvailable(propertyName, hash);
+            if (result == null) {
+                if (isDigits(propertyName)) {
+                    String mappedPropertyName = argumentMap.get(propertyName);
+                    if (mappedPropertyName != null) {
+                        result = ESArguments.this.getPropertyIfAvailable(mappedPropertyName, mappedPropertyName.hashCode());
+                    } else {
+                        result = ESArguments.this.getPropertyIfAvailable(propertyName, hash);
+                    }
+                } else if (argumentNameSet.contains(propertyName)){
+                    result = ESArguments.this.getPropertyIfAvailable(propertyName, hash);
+                }
+            }
+            return result;
+        }
+        
+        @Override
+        public boolean deleteProperty(String propertyName, int hash)
+                throws EcmaScriptException {
+            if (isDigits(propertyName)) {
+                if (argumentMap.remove(propertyName) != null) {
+                    return true;
+                }
+            }
+            return super.deleteProperty(propertyName, hash);
+        }
+        
+        private boolean isDigits(String propertyName) {
+            boolean allDigits = false;
+            for (char ch : propertyName.toCharArray()) {
+                if (!Character.isDigit(ch)) {
+                    return false;
+                }
+                allDigits = true;
+            }
+            return allDigits;
+        }
+
+        @Override
+        public String getESClassName() {
+            return "Arguments";
+        }
+    }
 
 
     // (not readily available) int [] hashCodes; // Argument hash codes from 0
@@ -65,47 +132,31 @@ public class ESArguments extends ESObject {
     @Override
     public ESValue getPropertyInScope(String propertyName,
             ScopeChain previousScope, int hash) throws EcmaScriptException {
+        ESValue value = super.getPropertyIfAvailable(propertyName, hash);
+        if (value != null) {
+            return value;
+        }
         if (hash == StandardProperty.CALLEEhash && propertyName.equals(StandardProperty.CALLEEstring)) {
             return callee;
         }
 
         if (hash == StandardProperty.ARGUMENTShash && propertyName.equals(StandardProperty.ARGUMENTSstring)) {
-            return this;
+            return getArgumentsObject();
         }
 
-        if (hash == StandardProperty.LENGTHhash && propertyName.equals(StandardProperty.LENGTHstring)) {
-            return ESNumber.valueOf(length);
-        }
-
-        ESValue value = super.getPropertyIfAvailable(propertyName, hash);
-
-        if (value != null) {
-            return value;
-        }
-        int index = -1; // indicates not a valid index value
-        try {
-            char c = propertyName.charAt(0);
-            if ('0' <= c && c <= '9') {
-                index = Integer.parseInt(propertyName);
-            }
-        } catch (NumberFormatException e) {
-            // do nothing
-        } catch (StringIndexOutOfBoundsException e) { // for charAt
-            // do nothing
-        }
-        if (index >= 0 && index < argumentNames.length) {
-            propertyName = argumentNames[index];
-            hash = propertyName.hashCode();
-            value = super.getPropertyIfAvailable(propertyName, hash); // will be defined
-
-            return value != null ? value : ESUndefined.theUndefined;
-        }
         if (previousScope == null) {
             throw new ReferenceError("Variable '" + propertyName
                     + "' does not exist in the scope chain");
         }
         return previousScope.getValue(propertyName, hash);
 
+    }
+
+    private ESArgumentsObject getArgumentsObject() throws EcmaScriptException {
+        if (argumentsObject == null) {
+            argumentsObject = new ESArgumentsObject(getEvaluator());
+        }
+        return argumentsObject;
     }
 
     // overrides
@@ -126,41 +177,18 @@ public class ESArguments extends ESObject {
     public ESValue getPropertyIfAvailable(String propertyName, int hash)
             throws EcmaScriptException {
 
-        if (hash == StandardProperty.CALLEEhash && propertyName.equals(StandardProperty.CALLEEstring)) {
-            return callee;
-        }
-
-        if (hash == StandardProperty.ARGUMENTShash && propertyName.equals(StandardProperty.ARGUMENTSstring)) {
-            return this;
-        }
-
-        if (hash == StandardProperty.LENGTHhash && propertyName.equals(StandardProperty.LENGTHstring)) {
-            return ESNumber.valueOf(length);
-        }
-
         // Assume that it is more likely a name than a number
         ESValue value = super.getPropertyIfAvailable(propertyName, hash);
-
+        
         if (value != null) {
             return value;
         }
-        int index = -1; // indicates not a valid index value
-        try {
-            char c = propertyName.charAt(0);
-            if ('0' <= c && c <= '9') {
-                index = Integer.parseInt(propertyName);
-            }
-        } catch (NumberFormatException e) {
-            // do nothing
+
+        if (hash == StandardProperty.ARGUMENTShash && propertyName.equals(StandardProperty.ARGUMENTSstring)) {
+            return getArgumentsObject();
         }
-        catch (StringIndexOutOfBoundsException e) { // for charAt
-            // do nothing
-        }
-        if (index >= 0 && index < argumentNames.length) {
-            propertyName = argumentNames[index];
-            hash = propertyName.hashCode();
-        }
-        return super.getPropertyIfAvailable(propertyName, hash);
+
+        return null;
     }
 
     @Override
