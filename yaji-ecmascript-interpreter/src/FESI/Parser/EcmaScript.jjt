@@ -1827,7 +1827,7 @@ SimpleNode Program() #Program :
 {}
 {
   ( SourceElement() )+  <EOF>
-  { return jjtThis; }
+  { return StrictMode.validate(jjtThis); }
 }
 
 void SourceElement() #void :

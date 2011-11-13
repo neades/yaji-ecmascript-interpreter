@@ -26,7 +26,7 @@ import FESI.Parser.Token;
 /**
  * Exception used to signal parsing errors
  */
-public class EcmaScriptParseException extends EcmaScriptException implements
+public class EcmaScriptParseException extends SyntaxError implements
         EcmaScriptConstants {
     private static final long serialVersionUID = 3037065674594117662L;
     /** @serial Original parse exception */

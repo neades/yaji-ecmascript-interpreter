@@ -21,6 +21,7 @@ package FESI.Data;
 import java.io.ObjectStreamException;
 
 import FESI.Exceptions.EcmaScriptException;
+import FESI.Exceptions.TypeError;
 
 /**
  * Implements the Undefined primitive value.
@@ -55,7 +56,7 @@ public final class ESUndefined extends ESPrimitive {
     @Override
     public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
-        throw new EcmaScriptException(
+        throw new TypeError(
                 "Function called on undefined value or property");
     }
 
@@ -72,7 +73,7 @@ public final class ESUndefined extends ESPrimitive {
     @Override
     public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
-        throw new EcmaScriptException(
+        throw new TypeError(
                 "'new' called on undefined value or property");
     }
 

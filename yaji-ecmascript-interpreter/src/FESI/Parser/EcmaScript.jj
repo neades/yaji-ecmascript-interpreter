@@ -5044,7 +5044,7 @@ SimpleNode Program()          :
     jjtreeCloseNodeScope(jjtn000);
   }
 /*@egen*/
-  { return jjtn000; }/*@bgen(jjtree)*/
+  { return StrictMode.validate(jjtn000); }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);

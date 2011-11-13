@@ -101,28 +101,6 @@ import FESI.Parser.EcmaScriptConstants;
 import FESI.Util.IAppendable;
 
 /**
- * Exception used to package any exception encountered during visiting to an
- * exception accepted by the visitor interface as defined by JavaCC. Eventually
- * the exception will be unpackaged and reraised.
- */
-class PackagedException extends RuntimeException {
-    private static final long serialVersionUID = -5115990393628214347L;
-    EcmaScriptException exception;
-    SimpleNode node;
-
-    PackagedException(EcmaScriptException exception, SimpleNode node) {
-        super();
-        this.exception = exception;
-        this.node = node;
-    }
-
-    @Override
-    public String getMessage() {
-        return exception.getMessage();
-    }
-}
-
-/**
  * The evaluate visitor use the visitor pattern to evaluate the parsed code. Use
  * for both main program and functions (using different entries). A new
  * evaluator is used everytime as it contains the return code (because we can
