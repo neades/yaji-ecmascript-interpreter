@@ -350,6 +350,9 @@ public class EcmascriptParserTest {
                     + "   PropertyIdentifierReference" + eol
                     + "    <getTimezoneOffset>" + eol
                     + "   FunctionCallParameters" + eol 
+                },
+                {  "// single line comment",
+                    "Program" + eol
                 }
             });
     }

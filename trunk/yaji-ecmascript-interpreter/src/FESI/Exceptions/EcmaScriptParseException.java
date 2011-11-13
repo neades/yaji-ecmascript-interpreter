@@ -127,7 +127,7 @@ public class EcmaScriptParseException extends SyntaxError implements
             }
         }
 
-        if (evaluationSource instanceof StringEvaluationSource && next != null) {
+        if (evaluationSource instanceof StringEvaluationSource && next != null && next.beginLine > 0) {
             retval += eol
                     + ((StringEvaluationSource) evaluationSource)
                             .getLineText(next.beginLine);

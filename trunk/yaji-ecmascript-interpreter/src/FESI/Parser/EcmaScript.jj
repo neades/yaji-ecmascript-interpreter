@@ -155,19 +155,14 @@ SPECIAL_TOKEN :
 /* COMMENTS - EcmaScript 7.3
  * Use states to skip until EOL
  */
+SPECIAL_TOKEN : {
+< SINGLE_LINE_COMMENT: "//"(~["\n","\r"])* ("\n"|"\r"|"\r\n")? > 
+}
 
 <DEFAULT,NOREGEXP>
 MORE :
 {
-  "//" : IN_SINGLE_LINE_COMMENT
-|
   "/*" : IN_MULTI_LINE_COMMENT
-}
-
-<IN_SINGLE_LINE_COMMENT>
-SPECIAL_TOKEN :
-{
-  <SINGLE_LINE_COMMENT: "\n" | "\r" | "\r\n" > : DEFAULT
 }
 
 <IN_MULTI_LINE_COMMENT>
@@ -176,7 +171,7 @@ SPECIAL_TOKEN :
   <MULTI_LINE_COMMENT: "*/" > : DEFAULT
 }
 
-<IN_SINGLE_LINE_COMMENT,IN_MULTI_LINE_COMMENT>
+<IN_MULTI_LINE_COMMENT>
 MORE :
 {
   < ~[] >
@@ -5037,7 +5032,7 @@ SimpleNode Program()          :
 {/*@bgen(jjtree) Program */
   try {
 /*@egen*/
-  ( SourceElement() )+  <EOF>/*@bgen(jjtree)*/
+  ( SourceElement() )*  <EOF>/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;

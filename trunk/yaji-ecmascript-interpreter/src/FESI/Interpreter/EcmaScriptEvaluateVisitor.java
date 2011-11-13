@@ -378,12 +378,13 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
     @Override
     public Object visit(ASTProgram node, Object data) {
         int n = node.jjtGetNumChildren();
-        if (n <= 0)
-            throw new ProgrammingError("Empty program not implemented");
-        Object result = node.jjtGetChild(0).jjtAccept(this, FOR_VALUE);
-        for (int i = 1; i < node.jjtGetNumChildren(); i++) {
-            Node statement = node.jjtGetChild(i);
-            result = statement.jjtAccept(this, FOR_VALUE);
+        Object result = ESUndefined.theUndefined;
+        if (n > 0) {
+            result = node.jjtGetChild(0).jjtAccept(this, FOR_VALUE);
+            for (int i = 1; i < node.jjtGetNumChildren(); i++) {
+                Node statement = node.jjtGetChild(i);
+                result = statement.jjtAccept(this, FOR_VALUE);
+            }
         }
         return result;
     }
