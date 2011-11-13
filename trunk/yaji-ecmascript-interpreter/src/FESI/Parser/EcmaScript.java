@@ -5503,7 +5503,7 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
     jjtreeCloseNodeScope(jjtn000);
-    {if (true) return jjtn000;}
+    {if (true) return StrictMode.validate(jjtn000);}
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
