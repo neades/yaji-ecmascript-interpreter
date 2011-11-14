@@ -9,6 +9,7 @@ public class ASTProgram extends SimpleNode {
 	 * 
 	 */
     private static final long serialVersionUID = 1395362606410066353L;
+    private boolean strictMode;
 
     public ASTProgram(int id) {
         super(id);
@@ -30,5 +31,13 @@ public class ASTProgram extends SimpleNode {
     @Override
     public Object jjtAccept(EcmaScriptVisitor visitor, Object data) {
         return visitor.visit(this, data);
+    }
+
+    public void setStrictMode(boolean strictMode) {
+        this.strictMode = strictMode;
+    }
+
+    public boolean isStrictMode() {
+        return strictMode;
     }
 }

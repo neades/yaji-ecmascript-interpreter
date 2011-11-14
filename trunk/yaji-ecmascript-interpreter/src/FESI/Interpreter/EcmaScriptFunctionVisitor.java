@@ -124,7 +124,7 @@ public class EcmaScriptFunctionVisitor extends AbstractEcmaScriptVisitor impleme
             ConstructedFunctionObject func = ConstructedFunctionObject
                     .makeNewConstructedFunction(evaluator, idNode.getName(),
                             fes, node.getSourceString(), fpl.getArguments(),
-                            variableNames, sl, null);
+                            variableNames, sl, null, node.isStrictMode());
             evaluator.putValue(newVar, func);
         } catch (EcmaScriptException e) {
             e.printStackTrace();

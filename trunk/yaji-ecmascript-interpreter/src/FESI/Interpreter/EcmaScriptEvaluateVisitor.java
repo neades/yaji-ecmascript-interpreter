@@ -98,6 +98,7 @@ import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
 import FESI.Exceptions.TypeError;
 import FESI.Parser.EcmaScriptConstants;
+import FESI.Parser.StrictMode;
 import FESI.Util.IAppendable;
 
 /**
@@ -377,6 +378,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
     // is done via the routine jjtAccept.
     @Override
     public Object visit(ASTProgram node, Object data) {
+        evaluator.setStrictMode(node.isStrictMode());
         int n = node.jjtGetNumChildren();
         Object result = ESUndefined.theUndefined;
         if (n > 0) {
@@ -1685,7 +1687,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
             ConstructedFunctionObject cfo = ConstructedFunctionObject
                     .makeNewConstructedFunction(evaluator, property, fes, "",
                             new String[0], variableNames, sl,
-                            evaluator.getScopeChain());
+                            evaluator.getScopeChain(), StrictMode.hasStrictModeDirective(sl));
             
             value = ObjectObject.createObject(evaluator);
             value.setGetAccessorDescriptor(cfo);
@@ -1701,7 +1703,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
             ConstructedFunctionObject cfo = ConstructedFunctionObject
                     .makeNewConstructedFunction(evaluator, property, fes, "",
                             new String[] { ((ASTIdentifier) node.jjtGetChild(2))
-                            .getName() }, variableNames, sl, evaluator.getScopeChain());
+                            .getName() }, variableNames, sl, evaluator.getScopeChain(), StrictMode.hasStrictModeDirective(sl));
 
             value = ObjectObject.createObject(evaluator);
             value.setSetAccessorDescriptor(cfo);
@@ -1776,7 +1778,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         ConstructedFunctionObject func = ConstructedFunctionObject
         .makeNewConstructedFunction(evaluator, procName,
                 fes, "", fpl.getArguments(),
-                variableNames, sl, evaluator.getScopeChain());
+                variableNames, sl, evaluator.getScopeChain(), node.isStrictMode());
         return func;
     }
 

@@ -565,6 +565,9 @@ public abstract class ESObject extends ESValue {
         getPropertyMap().put(propertyName, hash, false, false, propertyValue, true);
     }
 
+    public static final int ENUMERABLE = 1<<0;
+    public static final int WRITEABLE = 1<<1;
+    public static final int CONFIGURABLE = 1<<2; 
     /**
      * Put the property as hidden. This is mostly used by initialisation code,
      * so a hash value is computed locally and the string is interned.
@@ -581,6 +584,13 @@ public abstract class ESObject extends ESValue {
         propertyName = propertyName.intern();
         int hash = propertyName.hashCode();
         getPropertyMap().put(propertyName, hash, true, false, propertyValue, true);
+    }
+    
+    public void putProperty(String propertyName, int flags, ESValue propertyValue)
+                throws EcmaScriptException {
+        propertyName = propertyName.intern();
+        int hash = propertyName.hashCode();
+        getPropertyMap().put(propertyName, hash, (flags&ENUMERABLE) == 0, (flags&WRITEABLE) == 0, propertyValue, (flags&CONFIGURABLE) != 0);
     }
 
     /**

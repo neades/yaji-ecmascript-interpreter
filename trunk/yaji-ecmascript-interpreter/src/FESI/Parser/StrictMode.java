@@ -57,11 +57,18 @@ public class StrictMode extends AbstractEcmaScriptVisitor {
         StrictModeState state = new StrictModeState(program);
         lookAheadForDirectives(program,state);
         strictModeVisitor.visit(program, state);
+        program.setStrictMode(state.isStrictMode());
         return program;
     }
 
     private static void lookAheadForDirectives(Node statementList,
             StrictModeState state) {
+        if (hasStrictModeDirective(statementList)) {
+            state.setStrictMode();
+        }
+    }
+    
+    public static boolean hasStrictModeDirective(Node statementList) {
         int child = 0;
         boolean canContinue = true;
         while ( canContinue && child < statementList.jjtGetNumChildren()) {
@@ -75,7 +82,7 @@ public class StrictMode extends AbstractEcmaScriptVisitor {
                         ASTLiteral literal = (ASTLiteral) possibleLiteral;
                         String string = literal.getValue().toString();
                         if ("use strict".equals(string)) {
-                            state.setStrictMode();
+                            return true;
                         }
                         canContinue = true;
                     }
@@ -83,6 +90,7 @@ public class StrictMode extends AbstractEcmaScriptVisitor {
             }
             child ++;
         }
+        return false;
     }
 
     @Override
@@ -90,6 +98,7 @@ public class StrictMode extends AbstractEcmaScriptVisitor {
         StrictModeState strictMode = new StrictModeState((StrictModeState)data);
         ASTStatementList statementList = (ASTStatementList) node.jjtGetChild(2);
         lookAheadForDirectives(statementList, strictMode);
+        node.setStrictMode(strictMode.isStrictMode());
         return super.visit(node, strictMode);
     }
     
@@ -98,6 +107,7 @@ public class StrictMode extends AbstractEcmaScriptVisitor {
         StrictModeState strictMode = new StrictModeState((StrictModeState)data);
         ASTStatementList statementList = (ASTStatementList) node.jjtGetChild(node.jjtGetNumChildren()-1);
         lookAheadForDirectives(statementList, strictMode);
+        node.setStrictMode(strictMode.isStrictMode());
         return super.visit(node, strictMode);
     }
     
