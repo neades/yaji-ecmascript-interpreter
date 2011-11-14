@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import FESI.Exceptions.EcmaScriptException;
+import FESI.Exceptions.TypeError;
 import FESI.Util.EvaluatorAccess;
 
 
@@ -52,4 +53,16 @@ public class GlobalObjectTest extends EvaluatorTestCase {
         assertTrue(Double.isNaN(result.doubleValue()));
     }
 
+    @Test
+    public void NaNshouldNotBeWritable() throws Exception {
+        globalObject.putProperty("NaN", ESNumber.valueOf(0));
+        assertTrue(Double.isNaN(globalObject.getProperty("NaN").doubleValue()));
+    }
+    
+    @Test(expected=TypeError.class)
+    public void assignmentToNaNshouldThrowTypeErrorInStrictMode() throws Exception {
+        evaluator.setStrictMode(true);
+        globalObject.putProperty("NaN", ESNumber.valueOf(0));
+        assertTrue(Double.isNaN(globalObject.getProperty("NaN").doubleValue()));
+    }
 }

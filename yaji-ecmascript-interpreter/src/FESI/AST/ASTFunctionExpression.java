@@ -7,6 +7,7 @@ import FESI.Parser.*;
 public
 class ASTFunctionExpression extends SimpleNode {
   private static final long serialVersionUID = -6085961813205509357L;
+private boolean strictMode;
 
   public ASTFunctionExpression(int id) {
     super(id);
@@ -26,6 +27,14 @@ public Object jjtAccept(EcmaScriptVisitor visitor, Object data) {
 public void setSourceString(String string) {
     // TODO Auto-generated method stub
     
+}
+
+public void setStrictMode(boolean strictMode) {
+    this.strictMode = strictMode;
+}
+
+public boolean isStrictMode() {
+    return strictMode;
 }
 }
 /* JavaCC - OriginalChecksum=77120c9529c0e1298867f0fd9900eca7 (do not edit this line) */

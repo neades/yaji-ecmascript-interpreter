@@ -11,6 +11,7 @@ public class ASTFunctionDeclaration extends SimpleNode {
 	 */
     private static final long serialVersionUID = -2472394930724874278L;
     private String sourceString = null;
+    private boolean strictMode;
 
     public ASTFunctionDeclaration(int id) {
         super(id);
@@ -40,5 +41,13 @@ public class ASTFunctionDeclaration extends SimpleNode {
 
     public String getSourceString() {
         return sourceString;
+    }
+
+    public void setStrictMode(boolean strictMode) {
+        this.strictMode = strictMode;
+    }
+
+    public boolean isStrictMode() {
+        return strictMode;
     }
 }

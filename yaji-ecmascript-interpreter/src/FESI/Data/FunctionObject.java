@@ -31,6 +31,7 @@ import FESI.Interpreter.FunctionEvaluationSource;
 import FESI.Interpreter.StringEvaluationSource;
 import FESI.Parser.EcmaScript;
 import FESI.Parser.ParseException;
+import FESI.Parser.StrictMode;
 
 /**
  * Implements the EcmaScript Function singleton
@@ -225,7 +226,7 @@ public class FunctionObject extends BuiltinFunctionObject implements
 
         theFunction = ConstructedFunctionObject.makeNewConstructedFunction(
                 getEvaluator(), "anonymous", fes, fullFunctionText, fpl
-                        .getArguments(), variableNames, sl, null);
+                        .getArguments(), variableNames, sl, null,StrictMode.hasStrictModeDirective(sl));
 
         return theFunction;
     }

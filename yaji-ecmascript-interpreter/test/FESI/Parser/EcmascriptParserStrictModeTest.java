@@ -102,7 +102,6 @@ public class EcmascriptParserStrictModeTest extends EvaluatorTestCase {
         expectPackagedException("'use strict'; with({ x:10 }) { y = x; }");
     }
 
-
     @Test
     public void shouldParseProgramWithoutUseStrict() throws Exception {
         EcmaScript ecmaScript = new EcmaScript(new StringReader("arguments = 0;"));

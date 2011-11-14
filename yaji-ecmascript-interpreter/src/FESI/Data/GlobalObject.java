@@ -568,9 +568,9 @@ public class GlobalObject extends ObjectPrototype {
             go.putHiddenProperty(NativeErrorObject.TYPE_ERROR,NativeErrorObject.make(NativeErrorObject.TYPE_ERROR,evaluator,errorPrototype,functionPrototype));
             go.putHiddenProperty(NativeErrorObject.URI_ERROR,NativeErrorObject.make(NativeErrorObject.URI_ERROR,evaluator,errorPrototype,functionPrototype));
 
-            go.putHiddenProperty("NaN", ESNumber.valueOf(Double.NaN));
-            go.putHiddenProperty("undefined", ESUndefined.theUndefined);
-            go.putHiddenProperty("Infinity", ESNumber
+            go.putProperty("NaN", 0, ESNumber.valueOf(Double.NaN));
+            go.putProperty("undefined", 0, ESUndefined.theUndefined);
+            go.putProperty("Infinity", 0, ESNumber
                     .valueOf(Double.POSITIVE_INFINITY));
             go.putHiddenProperty("Array", ArrayObject.makeArrayObject(
                     evaluator, objectPrototype, functionPrototype));

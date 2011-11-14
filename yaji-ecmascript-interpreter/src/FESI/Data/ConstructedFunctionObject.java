@@ -44,12 +44,13 @@ public class ConstructedFunctionObject extends FunctionPrototype {
 
     private ESValue currentArguments = ESNull.theNull;
     private final ScopeChain scopeChain;
+    private final boolean isStrictMode;
 
     private ConstructedFunctionObject(FunctionPrototype functionPrototype,
             Evaluator evaluator, String functionName,
             EvaluationSource evaluationSource, String functionSource,
             String[] arguments, List<String> localVariableNames,
-            ASTStatementList aFunctionAST, ScopeChain scopeChain) {
+            ASTStatementList aFunctionAST, ScopeChain scopeChain, boolean isStrictMode) {
         super(functionPrototype, evaluator, functionName, arguments.length);
         this.evaluationSource = evaluationSource;
         this.functionSource = functionSource;
@@ -57,6 +58,7 @@ public class ConstructedFunctionObject extends FunctionPrototype {
         theArguments = arguments;
         this.localVariableNames = localVariableNames;
         this.scopeChain = scopeChain;
+        this.isStrictMode = isStrictMode;
 
         // try {
         // targetObject.putProperty(functionName, this);
@@ -123,14 +125,17 @@ public class ConstructedFunctionObject extends FunctionPrototype {
             throws EcmaScriptException {
         ESValue value = null;
         Evaluator evaluator = getEvaluator();
+        boolean strictMode = evaluator.isStrictMode();
         ESArguments args = ESArguments.makeNewESArguments(evaluator, this, theArguments, arguments);
         ESValue oldArguments = currentArguments;
         currentArguments = args;
         try {
+            evaluator.setStrictMode(strictMode || isStrictMode);
             value = getEvaluator().evaluateFunctionInScope(theFunctionAST,
                     evaluationSource, args, localVariableNames, thisObject.toESObject(evaluator), scopeChain);
         } finally {
             currentArguments = oldArguments;
+            evaluator.setStrictMode(strictMode);
         }
         return value;
     }
@@ -190,13 +195,14 @@ public class ConstructedFunctionObject extends FunctionPrototype {
      *            the parsed function
      * @param scopeChain 
      *            the current Scope Chain for Function Expressions - null for Function Declarations
+     * @param isStrictMode 
      * @return A new function object
      */
     public static ConstructedFunctionObject makeNewConstructedFunction(
             Evaluator evaluator, String functionName,
             EvaluationSource evaluationSource, String sourceString,
             String[] arguments, List<String> localVariableNames,
-            ASTStatementList aFunctionAST, ScopeChain scopeChain) {
+            ASTStatementList aFunctionAST, ScopeChain scopeChain, boolean isStrictMode) {
 
         ConstructedFunctionObject theNewFunction = null;
         try {
@@ -205,7 +211,7 @@ public class ConstructedFunctionObject extends FunctionPrototype {
 
             theNewFunction = new ConstructedFunctionObject(fp, evaluator,
                     functionName, evaluationSource, sourceString, arguments,
-                    localVariableNames, aFunctionAST, scopeChain);
+                    localVariableNames, aFunctionAST, scopeChain, isStrictMode);
             ObjectPrototype thePrototype = ObjectObject.createObject(evaluator);
             theNewFunction.putHiddenProperty("prototype", fp);
             thePrototype.putHiddenProperty("constructor", theNewFunction);
