@@ -154,4 +154,13 @@ public class DateObjectTest extends EvaluatorTestCase {
         return new Date(calendar.getTimeInMillis());
     }
     
+    
+    @Test
+    public void lengthOfToJSON() throws Exception {
+        DatePrototype object = (DatePrototype) dateObject.doConstruct(new ESValue[] { ESNumber.valueOf(2011), ESNumber.valueOf(9), ESNumber.valueOf(22), ESNumber.valueOf(13), ESNumber.valueOf(46), ESNumber.valueOf(9), new ESString("blah") });
+        ESObject function = (ESObject) object.getProperty(StandardProperty.TOJSONstring);
+        assertEquals(ESNumber.valueOf(1), function.getProperty(StandardProperty.LENGTHstring));
+    }
+
+    
 }

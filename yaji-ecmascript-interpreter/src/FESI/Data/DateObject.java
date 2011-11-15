@@ -154,7 +154,7 @@ public class DateObject extends BuiltinFunctionObject {
 
         DatePrototypeToJSON(String name, Evaluator evaluator,
                 FunctionPrototype fp) {
-            super(fp, evaluator, name, 0);
+            super(fp, evaluator, name, 1);
         }
 
         @Override
