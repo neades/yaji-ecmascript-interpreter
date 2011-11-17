@@ -7,10 +7,16 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.TimeZone;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -117,7 +123,52 @@ public class Runner {
         runTestsInDirectory(rootDirectory);
     }
 
+    private static class ThreadRunner extends Thread {
+
+        private final Queue<Test> tests;
+
+        public ThreadRunner(Queue<Test> tests) {
+            this.tests = tests;
+        }
+        
+        @Override
+        public void run() {
+            Test test = tests.poll();
+            while (test != null) {
+                test.execute();
+                test = tests.poll();
+            }
+        }
+    }
+    
     private void runTestsInDirectory(File rootDirectory) {
+        List<Test> tests = getListOfTests(rootDirectory);
+        
+        Queue<Test> testQueue = new ConcurrentLinkedQueue<Test>(tests);
+        long start = System.currentTimeMillis();
+        Thread[] threads = new Thread[2];
+        for(int i=0; i<threads.length; i++) {
+            threads[i] = new ThreadRunner(testQueue);
+            threads[i].start();
+        }
+        waitForThreadsToExit(threads);
+        long duration = System.currentTimeMillis() - start;
+        System.out.println();
+        System.out.println("Run completed: "+testPassed+"/"+testCount+" ("+toReadableDuration(duration)+") "+(new Date()).toString());
+    }
+
+    private void waitForThreadsToExit(Thread[] threads) {
+        for(int i=0; i<threads.length; i++) {
+            try {
+                threads[i].join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private List<Test> getListOfTests(File rootDirectory) {
+        List<Test> tests = new ArrayList<Test>();
         List<File> directoriesToProcess = new LinkedList<File>();
         directoriesToProcess.add(rootDirectory);
         do {
@@ -127,54 +178,90 @@ public class Runner {
                 if (file.isDirectory()) {
                     directoriesToProcess.add(file);
                 } else if (file.getName().endsWith(".js")){
-                    runTest(rootDirectory,file);
+                    Test test = new Test(rootDirectory,file);
+                    if (!excludes.contains(test.getTestId())) {
+                        tests.add(test);
+                    }
                 }
             }
         } while (directoriesToProcess.size() > 0);
-        
-        System.out.println();
-        System.out.println("Run completed: "+testPassed+"/"+testCount);
+        return tests;
     }
 
-    private void runTest(File rootDirectory, File file) {
-        String testName = getTestName(rootDirectory, file);
+    private String toReadableDuration(long duration) {
+        StringBuilder sb = new StringBuilder();
+        Formatter formatter = new Formatter(sb);
+        long seconds = duration/1000L;
+        formatter.format("%d:%02d.%03d", Long.valueOf(seconds/60),Long.valueOf(seconds%60),Long.valueOf(duration%1000L));
+        return sb.toString();
+    }
+
+    
+    private class Test {
+        private String testName;
+        private String testId;
+        private boolean negative;
+        private final File testFile;
+
+        public Test(File rootDirectory, File testFile) {
+            this.testFile = testFile;
+            testName = getTestName(rootDirectory, testFile);
+            testId = testName.substring(testName.lastIndexOf(File.separatorChar));
+            negative = isNegative(testName);
+        }
         
-        String testId = testName.substring(testName.lastIndexOf(File.separatorChar));
-        if (!excludes.contains(testId)) {
-            testCount ++;
-            boolean passed = executeTest(file, testName);
-            if (isNegative(testName)) {
+        public String getTestId() {
+            return testId;
+        }
+    
+        public void execute() {
+            int testCount = incrementCount();
+            boolean passed = executeTest(testFile, testName);
+            if (negative) {
                 passed = !passed;
             }
-            logTestResult(testName, passed);
+            logTestResult(testName, passed, testCount);
         }
+    }
+    
+    private synchronized int incrementCount() {
+        testCount ++;
+        return testCount;
     }
 
     private boolean executeTest(File file, String testName) {
         Evaluator evaluator = new Evaluator();
+        evaluator.setDefaultTimeZone(TimeZone.getTimeZone("UTC"));
         boolean passed = false;
-        logger.append("Executing ").append(testName).append(" ");
+        logStart(testName);
         try {
             evaluator.evaluate(file);
             passed = true;
         } catch (Throwable e) {
-            try {
-                e.printStackTrace(logger);
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
+            logException(e);
         }
         return passed;
+    }
+
+    private synchronized void logException(Throwable e) {
+        try {
+            e.printStackTrace(logger);
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+    }
+
+    private synchronized void logStart(String testName) {
+        logger.append("Executing ").append(testName).append(" ");
     }
 
     private String getTestName(File rootDirectory, File file) {
         int rootLength = rootDirectory.getAbsolutePath().length();
         String testPath = file.getAbsolutePath();
-        String testName = testPath.substring(rootLength, testPath.length()-3);
-        return testName;
+        return testPath.substring(rootLength, testPath.length()-3);
     }
 
-    private void logTestResult(String testName, boolean passed) {
+    private synchronized void logTestResult(String testName, boolean passed, int testCount) {
         logger.println();
         if (passed) {
             logger.println("Result " + testName + " SUCCESS");
