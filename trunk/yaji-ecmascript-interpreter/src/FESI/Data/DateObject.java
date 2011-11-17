@@ -104,6 +104,21 @@ public class DateObject extends BuiltinFunctionObject {
             return ESNumber.valueOf(timeinms);
         }
     }
+    
+    private static class DateObjectNow extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 6509035302938791509L;
+
+        public DateObjectNow(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            return ESNumber.valueOf(System.currentTimeMillis());
+        }
+    }
 
     private static abstract class DateBuiltinFunctionObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 8694680238052474774L;
@@ -977,11 +992,13 @@ public class DateObject extends BuiltinFunctionObject {
 
  
             // For dateObject
-            dateObject.putHiddenProperty("prototype", datePrototype);
+            dateObject.putProperty(StandardProperty.PROTOTYPEstring, 0, datePrototype);
             dateObject.putHiddenProperty("length", ESNumber.valueOf(7));
             dateObject.putHiddenProperty("parse", new DateObjectParse("parse",
                     evaluator, functionPrototype));
             dateObject.putHiddenProperty("UTC", new DateObjectUTC("UTC",
+                    evaluator, functionPrototype));
+            dateObject.putHiddenProperty("now", new DateObjectNow("now",
                     evaluator, functionPrototype));
 
             datePrototype.putHiddenProperty("constructor", dateObject);
@@ -1135,7 +1152,11 @@ public class DateObject extends BuiltinFunctionObject {
     }
 
     private static abstract class DateParser {
+        public abstract Date parse(String dateString, TimeZone timeZone);
+    }
+    private static abstract class DateFormatParser extends DateParser {
         
+        @Override
         public Date parse(String dateString, TimeZone timeZone) {
             DateFormat formatter = getFormatter(timeZone);
             ParsePosition initialPosition = new ParsePosition(0);
@@ -1145,7 +1166,7 @@ public class DateObject extends BuiltinFunctionObject {
         protected abstract DateFormat getFormatter(TimeZone timeZone);
     }
     
-    private static class UTCDateParser extends DateParser {
+    private static class UTCDateParser extends DateFormatParser {
         private final String pattern;
         private static final TimeZone UTC_TIME_ZONE = TimeZone.getTimeZone("UTC");
 
@@ -1161,7 +1182,7 @@ public class DateObject extends BuiltinFunctionObject {
         }
     }
     
-    private static class TZDateParser extends DateParser {
+    private static class TZDateParser extends DateFormatParser {
         private final String pattern;
 
         public TZDateParser(String  pattern) {
@@ -1176,7 +1197,7 @@ public class DateObject extends BuiltinFunctionObject {
         }
     }
     
-    private static class DefaultDateParser extends DateParser {
+    private static class DefaultDateParser extends DateFormatParser {
 
         @Override
         protected DateFormat getFormatter(TimeZone timeZone) {
@@ -1186,12 +1207,21 @@ public class DateObject extends BuiltinFunctionObject {
         }
         
     }
-    
+
+
     private static DateParser [] parsers = {
             new UTCDateParser(SIMPLIFIED_ISO8601_DATE_FORMAT_PATTERN),
             new UTCDateParser(UTC_FORMAT_PATTERN),
             new TZDateParser(TO_STRING_PATTERN), 
-            new DefaultDateParser() };
+            new DefaultDateParser(),
+            new UTCDateParser("yyyy-MM-dd'T'HH:mm:ss.SSS"),
+            new UTCDateParser("yyyy-MM-dd'T'HH:mm:ss"),
+            new UTCDateParser("yyyy-MM-dd'T'HH:mm"),
+            new UTCDateParser("yyyy-MM-dd'T'HH"),
+            new UTCDateParser("yyyy-MM-dd"),
+            new UTCDateParser("yyyy-MM"),
+            new UTCDateParser("yyyy"),
+            };
     private static long parse(String dateString, TimeZone timeZone) {
         for (DateParser parser : parsers) {
             Date date = parser.parse(dateString,timeZone);

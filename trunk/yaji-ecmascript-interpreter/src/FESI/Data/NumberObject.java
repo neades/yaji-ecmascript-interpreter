@@ -212,7 +212,7 @@ public class NumberObject extends BuiltinFunctionObject {
         try {
             
 
-            numberObject.putHiddenProperty("prototype", numberPrototype);
+            numberObject.putProperty(StandardProperty.PROTOTYPEstring, 0, numberPrototype);
             numberObject.putHiddenProperty("length", ESNumber.valueOf(1));
             numberObject.putHiddenProperty("MAX_VALUE", ESNumber
                     .valueOf(Double.MAX_VALUE));

@@ -116,7 +116,7 @@ public class BooleanObject extends BuiltinFunctionObject {
                 }
             }
 
-            booleanObject.putHiddenProperty("prototype", booleanPrototype);
+            booleanObject.putProperty(StandardProperty.PROTOTYPEstring, 0, booleanPrototype);
             booleanObject.putHiddenProperty("length", ESNumber.valueOf(1));
 
             booleanPrototype.putHiddenProperty("constructor", booleanObject);

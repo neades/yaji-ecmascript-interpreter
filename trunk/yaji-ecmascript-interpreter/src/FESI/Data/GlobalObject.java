@@ -489,11 +489,11 @@ public class GlobalObject extends ObjectPrototype {
             go = new GlobalObject(objectPrototype, evaluator);
 
             // Set built-in properties
-            objectObject.putHiddenProperty("prototype", objectPrototype);
+            objectObject.putProperty(StandardProperty.PROTOTYPEstring, 0, objectPrototype);
 
             objectPrototype.initialise(objectObject, evaluator, functionPrototype);
             
-            functionObject.putHiddenProperty("prototype", functionPrototype);
+            functionObject.putProperty(StandardProperty.PROTOTYPEstring, 0, functionPrototype);
             functionObject.putHiddenProperty("length", ESNumber.valueOf(1));
             
             ErrorObject errorObject = ErrorObject.make(evaluator, objectPrototype, functionPrototype);
@@ -502,7 +502,7 @@ public class GlobalObject extends ObjectPrototype {
             ESObject esRegExpPrototype = new RegExpPrototype(objectPrototype, evaluator);
             ESObject globalObjectRegExp = new RegExpObject(StandardProperty.REG_EXPstring,
                     evaluator, functionPrototype, esRegExpPrototype);
-            globalObjectRegExp.putHiddenProperty("prototype", esRegExpPrototype);
+            globalObjectRegExp.putProperty(StandardProperty.PROTOTYPEstring, 0, esRegExpPrototype);
             globalObjectRegExp.putHiddenProperty("length", ESNumber.valueOf(1));
 
             esRegExpPrototype.putHiddenProperty("constructor", globalObjectRegExp);

@@ -12,7 +12,7 @@ public class ErrorObject extends BuiltinFunctionObject {
         errorPrototype.putProperty("constructor", this, "constructor".hashCode());
         errorPrototype.putProperty("name", ESString.valueOf("Error"), "name".hashCode());
         errorPrototype.putProperty("message", ESString.valueOf(""), "message".hashCode());
-        putHiddenProperty("prototype",errorPrototype);
+        putProperty(StandardProperty.PROTOTYPEstring, 0, errorPrototype);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class ErrorObject extends BuiltinFunctionObject {
     }
 
     public ErrorPrototype getPrototypeProperty() throws EcmaScriptException {
-        return (ErrorPrototype) getProperty("prototype","prototype".hashCode());
+        return (ErrorPrototype) getProperty(StandardProperty.PROTOTYPEstring,StandardProperty.PROTOTYPEhash);
     }
 
 

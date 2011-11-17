@@ -31,10 +31,6 @@ import FESI.Interpreter.ScopeChain;
  */
 public class ConstructedFunctionObject extends FunctionPrototype {
     private static final long serialVersionUID = 8665440834402496188L;
-    private static final String PROTOTYPEstring = "prototype".intern();
-    private static final int PROTOTYPEhash = PROTOTYPEstring.hashCode();
-    private static final String ARGUMENTSstring = ("arguments").intern();
-    private static final int ARGUMENTShash = ARGUMENTSstring.hashCode();
 
     private ASTStatementList theFunctionAST;
     private String[] theArguments;
@@ -143,7 +139,7 @@ public class ConstructedFunctionObject extends FunctionPrototype {
     @Override
     public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
-        ESValue prototype = getProperty(PROTOTYPEstring, PROTOTYPEhash);
+        ESValue prototype = getProperty(StandardProperty.PROTOTYPEstring, StandardProperty.PROTOTYPEhash);
         ESObject op = getEvaluator().getObjectPrototype();
         if (!(prototype instanceof ESObject))
             prototype = op;
@@ -213,7 +209,7 @@ public class ConstructedFunctionObject extends FunctionPrototype {
                     functionName, evaluationSource, sourceString, arguments,
                     localVariableNames, aFunctionAST, scopeChain, isStrictMode);
             ObjectPrototype thePrototype = ObjectObject.createObject(evaluator);
-            theNewFunction.putHiddenProperty("prototype", fp);
+            theNewFunction.putProperty(StandardProperty.PROTOTYPEstring, 0, fp);
             thePrototype.putHiddenProperty("constructor", theNewFunction);
         } catch (EcmaScriptException e) {
             e.printStackTrace();
@@ -225,7 +221,7 @@ public class ConstructedFunctionObject extends FunctionPrototype {
     @Override
     public ESValue getPropertyInScope(String propertyName,
             ScopeChain previousScope, int hash) throws EcmaScriptException {
-        if (hash == ARGUMENTShash && propertyName.equals(ARGUMENTSstring)) {
+        if (hash == StandardProperty.ARGUMENTShash && propertyName.equals(StandardProperty.ARGUMENTSstring)) {
             return currentArguments;
         }
         return super.getPropertyInScope(propertyName, previousScope, hash);
@@ -235,7 +231,7 @@ public class ConstructedFunctionObject extends FunctionPrototype {
     @Override
     public ESValue getPropertyIfAvailable(String propertyName, int hash)
             throws EcmaScriptException {
-        if (hash == ARGUMENTShash && propertyName.equals(ARGUMENTSstring)) {
+        if (hash == StandardProperty.ARGUMENTShash && propertyName.equals(StandardProperty.ARGUMENTSstring)) {
             return currentArguments;
         }
         return super.getPropertyIfAvailable(propertyName, hash);
@@ -246,7 +242,7 @@ public class ConstructedFunctionObject extends FunctionPrototype {
     @Override
     public void putProperty(String propertyName, ESValue propertyValue, int hash)
             throws EcmaScriptException {
-        if (hash != ARGUMENTShash || ! propertyName.equals(ARGUMENTSstring)) {
+        if (hash != StandardProperty.ARGUMENTShash || ! propertyName.equals(StandardProperty.ARGUMENTSstring)) {
             super.putProperty(propertyName, propertyValue, hash);
         } // Allowed via putHiddenProperty, used internally !
     }
