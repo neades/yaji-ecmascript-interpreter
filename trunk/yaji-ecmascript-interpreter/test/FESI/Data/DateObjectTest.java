@@ -112,6 +112,27 @@ public class DateObjectTest extends EvaluatorTestCase {
     }
     
     @Test
+    public void constructorShouldHandleYearBeingInfinite() throws Exception {
+        DatePrototype object = (DatePrototype) dateObject.doConstruct(new ESValue[] { ESNumber.valueOf(Double.POSITIVE_INFINITY), ESNumber.valueOf(9) });
+        assertTrue(Double.isNaN(object.doubleValue()));
+    }
+    
+    @Test
+    public void constructorShouldHandleDateBeingGreaterThanMax() throws Exception {
+        evaluator.setDefaultTimeZone(TimeZone.getTimeZone("UTC"));
+        DatePrototype object = (DatePrototype) dateObject.doConstruct(new ESValue[] { ESNumber.valueOf(1970), ESNumber.valueOf(0), ESNumber.valueOf(100000001), ESNumber.valueOf(0), ESNumber.valueOf(0), ESNumber.valueOf(0), ESNumber.valueOf(1) });
+        assertTrue(Double.isNaN(object.doubleValue()));
+    }
+    
+    @Test
+    public void constructorShouldHandleDateBeingEqualMax() throws Exception {
+        evaluator.setDefaultTimeZone(TimeZone.getTimeZone("UTC"));
+        DatePrototype object = (DatePrototype) dateObject.doConstruct(new ESValue[] { ESNumber.valueOf(1970), ESNumber.valueOf(0), ESNumber.valueOf(100000001), ESNumber.valueOf(0), ESNumber.valueOf(0), ESNumber.valueOf(0), ESNumber.valueOf(0) });
+        assertTrue(!Double.isNaN(object.doubleValue()));
+    }
+    
+    
+    @Test
     public void constructorShouldHandleMonthBeingPoor() throws Exception {
         DatePrototype object = (DatePrototype) dateObject.doConstruct(new ESValue[] { ESNumber.valueOf(2011),new ESString("blah"), ESNumber.valueOf(9) });
         assertTrue(Double.isNaN(object.doubleValue()));
@@ -162,5 +183,4 @@ public class DateObjectTest extends EvaluatorTestCase {
         assertEquals(ESNumber.valueOf(1), function.getProperty(StandardProperty.LENGTHstring));
     }
 
-    
 }
