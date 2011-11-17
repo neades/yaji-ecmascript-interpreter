@@ -37,7 +37,7 @@ public abstract class BuiltinFunctionObject extends FunctionPrototype {
     @Override
     public void putProperty(String propertyName, ESValue propertyValue, int hash)
             throws EcmaScriptException {
-        if (!propertyName.equals("prototype")) {
+        if (!propertyName.equals(StandardProperty.PROTOTYPEstring)) {
             super.putProperty(propertyName, propertyValue, hash);
         } // Allowed via putHiddenProperty, used internally !
     }

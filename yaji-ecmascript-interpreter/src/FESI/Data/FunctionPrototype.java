@@ -140,7 +140,7 @@ public class FunctionPrototype extends ESObject {
             return false;
         }
         ESObject v = (ESObject)v1;
-        ESValue prototype = getProperty("prototype", "prototype".hashCode());
+        ESValue prototype = getProperty(StandardProperty.PROTOTYPEstring, StandardProperty.PROTOTYPEhash);
         if (! (prototype instanceof ESObject)) {
             throw new TypeError("prototype of Function expected to be an Object");
         }

@@ -20,7 +20,7 @@ public class NativeErrorObject extends BuiltinFunctionObject {
         nativeErrorPrototype.putProperty("constructor", this, "constructor".hashCode());
         nativeErrorPrototype.putProperty("name", ESString.valueOf(constructorName), "name".hashCode());
         nativeErrorPrototype.putProperty("message", ESString.valueOf(""), "message".hashCode());
-        putHiddenProperty("prototype",nativeErrorPrototype);
+        putProperty(StandardProperty.PROTOTYPEstring, 0, nativeErrorPrototype);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class NativeErrorObject extends BuiltinFunctionObject {
     }
 
     public ESObject getPrototypeProperty() throws EcmaScriptException {
-        return (ESObject) getProperty("prototype","prototype".hashCode());
+        return (ESObject) getProperty(StandardProperty.PROTOTYPEstring,StandardProperty.PROTOTYPEhash);
     }
 
 }

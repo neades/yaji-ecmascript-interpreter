@@ -34,7 +34,7 @@ public class ObjectObject extends BuiltinFunctionObject {
         super(prototype, evaluator, "Object", 1);
         
         ObjectPrototype p = new ObjectPrototype(null, evaluator);
-        putHiddenProperty("prototype", p);
+        putProperty(StandardProperty.PROTOTYPEstring, 0, p);
         
         putHiddenProperty("isFrozen", new BuiltinFunctionObject(prototype,
                 evaluator, "isFrozen", 1) {

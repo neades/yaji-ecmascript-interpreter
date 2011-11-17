@@ -127,7 +127,7 @@ public class FunctionObject extends BuiltinFunctionObject implements
 
     FunctionObject(FunctionPrototype prototype, Evaluator evaluator) throws EcmaScriptException {
         super(prototype, evaluator, "Function", 1);
-        putHiddenProperty("prototype", prototype);
+        putProperty(StandardProperty.PROTOTYPEstring, 0, prototype);
         prototype.putHiddenProperty("constructor", this);
         prototype.putHiddenProperty("toString",
                 new FunctionPrototypeToString("toString", evaluator, prototype));

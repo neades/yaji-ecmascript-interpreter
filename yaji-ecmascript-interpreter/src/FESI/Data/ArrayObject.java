@@ -490,7 +490,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                     return ((ArrayObject) thisObject).isArray(arguments);
                 }
             }
-            arrayObject.putHiddenProperty("prototype", arrayPrototype);
+            arrayObject.putProperty(StandardProperty.PROTOTYPEstring, 0,arrayPrototype);
             arrayObject.putHiddenProperty("isArray", new ArrayIsArray(
                     "isArray", evaluator, functionPrototype));
         } catch (EcmaScriptException e) {
