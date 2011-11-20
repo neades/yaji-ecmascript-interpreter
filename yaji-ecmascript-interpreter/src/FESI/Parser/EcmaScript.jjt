@@ -935,9 +935,8 @@ void PrimaryExpression() #void :
 {}
 {
     PrimaryExpressionInES() 
-|   ObjectLiteral()
+|   ( ( ObjectLiteral() ( PrimarySuffix() )* ) #CompositeReference(>1) )
 |   ( ( FunctionExpression() ( PrimarySuffix() )* ) #CompositeReference(>1) )
-|   ArrayLiteral()
 }
 
 void PrimaryExpressionInES() #void :
@@ -948,6 +947,7 @@ void PrimaryExpressionInES() #void :
 |	( ( Literal() ( PrimarySuffix() )* ) #CompositeReference(>1) )
 |	( ( "(" Expression() ")" ( PrimarySuffix() )* ) #CompositeReference(>1) )
 |	AllocationExpression()  #CompositeReference(>1)
+|   ( ( ArrayLiteral() ( PrimarySuffix() )* ) #CompositeReference(>1) )
 }
 
 void FunctionExpression() #FunctionExpression :

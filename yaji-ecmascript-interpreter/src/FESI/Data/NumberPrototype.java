@@ -207,7 +207,7 @@ class NumberPrototype extends ESObject {
         
         StringBuilder s = new StringBuilder(21);
         
-        if (d >= 1e21 || Double.isNaN(d)) {
+        if (d >= 1e20 || Double.isNaN(d)) {
             return toString();
         }
         if (d < 0) {

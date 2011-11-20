@@ -353,6 +353,18 @@ public class EcmascriptParserTest {
                 },
                 {  "// single line comment",
                     "Program" + eol
+                },
+                {  "[].length = 0;",
+                    "Program" + eol
+                    + " Statement" + eol
+                    + "  AssignmentExpression" + eol 
+                    + "   CompositeReference" + eol 
+                    + "    ArrayLiteral" +  eol
+                    + "     Elision" +  eol
+                    + "    PropertyIdentifierReference" + eol 
+                    + "     <length>" +  eol
+                    + "   <\"=\">" +  eol
+                    + "   [0]" +  eol
                 }
             });
     }

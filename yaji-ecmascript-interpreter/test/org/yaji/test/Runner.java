@@ -266,18 +266,18 @@ public class Runner {
         testCount ++;
         logger.println();
         if (passed) {
-            logger.print("Result " + testName + " SUCCESS");
+            logger.print("Result " + testName + " SUCCESS (");
             testPassed ++;
             System.out.print('.');
         } else {
-            logger.print("Result " + testName + " FAIL");
+            logger.print("Result " + testName + " FAIL (");
             System.out.print('E');
         }
         if (testCount % 80 == 0) {
             System.out.println();
         }
         toReadableDuration(logger, duration);
-        logger.println();
+        logger.println(")");
         System.out.flush();
     }
     

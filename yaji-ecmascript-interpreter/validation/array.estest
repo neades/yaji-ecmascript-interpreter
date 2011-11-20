@@ -240,3 +240,5 @@ Object.prototype.toString = function myToString() { return 'x,y,z' };
 result = a.toString();
 result === 'x,y,z';
 
+@test Array.literal.1
+[].length === 0;

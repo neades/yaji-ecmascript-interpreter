@@ -187,9 +187,9 @@ public class NumberPrototypeTest extends EvaluatorTestCase {
 
     @Test
     public void toFixedForTooLarge() throws Exception {
-        ESObject number = ESNumber.valueOf(1e21).toESObject(evaluator);
+        ESObject number = ESNumber.valueOf(1e20).toESObject(evaluator);
         ESValue value = number.doIndirectCall(evaluator, number, "toFixed", new ESValue[] { ESNumber.valueOf(5) });
-        assertEquals(new ESString("1000000000000000000000"),value);
+        assertEquals(new ESString("100000000000000000000"),value);
     }
     
     @Test
@@ -324,13 +324,13 @@ public class NumberPrototypeTest extends EvaluatorTestCase {
         assertEquals(new ESString("0"),value);
     }
     
-//    @Test
-//    public void toString1e21toString() throws Exception {
-//        ESObject number = ESNumber.valueOf(1e21).toESObject(evaluator);
-//        ESValue value = number.doIndirectCall(evaluator, number, "toString", ESValue.EMPTY_ARRAY);
-//        assertEquals(new ESString("1e+21"),value);
-//    }
-//    
+    @Test
+    public void toString1e21toString() throws Exception {
+        ESObject number = ESNumber.valueOf(1e21).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toString", ESValue.EMPTY_ARRAY);
+        assertEquals(new ESString("1e+21"),value);
+    }
+    
     @Test
     public void toStringNegativeZero() throws Exception {
         ESObject number = ESNumber.valueOf(-0).toESObject(evaluator);
