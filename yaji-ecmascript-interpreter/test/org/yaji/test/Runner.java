@@ -121,19 +121,21 @@ public class Runner {
         File rootDirectory = new File(arguments.get("testDir"));
         
         runTestsInDirectory(rootDirectory);
+        
+        logger.close();
     }
 
     private static class ThreadRunner extends Thread {
 
-        private final Queue<Test> tests;
+        private final Queue<TestFile> tests;
 
-        public ThreadRunner(Queue<Test> tests) {
+        public ThreadRunner(Queue<TestFile> tests) {
             this.tests = tests;
         }
         
         @Override
         public void run() {
-            Test test = tests.poll();
+            TestFile test = tests.poll();
             while (test != null) {
                 test.execute();
                 test = tests.poll();
@@ -142,9 +144,9 @@ public class Runner {
     }
     
     private void runTestsInDirectory(File rootDirectory) {
-        List<Test> tests = getListOfTests(rootDirectory);
+        List<TestFile> tests = getListOfTests(rootDirectory);
         
-        Queue<Test> testQueue = new ConcurrentLinkedQueue<Test>(tests);
+        Queue<TestFile> testQueue = new ConcurrentLinkedQueue<TestFile>(tests);
         long start = System.currentTimeMillis();
         Thread[] threads = new Thread[2];
         for(int i=0; i<threads.length; i++) {
@@ -167,8 +169,8 @@ public class Runner {
         }
     }
 
-    private List<Test> getListOfTests(File rootDirectory) {
-        List<Test> tests = new ArrayList<Test>();
+    private List<TestFile> getListOfTests(File rootDirectory) {
+        List<TestFile> tests = new ArrayList<TestFile>();
         List<File> directoriesToProcess = new LinkedList<File>();
         directoriesToProcess.add(rootDirectory);
         do {
@@ -178,7 +180,7 @@ public class Runner {
                 if (file.isDirectory()) {
                     directoriesToProcess.add(file);
                 } else if (file.getName().endsWith(".js")){
-                    Test test = new Test(rootDirectory,file);
+                    TestFile test = new TestFile(rootDirectory,file);
                     if (!excludes.contains(test.getTestId())) {
                         tests.add(test);
                     }
@@ -190,20 +192,24 @@ public class Runner {
 
     private String toReadableDuration(long duration) {
         StringBuilder sb = new StringBuilder();
-        Formatter formatter = new Formatter(sb);
-        long seconds = duration/1000L;
-        formatter.format("%d:%02d.%03d", Long.valueOf(seconds/60),Long.valueOf(seconds%60),Long.valueOf(duration%1000L));
+        toReadableDuration(sb, duration);
         return sb.toString();
     }
 
+    private void toReadableDuration(Appendable sb, long duration) {
+        Formatter formatter = new Formatter(sb);
+        long seconds = duration/1000L;
+        formatter.format("%d:%02d.%03d", Long.valueOf(seconds/60),Long.valueOf(seconds%60),Long.valueOf(duration%1000L));
+    }
+
     
-    private class Test {
+    private class TestFile {
         private String testName;
         private String testId;
         private boolean negative;
         private final File testFile;
 
-        public Test(File rootDirectory, File testFile) {
+        public TestFile(File rootDirectory, File testFile) {
             this.testFile = testFile;
             testName = getTestName(rootDirectory, testFile);
             testId = testName.substring(testName.lastIndexOf(File.separatorChar));
@@ -215,20 +221,15 @@ public class Runner {
         }
     
         public void execute() {
-            int testCount = incrementCount();
+            long start = System.currentTimeMillis();
             boolean passed = executeTest(testFile, testName);
             if (negative) {
                 passed = !passed;
             }
-            logTestResult(testName, passed, testCount);
+            logTestResult(testName, passed, System.currentTimeMillis()-start);
         }
     }
     
-    private synchronized int incrementCount() {
-        testCount ++;
-        return testCount;
-    }
-
     private boolean executeTest(File file, String testName) {
         Evaluator evaluator = new Evaluator();
         evaluator.setDefaultTimeZone(TimeZone.getTimeZone("UTC"));
@@ -261,19 +262,22 @@ public class Runner {
         return testPath.substring(rootLength, testPath.length()-3);
     }
 
-    private synchronized void logTestResult(String testName, boolean passed, int testCount) {
+    private synchronized void logTestResult(String testName, boolean passed, long duration) {
+        testCount ++;
         logger.println();
         if (passed) {
-            logger.println("Result " + testName + " SUCCESS");
+            logger.print("Result " + testName + " SUCCESS");
             testPassed ++;
             System.out.print('.');
         } else {
-            logger.println("Result " + testName + " FAIL");
+            logger.print("Result " + testName + " FAIL");
             System.out.print('E');
         }
         if (testCount % 80 == 0) {
             System.out.println();
         }
+        toReadableDuration(logger, duration);
+        logger.println();
         System.out.flush();
     }
     

@@ -43,7 +43,7 @@ public class StringObject extends BuiltinFunctionObject {
         @Override
         public ESValue callFunction(ESValue thisObject,ESValue[] arguments) throws EcmaScriptException {
             checkThisObjectCoercible(thisObject);
-            return invoke(thisObject.toString(),arguments);
+            return invoke(thisObject.internalToString(),arguments);
         }
 
         protected abstract ESValue invoke(String string, ESValue[] arguments) throws EcmaScriptException;
@@ -73,7 +73,7 @@ public class StringObject extends BuiltinFunctionObject {
         }
 
         private boolean isWhitespace(char c) {
-            return Character.isWhitespace(c) || Character.isSpaceChar(c);
+            return Character.isWhitespace(c) || Character.isSpaceChar(c) || c == '\uFEFF';
         }
     }
 
@@ -655,7 +655,7 @@ public class StringObject extends BuiltinFunctionObject {
     public static StringObject makeStringObject(Evaluator evaluator,
             ObjectPrototype objectPrototype, FunctionPrototype functionPrototype) {
 
-        StringPrototype stringPrototype = new StringPrototype(objectPrototype,
+        ESObject stringPrototype = new StringPrototype(objectPrototype,
                 evaluator);
         StringObject stringObject = new StringObject(functionPrototype,
                 evaluator);

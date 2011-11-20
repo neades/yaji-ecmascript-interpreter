@@ -37,7 +37,8 @@ public class StringPrototypeTest extends EvaluatorTestCase  {
         +"\u205F" //   medium mathematical space 
         +"\u3000" //   ideographic space
         +"\u2028" //   Line separator
-        +"\u2029";//   Paragraph separator
+        +"\u2029" //   Paragraph separator
+        +"\uFEFF";//   Byte Order Mark
 
     private static final String ASCII_WHITE_SPACE = "\u0009\n\u000B\u000C\r\u0020";
 

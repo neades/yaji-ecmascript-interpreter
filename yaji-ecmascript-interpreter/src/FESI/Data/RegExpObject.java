@@ -11,7 +11,7 @@ class RegExpObject extends BuiltinFunctionObject {
     private static final long serialVersionUID = 5695969400216749530L;
     private final ESObject regExpPrototype;
     
-    static class ESRegExpPrototypetestMethod extends BuiltinFunctionObject {
+    private static class ESRegExpPrototypetestMethod extends BuiltinFunctionObject {
         private static final long serialVersionUID = -1530678844987141170L;
 
         ESRegExpPrototypetestMethod(String name, Evaluator evaluator,
@@ -28,7 +28,7 @@ class RegExpObject extends BuiltinFunctionObject {
         }
     }
 
-    static class ESRegExpPrototypeExecMethod extends BuiltinFunctionObject {
+    private static class ESRegExpPrototypeExecMethod extends BuiltinFunctionObject {
         private static final long serialVersionUID = 6552738494467189408L;
 
         ESRegExpPrototypeExecMethod(String name, Evaluator evaluator,
@@ -45,6 +45,25 @@ class RegExpObject extends BuiltinFunctionObject {
         }
     }
 
+    private static class ESRegExpPrototypeToStringMethod extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 6552738494467189408L;
+
+        ESRegExpPrototypeToStringMethod(String name, Evaluator evaluator,
+                FunctionPrototype fp) {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            if (!(thisObject instanceof RegExpPrototype)) {
+                throw new TypeError("Regexp.prototype.toString cannot be applied to non-regexp object");
+            }
+            RegExpPrototype regexp = (RegExpPrototype) thisObject;
+            return new ESString(regexp.toString());
+        }
+    }
+
     public RegExpObject(String name, Evaluator evaluator,
             FunctionPrototype fp, ESObject regExpPrototype) throws EcmaScriptException {
         super(fp, evaluator, name, 1);
@@ -53,6 +72,8 @@ class RegExpObject extends BuiltinFunctionObject {
                 "test", evaluator, fp));
         regExpPrototype.putHiddenProperty("exec", new ESRegExpPrototypeExecMethod(
                 "exec", evaluator, fp));
+        regExpPrototype.putHiddenProperty("toString", new ESRegExpPrototypeToStringMethod(
+                "toString", evaluator, fp));
     }
 
     @Override
@@ -97,4 +118,6 @@ class RegExpObject extends BuiltinFunctionObject {
     private String argToString(ESValue v) {
         return (v == ESUndefined.theUndefined)?"":v.toString();
     }
+    
+
 }

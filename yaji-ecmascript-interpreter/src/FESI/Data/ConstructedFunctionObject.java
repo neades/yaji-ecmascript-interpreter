@@ -209,7 +209,7 @@ public class ConstructedFunctionObject extends FunctionPrototype {
                     functionName, evaluationSource, sourceString, arguments,
                     localVariableNames, aFunctionAST, scopeChain, isStrictMode);
             ObjectPrototype thePrototype = ObjectObject.createObject(evaluator);
-            theNewFunction.putProperty(StandardProperty.PROTOTYPEstring, 0, fp);
+            theNewFunction.putHiddenProperty(StandardProperty.PROTOTYPEstring, fp);
             thePrototype.putHiddenProperty("constructor", theNewFunction);
         } catch (EcmaScriptException e) {
             e.printStackTrace();

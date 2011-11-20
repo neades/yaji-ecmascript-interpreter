@@ -104,4 +104,10 @@ public class RegExpPrototypeTest extends EvaluatorTestCase {
         RegExpPrototype regexp = new RegExpPrototype(evaluator.getRegExpPrototype(), evaluator, "([a-z])B([a-z])B","g");
         assertEquals(new ESString("([a-z])B([a-z])B"),regexp.getProperty(StandardProperty.SOURCEstring));
     }
+    
+    @Test
+    public void toStringShouldReturnPatternSurrondedInSlashes() throws Exception {
+        RegExpPrototype regexp = new RegExpPrototype(evaluator.getRegExpPrototype(), evaluator, "([a-z])B([a-z])B","g");
+        assertEquals(new ESString("/([a-z])B([a-z])B/g"),regexp.doIndirectCall(evaluator, regexp, "toString", ESValue.EMPTY_ARRAY));
+    }
 }

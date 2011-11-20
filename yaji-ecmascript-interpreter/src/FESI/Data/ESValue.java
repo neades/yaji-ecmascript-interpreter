@@ -226,6 +226,15 @@ public abstract class ESValue implements java.io.Serializable {
         return ESNumber.valueOf(d);
     }
 
+   /**
+    * ToString 9.8
+    * @throws EcmaScriptException 
+    * 
+    */
+    public String internalToString() throws EcmaScriptException {
+        return toString();
+    }
+
     // Provide support to easily distinguish primitive values from other, and
     // to convert values to primitive value. If the desired type is known
     // the direct conversion routines are prefered.

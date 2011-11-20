@@ -171,4 +171,5 @@ public final class ESUndefined extends ESPrimitive {
     boolean isObjectCoercible() {
         return false;
     }
+
 }

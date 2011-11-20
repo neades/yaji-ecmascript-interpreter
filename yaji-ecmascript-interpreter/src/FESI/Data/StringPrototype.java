@@ -77,8 +77,8 @@ class StringPrototype extends ESObject {
         ESValue definedProperty = super.getPropertyIfAvailable(propertyName, hash);
         if (definedProperty == null) {
             if (isAllDigits(propertyName)) {
-                int index = Integer.parseInt(propertyName);
-                if (index < value.getStringLength()) {
+                int index = toUInt32(propertyName);
+                if (index < value.getStringLength() && index >= 0) {
                     return ESString.valueOf(value.toString().substring(index, index+1));
                 }
             }
