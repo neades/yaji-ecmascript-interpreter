@@ -55,7 +55,7 @@
 	</path>
 
 
-	<target name="init">
+	<target name="init" depends="configure">
 		<!-- Create the time stamp -->
 		<tstamp />
 		<!-- Create the build directory structure used by compile -->
@@ -136,13 +136,13 @@
 
 	<!-- Compile the java code from ${src} into ${classes} -->
 	<target name="compile" depends="init" description="compile the source ">
-		<javac srcdir="${src}" destdir="${classes}" debug="true">
+		<javac srcdir="${src}" destdir="${classes}" debug="true" includeantruntime="false">
 			<classpath refid="project.compile.class.path" />
 		</javac>
 	</target>
 
 	<target name="compile-tests" depends="init" description="compile the test source ">
-		<javac srcdir="test" destdir="${test-classes}" debug="true" encoding="UTF-8">
+		<javac srcdir="test" destdir="${test-classes}" debug="true" encoding="UTF-8" includeantruntime="false">
 			<classpath refid="project.test.class.path" />
 		</javac>
 	</target>

@@ -513,21 +513,21 @@ try {
 }
 
 @test instanceof.15.3.5.3.4.b
-var F1 = function() {};
-F1.prototype = {};
-var F2 = function() {};
-F2.prototype = {};
-var x = new F1();
-!(x instanceof F2);
+var F1b = function() {};
+F1b.prototype = {};
+var F2b = function() {};
+F2b.prototype = {};
+var x = new F1b();
+!(x instanceof F2b);
 
 
 @test instanceof.15.3.5.3.4.loop
-var F1 = function() {};
-F1.prototype = {};
-var F2 = function() {};
-F2.prototype = new F1();
-var x = new F2();
-x instanceof F1;
+var F1c = function() {};
+F1c.prototype = {};
+var F2c = function() {};
+F2c.prototype = new F1c();
+var x = new F2c();
+x instanceof F1c;
 
 
 @test in.11.8.7

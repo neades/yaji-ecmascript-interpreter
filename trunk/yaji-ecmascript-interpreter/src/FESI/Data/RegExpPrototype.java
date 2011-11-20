@@ -169,4 +169,5 @@ public class RegExpPrototype extends ESObject {
         lastIndex = 0;
         return ESNull.theNull;
     }
+
 }

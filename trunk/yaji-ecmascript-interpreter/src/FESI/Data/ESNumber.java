@@ -181,7 +181,7 @@ public final class ESNumber extends ESPrimitive {
                 pad(sb,n-k+1,'0');
             } else if (0 <= n && n <= 21) {
                 sb.append(s.substring(0,n+1)).append('.').append(s.substring(n+1));
-            } else if (-6 < n && n < 0) {
+            } else if (-6 <= n && n < 0) {
                 sb.append("0.");
                 pad(sb,-n-1,'0');
                 sb.append(s);

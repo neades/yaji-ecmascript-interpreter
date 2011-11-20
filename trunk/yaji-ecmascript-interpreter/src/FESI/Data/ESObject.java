@@ -143,6 +143,12 @@ public abstract class ESObject extends ESValue {
         return context;
     }
 
+    @Override
+    public String internalToString() throws EcmaScriptException {
+        ESValue primitive = toESPrimitive(EStypeString);
+        return primitive.toString();
+    }
+    
     /**
      * All objects and thir subclasses are non primitive
      * 
@@ -644,7 +650,7 @@ public abstract class ESObject extends ESValue {
             }
             // Throw errror on super to avoid evaluating this with as a string,
             // as this is exactly what we cannot do.
-            throw new EcmaScriptException("No default value for "
+            throw new TypeError("No default value for "
                     + super.toString() + " and hint " + hint);
         } else if (hint == ESValue.EStypeNumber) {
             theFunction = this.getProperty(StandardProperty.VALUEOFstring, StandardProperty.VALUEOFhash);
@@ -662,7 +668,7 @@ public abstract class ESObject extends ESValue {
                 }
             }
         }
-        throw new EcmaScriptException("No default value for " + this
+        throw new TypeError("No default value for " + this
                 + " and hint " + hint);
     }
 
@@ -1214,5 +1220,9 @@ public abstract class ESObject extends ESValue {
 
     public Enumeration<String> keys() {
         return hasPropertyMap() ? getPropertyMap().enumerableKeys() : EMPTY_STRING_ENUMERATION;
+    }
+
+    protected int toUInt32(String propertyName) {
+        return (int)Long.parseLong(propertyName);
     }
 }

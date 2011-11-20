@@ -292,9 +292,9 @@ public class NumberPrototypeTest extends EvaluatorTestCase {
     
     @Test
     public void toStringFor9_8_1_8_lowerlimit_exceeded() throws Exception {
-        ESObject number = ESNumber.valueOf(1.23456e-6).toESObject(evaluator);
+        ESObject number = ESNumber.valueOf(1.23456e-7).toESObject(evaluator);
         ESValue value = number.doIndirectCall(evaluator, number, "toString", ESValue.EMPTY_ARRAY);
-        assertEquals(new ESString("1.23456e-6"),value);
+        assertEquals(new ESString("1.23456e-7"),value);
     }
     
     @Test
@@ -324,6 +324,13 @@ public class NumberPrototypeTest extends EvaluatorTestCase {
         assertEquals(new ESString("0"),value);
     }
     
+//    @Test
+//    public void toString1e21toString() throws Exception {
+//        ESObject number = ESNumber.valueOf(1e21).toESObject(evaluator);
+//        ESValue value = number.doIndirectCall(evaluator, number, "toString", ESValue.EMPTY_ARRAY);
+//        assertEquals(new ESString("1e+21"),value);
+//    }
+//    
     @Test
     public void toStringNegativeZero() throws Exception {
         ESObject number = ESNumber.valueOf(-0).toESObject(evaluator);

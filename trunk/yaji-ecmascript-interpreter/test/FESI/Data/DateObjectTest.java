@@ -182,5 +182,38 @@ public class DateObjectTest extends EvaluatorTestCase {
         ESObject function = (ESObject) object.getProperty(StandardProperty.TOJSONstring);
         assertEquals(ESNumber.valueOf(1), function.getProperty(StandardProperty.LENGTHstring));
     }
+    
+    @Test
+    public void constructorWithStringArgParsesString() throws Exception {
+        Date date = createDate(1965, 9, 30, 14, 22, 36);
+        DatePrototype dp = (DatePrototype) dateObject.doConstruct(ESValue.EMPTY_ARRAY);
+        dp.setDate(date);
+        ESValue toStringDate = dp.doIndirectCall(evaluator, dp, "toString", ESValue.EMPTY_ARRAY );
+        
+        DatePrototype object = (DatePrototype) dateObject.doConstruct(new ESValue[] { toStringDate });
+        assertEquals("1965-10-30T14:22:36.000Z",object.doIndirectCall(evaluator, object, "toISOString", ESValue.EMPTY_ARRAY ).toString());
+    }
+
+    @Test
+    public void constructorWithPartialYearOnly() throws Exception {
+        Date date = createDate(2007, 0, 1, 0, 0, 0);
+        ESValue value = dateObject.doIndirectCall(evaluator, dateObject, "parse", new ESValue[] { new ESString("2007") });
+        assertEquals(ESNumber.valueOf(date.getTime()), value);
+    }
+
+    @Test
+    public void constructorWithPartialYearMonthOnly() throws Exception {
+        Date date = createDate(2007, 5, 1, 0, 0, 0);
+        ESValue value = dateObject.doIndirectCall(evaluator, dateObject, "parse", new ESValue[] { new ESString("2007-06") });
+        assertEquals(ESNumber.valueOf(date.getTime()), value);
+    }
+
+    @Test
+    public void nowReturnsApproximatleyCorrectTime() throws Exception  {
+        long now = System.currentTimeMillis();
+        ESNumber value = (ESNumber) dateObject.doIndirectCall(evaluator, dateObject, "now", ESValue.EMPTY_ARRAY);
+        long diff = value.longValue() - now;
+        assertTrue(diff < 10000 && diff >= 0); // very generously allow ten seconds
+    }
 
 }
