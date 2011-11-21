@@ -181,7 +181,6 @@ public class Runner {
                     directoriesToProcess.add(file);
                 } else if (file.getName().endsWith(".js")){
                     TestFile test = new TestFile(rootDirectory,file);
-                    System.out.println("Excludes contains "+test.getTestId()+" : "+excludes.contains(test.getTestId()));
                     if (!excludes.contains(test.getTestId())) {
                         tests.add(test);
                     }
