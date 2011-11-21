@@ -181,6 +181,7 @@ public class Runner {
                     directoriesToProcess.add(file);
                 } else if (file.getName().endsWith(".js")){
                     TestFile test = new TestFile(rootDirectory,file);
+                    System.out.println("Excludes contains "+test.getTestId()+" : "+excludes.contains(test.getTestId()));
                     if (!excludes.contains(test.getTestId())) {
                         tests.add(test);
                     }
@@ -212,7 +213,7 @@ public class Runner {
         public TestFile(File rootDirectory, File testFile) {
             this.testFile = testFile;
             testName = getTestName(rootDirectory, testFile);
-            testId = testName.substring(testName.lastIndexOf(File.separatorChar));
+            testId = testName.substring(testName.lastIndexOf(File.separatorChar)+1);
             negative = isNegative(testName);
         }
         
