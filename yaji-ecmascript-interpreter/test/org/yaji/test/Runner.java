@@ -7,6 +7,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Formatter;
@@ -17,6 +19,8 @@ import java.util.List;
 import java.util.Queue;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -25,20 +29,122 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+import org.yaji.util.OS;
 
 import FESI.Interpreter.Evaluator;
 
 public class Runner {
 
+    private static class Logger implements ILogger, Runnable {
+        private final Writer writer;
+        private LinkedBlockingQueue<CharSequence> messagesToWrite = new LinkedBlockingQueue<CharSequence>();
+        private transient boolean closeRequested;
+        private Thread thread;
+
+        private Logger(String logFile) throws IOException {
+            if (logFile != null) {
+                writer = new PrintWriter(new FileWriter(logFile));
+            } else {
+                writer = new PrintWriter(System.out);
+            }
+            thread = new Thread(this);
+            thread.start();
+        }
+
+        public Appendable append(CharSequence csq) throws IOException {
+            messagesToWrite.add(csq);
+            return this; 
+        }
+
+        public Appendable append(CharSequence csq, int start, int end)
+        throws IOException {
+            return append(csq.subSequence(start, end));
+        }
+
+        public Appendable append(char c) throws IOException {
+            return append(Character.toString(c));
+        }
+
+        public void close() {
+            closeRequested = true;
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            try {
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void printStackTrace(Throwable e) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            pw.close();
+            print(sw.toString());
+        }
+
+        public void println() {
+            print(OS.EOL);
+        }
+
+        public void print(String string) {
+            try {
+                append(string);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void println(String string) {
+            print(string+OS.EOL);
+        }
+
+        public void run() {
+            while (!(closeRequested && messagesToWrite.isEmpty())) {
+                try {
+                    CharSequence toWrite = messagesToWrite.poll(1,TimeUnit.SECONDS);
+                    if (toWrite != null) {
+                        writer.append(toWrite);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            
+        }
+    }
+
+    private interface ILogger extends Appendable{
+
+        void close();
+
+        void printStackTrace(Throwable e);
+
+        void println();
+
+        void print(String string);
+
+        void println(String string);
+        
+    }
+    
     private static SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
     
     private final Arguments arguments;
-    private PrintWriter logger;
+    private ILogger logger;
     private int testCount;
     private int testPassed;
     private HashSet<String> excludes;
 
     private File originalDirectory;
+
+    private int threadCount;
 
     private static class Arguments extends HashMap<String,String> {
 
@@ -76,6 +182,16 @@ public class Runner {
         } else {
             originalDirectory = null;
         }
+        String threads = arguments.get("threads");
+        if (threads == null) {
+            threadCount = 1;
+        } else {
+            try {
+                threadCount = Math.max(1, Integer.parseInt(threads,10));
+            } catch (NumberFormatException e) {
+                threadCount = 1;
+            }
+        }
     }
 
     private void readExcludesFile(String excludesFile, final HashSet<String> excludesSet) {
@@ -102,19 +218,8 @@ public class Runner {
         }
     }
 
-    private PrintWriter createLogger(String logFile) throws IOException {
-        PrintWriter logger;
-        if (logFile != null) {
-            logger = new PrintWriter(new FileWriter(logFile));
-        } else {
-            logger = new PrintWriter(System.out) {
-                @Override
-                public void close() {
-                    // Ignore
-                }
-            };
-        }
-        return logger;
+    private ILogger createLogger(final String logFile) throws IOException {
+        return new Logger(logFile);
     }
     
     public void run() {
@@ -148,7 +253,7 @@ public class Runner {
         
         Queue<TestFile> testQueue = new ConcurrentLinkedQueue<TestFile>(tests);
         long start = System.currentTimeMillis();
-        Thread[] threads = new Thread[2];
+        Thread[] threads = new Thread[threadCount];
         for(int i=0; i<threads.length; i++) {
             threads[i] = new ThreadRunner(testQueue);
             threads[i].start();
@@ -222,15 +327,19 @@ public class Runner {
     
         public void execute() {
             long start = System.currentTimeMillis();
-            boolean passed = executeTest(testFile, testName);
-            if (negative) {
-                passed = !passed;
+            try {
+                boolean passed = executeTest(testFile, testName);
+                if (negative) {
+                    passed = !passed;
+                }
+                logTestResult(testName, passed, System.currentTimeMillis()-start);
+            } catch(Throwable t) {
+                t.printStackTrace();
             }
-            logTestResult(testName, passed, System.currentTimeMillis()-start);
         }
     }
     
-    private boolean executeTest(File file, String testName) {
+    private boolean executeTest(File file, String testName) throws IOException {
         Evaluator evaluator = new Evaluator();
         evaluator.setDefaultTimeZone(TimeZone.getTimeZone("UTC"));
         boolean passed = false;
@@ -246,14 +355,15 @@ public class Runner {
 
     private synchronized void logException(Throwable e) {
         try {
-            e.printStackTrace(logger);
+            logger.printStackTrace(e);
         } catch (Exception e1) {
             e1.printStackTrace();
         }
     }
 
-    private synchronized void logStart(String testName) {
-        logger.append("Executing ").append(testName).append(" ");
+    private synchronized void logStart(String testName) throws IOException {
+        logger.append("Executing ").append(testName);
+        logger.println();
     }
 
     private String getTestName(File rootDirectory, File file) {
