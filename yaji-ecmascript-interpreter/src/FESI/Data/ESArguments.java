@@ -38,7 +38,6 @@ public class ESArguments extends ESObject {
     private final int length; // Number of arguments
     protected String[] argumentNames; // Argument names from 0 to n
     private ESArgumentsObject argumentsObject;
-    private int maxNamesOrValues;
     
     private class ESArgumentsObject extends ESObject {
         private static final long serialVersionUID = 7532306514655719417L;
@@ -49,13 +48,9 @@ public class ESArguments extends ESObject {
             super(evaluator.getObjectPrototype(), evaluator);
             putHiddenProperty(StandardProperty.LENGTHstring, ESNumber.valueOf(length));
             putHiddenProperty(StandardProperty.CALLEEstring, callee);
-            for(int i=0; i<maxNamesOrValues; i++) {
-                String index = Integer.toString(i);
-                if (i>=argumentNames.length) {
-                    argumentMap.put(index,index);
-                } else {
-                    argumentMap.put(index,argumentNames[i]);
-                }
+            int i=0;
+            for (String argumentName : argumentNames) {
+                argumentMap .put(Integer.toString(i++),argumentName);
             }
             argumentNameSet = new HashSet<String>(Arrays.asList(argumentNames));
         }
@@ -84,9 +79,6 @@ public class ESArguments extends ESObject {
                 throws EcmaScriptException {
             if (isDigits(propertyName)) {
                 if (argumentMap.remove(propertyName) != null) {
-                    if (!getEvaluator().isStrictMode()) {
-                        ESArguments.this.deleteProperty(propertyName, hash);
-                    }
                     return true;
                 }
             }
@@ -264,9 +256,11 @@ public class ESArguments extends ESObject {
     protected void setArguments(String[] argumentNames, ESValue[] argumentValues)
             throws ProgrammingError {
         try {
-            maxNamesOrValues = Math.max(argumentValues.length,
+            // keep looking until we run out of either variable names or values,
+            // which ever happens 2nd
+            int noIterations = Math.max(argumentValues.length,
                     argumentNames.length);
-            for (int i = 0; i < maxNamesOrValues; i++) {
+            for (int i = 0; i < noIterations; i++) {
 
                 // if we ran out of values first, use undefined
                 ESValue val = i < argumentValues.length ? argumentValues[i]
@@ -292,6 +286,13 @@ public class ESArguments extends ESObject {
             e.printStackTrace();
             throw new ProgrammingError(e.getMessage());
         }
+    }
+
+    // overrides
+    @Override
+    public boolean deleteProperty(String propertyName, int hash)
+            throws EcmaScriptException {
+        return !hasProperty(propertyName, hash); // none can be deleted...
     }
 
     // overrides
