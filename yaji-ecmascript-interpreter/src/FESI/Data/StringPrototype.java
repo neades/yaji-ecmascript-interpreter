@@ -86,15 +86,6 @@ class StringPrototype extends ESObject {
         return definedProperty;
     }
 
-    private boolean isAllDigits(String propertyName) {
-        char[] charArray = propertyName.toCharArray();
-        boolean allDigits = true;
-        for (char c : charArray) {
-            allDigits &= Character.isDigit(c);
-        }
-        return allDigits;
-    }
-
     @Override
     public String[] getSpecialPropertyNames() {
         String[] ns = { StandardProperty.LENGTHstring };
@@ -125,6 +116,6 @@ class StringPrototype extends ESObject {
 
     @Override
     public Enumeration<String> getOwnPropertyNames() {
-        return new ArrayPropertyNamesEnumeration(super.getOwnPropertyNames(), value.getStringLength(), false);
+        return new ArrayPropertyNamesEnumeration(super.getOwnPropertyNames(), value.getStringLength());
     }
 }

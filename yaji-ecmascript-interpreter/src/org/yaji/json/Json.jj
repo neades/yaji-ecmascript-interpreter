@@ -135,11 +135,12 @@ ArrayPrototype Array() :
 	ESValue v;
 }
 {
-    { ArrayPrototype array = ArrayObject.createArray(evaluator); }
+    { ArrayPrototype array; try { array = ArrayObject.createArray(evaluator); } catch (EcmaScriptException e) { throw new ParseException("Programming error"); } }
 	<BEGIN_ARRAY>
-	  [ v=Value() { array.add(v); } ( <VALUE_SEPARATOR> v=Value()  { array.add(v); } )* ]
+	  [ v=Value() { try {array.add(v); } catch (EcmaScriptException e) { throw new ParseException("Programming error"); }  }
+	   ( <VALUE_SEPARATOR> v=Value()  { try{array.add(v);} catch (EcmaScriptException e) { throw new ParseException("Programming error"); } } )* ]
 	<END_ARRAY>
-	{ return array; }
+	{ return array;  }
 }
 
 void Member(ESObject map) :

@@ -20,6 +20,7 @@ package FESI.Data;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
 import FESI.Interpreter.Evaluator;
+import FESI.Interpreter.FesiHashtable;
 import FESI.Interpreter.LocalClassLoader;
 
 /**
@@ -102,7 +103,7 @@ public class ESPackages extends ESLoader {
                 value = new ESPackages(propertyName, this, classLoader,
                         getEvaluator());
             }
-            getPropertyMap().put(propertyName, hash, false, false, value, true);
+            getPropertyMap().put(propertyName, hash, FesiHashtable.Flag.False, FesiHashtable.Flag.False, value, FesiHashtable.Flag.True);
         }
         return value;
     }

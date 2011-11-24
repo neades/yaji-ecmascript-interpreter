@@ -142,7 +142,7 @@ public class JsonObjectParseTest {
     public void testReviverCanDeleteProperties() throws Exception {
         ESObject value = parseWithReviver("return (typeof(value)=='object')?value:undefined;", "{\"p\":1}");
         Enumeration<String> allProperties = value.getAllProperties();
-        assertFalse("Should have no properties",allProperties.hasMoreElements());
+        assertFalse("Should have no properties"+allProperties.toString(),allProperties.hasMoreElements());
     }
 
     private ESObject parseWithReviver(String reviverBody, String jsonText)

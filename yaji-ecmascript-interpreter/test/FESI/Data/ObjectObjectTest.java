@@ -494,8 +494,8 @@ public class ObjectObjectTest extends EvaluatorTestCase {
         assertEquals("0",array.getProperty(0).toString());
         assertEquals("1",array.getProperty(1).toString());
         assertEquals("2",array.getProperty(2).toString());
-        assertEquals("length",array.getProperty(3).toString());
-        assertEquals("another",array.getProperty(4).toString());
+        assertEquals("another",array.getProperty(3).toString());
+        assertEquals("length",array.getProperty(4).toString());
     }
 
     @Test

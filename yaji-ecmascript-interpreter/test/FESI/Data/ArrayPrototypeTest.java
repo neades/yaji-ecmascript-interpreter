@@ -6,6 +6,8 @@ import static org.junit.Assert.assertSame;
 import org.junit.Before;
 import org.junit.Test;
 
+import FESI.Exceptions.RangeError;
+
 
 public class ArrayPrototypeTest extends EvaluatorTestCase{
 
@@ -56,5 +58,35 @@ public class ArrayPrototypeTest extends EvaluatorTestCase{
         ESValue value = object.doIndirectCall(evaluator, object, "toString", null);
 
         assertEquals("a,b,c", value.toESString().toString());
+    }
+    
+    @Test(expected=RangeError.class)
+    public void settingLengthTooLong() throws Exception {
+        ESObject object = arrayObject.doConstruct(ESValue.EMPTY_ARRAY);
+        object.putProperty(StandardProperty.LENGTHstring, ESNumber.valueOf(0x100000000L));
+    }
+    
+    @Test
+    public void settingAttributeTooLong() throws Exception {
+        ESObject object = arrayObject.doConstruct(ESValue.EMPTY_ARRAY);
+        String string = Long.toString(0x100000000L);
+        object.putProperty(string, ESNull.theNull);
+        assertEquals(ESNull.theNull, object.getProperty(string));
+    }
+    
+    @Test
+    public void settingAttributeTooLongJustAddsProperty() throws Exception {
+        ESObject object = arrayObject.doConstruct(ESValue.EMPTY_ARRAY);
+        String string = Long.toString(0x100000000L);
+        object.putProperty(string, ESNull.theNull);
+        assertEquals(ESNumber.valueOf(0), object.getProperty(StandardProperty.LENGTHstring));
+    }
+    
+    @Test
+    public void settingAttributeTooLongJustAddsProperty2() throws Exception {
+        ESObject object = arrayObject.doConstruct(ESValue.EMPTY_ARRAY);
+        String string = "4294967295";
+        object.putProperty(string, ESNull.theNull);
+        assertEquals(ESNumber.valueOf(0), object.getProperty(StandardProperty.LENGTHstring));
     }
 }

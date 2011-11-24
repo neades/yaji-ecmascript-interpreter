@@ -67,7 +67,7 @@ a.toString()=="1,12.5,aa,,,,,,,,dix,,,,,,,,,";
 
 @test array.13
 a.length=4;
-a.join("$")=="1$12.5$aa$$$$$$$$dix";
+a.join("$")=="1$12.5$aa$";
 
 @test array.14
 a = new Array (2433,54,44,434);
