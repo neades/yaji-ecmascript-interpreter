@@ -51,6 +51,7 @@ import FESI.Data.ObjectPrototype;
 import FESI.Data.StandardProperty;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.TypeError;
+import FESI.Interpreter.FesiHashtable.Flag;
 
 /**
  * Hashtable collision list.
@@ -63,7 +64,7 @@ class HashtableEntry implements java.io.Serializable {
     HashtableEntry next;
     boolean hidden;         // = !enumerable
     boolean readonly;       // = !writable
-    boolean configurable;  
+    boolean configurable = true;  
 
     @Override
     protected Object clone() {
@@ -78,11 +79,11 @@ class HashtableEntry implements java.io.Serializable {
         return entry;
     }
 
-    void set(ESValue value, boolean hidden, boolean readonly, boolean configurable) {
+    void set(ESValue value, Flag hidden, Flag readonly, Flag configurable) {
         this.value = value;
-        this.hidden = hidden;
-        this.readonly = readonly;
-        this.configurable = configurable;
+        this.hidden = hidden.from(this.hidden);
+        this.readonly = readonly.from(this.readonly);
+        this.configurable = configurable.from(this.configurable);
     }
 }
 
@@ -166,6 +167,33 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
 
     private final int initialCapacity;
 
+    public static enum Flag {
+        False {
+            @Override
+            public boolean from(boolean current) {
+                return false;
+            }
+        },
+        True{
+            @Override
+            public boolean from(boolean current) {
+                return true;
+            }
+        },
+        Default{
+            @Override
+            public boolean from(boolean current) {
+                return current;
+            }
+        };
+
+        public abstract boolean from(boolean current);
+
+        public static Flag fromBoolean(boolean b) {
+            return b?True:False;
+        }
+    }
+    
     /**
      * Constructs a new, empty hashtable with the specified initial capacity and
      * the specified load factor.
@@ -407,8 +435,8 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
      * @see java.util.Hashtable#get(java.lang.Object)
      * @since JDK1.0
      */
-    public ESValue put(String key, int hash, boolean hidden, boolean readonly,
-            ESValue value, boolean configurable) {
+    public ESValue put(String key, int hash, Flag hidden, Flag readonly,
+            ESValue value, Flag configurable) {
         // Make sure the value is not null
         if (value == null) {
             throw new NullPointerException("value");
@@ -729,7 +757,7 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
             value.setGetAccessorDescriptor(getter);
             value.setSetAccessorDescriptor(setter);
         }
-        put(propertyName,propertNameHash,!enumerable,!writable,value,configurable);
+        put(propertyName,propertNameHash,Flag.fromBoolean(!enumerable),Flag.fromBoolean(!writable),value,Flag.fromBoolean(configurable));
         return true;
     }
 

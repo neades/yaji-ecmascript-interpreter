@@ -518,8 +518,8 @@ public abstract class ESObject extends ESValue {
                     setter.callFunction(this, new ESValue[] {propertyValue});
                 }
             } else {
-                getPropertyMap().put(propertyName, hash, false, false,
-                    propertyValue, true);
+                getPropertyMap().put(propertyName, hash, FesiHashtable.Flag.Default, FesiHashtable.Flag.Default,
+                    propertyValue, FesiHashtable.Flag.Default);
             }
         }
     }
@@ -568,7 +568,7 @@ public abstract class ESObject extends ESValue {
      */
     public void initializeProperty(String propertyName, ESValue propertyValue,
             int hash) throws EcmaScriptException {
-        getPropertyMap().put(propertyName, hash, false, false, propertyValue, true);
+        getPropertyMap().put(propertyName, hash, FesiHashtable.Flag.False, FesiHashtable.Flag.False, propertyValue, FesiHashtable.Flag.True);
     }
 
     public static final int ENUMERABLE = 1<<0;
@@ -589,14 +589,16 @@ public abstract class ESObject extends ESValue {
             throws EcmaScriptException {
         propertyName = propertyName.intern();
         int hash = propertyName.hashCode();
-        getPropertyMap().put(propertyName, hash, true, false, propertyValue, true);
+        getPropertyMap().put(propertyName, hash, FesiHashtable.Flag.True, FesiHashtable.Flag.False, propertyValue, FesiHashtable.Flag.True);
     }
     
     public void putProperty(String propertyName, int flags, ESValue propertyValue)
                 throws EcmaScriptException {
         propertyName = propertyName.intern();
         int hash = propertyName.hashCode();
-        getPropertyMap().put(propertyName, hash, (flags&ENUMERABLE) == 0, (flags&WRITEABLE) == 0, propertyValue, (flags&CONFIGURABLE) != 0);
+        getPropertyMap().put(propertyName, hash, FesiHashtable.Flag.fromBoolean((flags&ENUMERABLE) == 0),
+                FesiHashtable.Flag.fromBoolean((flags&WRITEABLE) == 0), propertyValue, 
+                FesiHashtable.Flag.fromBoolean((flags&CONFIGURABLE) != 0));
     }
 
     /**
@@ -1224,5 +1226,14 @@ public abstract class ESObject extends ESValue {
 
     protected int toUInt32(String propertyName) {
         return (int)Long.parseLong(propertyName);
+    }
+
+    protected boolean isAllDigits(String propertyName) {
+        char[] charArray = propertyName.toCharArray();
+        boolean allDigits = true;
+        for (char c : charArray) {
+            allDigits &= Character.isDigit(c);
+        }
+        return allDigits;
     }
 }

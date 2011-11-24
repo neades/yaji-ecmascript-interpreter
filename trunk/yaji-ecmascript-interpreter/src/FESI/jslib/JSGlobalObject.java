@@ -17,6 +17,8 @@
 
 package FESI.jslib;
 
+import FESI.Exceptions.EcmaScriptException;
+
 /**
  * Interface used to represent the GlobalObject wrapper of the interpreter. The
  * global object is used for functions which require the evaluator. It is
@@ -101,7 +103,8 @@ public interface JSGlobalObject extends JSObject {
      * (length 0).
      * 
      * @return A new EcmaScript object thatis an Array
+     * @throws EcmaScriptException 
      */
-    public JSObject makeJSArrayObject();
+    public JSObject makeJSArrayObject() throws EcmaScriptException;
 
 }

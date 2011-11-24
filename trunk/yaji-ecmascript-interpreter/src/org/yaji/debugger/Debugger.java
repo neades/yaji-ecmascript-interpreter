@@ -152,7 +152,7 @@ public class Debugger {
                         }
                     });
                     put("list_tabs",new CommandHandler() {
-                        public boolean apply(Debugger debugger, ESObject commandContent, Result result, Evaluator evaluator) {
+                        public boolean apply(Debugger debugger, ESObject commandContent, Result result, Evaluator evaluator) throws EcmaScriptException {
                             ArrayPrototype tabList = ArrayObject.createArray(evaluator);
                             ArrayPrototype defaultTab = ArrayObject.createArray(evaluator);
                             defaultTab.add(ESNumber.valueOf(0));

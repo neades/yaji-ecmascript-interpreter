@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,6 +30,7 @@ import org.yaji.json.JsonState;
 
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
+import FESI.Exceptions.RangeError;
 import FESI.Exceptions.ReferenceError;
 import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
@@ -55,9 +55,11 @@ public class ArrayPrototype extends ESObject {
      *            the ArrayPrototype
      * @param evaluator
      *            The evaluator
+     * @throws EcmaScriptException 
      */
-    public ArrayPrototype(ESObject prototype, Evaluator evaluator) {
+    public ArrayPrototype(ESObject prototype, Evaluator evaluator) throws EcmaScriptException {
         super(prototype, evaluator);
+        putProperty(StandardProperty.LENGTHstring, WRITEABLE, ESNumber.valueOf(0));
     }
 
     // overrides
@@ -66,8 +68,9 @@ public class ArrayPrototype extends ESObject {
         return "Array";
     }
     
-    public void add(ESValue v) {
+    public void add(ESValue v) throws EcmaScriptException {
         theArray.add(v);
+        updateLength(theArray.size());
     }
 
     /**
@@ -233,7 +236,11 @@ public class ArrayPrototype extends ESObject {
      * @return the size as an int
      */
     public int size() {
-        return theArray.size();
+        try {
+            return getProperty(StandardProperty.LENGTHstring,StandardProperty.LENGTHhash).toInt32();
+        } catch (EcmaScriptException e) {
+            return 0;
+        }
     }
 
     /**
@@ -241,8 +248,9 @@ public class ArrayPrototype extends ESObject {
      * 
      * @param size
      *            the new size 90 or positive)
+     * @throws EcmaScriptException 
      */
-    public void setSize(int size) {
+    public void setSize(int size) throws EcmaScriptException {
         int currentSize = theArray.size();
         if (size > currentSize) {
             theArray.ensureCapacity(size);
@@ -253,6 +261,11 @@ public class ArrayPrototype extends ESObject {
             theArray.subList(size, theArray.size()).clear();
             theArray.trimToSize();
         }
+        updateLength(size);
+    }
+
+    private void updateLength(int size) throws EcmaScriptException {
+        super.putProperty(StandardProperty.LENGTHstring, ESNumber.valueOf(size), StandardProperty.LENGTHhash);
     }
 
     /**
@@ -294,12 +307,15 @@ public class ArrayPrototype extends ESObject {
      * 
      * @param args
      * @return
+     * @throws EcmaScriptException 
      */
-    public ESValue push(ESValue[] args) {
+    public ESValue push(ESValue[] args) throws EcmaScriptException {
+        int size = size();
+        setSize(size+args.length);
         for (ESValue v : args) {
-            theArray.add(v);
+            theArray.set(size++,v);
         }
-        return ESNumber.valueOf(theArray.size());
+        return ESNumber.valueOf(size());
     }
     
     /**
@@ -309,12 +325,14 @@ public class ArrayPrototype extends ESObject {
      * The last element of the array is removed from the array and returned.
      * 
      * @return
+     * @throws EcmaScriptException 
      */
-    public ESValue pop() {
+    public ESValue pop() throws EcmaScriptException {
         int len = theArray.size();
         if (len == 0) {
             return ESUndefined.theUndefined;
         }
+        updateLength(len-1);
         return theArray.remove(len-1);
     }
     
@@ -325,11 +343,13 @@ public class ArrayPrototype extends ESObject {
      * The first element of the array is removed from the array and returned.
      * 
      * @return
+     * @throws EcmaScriptException 
      */
-    public ESValue shift() {
+    public ESValue shift() throws EcmaScriptException {
         if (theArray.size() == 0) {
             return ESUndefined.theUndefined;
         }
+        updateLength(theArray.size()-1);
         return theArray.remove(0);
     }
 
@@ -343,12 +363,14 @@ public class ArrayPrototype extends ESObject {
      * 
      * @param args
      * @return
+     * @throws EcmaScriptException 
      */
-    public ESValue unshift(ESValue[] args) {
+    public ESValue unshift(ESValue[] args) throws EcmaScriptException {
        int i = 0;
        for (ESValue v : args) {
            theArray.add(i++, v);
        }
+       updateLength(theArray.size());
        return ESNumber.valueOf(theArray.size());
     }
     
@@ -373,6 +395,7 @@ public class ArrayPrototype extends ESObject {
         }
         ArrayPrototype newArray = newEmptyArray();
         newArray.theArray.addAll(theArray.subList(begin, end));
+        newArray.updateLength(newArray.theArray.size());
         return newArray;
     }
 
@@ -448,6 +471,9 @@ public class ArrayPrototype extends ESObject {
             for (i = 2; i < args.length; i++) {
                 theArray.set(start++, args[i]);
             }
+            
+            updateLength(theArray.size());
+            newArray.updateLength(newArray.theArray.size());
         }
         return newArray;
     }
@@ -534,7 +560,7 @@ public class ArrayPrototype extends ESObject {
     public ESValue concat(ESValue[] args) throws EcmaScriptException {
         ArrayPrototype newArray = newEmptyArray();
         
-        Vector<ESValue> items = new Vector<ESValue>();
+        ArrayList<ESValue> items = new ArrayList<ESValue>();
         items.addAll(theArray);
         Collections.addAll(items, args);
         for (ESValue value : items) {
@@ -545,6 +571,7 @@ public class ArrayPrototype extends ESObject {
             } else {
                 newArray.theArray.add(value);
             }
+            newArray.updateLength(newArray.theArray.size());
         }
         return newArray;
     }
@@ -744,6 +771,7 @@ public class ArrayPrototype extends ESObject {
             return ESUndefined.theUndefined;
         case MAP:
         case FILTER:
+            newArray.updateLength(newArray.theArray.size());
             return newArray;
         }
     }
@@ -865,10 +893,9 @@ public class ArrayPrototype extends ESObject {
     public void putProperty(String propertyName, ESValue propertyValue, int hash)
             throws EcmaScriptException {
         if (hash == StandardProperty.LENGTHhash && propertyName.equals(StandardProperty.LENGTHstring)) {
-            int newLen = (int) (((ESPrimitive) propertyValue).doubleValue());
-            if (newLen >= theArray.size()) {
-                setSize(newLen);
-            } else {
+            long newLength = ((ESPrimitive) propertyValue).longValue();
+            int newLen = checkUInt32(newLength);
+            if (newLen < theArray.size()) {
                 int len = theArray.size();
                 int i;
                 for (i = len; i >= newLen; i--) {
@@ -883,19 +910,26 @@ public class ArrayPrototype extends ESObject {
                     setSize(i);
                 }
             }
+            super.putProperty(propertyName, propertyValue, hash);
         } else {
-            int index = -1; // indicates not a valid index value
-            try {
-                index = Integer.parseInt(propertyName); // should be uint
-            } catch (NumberFormatException e) {
-                // do nothing
-            }
+            long index = getIndex(propertyName);
             if (index < 0) {
                 super.putProperty(propertyName, propertyValue, hash);
             } else {
-                putProperty(index, propertyValue);
+                putProperty((int)index, propertyValue);
             }
         }
+    }
+
+    private int checkUInt32(long newLength) throws RangeError {
+        if (newLength != (newLength & 0xffffffffL)) {
+            throw new RangeError("Array length exceeds maximum supported");
+        }
+        return (int)newLength;
+    }
+
+    private boolean isUint32(long newLength) {
+        return newLength != (newLength & 0x7fffffffL);
     }
 
     // overrides
@@ -903,11 +937,9 @@ public class ArrayPrototype extends ESObject {
     public void putProperty(int index, ESValue propertyValue)
             throws EcmaScriptException {
         if (index >= theArray.size()) {
-            setSize(index);
-            theArray.add(index, propertyValue);
-        } else {
-            theArray.set(index, propertyValue);
+            setSize(index+1);
         }
+        theArray.set(index, propertyValue);
     }
 
     // overrides
@@ -937,20 +969,27 @@ public class ArrayPrototype extends ESObject {
     @Override
     public ESValue getPropertyIfAvailable(String propertyName, int hash)
             throws EcmaScriptException {
-        if (hash == StandardProperty.LENGTHhash && propertyName.equals(StandardProperty.LENGTHstring)) {
-            return ESNumber.valueOf(theArray.size());
-        }
-        int index = -1; // indicates not a valid index value
-        try {
-            index = Integer.parseInt(propertyName); // should be uint
-        } catch (NumberFormatException e) {
-            // do nothing
-        }
-        if (index < 0) {
+        long index = getIndex(propertyName);
+        if (index < 0 || index > theArray.size()) {
             return super.getPropertyIfAvailable(propertyName, hash);
         }
-        return getPropertyIfAvailable(index);
+        return getPropertyIfAvailable((int)index);
 
+    }
+
+    private long getIndex(String propertyName) {
+        long index = -1; // indicates not a valid index value
+        if (isAllDigits(propertyName)) {
+            try {
+                index = Long.parseLong(propertyName); // should be uint
+                if (isUint32(index)) {
+                    index = -1;
+                }
+            } catch (NumberFormatException e) {
+                // do nothing
+            }
+        }
+        return index;
     }
 
     // overrides
@@ -1239,12 +1278,12 @@ public class ArrayPrototype extends ESObject {
     
     @Override
     public Enumeration<String> getOwnPropertyNames() {
-        return new ArrayPropertyNamesEnumeration(super.getOwnPropertyNames(), theArray.size(), true);
+        return new ArrayPropertyNamesEnumeration(super.getOwnPropertyNames(), size());
     }
     
     @Override
     public Enumeration<String> keys() {
-        return new ArrayPropertyNamesEnumeration(super.keys(), theArray.size(), false);
+        return new ArrayPropertyNamesEnumeration(super.keys(), size());
     }
     
     @Override

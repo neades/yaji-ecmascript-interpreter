@@ -64,7 +64,7 @@ public class V8Debugger {
         }
     }
 
-    ArrayPrototype createArray() {
+    ArrayPrototype createArray() throws EcmaScriptException {
         return new ArrayPrototype(evaluator.getArrayPrototype(),evaluator);
     }
     

@@ -17,6 +17,7 @@
 
 package FESI.Data;
 
+import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
 import FESI.Interpreter.Evaluator;
 import FESI.jslib.JSException;
@@ -188,8 +189,9 @@ public class JSGlobalWrapper extends JSWrapper implements JSGlobalObject {
      * (length 0).
      * 
      * @return A new object
+     * @throws EcmaScriptException 
      */
-    public JSObject makeJSArrayObject() {
+    public JSObject makeJSArrayObject() throws EcmaScriptException {
         synchronized (evaluator) {
             ESObject ap = evaluator.getArrayPrototype();
             ArrayPrototype theArray = new ArrayPrototype(ap, evaluator);

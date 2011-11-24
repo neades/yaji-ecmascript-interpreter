@@ -43,7 +43,7 @@ public class ArrayObject extends BuiltinFunctionObject {
         super(prototype, evaluator, "Array", 1);
     }
 
-    public static ArrayPrototype createArray(Evaluator evaluator) {
+    public static ArrayPrototype createArray(Evaluator evaluator) throws EcmaScriptException {
         ESObject ap = evaluator.getArrayPrototype();
         return new ArrayPrototype(ap, evaluator);
     }
@@ -98,10 +98,11 @@ public class ArrayObject extends BuiltinFunctionObject {
      *            The Function prototype attached to the evaluator
      * 
      * @return The Array singleton
+     * @throws EcmaScriptException 
      */
 
     public static ArrayObject makeArrayObject(Evaluator evaluator,
-            ObjectPrototype objectPrototype, FunctionPrototype functionPrototype) {
+            ObjectPrototype objectPrototype, FunctionPrototype functionPrototype) throws EcmaScriptException {
 
         ArrayPrototype arrayPrototype = new ArrayPrototype(objectPrototype,
                 evaluator);

@@ -47,7 +47,7 @@ public class JsonObjectStringifyTest {
         assertEquals(new ESString("[]"),result);
     }
 
-    private ArrayPrototype createArray() {
+    private ArrayPrototype createArray() throws EcmaScriptException {
         return new ArrayPrototype(evaluator.getArrayPrototype(), evaluator);
     }
 

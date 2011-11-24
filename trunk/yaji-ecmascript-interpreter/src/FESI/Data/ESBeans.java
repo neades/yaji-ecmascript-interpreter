@@ -23,6 +23,7 @@ import java.io.IOException;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
 import FESI.Interpreter.Evaluator;
+import FESI.Interpreter.FesiHashtable;
 import FESI.Interpreter.LocalClassLoader;
 
 /**
@@ -79,7 +80,7 @@ public class ESBeans extends ESLoader {
         if (value == null) {
             buildPrefix();
             value = new ESBeans(propertyName, this, classLoader, getEvaluator());
-            getPropertyMap().put(propertyName, hash, false, false, value, true);
+            getPropertyMap().put(propertyName, hash, FesiHashtable.Flag.False, FesiHashtable.Flag.False, value, FesiHashtable.Flag.True);
         }
         return value;
     }

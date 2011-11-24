@@ -242,7 +242,7 @@ public class StringObject extends BuiltinFunctionObject {
             super(fp, evaluator, name, 1);
         }
 
-        private void split(Pattern pattern, ArrayPrototype matchList, CharSequence input, int limit) {
+        private void split(Pattern pattern, ArrayPrototype matchList, CharSequence input, int limit) throws EcmaScriptException {
             int index = 0;
             boolean matchLimited = limit > 0;
             Matcher m = pattern.matcher(input);
