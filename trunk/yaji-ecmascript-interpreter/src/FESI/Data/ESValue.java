@@ -166,9 +166,12 @@ public abstract class ESValue implements java.io.Serializable {
      * @exception EcmaScriptException
      *                Not thrown
      */
-    public int toUInt32() throws EcmaScriptException {
+    public long toUInt32() throws EcmaScriptException {
         double value = this.toInteger();
-        return (int) value;
+        if (Double.isInfinite(value) || Double.isNaN(value)) {
+            return 0;
+        }
+        return ((long)value & 0xFFFFFFFFL);
     }
 
     /**
@@ -497,6 +500,21 @@ public abstract class ESValue implements java.io.Serializable {
     }
 
     public boolean isFinite() {
+        return false;
+    }
+
+    public boolean isUInt32() {
+        return false;
+    }
+
+    public boolean strictEqual(ESValue v2) throws EcmaScriptException {
+        if (getTypeOf() == v2.getTypeOf()) {
+            return equalsSameType(v2);
+        }
+        return false;
+    }
+
+    public boolean isArray() {
         return false;
     }
 }

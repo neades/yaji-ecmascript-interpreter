@@ -345,7 +345,7 @@ public class JSWrapper implements JSObject {
         Object obj = null;
         synchronized (evaluator) {
             try {
-                ESValue value = object.getProperty(index);
+                ESValue value = object.getProperty((long)index);
                 obj = value.toJavaObject();
             } catch (EcmaScriptException e) {
                 throw new JSException(e.getMessage(), e);
@@ -412,7 +412,7 @@ public class JSWrapper implements JSObject {
         synchronized (evaluator) {
             try {
                 ESValue esvalue = ESLoader.normalizeValue(value, evaluator);
-                object.putProperty(index, esvalue);
+                object.putProperty((long)index, esvalue);
             } catch (EcmaScriptException e) {
                 throw new JSException(e.getMessage(), e);
             }

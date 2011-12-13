@@ -10,7 +10,6 @@ import java.util.Enumeration;
 import org.junit.Before;
 import org.junit.Test;
 
-import FESI.Data.ArrayPrototype;
 import FESI.Data.ESBoolean;
 import FESI.Data.ESNull;
 import FESI.Data.ESNumber;
@@ -93,17 +92,15 @@ public class JsonObjectParseTest {
     @Test
     public void testParseArray() throws Exception {
         ESObject value = (ESObject) parse("[1,2,3]");
-        assertTrue(value instanceof ArrayPrototype);
         assertEquals(ESNumber.valueOf(3),value.getProperty(StandardProperty.LENGTHstring,StandardProperty.LENGTHhash));
-        assertEquals(ESNumber.valueOf(1),value.getProperty(0));
-        assertEquals(ESNumber.valueOf(2),value.getProperty(1));
-        assertEquals(ESNumber.valueOf(3),value.getProperty(2));
+        assertEquals(ESNumber.valueOf(1),value.getProperty(0L));
+        assertEquals(ESNumber.valueOf(2),value.getProperty(1L));
+        assertEquals(ESNumber.valueOf(3),value.getProperty(2L));
     }
     
     @Test
     public void testParseEmptyArray() throws Exception {
         ESObject value = (ESObject) parse("[]");
-        assertTrue(value instanceof ArrayPrototype);
         assertEquals(ESNumber.valueOf(0),value.getProperty(StandardProperty.LENGTHstring,StandardProperty.LENGTHhash));
     }
     
@@ -134,8 +131,8 @@ public class JsonObjectParseTest {
     @Test
     public void testCallsArrayWithReviver() throws Exception {
         ESObject value = parseWithReviver("return (typeof(value)=='object')?value:key+value;", "[{\"p\":1},2]");
-        assertEquals(new ESString("p1"),((ESObject)value.getProperty(0)).getProperty("p", "p".hashCode()));
-        assertEquals(new ESString("12"),value.getProperty(1));
+        assertEquals(new ESString("p1"),((ESObject)value.getProperty(0L)).getProperty("p", "p".hashCode()));
+        assertEquals(new ESString("12"),value.getProperty(1L));
     }
     
     @Test

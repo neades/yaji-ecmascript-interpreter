@@ -22,8 +22,6 @@ import FESI.Data.ESString;
 import FESI.Data.ESNumber;
 import FESI.Data.ESObject;
 import FESI.Data.ObjectObject;
-import FESI.Data.ArrayObject;
-import FESI.Data.ArrayPrototype;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Interpreter.Evaluator;
 
@@ -130,15 +128,23 @@ ESObject Object() :
 	{ return map; }
 }
 
-ArrayPrototype Array() : 
+ESObject Array() : 
 {
 	ESValue v;
+	ESValue[] esValues;
 }
 {
-    { ArrayPrototype array; try { array = ArrayObject.createArray(evaluator); } catch (EcmaScriptException e) { throw new ParseException("Programming error"); } }
+    { ESObject array; try { array = evaluator.createArray(); esValues = new ESValue[1];
+    } catch (EcmaScriptException e) { throw new ParseException("Programming error"); } }
 	<BEGIN_ARRAY>
-	  [ v=Value() { try {array.add(v); } catch (EcmaScriptException e) { throw new ParseException("Programming error"); }  }
-	   ( <VALUE_SEPARATOR> v=Value()  { try{array.add(v);} catch (EcmaScriptException e) { throw new ParseException("Programming error"); } } )* ]
+	  [ v=Value() { try { esValues[0] = v; array.doIndirectCall(evaluator,array,"push",esValues); } 
+	                catch (NoSuchMethodException e) { throw new ParseException("Programming error"); }  
+	                catch (EcmaScriptException e) { throw new ParseException("Programming error"); }  
+	              }
+	   ( <VALUE_SEPARATOR> v=Value()  { try{esValues[0] = v; array.doIndirectCall(evaluator,array,"push",esValues);} 
+						                catch (NoSuchMethodException e) { throw new ParseException("Programming error"); }  
+	   									catch (EcmaScriptException e) { throw new ParseException("Programming error"); } 
+	   								  } )* ]
 	<END_ARRAY>
 	{ return array;  }
 }

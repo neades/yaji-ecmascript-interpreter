@@ -53,34 +53,34 @@ public class RegExpPrototypeTest extends EvaluatorTestCase {
     public void testSuccessiveCallsShouldStep() throws Exception {
         ESString esString = new ESString("abc");
         RegExpPrototype regexp = new RegExpPrototype(evaluator.getRegExpPrototype(), evaluator, "[a-z]","g");
-        ArrayPrototype array = (ArrayPrototype) regexp.doIndirectCall(evaluator, regexp, "exec", new ESValue[] { esString });
-        assertEquals(new ESString("a"), array.getProperty(0));
-        array = (ArrayPrototype) regexp.doIndirectCall(evaluator, regexp, "exec", new ESValue[] { esString });
-        assertEquals(new ESString("b"), array.getProperty(0));
-        array = (ArrayPrototype) regexp.doIndirectCall(evaluator, regexp, "exec", new ESValue[] { esString });
-        assertEquals(new ESString("c"), array.getProperty(0));
+        ESObject array = (ESObject) regexp.doIndirectCall(evaluator, regexp, "exec", new ESValue[] { esString });
+        assertEquals(new ESString("a"), array.getProperty(0L));
+        array = (ESObject) regexp.doIndirectCall(evaluator, regexp, "exec", new ESValue[] { esString });
+        assertEquals(new ESString("b"), array.getProperty(0L));
+        array = (ESObject) regexp.doIndirectCall(evaluator, regexp, "exec", new ESValue[] { esString });
+        assertEquals(new ESString("c"), array.getProperty(0L));
         ESValue lastResult = regexp.doIndirectCall(evaluator, regexp, "exec", new ESValue[] { esString });
         assertEquals(ESNull.theNull, lastResult);
-        array = (ArrayPrototype) regexp.doIndirectCall(evaluator, regexp, "exec", new ESValue[] { esString });
-        assertEquals(new ESString("a"), array.getProperty(0));
+        array = (ESObject) regexp.doIndirectCall(evaluator, regexp, "exec", new ESValue[] { esString });
+        assertEquals(new ESString("a"), array.getProperty(0L));
     }
     
     @Test
     public void testNonGlobalExpressionDontStep() throws Exception {
         ESString esString = new ESString("abc");
         RegExpPrototype regexp = new RegExpPrototype(evaluator.getRegExpPrototype(), evaluator, "[a-z]","");
-        ArrayPrototype array = (ArrayPrototype) regexp.doIndirectCall(evaluator, regexp, "exec", new ESValue[] { esString });
-        assertEquals(new ESString("a"), array.getProperty(0));
-        array = (ArrayPrototype) regexp.doIndirectCall(evaluator, regexp, "exec", new ESValue[] { esString });
-        assertEquals(new ESString("a"), array.getProperty(0));
+        ESObject array = (ESObject) regexp.doIndirectCall(evaluator, regexp, "exec", new ESValue[] { esString });
+        assertEquals(new ESString("a"), array.getProperty(0L));
+        array = (ESObject) regexp.doIndirectCall(evaluator, regexp, "exec", new ESValue[] { esString });
+        assertEquals(new ESString("a"), array.getProperty(0L));
     }
     
     @Test
     public void testNoProblemWithShortenedString() throws Exception {
         ESString esString = new ESString("abcABCabc");
         RegExpPrototype regexp = new RegExpPrototype(evaluator.getRegExpPrototype(), evaluator, "[a-z]+","g");
-        ArrayPrototype array = (ArrayPrototype) regexp.doIndirectCall(evaluator, regexp, "exec", new ESValue[] { esString });
-        assertEquals(new ESString("abc"), array.getProperty(0));
+        ESObject array = (ESObject) regexp.doIndirectCall(evaluator, regexp, "exec", new ESValue[] { esString });
+        assertEquals(new ESString("abc"), array.getProperty(0L));
         ESValue v = regexp.doIndirectCall(evaluator, regexp, "exec", new ESValue[] { new ESString("a") });
         assertEquals(ESNull.theNull, v);
     }    
@@ -89,10 +89,10 @@ public class RegExpPrototypeTest extends EvaluatorTestCase {
     public void testShouldMatchGlobal() throws Exception {
         RegExpPrototype regexp = new RegExpPrototype(evaluator.getRegExpPrototype(), evaluator, "([a-z])B([a-z])B","g");
         ESValue result = regexp.doIndirectCall(evaluator, regexp, "exec", new ESValue[] { new ESString("aBcB") });
-        ArrayPrototype array = (ArrayPrototype) result;
-        assertEquals(new ESString("aBcB"),array.getProperty(0));
-        assertEquals(new ESString("a"),array.getProperty(1));
-        assertEquals(new ESString("c"),array.getProperty(2));
+        ESObject array = (ESObject) result;
+        assertEquals(new ESString("aBcB"),array.getProperty(0L));
+        assertEquals(new ESString("a"),array.getProperty(1L));
+        assertEquals(new ESString("c"),array.getProperty(2L));
         assertEquals(ESNumber.valueOf(0),array.getProperty(StandardProperty.INDEXstring));
         assertEquals(ESNumber.valueOf(4),regexp.getProperty(StandardProperty.LAST_INDEXstring));
         assertEquals(ESNumber.valueOf(3),array.getProperty(StandardProperty.LENGTHstring));

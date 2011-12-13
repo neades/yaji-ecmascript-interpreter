@@ -640,9 +640,9 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         HashtableEntry[] tab = getTable();
         for (HashtableEntry hashtableEntry : tab) {
             for (HashtableEntry e = hashtableEntry; e != null; e = e.next) {
-                int index = state.getAllowedIndex(e.key);
+                long index = state.getAllowedIndex(e.key);
                 if (index != -1) {
-                    array[index] = e;
+                    array[(int)index] = e;
                 }
             }
         }

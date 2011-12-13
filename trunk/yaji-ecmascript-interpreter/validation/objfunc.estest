@@ -558,7 +558,7 @@ obj.foo === "eit";
 @test keys.mdn.1  
 var arr = ["a", "b", "c"];
 writeln(Object.keys(arr));
-Object.keys(arr).toString() === "0,1,2";  
+Object.keys(arr).sort().toString() === "0,1,2";  
 
 @test keys.mdn.2
 // array like object  

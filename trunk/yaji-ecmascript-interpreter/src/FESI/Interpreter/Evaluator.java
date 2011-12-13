@@ -54,6 +54,7 @@ import FESI.Data.ESWrapper;
 import FESI.Data.GlobalObject;
 import FESI.Data.IObjectProfiler;
 import FESI.Data.JSGlobalWrapper;
+import FESI.Data.StandardProperty;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.EcmaScriptLexicalException;
 import FESI.Exceptions.EcmaScriptParseException;
@@ -121,7 +122,7 @@ public class Evaluator implements Serializable {
     // Current environment
     protected ScopeChain theScopeChain = null;
     private ESObject currentVariableObject = null;
-    private ESObject currentThisObject = null;
+    private ESValue currentThisObject = null;
     private EvaluationSource currentEvaluationSource = null;
 
     public EvaluationSource getCurrentEvaluationSource() {
@@ -199,15 +200,16 @@ public class Evaluator implements Serializable {
      * 
      * @return the this object
      */
-    public ESObject getThisObject() {
+    public ESValue getThisObject() throws EcmaScriptException {
         return currentThisObject;
     }
 
     /**
      * Get the super of this object of this evaluator
+     * @throws EcmaScriptException 
      */
-    public ESObject getSuperObject() {
-        return currentThisObject.getPrototype();
+    public ESObject getSuperObject() throws EcmaScriptException {
+        return ((ESObject) getThisObject()).getPrototype();
     }
 
     /**
@@ -1003,12 +1005,12 @@ public class Evaluator implements Serializable {
     }
     public ESValue evaluateFunctionInScope(ASTStatementList node,
                 EvaluationSource es, ESObject variableObject,
-                List<String> localVariableNames, ESObject thisObject,
+                List<String> localVariableNames, ESValue thisObject,
                 ScopeChain scopeChain) throws EcmaScriptException {
         ESValue theValue = ESUndefined.theUndefined;
 
         ESObject savedVariableObject = currentVariableObject;
-        ESObject savedThisObject = currentThisObject;
+        ESValue savedThisObject = currentThisObject;
         ScopeChain previousScopeChain = theScopeChain;
 
         currentVariableObject = variableObject;
@@ -1105,7 +1107,7 @@ public class Evaluator implements Serializable {
         ESValue theValue = ESUndefined.theUndefined;
 
         ESObject savedVariableObject = currentVariableObject;
-        ESObject savedThisObject = currentThisObject;
+        ESValue savedThisObject = currentThisObject;
         ScopeChain previousScopeChain = theScopeChain;
 
         theScopeChain = globalScope;
@@ -1527,5 +1529,9 @@ public class Evaluator implements Serializable {
 
     public void setLocaleListener(ILocaleListener localeListener) {
         localeListeners.add(localeListener);
+    }
+
+    public ESObject createArray() throws EcmaScriptException {
+        return globalObject.getProperty(StandardProperty.ARRAYstring,StandardProperty.ARRAYhash).doConstruct(ESValue.EMPTY_ARRAY);
     }
 }

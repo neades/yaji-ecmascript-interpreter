@@ -45,7 +45,7 @@ public class ESArgumentsTest extends EvaluatorTestCase {
     @Test
     public void argumentsShouldHaveDirectlyIndexedArguments() throws Exception {
         ESObject arguments = (ESObject) environment.getPropertyInScope("arguments",null,"arguments".hashCode());
-        assertEquals(ESNumber.valueOf(100),arguments.getProperty(0));
+        assertEquals(ESNumber.valueOf(100),arguments.getProperty(0L));
     }
     
     @Test
@@ -70,14 +70,14 @@ public class ESArgumentsTest extends EvaluatorTestCase {
 
         ESObject arguments = (ESObject) environment.getPropertyInScope("arguments",null,"arguments".hashCode());
         assertEquals(ESNumber.valueOf(2),arguments.getProperty("length"));
-        assertEquals(new ESString("value"), arguments.getProperty(1));
+        assertEquals(new ESString("value"), arguments.getProperty(1L));
     }
 
     @Test
     public void argumentsShouldAllowValuesToBeDeleted() throws Exception {
         ESObject arguments = (ESObject) environment.getPropertyInScope("arguments",null,"arguments".hashCode());
         arguments.deleteProperty("0", "0".hashCode());
-        assertEquals(ESUndefined.theUndefined,arguments.getProperty(0));
+        assertEquals(ESUndefined.theUndefined,arguments.getProperty(0L));
     }
     
 }

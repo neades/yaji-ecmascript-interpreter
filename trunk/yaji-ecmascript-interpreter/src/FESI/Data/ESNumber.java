@@ -242,8 +242,11 @@ public final class ESNumber extends ESPrimitive {
     }
 
     @Override
-    public int toUInt32() throws EcmaScriptException {
-        return toInt32();
+    public long toUInt32() throws EcmaScriptException {
+        if (isLongValue) {
+            return longValue & 0xffffffffL;
+        }
+        return super.toUInt32();
     }
 
     // overrides
@@ -323,6 +326,11 @@ public final class ESNumber extends ESPrimitive {
         return isLongValue;
     }
 
+    @Override
+    public boolean isUInt32() {
+        return isLongValue && longValue >= 0L && longValue < 0x100000000L;
+    }
+    
     @Override
     public boolean equalsSameType(ESValue v2) throws EcmaScriptException {
         if (isLongValue && v2.isIntegerValue()) {

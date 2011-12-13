@@ -128,7 +128,7 @@ public class ConstructedFunctionObject extends FunctionPrototype {
         try {
             evaluator.setStrictMode(strictMode || isStrictMode);
             value = getEvaluator().evaluateFunctionInScope(theFunctionAST,
-                    evaluationSource, args, localVariableNames, thisObject.toESObject(evaluator), scopeChain);
+                    evaluationSource, args, localVariableNames, thisObject, scopeChain);
         } finally {
             currentArguments = oldArguments;
             evaluator.setStrictMode(strictMode);

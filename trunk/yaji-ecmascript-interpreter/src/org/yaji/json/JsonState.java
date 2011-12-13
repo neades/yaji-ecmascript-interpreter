@@ -5,10 +5,11 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
-import FESI.Data.ArrayPrototype;
+import FESI.Data.ESObject;
 import FESI.Data.ESUndefined;
 import FESI.Data.ESValue;
 import FESI.Data.FunctionPrototype;
+import FESI.Data.StandardProperty;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.TypeError;
 
@@ -39,7 +40,7 @@ public class JsonState {
         }
     }
 
-    public Map<String,Integer> allowedList;
+    public Map<String,Long> allowedList;
     private ESValue replacerFunction;
     public JsonIndent indent;
     private Deque<InstanceMatch> stack = new ArrayDeque<InstanceMatch>();
@@ -66,15 +67,16 @@ public class JsonState {
         return replacerFunction;
     }
 
-    private Map<String, Integer> createAllowedSet(ESValue replacerFunction)
+    private Map<String, Long> createAllowedSet(ESValue replacerFunction)
             throws EcmaScriptException {
-        HashMap<String, Integer> set = new HashMap<String,Integer>();
-        if (replacerFunction instanceof ArrayPrototype) {
-            ArrayPrototype filters = (ArrayPrototype) replacerFunction;
-            for(int i=0; i<filters.size(); i++) {
+        HashMap<String, Long> set = new HashMap<String,Long>();
+        if (replacerFunction.isArray()) {
+            ESObject filters = (ESObject) replacerFunction;
+            long length = filters.getProperty(StandardProperty.LENGTHstring, StandardProperty.LENGTHhash).toUInt32();
+            for(long i=0; i<length; i++) {
                 ESValue property = filters.getProperty(i);
                 if (property.isStringValue() || property.isNumberValue()) {
-                    set.put(property.toString(),Integer.valueOf(i));
+                    set.put(property.toString(),Long.valueOf(i));
                 }
             }
         }
@@ -100,9 +102,9 @@ public class JsonState {
         stack.pop();
     }
 
-    public int getAllowedIndex(String key) {
-        Integer index = allowedList.get(key);
-        return index == null ? -1 : index.intValue();
+    public long getAllowedIndex(String key) {
+        Long index = allowedList.get(key);
+        return index == null ? -1 : index.longValue();
     }
 
     public int allowedSize() {

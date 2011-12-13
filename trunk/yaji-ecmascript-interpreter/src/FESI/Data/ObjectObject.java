@@ -120,11 +120,11 @@ public class ObjectObject extends BuiltinFunctionObject {
             public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                     throws EcmaScriptException {
                 ESObject object = getArgAsObject(arguments,0);
-                ArrayPrototype array = ArrayObject.createArray(getEvaluator());
+                ESObject array = getEvaluator().createArray();
                 Enumeration<String> propertyNames = object.getOwnPropertyNames();
-                while (propertyNames.hasMoreElements()) {
+                for (long i=0L; propertyNames.hasMoreElements(); i++) {
                     String propertyName = propertyNames.nextElement();
-                    array.add(new ESString(propertyName));
+                    array.putProperty(i,new ESString(propertyName));
                 }
                 return array;
             }
@@ -201,10 +201,11 @@ public class ObjectObject extends BuiltinFunctionObject {
                     throws EcmaScriptException {
                 ESObject object = getArgAsObject(arguments,0);
                 Enumeration<String> propertyNames = object.keys();
-                ArrayPrototype array = ArrayObject.createArray(getEvaluator());
+                ESObject array = getEvaluator().createArray();
+                long index = 0;
                 while (propertyNames.hasMoreElements()) {
                     String propertyName = propertyNames.nextElement();
-                    array.add(new ESString(propertyName));
+                    array.putProperty(index++,new ESString(propertyName));
                 }
                 return array;
             }
