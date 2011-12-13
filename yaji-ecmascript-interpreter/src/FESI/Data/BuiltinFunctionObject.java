@@ -95,10 +95,14 @@ public abstract class BuiltinFunctionObject extends FunctionPrototype {
         }
     }
 
-    protected int getArgAsInteger(ESValue[] arguments, int i)
-            throws EcmaScriptException {
-                ESValue value = getArg(arguments, i);
-                return value.toInt32();
-            }
+    protected int getArgAsInt32(ESValue[] arguments, int i) throws EcmaScriptException {
+        ESValue value = getArg(arguments, i);
+        return value.toInt32();
+    }
+
+    protected double getArgAsInteger(ESValue[] arguments, int i) throws EcmaScriptException {
+        ESValue value = getArg(arguments, i);
+        return value.toInteger();
+    }
 
 }

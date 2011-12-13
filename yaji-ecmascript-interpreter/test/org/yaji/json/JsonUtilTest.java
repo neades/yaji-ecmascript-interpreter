@@ -5,10 +5,10 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import FESI.Data.ArrayPrototype;
 import FESI.Data.ESBoolean;
 import FESI.Data.ESNull;
 import FESI.Data.ESNumber;
+import FESI.Data.ESObject;
 import FESI.Data.ESString;
 import FESI.Data.ESUndefined;
 import FESI.Data.ESValue;
@@ -69,14 +69,14 @@ public class JsonUtilTest {
 
     @Test
     public void testEmptyArray() throws Exception {
-        ArrayPrototype array = new ArrayPrototype(evaluator.getArrayPrototype(),evaluator);
+        ESObject array = evaluator.createArray();
         assertEquals("[]",JsonUtil.stringify(evaluator,array,ESUndefined.theUndefined, ESUndefined.theUndefined));
     }
 
     @Test
     public void testPopulatedArray() throws Exception {
-        ArrayPrototype array = new ArrayPrototype(evaluator.getArrayPrototype(),evaluator);
-        array.push(new ESValue[] { ESNumber.valueOf(123L), new ESString("test") });
+        ESObject array = evaluator.createArray();
+        array.doIndirectCall(evaluator, array, "push", new ESValue[] { ESNumber.valueOf(123L), new ESString("test") });
         assertEquals("[123,\"test\"]",JsonUtil.stringify(evaluator,array,ESUndefined.theUndefined, ESUndefined.theUndefined));
     }
     

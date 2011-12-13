@@ -30,8 +30,8 @@ public final class ESBoolean extends ESPrimitive {
 
     // There is only one true and one false value (allowing
     // efficient comparisons)
-    private static ESBoolean trueValue = new ESBoolean();
-    private static ESBoolean falseValue = new ESBoolean();
+    public static final ESBoolean TRUE = new ESBoolean();
+    public static final ESBoolean FALSE = new ESBoolean();
 
     private ESBoolean() {
         // do nothing
@@ -56,13 +56,13 @@ public final class ESBoolean extends ESPrimitive {
      * @return either trueValue or falseValue
      */
     static public ESBoolean valueOf(boolean value) {
-        return value ? trueValue : falseValue;
+        return value ? TRUE : FALSE;
     }
     
     // overrides
     @Override
     public String toDetailString() {
-        return "ES:<" + (this == trueValue ? "true" : "false") + ">";
+        return "ES:<" + (this == TRUE ? "true" : "false") + ">";
     }
 
     // overrides
@@ -80,19 +80,19 @@ public final class ESBoolean extends ESPrimitive {
     // overrides
     @Override
     public String toString() {
-        return this == trueValue ? "true" : "false";
+        return this == TRUE ? "true" : "false";
     }
 
     // overrides
     @Override
     public double doubleValue() {
-        return this == trueValue ? 1 : 0;
+        return this == TRUE ? 1 : 0;
     }
 
     // overrides
     @Override
     public boolean booleanValue() {
-        return this == trueValue;
+        return this == TRUE;
     }
 
     // overrides
@@ -114,7 +114,7 @@ public final class ESBoolean extends ESPrimitive {
     // overrides
     @Override
     public Object toJavaObject() {
-        return Boolean.valueOf(this == trueValue);
+        return Boolean.valueOf(this == TRUE);
     }
 
     // overrides
@@ -136,7 +136,7 @@ public final class ESBoolean extends ESPrimitive {
      * @throws ObjectStreamException
      */
     public Object writeReplace() throws ObjectStreamException {
-        return new ESBooleanReplace(this == trueValue);
+        return new ESBooleanReplace(this == TRUE);
     }
 
     private static class ESBooleanReplace implements java.io.Serializable {

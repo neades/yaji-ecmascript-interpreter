@@ -155,13 +155,11 @@ public class RegExpPrototype extends ESObject {
         boolean result = matcher.find();
         if (result) {
             // at least one match
-            ESObject ap = getEvaluator().getArrayPrototype();
-            ArrayPrototype resultArray = new ArrayPrototype(ap, getEvaluator());
+            ESObject resultArray = getEvaluator().createArray();
             resultArray.putProperty(StandardProperty.INDEXstring, ESNumber.valueOf(matcher.start()), StandardProperty.INDEXhash);
             resultArray.putProperty(StandardProperty.INPUTstring, new ESString(str),StandardProperty.INPUThash);
-            resultArray.setSize(matcher.groupCount() + 1);
             for (int i = 0; i <= matcher.groupCount(); i++) {
-                resultArray.setElementAt(new ESString(matcher.group(i)), i);
+                resultArray.putProperty((long)i,new ESString(matcher.group(i)));
             } // for
             lastIndex = matcher.end() + startIndex;
             return resultArray;

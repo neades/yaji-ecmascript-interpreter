@@ -76,13 +76,13 @@ public class JsonObject extends ESObject {
         }
     };
     
-    private static Walker<Integer> integerWalker = new Walker<Integer>() {
+    private static Walker<Long> integerWalker = new Walker<Long>() {
         @Override
-        protected ESValue get(ESObject holder, Integer idx) throws EcmaScriptException {
-            return holder.getProperty(idx.intValue());
+        protected ESValue get(ESObject holder, Long idx) throws EcmaScriptException {
+            return holder.getProperty(idx.longValue());
         }
         @Override
-        protected ESValue toESValue(Integer idx) {
+        protected ESValue toESValue(Long idx) {
             return new ESString(idx.toString());
         }
     };
@@ -91,10 +91,11 @@ public class JsonObject extends ESObject {
         public ESValue walk(ESObject holder, T name, ESValue reviver) throws EcmaScriptException {
             ESValue val = get(holder, name);
             if (!val.isPrimitive()) {
-                if (val instanceof ArrayPrototype) {
-                    walkArray(val, reviver);
+                ESObject object = (ESObject) val;
+                if (object.isArray()) {
+                    walkArray(object, reviver);
                 } else {
-                    walkObject((ESObject) val, reviver);
+                    walkObject(object, reviver);
                 }
             }
             return reviver.callFunction(holder, new ESValue[] { toESValue(name), val });
@@ -103,12 +104,11 @@ public class JsonObject extends ESObject {
         protected abstract ESValue get(ESObject holder, T name) throws EcmaScriptException;
         protected abstract ESValue toESValue(T name);
 
-        private void walkArray(ESValue val, ESValue reviver)
+        private void walkArray(ESObject array, ESValue reviver)
                 throws EcmaScriptException {
-            ArrayPrototype array = (ArrayPrototype) val;
-            int length = array.size();
-            for( int i=0; i<length; i++) {
-                ESValue newElement = integerWalker.walk(array, Integer.valueOf(i), reviver);
+            long length = array.getProperty(StandardProperty.LENGTHstring,StandardProperty.LENGTHhash).toUInt32();
+            for( long i=0; i<length; i++) {
+                ESValue newElement = integerWalker.walk(array, Long.valueOf(i), reviver);
                 array.putProperty(i, newElement);
             }
         }

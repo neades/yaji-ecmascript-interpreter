@@ -298,8 +298,28 @@ public abstract class ESObject extends ESValue {
      * @return The property or <em>undefined</em>
      * @exception EcmaScriptException
      *                Error in host objects ?
+     * @deprecated Use {@link #getProperty(long)} instead
      */
+    @Deprecated
     public final ESValue getProperty(int index) throws EcmaScriptException {
+        return getProperty((long)index);
+    }
+
+    /**
+     * Get the property by index value. By default the index is converted to a
+     * string, but this can be optimized for arrays.
+     * <P>
+     * This is not the same as the indexed properties of the first version of
+     * JavaScript and does not allow to access named properties other than the
+     * property using the integer string representation as a name.
+     * 
+     * @param index
+     *            The property name as an integer.
+     * @return The property or <em>undefined</em>
+     * @exception EcmaScriptException
+     *                Error in host objects ?
+     */
+    public final ESValue getProperty(long index) throws EcmaScriptException {
         ESValue value = getPropertyIfAvailable(index);
 
         if (value == null) {
@@ -322,9 +342,29 @@ public abstract class ESObject extends ESValue {
      * @param   index  The property name as an integer.
      * @return     The property or <em>null</em>
      * @exception   EcmaScriptException  Error in host objects ?
+     * @deprecated Use {@link #getPropertyIfAvailable(long)} instead
      */
+    @Deprecated
     public ESValue getPropertyIfAvailable(int index) throws EcmaScriptException {
-        String iString = Integer.toString(index);
+        return getPropertyIfAvailable((long)index);
+    }
+
+    /**
+     * Get the property by index value. By default the index is
+     * converted to a string, but this can be optimized for arrays.
+     * <P>This is not the same as the indexed properties of the first
+     * version of JavaScript and does not allow to access named
+     * properties other than the property using the integer string
+     * representation as a name.
+     *
+     * Returns null if the property was not found.
+     *
+     * @param   index  The property name as an integer.
+     * @return     The property or <em>null</em>
+     * @exception   EcmaScriptException  Error in host objects ?
+     */
+    public ESValue getPropertyIfAvailable(long index) throws EcmaScriptException {
+        String iString = Long.toString(index);
         return getPropertyIfAvailable(iString, iString.hashCode());
     }
 
@@ -550,10 +590,31 @@ public abstract class ESObject extends ESValue {
      *            The value to put
      * @exception EcmaScriptException
      *                Error in host objects ?
+     * @deprecated Use {@link #putProperty(long,ESValue)} instead
      */
-    public void putProperty(int index, ESValue propertyValue)
+    @Deprecated
+    public void putProperty(int index, ESValue propertyValue) throws EcmaScriptException {
+                putProperty((long)index, propertyValue);
+    }
+
+    /**
+     * Put the property by index value. By default the index is converted to a
+     * string, but this can be optimized for arrays.
+     * <P>
+     * This is not the same as the indexed properties of the first version of
+     * JavaScript and does not allow to access named properties other than the
+     * property using the integer string representation as a name.
+     * 
+     * @param index
+     *            The property name as an integer.
+     * @param propertyValue
+     *            The value to put
+     * @exception EcmaScriptException
+     *                Error in host objects ?
+     */
+    public void putProperty(long index, ESValue propertyValue)
             throws EcmaScriptException {
-        String iString = Integer.toString(index);
+        String iString = Long.toString(index);
         putProperty(iString, propertyValue, iString.hashCode());
     }
 
@@ -620,6 +681,11 @@ public abstract class ESObject extends ESValue {
             getPropertyMap().remove(propertyName, hash, isStrictMode());
         }
         return true; // either it did not exist or was deleted !
+    }
+    
+    public boolean deleteProperty(long index) throws EcmaScriptException {
+        String propertyName = Long.toString(index);
+        return deleteProperty(propertyName,propertyName.hashCode());
     }
 
     /**
@@ -1236,4 +1302,5 @@ public abstract class ESObject extends ESValue {
         }
         return allDigits;
     }
+
 }

@@ -65,7 +65,12 @@ public class ArrayPrototype extends ESObject {
     // overrides
     @Override
     public String getESClassName() {
-        return "Array";
+        return StandardProperty.ARRAYstring;
+    }
+    
+    @Override
+    public boolean isArray() {
+        return true;
     }
     
     public void add(ESValue v) throws EcmaScriptException {
@@ -810,7 +815,7 @@ public class ArrayPrototype extends ESObject {
     
     private ArrayPrototype newEmptyArray() throws EcmaScriptException {
         Evaluator eval = getEvaluator();
-        return (ArrayPrototype) eval.getValue("Array").doConstruct(
+        return (ArrayPrototype) eval.getValue(StandardProperty.ARRAYstring).doConstruct(
                 ESValue.EMPTY_ARRAY);
     }
 
@@ -916,7 +921,7 @@ public class ArrayPrototype extends ESObject {
             if (index < 0) {
                 super.putProperty(propertyName, propertyValue, hash);
             } else {
-                putProperty((int)index, propertyValue);
+                putProperty(index, propertyValue);
             }
         }
     }
@@ -933,13 +938,14 @@ public class ArrayPrototype extends ESObject {
     }
 
     // overrides
+    // overrides
     @Override
-    public void putProperty(int index, ESValue propertyValue)
+    public void putProperty(long index, ESValue propertyValue)
             throws EcmaScriptException {
         if (index >= theArray.size()) {
-            setSize(index+1);
+            setSize((int)index+1);
         }
-        theArray.set(index, propertyValue);
+        theArray.set((int)index, propertyValue);
     }
 
     // overrides
@@ -973,8 +979,7 @@ public class ArrayPrototype extends ESObject {
         if (index < 0 || index > theArray.size()) {
             return super.getPropertyIfAvailable(propertyName, hash);
         }
-        return getPropertyIfAvailable((int)index);
-
+        return getPropertyIfAvailable(index);
     }
 
     private long getIndex(String propertyName) {
@@ -992,12 +997,11 @@ public class ArrayPrototype extends ESObject {
         return index;
     }
 
-    // overrides
     @Override
-    public ESValue getPropertyIfAvailable(int index) throws EcmaScriptException {
+    public ESValue getPropertyIfAvailable(long index) throws EcmaScriptException {
         Object theElement = null;
         if (index < theArray.size()) {
-            theElement = theArray.get(index);
+            theElement = theArray.get((int)index);
         }
         return (ESValue) theElement;
 

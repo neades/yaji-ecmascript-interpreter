@@ -31,7 +31,6 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
 
-import FESI.Data.ArrayPrototype;
 import FESI.Data.BuiltinFunctionObject;
 import FESI.Data.DatePrototype;
 import FESI.Data.ESBoolean;
@@ -1130,12 +1129,9 @@ public class FileIO extends Extension {
             if (l == null) {
                 return ESBoolean.valueOf(false);
             }
-            ESObject ap = this.getEvaluator().getArrayPrototype();
-            ArrayPrototype theArray = new ArrayPrototype(ap, this
-                    .getEvaluator());
-            theArray.setSize(l.length);
+            ESObject theArray = getEvaluator().createArray();
             for (int i = 0; i < l.length; i++) {
-                theArray.setElementAt(new ESString(l[i]), i);
+                theArray.putProperty((long)i, new ESString(l[i]));
             }
             return theArray;
 

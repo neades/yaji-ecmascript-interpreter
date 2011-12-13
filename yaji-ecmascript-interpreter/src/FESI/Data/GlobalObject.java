@@ -23,6 +23,8 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.BitSet;
 
+import org.yaji.data.SparseArrayConstructor;
+
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.EcmaScriptParseException;
 import FESI.Exceptions.ProgrammingError;
@@ -34,6 +36,7 @@ import FESI.Interpreter.Evaluator;
  */
 public class GlobalObject extends ObjectPrototype {
     private static final long serialVersionUID = -4033899977752030036L;
+    public static boolean useSparse = true;
     
     private GlobalObject(ESObject prototype, Evaluator evaluator) {
         super(prototype, evaluator);
@@ -481,8 +484,12 @@ public class GlobalObject extends ObjectPrototype {
                     evaluator, objectPrototype, functionPrototype);
             BooleanObject booleanObject = BooleanObject.makeBooleanObject(
                     evaluator, objectPrototype, functionPrototype);
-            ArrayObject arrayObject = ArrayObject.makeArrayObject(evaluator,
-                    objectPrototype, functionPrototype);
+            ESObject arrayObject;
+            if (useSparse) {
+                arrayObject = SparseArrayConstructor.makeArrayObject(evaluator, objectPrototype, functionPrototype);
+            } else {
+                arrayObject = ArrayObject.makeArrayObject(evaluator, objectPrototype, functionPrototype);
+            }
             DateObject dateObject = DateObject.makeDateObject(evaluator,
                     objectPrototype, functionPrototype);
 
@@ -556,7 +563,7 @@ public class GlobalObject extends ObjectPrototype {
             go.putHiddenProperty("String", stringObject);
             go.putHiddenProperty("Number", numberObject);
             go.putHiddenProperty("Boolean", booleanObject);
-            go.putHiddenProperty("Array", arrayObject);
+            go.putHiddenProperty(StandardProperty.ARRAYstring, arrayObject);
             go.putHiddenProperty("Date", dateObject);
             go.putHiddenProperty(StandardProperty.REG_EXPstring, globalObjectRegExp);
             
@@ -572,8 +579,6 @@ public class GlobalObject extends ObjectPrototype {
             go.putProperty("undefined", 0, ESUndefined.theUndefined);
             go.putProperty("Infinity", 0, ESNumber
                     .valueOf(Double.POSITIVE_INFINITY));
-            go.putHiddenProperty("Array", ArrayObject.makeArrayObject(
-                    evaluator, objectPrototype, functionPrototype));
             go.putHiddenProperty("Math", MathObject.makeMathObject(evaluator,
                     objectPrototype, functionPrototype));
             go.putHiddenProperty("JSON", JsonObject.makeJsonObject(evaluator, objectPrototype, functionPrototype));

@@ -35,8 +35,8 @@ public class FunctionConstructorTest extends EvaluatorTestCase {
     }
 
     @Test public void shouldImplementApplyOnFunctionDeclarations() throws Exception {
-        ArrayPrototype array = new ArrayPrototype(evaluator.getArrayPrototype(), evaluator);
-        array.push(new ESValue[] { new ESString("param1"), new ESString("param2") });
+        ESObject array = evaluator.createArray();
+        array.doIndirectCall(evaluator,array,"push",new ESValue[] { new ESString("param1"), new ESString("param2") });
         ESValue value = function.doIndirectCall(evaluator, function, "apply", new ESValue[] { evaluator.getGlobalObject(), array });
 
         assertEquals("Called:param1param2",value.toString());

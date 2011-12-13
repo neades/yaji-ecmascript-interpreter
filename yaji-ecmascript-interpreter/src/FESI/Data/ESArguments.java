@@ -192,12 +192,12 @@ public class ESArguments extends ESObject {
     }
 
     @Override
-    public ESValue getPropertyIfAvailable(int index) throws EcmaScriptException {
+    public ESValue getPropertyIfAvailable(long index) throws EcmaScriptException {
         if (index >= 0 && index < argumentNames.length) {
-            String propertyName = argumentNames[index];
+            String propertyName = argumentNames[(int)index];
             return super.getPropertyIfAvailable(propertyName, propertyName.hashCode());
         }
-        String iString = Integer.toString(index);
+        String iString = Long.toString(index);
         return getPropertyIfAvailable(iString, iString.hashCode());
 
     }

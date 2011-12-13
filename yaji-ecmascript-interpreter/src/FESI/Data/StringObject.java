@@ -106,7 +106,7 @@ public class StringObject extends BuiltinFunctionObject {
         @Override
         public ESValue invoke(String str, ESValue[] arguments) throws EcmaScriptException {
             int strLength = str.length();
-            int start = getArgAsInteger(arguments,0);
+            int start = getArgAsInt32(arguments,0);
             if (start < 0) {
                 start = Math.max(strLength + start,0);
             }
@@ -216,17 +216,14 @@ public class StringObject extends BuiltinFunctionObject {
             boolean result = matcher.find();
             if (result) {
                 // at least one match
-                ESObject ap = this.getEvaluator().getArrayPrototype();
-                ArrayPrototype resultArray = new ArrayPrototype(ap, this
-                        .getEvaluator());
+                ESObject resultArray = this.getEvaluator().createArray();
                 resultArray.putProperty(StandardProperty.INDEXstring, ESNumber
                         .valueOf(matcher.start()), StandardProperty.INDEXhash);
                 resultArray.putProperty(StandardProperty.INPUTstring, new ESString(str),
                         StandardProperty.INPUThash);
-                resultArray.setSize(matcher.groupCount() + 1);
                 for (int i = 0; i <= matcher.groupCount(); i++) {
-                    resultArray.setElementAt(
-                            new ESString(matcher.group(i)), i);
+                    resultArray.putProperty((long)i,
+                            new ESString(matcher.group(i)));
                 } // for
                 return resultArray;
             }
@@ -242,23 +239,25 @@ public class StringObject extends BuiltinFunctionObject {
             super(fp, evaluator, name, 1);
         }
 
-        private void split(Pattern pattern, ArrayPrototype matchList, CharSequence input, int limit) throws EcmaScriptException {
+        private void split(Pattern pattern, ESObject matchList, CharSequence input, int limit) throws EcmaScriptException {
             int index = 0;
             boolean matchLimited = limit > 0;
             Matcher m = pattern.matcher(input);
+            
+            long matchListSize = matchList.getProperty(StandardProperty.LENGTHstring, StandardProperty.LENGTHhash).toUInt32();
 
             int groupCount = m.groupCount();
             // Add segments before each match found
             while(m.find()) {
                 String match = input.subSequence(index, m.start()).toString();
-                matchList.add(new ESString(match));
-                if (matchList.size() == limit) {
+                matchList.putProperty(matchListSize++,new ESString(match));
+                if (matchListSize == limit) {
                     return;
                 }
                 for (int i=1; i<=groupCount; i++) {
                     String group = m.group(i);
-                    matchList.add((group == null)?ESUndefined.theUndefined:new ESString(group));
-                    if (matchList.size() == limit) {
+                    matchList.putProperty(matchListSize++,(group == null)?ESUndefined.theUndefined:new ESString(group));
+                    if (matchListSize == limit) {
                         return;
                     }
                 }
@@ -267,11 +266,11 @@ public class StringObject extends BuiltinFunctionObject {
 
             // If no match was found, return complete string
             if (index == 0) {
-                matchList.add(new ESString(input.toString()));
+                matchList.putProperty(matchListSize++,new ESString(input.toString()));
             } else {
                 // Add remaining segment
-                if (!matchLimited || matchList.size() < limit) {
-                    matchList.add(new ESString(input.subSequence(index, input.length()).toString()));
+                if (!matchLimited || matchListSize < limit) {
+                    matchList.putProperty(matchListSize++,new ESString(input.subSequence(index, input.length()).toString()));
                 }
             }
 
@@ -279,25 +278,21 @@ public class StringObject extends BuiltinFunctionObject {
         @Override
         public ESValue invoke(String str, ESValue[] arguments)
                 throws EcmaScriptException {
-            ESObject ap = this.getEvaluator().getArrayPrototype();
-            ArrayPrototype theArray = new ArrayPrototype(ap, this
-                    .getEvaluator());
+            ESObject theArray = this.getEvaluator().createArray();
             if (arguments.length <= 0) {
-                theArray.setSize(1);
-                theArray.setElementAt(new ESString(str), 0);
+                theArray.putProperty(0L, new ESString(str));
             } else {
                 if (arguments[0] instanceof RegExpPrototype) {
                     RegExpPrototype regexp = (RegExpPrototype) arguments[0];
-                    int limit = getArgAsInteger(arguments,1);
+                    int limit = getArgAsInt32(arguments,1);
                     split(regexp.getPattern(),theArray,str,limit);
                 } else { // ! instanceof ESJavaRegExp, using "normal" split
                     String sep = arguments[0].toString();
                     if (sep.length() == 0) {
                         int l = str.length();
-                        theArray.setSize(l);
                         for (int i = 0; i < l; i++) {
-                            theArray.setElementAt(new ESString(str
-                                    .substring(i, i + 1)), i);
+                            theArray.putProperty((long)i,new ESString(str
+                                    .substring(i, i + 1)));
                         }
                     } else {
                         int i = 0;
@@ -308,9 +303,7 @@ public class StringObject extends BuiltinFunctionObject {
                                 pos = str.length();
                             // System.out.println("start: " + start +
                             // ", pos: " + pos);
-                            theArray.setSize(i + 1);
-                            theArray.setElementAt(new ESString(str
-                                    .substring(start, pos)), i);
+                            theArray.putProperty((long)i,new ESString(str.substring(start, pos)));
                             start = pos + sep.length();
                             i++;
                         }

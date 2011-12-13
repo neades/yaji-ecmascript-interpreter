@@ -89,13 +89,13 @@ public class ESArrayWrapper extends ESObject {
             throw new EcmaScriptException(
                     "Java Arrays accept only index properties");
         }
-        putProperty(index, propertyValue);
+        putProperty((long)index, propertyValue);
 
     }
 
     // overrides
     @Override
-    public void putProperty(int index, ESValue propertyValue)
+    public void putProperty(long index, ESValue propertyValue)
             throws EcmaScriptException {
 
         int l = Array.getLength(javaArray);
@@ -105,7 +105,7 @@ public class ESArrayWrapper extends ESObject {
         }
         Object obj = propertyValue.toJavaObject();
         try {
-            Array.set(javaArray, index, obj);
+            Array.set(javaArray, (int)index, obj);
         } catch (IllegalArgumentException e) {
             String type = "null";
             if (obj != null) {
@@ -140,9 +140,9 @@ public class ESArrayWrapper extends ESObject {
         if (propertyName.equals("length")) {
             return ESNumber.valueOf(Array.getLength(javaArray));
         }
-        int index = -1; // indicates not a valid index value
+        long index = -1; // indicates not a valid index value
         try {
-            index = Integer.parseInt(propertyName); // should be uint
+            index = Long.parseLong(propertyName); // should be uint
         } catch (NumberFormatException e) {
             // do nothing
         }
@@ -153,16 +153,15 @@ public class ESArrayWrapper extends ESObject {
         return getPropertyIfAvailable(index);
     }
 
-    // overrides
     @Override
-    public ESValue getPropertyIfAvailable(int index) throws EcmaScriptException {
+    public ESValue getPropertyIfAvailable(long index) throws EcmaScriptException {
         Object theElement = null;
         int l = Array.getLength(javaArray);
         if (index >= l || index < 0) {
             throw new EcmaScriptException("Java Array index " + index
                     + " is out of range " + l);
         }
-        theElement = Array.get(javaArray, index);
+        theElement = Array.get(javaArray, (int)index);
         return ESLoader.normalizeValue(theElement, getEvaluator());
     }
 

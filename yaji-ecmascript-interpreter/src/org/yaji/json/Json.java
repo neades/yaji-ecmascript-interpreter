@@ -8,8 +8,6 @@ import FESI.Data.ESString;
 import FESI.Data.ESNumber;
 import FESI.Data.ESObject;
 import FESI.Data.ObjectObject;
-import FESI.Data.ArrayObject;
-import FESI.Data.ArrayPrototype;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Interpreter.Evaluator;
 
@@ -102,9 +100,11 @@ public class Json implements JsonConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public ArrayPrototype Array() throws ParseException {
+  final public ESObject Array() throws ParseException {
         ESValue v;
-      ArrayPrototype array; try { array = ArrayObject.createArray(evaluator); } catch (EcmaScriptException e) { {if (true) throw new ParseException("Programming error");} }
+        ESValue[] esValues;
+      ESObject array; try { array = evaluator.createArray(); esValues = new ESValue[1];
+    } catch (EcmaScriptException e) { {if (true) throw new ParseException("Programming error");} }
     jj_consume_token(BEGIN_ARRAY);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case BEGIN_ARRAY:
@@ -115,7 +115,9 @@ public class Json implements JsonConstants {
     case 16:
     case 17:
       v = Value();
-                        try {array.add(v); } catch (EcmaScriptException e) { {if (true) throw new ParseException("Programming error");} }
+                        try { esValues[0] = v; array.doIndirectCall(evaluator,array,"push",esValues); }
+                        catch (NoSuchMethodException e) { {if (true) throw new ParseException("Programming error");} }
+                        catch (EcmaScriptException e) { {if (true) throw new ParseException("Programming error");} }
       label_2:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -128,7 +130,9 @@ public class Json implements JsonConstants {
         }
         jj_consume_token(VALUE_SEPARATOR);
         v = Value();
-                                            try{array.add(v);} catch (EcmaScriptException e) { {if (true) throw new ParseException("Programming error");} }
+                                            try{esValues[0] = v; array.doIndirectCall(evaluator,array,"push",esValues);}
+                                                                catch (NoSuchMethodException e) { {if (true) throw new ParseException("Programming error");} }
+                                                                                catch (EcmaScriptException e) { {if (true) throw new ParseException("Programming error");} }
       }
       break;
     default:

@@ -193,9 +193,7 @@ public class JSGlobalWrapper extends JSWrapper implements JSGlobalObject {
      */
     public JSObject makeJSArrayObject() throws EcmaScriptException {
         synchronized (evaluator) {
-            ESObject ap = evaluator.getArrayPrototype();
-            ArrayPrototype theArray = new ArrayPrototype(ap, evaluator);
-            return new JSWrapper(theArray, evaluator);
+            return new JSWrapper(evaluator.createArray(), evaluator);
         }
     }
 

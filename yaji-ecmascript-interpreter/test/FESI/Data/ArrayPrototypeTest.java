@@ -21,14 +21,15 @@ public class ArrayPrototypeTest extends EvaluatorTestCase{
     public void keysShouldReturnIndices() throws Exception {
         ESObject array = arrayObject.doConstruct(new ESValue[] { new ESString("a"), new ESString("b"), new ESString("c") });
         ESValue value = objectObject.doIndirectCall(evaluator, array, "keys", new ESValue[] { array } );
+        ((ESObject)value).doIndirectCall(evaluator, (ESObject)value, "sort", ESValue.EMPTY_ARRAY);
         assertEquals("0,1,2",value.toESString().toString());
-        assertEquals(new ESString("0"), ((ESObject)value).getProperty(0));
+        assertEquals(new ESString("0"), ((ESObject)value).getProperty(0L));
     }
 
     @Test
     public void propertyIsEnumerableReturnsTrueForArrayEleemnt() throws Exception {
         ESObject object = arrayObject.doConstruct(ESValue.EMPTY_ARRAY);
-        object.putProperty(0, ESNull.theNull);
+        object.putProperty(0L, ESNull.theNull);
         ESValue result = object.doIndirectCall(evaluator, object, "propertyIsEnumerable", new ESValue[] { ESNumber.valueOf(0) });
 
         assertSame(ESBoolean.valueOf(true), result);
@@ -63,7 +64,7 @@ public class ArrayPrototypeTest extends EvaluatorTestCase{
     @Test(expected=RangeError.class)
     public void settingLengthTooLong() throws Exception {
         ESObject object = arrayObject.doConstruct(ESValue.EMPTY_ARRAY);
-        object.putProperty(StandardProperty.LENGTHstring, ESNumber.valueOf(0x100000000L));
+        object.putProperty(StandardProperty.LENGTHstring, ESNumber.valueOf(0x100000000L), StandardProperty.LENGTHhash);
     }
     
     @Test
@@ -85,8 +86,8 @@ public class ArrayPrototypeTest extends EvaluatorTestCase{
     @Test
     public void settingAttributeTooLongJustAddsProperty2() throws Exception {
         ESObject object = arrayObject.doConstruct(ESValue.EMPTY_ARRAY);
-        String string = "4294967295";
+        String string = "4294967294";
         object.putProperty(string, ESNull.theNull);
-        assertEquals(ESNumber.valueOf(0), object.getProperty(StandardProperty.LENGTHstring));
+        assertEquals(ESNumber.valueOf(4294967295L), object.getProperty(StandardProperty.LENGTHstring));
     }
 }

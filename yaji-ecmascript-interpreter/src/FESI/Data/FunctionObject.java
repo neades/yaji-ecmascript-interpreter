@@ -115,7 +115,7 @@ public class FunctionObject extends BuiltinFunctionObject implements
                     int length = array.getProperty(StandardProperty.LENGTHstring,StandardProperty.LENGTHhash).toInt32();
                     functionArguments = new ESValue[length];
                     for( int index=0; index<length; index++) {
-                        functionArguments[index] = array.getProperty(index);
+                        functionArguments[index] = array.getProperty((long)index);
                     }
                 }
             }

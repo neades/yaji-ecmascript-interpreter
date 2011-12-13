@@ -79,7 +79,6 @@ import FESI.AST.ASTWithStatement;
 import FESI.AST.AbstractEcmaScriptVisitor;
 import FESI.AST.Node;
 import FESI.AST.SimpleNode;
-import FESI.Data.ArrayPrototype;
 import FESI.Data.ConstructedFunctionObject;
 import FESI.Data.ESArguments;
 import FESI.Data.ESBoolean;
@@ -311,15 +310,6 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         // System.out.println("CN: '"+ d1 + "' " +c+ " '" + d2 + "'");
         return c;
     }
-
-    // ES5 11.9.6
-    private boolean strictEqual(ESValue v1, ESValue v2) throws EcmaScriptException {
-        if (v1.getTypeOf() == v2.getTypeOf()) {
-            return v1.equalsSameType(v2);
-        }
-        return false;
-    }
-
 
     // EcmaScript standard 11.9.3
     private boolean equal(ESValue v1, ESValue v2) throws EcmaScriptException {
@@ -790,14 +780,22 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
 
     @Override
     public Object visit(ASTThisReference node, Object data) {
-        node.assertNoChildren();
-        return evaluator.getThisObject();
+        try {
+            node.assertNoChildren();
+            return evaluator.getThisObject();
+        } catch (EcmaScriptException e) {
+            throw new PackagedException(e, node);
+        }
     }
 
     @Override
     public Object visit(ASTSuperReference node, Object data) {
-        node.assertNoChildren();
-        return evaluator.getSuperObject();
+        try {
+            node.assertNoChildren();
+            return evaluator.getSuperObject();
+        } catch (EcmaScriptException e) {
+            throw new PackagedException(e, node);
+        }
     }
 
     /*
@@ -1356,11 +1354,11 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                 }
                     break;
                 case STRICT_EQ: {
-                    result = ESBoolean.valueOf(strictEqual(v1, v2));
+                    result = ESBoolean.valueOf(v1.strictEqual(v2));
                 }
                     break;
                 case STRICT_NEQ: {
-                    result = ESBoolean.valueOf(!strictEqual(v1, v2));
+                    result = ESBoolean.valueOf(!v1.strictEqual(v2));
                 }
                     break;
                 case INSTANCEOF: {
@@ -1484,9 +1482,9 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                     // N.B.: could also be achieved by modifying the ESNumber 
                     // value were it not final (presumably for performance)
                     ESValue baseValue = lv.getBase();
-                    if (baseValue instanceof ArrayPrototype) {
-                        result = ((ArrayPrototype) baseValue).getProperty(
-                                StandardProperty.LENGTHstring, StandardProperty.LENGTHhash);
+                    if (baseValue.isArray()) {
+                        ESObject o = (ESObject) baseValue;
+                        result = o.getProperty(StandardProperty.LENGTHstring, StandardProperty.LENGTHhash);
                     }
                 } else {
                     result = v2;
@@ -1796,14 +1794,13 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
     public Object visit(ASTArrayLiteral node, Object data) {
         ESObject result = null;
         try {
-            result = evaluator.getValue("Array").doConstruct(
-                    ESValue.EMPTY_ARRAY);
+            result = evaluator.createArray();
             
             int length = node.jjtGetNumChildren();
             for (int i = 0; i < length; i++) {
                 Node child = node.jjtGetChild(i);
                 if (!(i == length - 1 &&  child instanceof ASTElision)) {
-                    result.putProperty(i,(ESValue) child.jjtAccept(this, FOR_VALUE));
+                    result.putProperty((long)i,(ESValue) child.jjtAccept(this, FOR_VALUE));
                 }
             }
         } catch (EcmaScriptException e) {
@@ -1951,7 +1948,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         Object result;
         try {
             result = null;
-            switchState.found = switchState.found || strictEqual(switchState.input,clauseSelector);
+            switchState.found = switchState.found || switchState.input.strictEqual(clauseSelector);
             if (switchState.found && n>1) {
                 result = node.jjtGetChild(1).jjtAccept(this, data);
             }

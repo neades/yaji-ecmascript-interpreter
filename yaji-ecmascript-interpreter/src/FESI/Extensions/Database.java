@@ -522,7 +522,7 @@ class ESRowSet extends ESObject {
                 // do nothing
             }
             if (index >= 0) {
-                return getProperty(index);
+                return getProperty((long)index);
             }
             Object o = resultSet.getObject(propertyName);
             ESValue value = ESLoader.normalizeValue(o, getEvaluator());
@@ -572,7 +572,7 @@ class ESRowSet extends ESObject {
 
                 }
                 if (index >= 0) {
-                    return getProperty(index);
+                    return getProperty((long)index);
                 }
                 Object o = resultSet.getObject(propertyName);
                 ESValue value = ESLoader.normalizeValue(o, getEvaluator());
@@ -590,7 +590,7 @@ class ESRowSet extends ESObject {
     }
 
     @Override
-    public ESValue getPropertyIfAvailable(int index) throws EcmaScriptException {
+    public ESValue getPropertyIfAvailable(long index) throws EcmaScriptException {
         if (!firstRowSeen) {
             throw new EcmaScriptException(
                     "Attempt to access data before the first row is read");
@@ -600,7 +600,7 @@ class ESRowSet extends ESObject {
                     "Attempt to access a released result set");
         }
         try {
-            Object o = resultSet.getObject(index);
+            Object o = resultSet.getObject((int)index);
             ESValue value = ESLoader.normalizeValue(o, getEvaluator());
             lastError = null;
             return value;
@@ -965,7 +965,7 @@ public class Database extends Extension {
                 throw new EcmaScriptException("Missing parameter in function "
                         + this);
             }
-            int idx = arguments[0].toUInt32();
+            int idx = arguments[0].toInt32();
             String name = rowSet.getColumnName(idx); // base 1
             if (name == null) {
                 return ESUndefined.theUndefined;
@@ -1012,7 +1012,7 @@ public class Database extends Extension {
                 throw new EcmaScriptException("Missing parameter in function "
                         + this);
             }
-            int idx = arguments[0].toUInt32();
+            int idx = arguments[0].toInt32();
             return ESNumber.valueOf(rowSet.getColumnDatatypeNumber(idx));
         }
     }
@@ -1033,7 +1033,7 @@ public class Database extends Extension {
                 throw new EcmaScriptException("Missing parameter in function "
                         + this);
             }
-            int idx = arguments[0].toUInt32();
+            int idx = arguments[0].toInt32();
             String name = rowSet.getColumnDatatypeName(idx);
             // System.out.println("Datat type name for col " + idx + " is "
             // +name);

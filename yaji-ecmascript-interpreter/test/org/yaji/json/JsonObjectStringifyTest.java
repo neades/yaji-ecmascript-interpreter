@@ -7,7 +7,6 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
-import FESI.Data.ArrayPrototype;
 import FESI.Data.ESBoolean;
 import FESI.Data.ESNull;
 import FESI.Data.ESNumber;
@@ -47,8 +46,8 @@ public class JsonObjectStringifyTest {
         assertEquals(new ESString("[]"),result);
     }
 
-    private ArrayPrototype createArray() throws EcmaScriptException {
-        return new ArrayPrototype(evaluator.getArrayPrototype(), evaluator);
+    private ESObject createArray() throws EcmaScriptException {
+        return evaluator.createArray();
     }
 
     @Test
@@ -93,24 +92,24 @@ public class JsonObjectStringifyTest {
     
     @Test
     public void testStringifyArray() throws EcmaScriptException, NoSuchMethodException {
-        ArrayPrototype array = createArray();
-        array.putProperty(0,new ESString("x"));
+        ESObject array = createArray();
+        array.putProperty(0L,new ESString("x"));
         assertEquals(new ESString("[\"x\"]"),stringify(array));
     }
     
     @Test
     public void testStringifyArrayWithReplacer() throws EcmaScriptException, NoSuchMethodException {
-        ArrayPrototype array = createArray();
-        array.putProperty(0,new ESString("x"));
-        array.putProperty(1,new ESString("q"));
+        ESObject array = createArray();
+        array.putProperty(0L,new ESString("x"));
+        array.putProperty(1L,new ESString("q"));
         assertEquals(new ESString("[\"y\",\"q\"]"),stringify(array,createFunction("return key==='0'?'y':value;")));
     }
     
     @Test
     public void testStringifyArrayWithUndefinedFromReplacer() throws EcmaScriptException, NoSuchMethodException {
-        ArrayPrototype array = createArray();
-        array.putProperty(0,new ESString("x"));
-        array.putProperty(1,new ESString("q"));
+        ESObject array = createArray();
+        array.putProperty(0L,new ESString("x"));
+        array.putProperty(1L,new ESString("q"));
         assertEquals(new ESString("[null,\"q\"]"),stringify(array,createFunction("return key==='0'?undefined:value;")));
     }
     
@@ -156,18 +155,18 @@ public class JsonObjectStringifyTest {
 
     @Test
     public void testStringifyArrayWithFunction() throws EcmaScriptException, NoSuchMethodException {
-        ArrayPrototype array = createArray();
-        array.putProperty(0,new ESString("x"));
-        array.putProperty(1,createFunction("return key==='propName'?'replaced':value;"));
-        array.putProperty(2,new ESString("q"));
+        ESObject array = createArray();
+        array.putProperty(0L,new ESString("x"));
+        array.putProperty(1L,createFunction("return key==='propName'?'replaced':value;"));
+        array.putProperty(2L,new ESString("q"));
         assertEquals(new ESString("[\"x\",null,\"q\"]"),stringify(array));
     }
 
     @Test
     public void testStringifyArrayFormatted() throws EcmaScriptException, NoSuchMethodException {
-        ArrayPrototype array = createArray();
-        array.putProperty(0,new ESString("x"));
-        array.putProperty(1,new ESString("q"));
+        ESObject array = createArray();
+        array.putProperty(0L,new ESString("x"));
+        array.putProperty(1L,new ESString("q"));
         assertEquals(new ESString("[\n  \"x\",\n  \"q\"\n]"),stringify(array,ESUndefined.theUndefined,ESNumber.valueOf(2)));
     }
 
@@ -181,9 +180,9 @@ public class JsonObjectStringifyTest {
 
     @Test
     public void shouldFilterProperties() throws EcmaScriptException, NoSuchMethodException { 
-        ArrayPrototype array = createArray();
-        array.putProperty(0,new ESString("propName"));
-        array.putProperty(1,new ESString("lastName"));
+        ESObject array = createArray();
+        array.putProperty(0L,new ESString("propName"));
+        array.putProperty(1L,new ESString("lastName"));
         ObjectPrototype object = createObject();
         object.putProperty("lastName", ESNull.theNull, "lastName".hashCode());
         object.putProperty("propName", ESNull.theNull, "propName".hashCode());
@@ -208,10 +207,10 @@ public class JsonObjectStringifyTest {
     
     @Test
     public void shouldDetectCyclicArrays() throws Exception {
-        ArrayPrototype arrayA = createArray();
-        ArrayPrototype arrayB = createArray();
-        arrayA.putProperty(0,arrayB);
-        arrayB.putProperty(0,arrayA);
+        ESObject arrayA = createArray();
+        ESObject arrayB = createArray();
+        arrayA.putProperty(0L,arrayB);
+        arrayB.putProperty(0L,arrayA);
         try {
             stringify(arrayA);
             fail("Should throw exception");

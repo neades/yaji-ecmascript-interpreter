@@ -643,7 +643,7 @@ public class Interpret implements InterpreterCommands {
             ESObject ap = evaluator.getArrayPrototype();
             ArrayPrototype argsArray = new ArrayPrototype(ap, evaluator);
             for (int i = 0; i < esArgs.length; i++) {
-                argsArray.putProperty(i, new ESString(esArgs[i]));
+                argsArray.putProperty((long)i, new ESString(esArgs[i]));
             }
             ESObject go = evaluator.getGlobalObject();
             String ARGSstring = ("args").intern();

@@ -40,7 +40,7 @@ public class ArrayObject extends BuiltinFunctionObject {
      *            the evaluator
      */
     private ArrayObject(ESObject prototype, Evaluator evaluator) {
-        super(prototype, evaluator, "Array", 1);
+        super(prototype, evaluator, StandardProperty.ARRAYstring, 1);
     }
 
     public static ArrayPrototype createArray(Evaluator evaluator) throws EcmaScriptException {
@@ -79,10 +79,7 @@ public class ArrayObject extends BuiltinFunctionObject {
     
     public ESValue isArray(ESValue[] args) throws EcmaScriptException {
         if (args.length >= 1) {
-            if (args[0] instanceof ESObject 
-                    && "Array".equals(((ESObject)args[0]).getESClassName())) {
-                return ESBoolean.valueOf(true);
-            }
+            ESBoolean.valueOf(args[0].isArray());
         }
         return ESBoolean.valueOf(false);
     }

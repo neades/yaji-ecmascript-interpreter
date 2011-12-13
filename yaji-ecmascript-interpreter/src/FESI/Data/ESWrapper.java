@@ -495,13 +495,12 @@ public class ESWrapper extends ESObject {
             System.out.println("** Write method found for: " + propertyName);
         Object params[] = new Object[1];
         if (propClass.isArray()) {
-            if (!(propertyValue instanceof ArrayPrototype)) {
+            if (!(propertyValue.isArray())) {
                 throw new EcmaScriptException(
                         "Argument should be Array for property '"
                                 + propertyName + "'");
             }
-            ArrayPrototype ao = (ArrayPrototype) propertyValue;
-            params[0] = ao.toJavaArray(propClass.getComponentType());
+            params[0] = ESLoader.arrayToJavaArray((ESObject) propertyValue,propClass.getComponentType());
         } else {
             params[0] = propertyValue.toJavaObject();
         }

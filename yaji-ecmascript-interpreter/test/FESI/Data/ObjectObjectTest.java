@@ -463,9 +463,8 @@ public class ObjectObjectTest extends EvaluatorTestCase {
     public void getOwnPropertyNamesShouldReturnArray() throws Exception {
         // 15.2.3.4.2
         ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
-        ESValue result = objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyNames", new ESValue[] { object });
-        ArrayPrototype array = (ArrayPrototype) result;
-        assertEquals(0,array.size());
+        ESObject result = (ESObject) objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyNames", new ESValue[] { object });
+        assertEquals(0,result.getProperty(StandardProperty.LENGTHstring,StandardProperty.LENGTHhash).toInt32());
     }
 
     @Test
@@ -474,28 +473,28 @@ public class ObjectObjectTest extends EvaluatorTestCase {
         ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         defineValueProperty(object, "propertyName", false, false, false, ES_TRUE);
         
-        ESValue result = objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyNames", new ESValue[] { object });
-        ArrayPrototype array = (ArrayPrototype) result;
-        assertEquals(1,array.size());
-        assertEquals("propertyName",array.getProperty(0).toString());
+        ESObject result = (ESObject)objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyNames", new ESValue[] { object });
+        assertEquals(1,result.getProperty(StandardProperty.LENGTHstring,StandardProperty.LENGTHhash).toInt32());
+        assertEquals("propertyName",result.getProperty(0L).toString());
     }
 
 
     @Test
     public void getOwnPropertyNamesShouldReturnIndicesForArray() throws Exception {
         // 15.2.3.4.2
-        ESObject object = arrayObject.doConstruct(ESValue.EMPTY_ARRAY);
+        ESObject object = arrayObject.doConstruct(new ESValue[] { ESNumber.valueOf(1),ESNumber.valueOf(2), ESNumber.valueOf(3) });
         object.putProperty(StandardProperty.LENGTHstring, ESNumber.valueOf(3));
         object.putProperty("another", ESNumber.valueOf(3));
         
         ESValue result = objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyNames", new ESValue[] { object });
-        ArrayPrototype array = (ArrayPrototype) result;
-        assertEquals(5,array.size());
-        assertEquals("0",array.getProperty(0).toString());
-        assertEquals("1",array.getProperty(1).toString());
-        assertEquals("2",array.getProperty(2).toString());
-        assertEquals("another",array.getProperty(3).toString());
-        assertEquals("length",array.getProperty(4).toString());
+        ESObject array = (ESObject) result;
+        array.doIndirectCall(evaluator, array, "sort", ESValue.EMPTY_ARRAY);
+        assertEquals(5,array.getProperty("length").toInt32());
+        assertEquals("0",array.getProperty(0L).toString());
+        assertEquals("1",array.getProperty(1L).toString());
+        assertEquals("2",array.getProperty(2L).toString());
+        assertEquals("another",array.getProperty(3L).toString());
+        assertEquals("length",array.getProperty(4L).toString());
     }
 
     @Test
@@ -505,12 +504,13 @@ public class ObjectObjectTest extends EvaluatorTestCase {
         object.putProperty(StandardProperty.LENGTHstring, ESNumber.valueOf(3));
         
         ESValue result = objectObject.doIndirectCall(evaluator, objectObject, "getOwnPropertyNames", new ESValue[] { object });
-        ArrayPrototype array = (ArrayPrototype) result;
-        assertEquals(4,array.size());
-        assertEquals("0",array.getProperty(0).toString());
-        assertEquals("1",array.getProperty(1).toString());
-        assertEquals("2",array.getProperty(2).toString());
-        assertEquals("length",array.getProperty(3).toString());
+        ESObject array = (ESObject) result;
+        array.doIndirectCall(evaluator, array, "sort", ESValue.EMPTY_ARRAY);
+        assertEquals(4,array.getProperty("length").toInt32());
+        assertEquals("0",array.getProperty(0L).toString());
+        assertEquals("1",array.getProperty(1L).toString());
+        assertEquals("2",array.getProperty(2L).toString());
+        assertEquals("length",array.getProperty(3L).toString());
     }
 
     @Test
@@ -666,9 +666,9 @@ public class ObjectObjectTest extends EvaluatorTestCase {
     public void keysShouldReturnNamesOfEnumerableProperties() throws Exception {
         ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         object.putProperty("name",ES_TRUE);
-        ArrayPrototype result = (ArrayPrototype) objectObject.doIndirectCall(evaluator, objectObject, "keys", new ESValue[] { object });
-        assertEquals(1,result.size());
-        assertEquals("name",result.getProperty(0).toString());
+        ESObject result = (ESObject) objectObject.doIndirectCall(evaluator, objectObject, "keys", new ESValue[] { object });
+        assertEquals(1,result.getProperty(StandardProperty.LENGTHstring).toInt32());
+        assertEquals("name",result.getProperty(0L).toString());
     }
     
     @Test
@@ -676,9 +676,9 @@ public class ObjectObjectTest extends EvaluatorTestCase {
         ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         object.putProperty("name",ES_TRUE);
         object.putHiddenProperty("hidden",ES_TRUE);
-        ArrayPrototype result = (ArrayPrototype) objectObject.doIndirectCall(evaluator, objectObject, "keys", new ESValue[] { object });
-        assertEquals(1,result.size());
-        assertEquals("name",result.getProperty(0).toString());
+        ESObject result = (ESObject) objectObject.doIndirectCall(evaluator, objectObject, "keys", new ESValue[] { object });
+        assertEquals(1,result.getProperty(StandardProperty.LENGTHstring).toInt32());
+        assertEquals("name",result.getProperty(0L).toString());
     }
     
     private void definePropertyOnExistingProperty(String descPropertyName, boolean stateToTest)
