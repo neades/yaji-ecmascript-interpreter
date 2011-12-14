@@ -13,7 +13,6 @@ import java.util.Map;
 
 import org.yaji.json.JsonUtil;
 
-import FESI.Data.ArrayPrototype;
 import FESI.Data.ESBoolean;
 import FESI.Data.ESNull;
 import FESI.Data.ESNumber;
@@ -64,8 +63,8 @@ public class V8Debugger {
         }
     }
 
-    ArrayPrototype createArray() throws EcmaScriptException {
-        return new ArrayPrototype(evaluator.getArrayPrototype(),evaluator);
+    ESObject createArray() throws EcmaScriptException {
+        return evaluator.createArray();
     }
     
     private Map<String,CommandHandler> commandMap = new HashMap<String,CommandHandler>() {
@@ -145,7 +144,7 @@ public class V8Debugger {
                 public void invoke(ESObject request, ESObject response) throws EcmaScriptException {
                     ESObject arguments = (ESObject) request.getProperty("arguments","arguments".hashCode());
                     boolean includeSource = arguments.getProperty("includeSource","includeSource".hashCode()).booleanValue();
-                    ArrayPrototype array = new ArrayPrototype(evaluator.getArrayPrototype(),evaluator);
+                    ESObject array = evaluator.createArray();
                     List<File> scripts = debugger.getScripts();
                     int index = 1;
                     for (File file : scripts) {
@@ -157,7 +156,7 @@ public class V8Debugger {
                         if (includeSource) {
                             script.putProperty("source", sourceFile.getText(), "source".hashCode());
                         }
-                        array.add(script);
+                        array.putProperty((long)index,script);
                     }
                     
                     response.putProperty("body", array, "body".hashCode());
