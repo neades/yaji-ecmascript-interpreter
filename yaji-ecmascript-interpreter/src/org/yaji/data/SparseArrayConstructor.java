@@ -64,7 +64,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
         protected ESValue reduce(ESObject thisObject, ESValue[] arguments, Op op) throws EcmaScriptException, TypeError {
             long length = getLength(thisObject);
             ESValue callbackFn = getArg(arguments,0);
-            ESValue thisArg = getArg(arguments,1);
+            ESValue thisArg = ESUndefined.theUndefined;
             ESValue[] functionArgs = new ESValue[4];
             functionArgs[3] = thisObject;
 
