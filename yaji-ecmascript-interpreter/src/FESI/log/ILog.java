@@ -25,4 +25,7 @@ public interface ILog {
 
     void asWarning(String m, Throwable t);
 
+    void print(String m);
+    
+    void println();
 }

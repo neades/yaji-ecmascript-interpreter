@@ -424,10 +424,8 @@ public class JSWrapper implements JSObject {
      * Implement the creation of a new evaluator, with no extension loaded.
      * 
      * @return The global object of the created evaluator.
-     * @exception JSException
-     *                For any error during initialization
      */
-    static public JSGlobalObject makeEvaluator() throws JSException {
+    static public JSGlobalObject makeEvaluator()  {
         Evaluator evaluator = new Evaluator();
         GlobalObject go = evaluator.getGlobalObject();
         return new JSGlobalWrapper(go, evaluator);

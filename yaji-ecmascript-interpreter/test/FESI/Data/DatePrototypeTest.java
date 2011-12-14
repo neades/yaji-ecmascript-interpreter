@@ -3,6 +3,7 @@ package FESI.Data;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -17,12 +18,16 @@ import FESI.Exceptions.TypeError;
 
 public class DatePrototypeTest extends EvaluatorTestCase {
 
+    private boolean hasFullIndonesian;
+
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
         evaluator.setDefaultTimeZone(TimeZone.getTimeZone("Asia/Jakarta"));
-        evaluator.setDefaultLocale(new Locale("id"));
+        Locale locale = new Locale("fr");
+        
+        evaluator.setDefaultLocale(locale);
     }
     
     @Test
@@ -111,7 +116,7 @@ public class DatePrototypeTest extends EvaluatorTestCase {
         DatePrototype dp = (DatePrototype) dateObject.doConstruct(new ESValue[] { ESNumber.valueOf(Double.NaN)});
         dp.setDate(createDate());
         ESValue value = dp.doIndirectCall(evaluator, dp, "toLocaleDateString", ESValue.EMPTY_ARRAY);
-        assertEquals(new ESString("1965 Okt 30"),value);
+        assertEquals(new ESString("30 oct. 1965"),value);
     }
     
     @Test

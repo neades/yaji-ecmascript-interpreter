@@ -1,6 +1,6 @@
 package FESI.log.impl;
 
-import FESI.log.ILog;
+import FESI.log.AbstractLog;
 
 /**
  * A very basic logger implementation.
@@ -8,13 +8,7 @@ import FESI.log.ILog;
  * Prints all standard levels directly to the console and includes support for
  * throwables.
  */
-public class BasicLog implements ILog {
-    private static final String DEBUG = "WARN";
-    private static final String ERROR = "ERROR";
-    private static final String INFO = "INFO";
-    private static final String TRACE = "TRACE";
-    private static final String WARN = "WARN";
-
+public class BasicLog extends AbstractLog {
     private static final long INSTANTIATED_TIME = System.currentTimeMillis();
 
     private final String name;
@@ -23,47 +17,15 @@ public class BasicLog implements ILog {
         this.name = name;
     }
 
-    public void asDebug(String m) {
-        log(DEBUG, m, null);
+    public void print(String m) {
+        System.out.print(m);
     }
-
-    public void asDebug(String m, Throwable t) {
-        log(DEBUG, m, t);
+    
+    public void println() {
+        System.out.println();
     }
-
-    public void asError(String m) {
-        log(ERROR, m, null);
-    }
-
-    public void asError(String m, Throwable t) {
-        log(ERROR, m, t);
-    }
-
-    public void asInfo(String m) {
-        log(INFO, m, null);
-    }
-
-    public void asInfo(String m, Throwable t) {
-        log(INFO, m, t);
-    }
-
-    public void asTrace(String m) {
-        log(TRACE, m, null);
-    }
-
-    public void asTrace(String m, Throwable t) {
-        log(TRACE, m, t);
-    }
-
-    public void asWarning(String m) {
-        log(WARN, m, null);
-    }
-
-    public void asWarning(String m, Throwable t) {
-        log(WARN, m, t);
-    }
-
-    private void log(String l, String m, Throwable t) {
+    @Override
+    protected void log(String l, String m, Throwable t) {
         System.err.println(System.currentTimeMillis() - INSTANTIATED_TIME
                 + " [" + Thread.currentThread().getName() + "] " + l + " - "
                 + name + " - " + m);

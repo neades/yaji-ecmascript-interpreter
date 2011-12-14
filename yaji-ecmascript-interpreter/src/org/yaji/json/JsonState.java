@@ -1,9 +1,8 @@
 package org.yaji.json;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 import FESI.Data.ESObject;
 import FESI.Data.ESUndefined;
@@ -43,7 +42,7 @@ public class JsonState {
     public Map<String,Long> allowedList;
     private ESValue replacerFunction;
     public JsonIndent indent;
-    private Deque<InstanceMatch> stack = new ArrayDeque<InstanceMatch>();
+    private Stack<InstanceMatch> stack = new Stack<InstanceMatch>();
     
     public JsonState(ESValue replacer, ESValue indentValue) {
         try {

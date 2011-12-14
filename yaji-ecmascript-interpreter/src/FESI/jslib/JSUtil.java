@@ -34,7 +34,7 @@ abstract public class JSUtil {
      * @exception JSException
      *                For any error during initialization
      */
-    static public JSGlobalObject makeEvaluator() throws JSException {
+    static public JSGlobalObject makeEvaluator() {
         return FESI.Data.JSWrapper.makeEvaluator();
     }
 
