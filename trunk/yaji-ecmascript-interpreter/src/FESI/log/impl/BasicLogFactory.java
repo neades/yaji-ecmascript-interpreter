@@ -25,4 +25,8 @@ public class BasicLogFactory implements ILogFactory {
         }
         return log;
     }
+    
+    public void setLog(String name, ILog log) {
+        logs.put(name, log);
+    }
 }

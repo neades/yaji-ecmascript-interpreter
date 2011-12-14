@@ -10,4 +10,6 @@ public interface ILogFactory {
      * @param s the name of the log to return
      */
     public ILog getLog(String s);
+    
+    public void setLog(String name, ILog log);
 }

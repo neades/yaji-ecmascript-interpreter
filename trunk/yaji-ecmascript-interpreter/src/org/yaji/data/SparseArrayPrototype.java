@@ -3,6 +3,7 @@ package org.yaji.data;
 import java.io.IOException;
 
 import org.yaji.json.JsonState;
+import org.yaji.util.ArrayUtil;
 
 import FESI.Data.ESNull;
 import FESI.Data.ESNumber;
@@ -49,9 +50,7 @@ public class SparseArrayPrototype extends ESObject {
     }
 
     private long getLength() throws EcmaScriptException {
-        ESValue lengthProperty = getProperty(StandardProperty.LENGTHstring, StandardProperty.LENGTHhash);
-        long length = lengthProperty.toUInt32();
-        return length;
+        return ArrayUtil.getArrayLength(this);
     }
 
     private long validateLength(ESValue lengthProperty)

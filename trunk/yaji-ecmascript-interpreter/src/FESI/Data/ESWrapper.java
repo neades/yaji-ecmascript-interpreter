@@ -33,6 +33,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Enumeration;
 
+import org.yaji.util.ArrayUtil;
+
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
 import FESI.Exceptions.ReferenceError;
@@ -500,7 +502,7 @@ public class ESWrapper extends ESObject {
                         "Argument should be Array for property '"
                                 + propertyName + "'");
             }
-            params[0] = ESLoader.arrayToJavaArray((ESObject) propertyValue,propClass.getComponentType());
+            params[0] = ArrayUtil.arrayToJavaArray((ESObject) propertyValue,propClass.getComponentType());
         } else {
             params[0] = propertyValue.toJavaObject();
         }

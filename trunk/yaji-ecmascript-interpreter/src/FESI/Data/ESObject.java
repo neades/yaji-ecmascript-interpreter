@@ -139,7 +139,7 @@ public abstract class ESObject extends ESValue {
      * 
      * @return the context
      */
-    public final Object getESObjectContext() {
+    public Object getESObjectContext() {
         return context;
     }
 
@@ -1218,7 +1218,7 @@ public abstract class ESObject extends ESValue {
         return properties == null;
     }
 
-    public void freeze() {
+    public void freeze() throws TypeError {
         setExtensible(false);
         if (!hasNoPropertyMap()) {
             getPropertyMap().setAllNonConfigurable(true);
@@ -1264,7 +1264,7 @@ public abstract class ESObject extends ESValue {
     }
 
     public Enumeration<String> getOwnPropertyNames() {
-        return getPropertyMap().keys();
+        return hasPropertyMap() ? getPropertyMap().keys() : EMPTY_STRING_ENUMERATION;
     }
 
     public void seal() {

@@ -1101,7 +1101,7 @@ public class Evaluator implements Serializable {
      *                In case of any error during evaluation
      */
 
-    public ESValue evaluate(ParsedProgram program, ESObject thisObject,
+    public ESValue evaluate(ParsedProgram program, ESValue thisObject,
             boolean acceptReturn) throws EcmaScriptException {
         ASTProgram node = program.getProgramNode();
         ESValue theValue = ESUndefined.theUndefined;
@@ -1115,7 +1115,7 @@ public class Evaluator implements Serializable {
         if (thisObject == null) {
             currentThisObject = globalObject;
         } else {
-            theScopeChain = new ScopeChain(thisObject, theScopeChain);
+            theScopeChain = new ScopeChain(thisObject.toESObject(this), theScopeChain);
             currentThisObject = thisObject;
         }
 
@@ -1189,7 +1189,7 @@ public class Evaluator implements Serializable {
      */
 
      public ESValue evaluate(java.io.Reader is,
-            ESObject thisObject, EvaluationSource es, boolean acceptReturn)
+            ESValue thisObject, EvaluationSource es, boolean acceptReturn)
             throws EcmaScriptException {
         ESValue theValue = ESUndefined.theUndefined;
         EcmaScript parser = new EcmaScript(is);
@@ -1376,7 +1376,7 @@ public class Evaluator implements Serializable {
      * @exception EmcaScriptException
      *                In case of any error during evaluation
      */
-    public ESValue evaluate(String theSource, ESObject thisObject,
+    public ESValue evaluate(String theSource, ESValue thisObject,
             boolean returnAccepted) throws EcmaScriptException {
         java.io.StringReader is = null;
         ESValue v = null;

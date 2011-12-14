@@ -46,7 +46,7 @@ public class ArrayPrototype extends ESObject {
         EVERY, SOME, FOREACH, MAP, FILTER;
     }
 
-    private ArrayList<ESValue> theArray = new ArrayList<ESValue>();
+    protected ArrayList<ESValue> theArray = new ArrayList<ESValue>();
 
     /**
      * Create a new empty array
