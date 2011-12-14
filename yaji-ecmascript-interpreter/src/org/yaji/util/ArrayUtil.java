@@ -2,7 +2,6 @@ package org.yaji.util;
 
 import java.lang.reflect.Array;
 
-import FESI.Data.ArrayPrototype;
 import FESI.Data.ESObject;
 import FESI.Data.ESValue;
 import FESI.Data.StandardProperty;
@@ -133,9 +132,9 @@ public abstract class ArrayUtil {
                 }
             } else {
                 Object o;
-                if (element instanceof ArrayPrototype) {
+                if (element.isArray()) {
                     // HACK FUR NOW, USE Object arrays, could get away with it!
-                    o = ((ArrayPrototype) element).toJavaArray(Object.class);
+                    o = arrayToJavaArray((ESObject) element,Object.class);
                 } else {
                     o = element.toJavaObject();
                 }

@@ -3,7 +3,6 @@ package FESI.Data;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -17,8 +16,6 @@ import FESI.Exceptions.TypeError;
 
 
 public class DatePrototypeTest extends EvaluatorTestCase {
-
-    private boolean hasFullIndonesian;
 
     @Override
     @Before

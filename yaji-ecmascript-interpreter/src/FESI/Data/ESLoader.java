@@ -484,7 +484,7 @@ public abstract class ESLoader extends ESObject {
                                 try {
                                     // We convert to the orginal class (possibly
                                     // a primitive type)
-                                    array = ArrayUtil.arrayToJavaArray(esArray,targetClass);
+                                    array = ArrayUtil.arrayToJavaArray(esArray,targetClass.getComponentType());
                                     accepted = true;
                                     debugInfo = " accepted (array converted)";
                                     if (convertedArrays == null) {

@@ -33,7 +33,6 @@ import java.util.StringTokenizer;
 
 import org.yaji.debugger.Debugger;
 
-import FESI.Data.ArrayPrototype;
 import FESI.Data.ESLoader;
 import FESI.Data.ESObject;
 import FESI.Data.ESString;
@@ -640,8 +639,7 @@ public class Interpret implements InterpreterCommands {
 
         // Set the args array from values after -A
         try {
-            ESObject ap = evaluator.getArrayPrototype();
-            ArrayPrototype argsArray = new ArrayPrototype(ap, evaluator);
+            ESObject argsArray = evaluator.createArray();
             for (int i = 0; i < esArgs.length; i++) {
                 argsArray.putProperty((long)i, new ESString(esArgs[i]));
             }

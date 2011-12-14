@@ -13,8 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import FESI.Data.ArrayObject;
-import FESI.Data.ArrayPrototype;
 import FESI.Data.ESNumber;
 import FESI.Data.ESObject;
 import FESI.Data.ESString;
@@ -153,11 +151,11 @@ public class Debugger {
                     });
                     put("list_tabs",new CommandHandler() {
                         public boolean apply(Debugger debugger, ESObject commandContent, Result result, Evaluator evaluator) throws EcmaScriptException {
-                            ArrayPrototype tabList = ArrayObject.createArray(evaluator);
-                            ArrayPrototype defaultTab = ArrayObject.createArray(evaluator);
-                            defaultTab.add(ESNumber.valueOf(0));
-                            defaultTab.add(ESString.valueOf("Default"));
-                            tabList.add(defaultTab);
+                            ESObject tabList = evaluator.createArray();
+                            ESObject defaultTab = evaluator.createArray();
+                            defaultTab.putProperty(0L,ESNumber.valueOf(0));
+                            defaultTab.putProperty(1L,ESString.valueOf("Default"));
+                            tabList.putProperty(0L,defaultTab);
                             result.setData(tabList);
                             result.setCode(DevToolsResultCode.OK);
                             return true;
