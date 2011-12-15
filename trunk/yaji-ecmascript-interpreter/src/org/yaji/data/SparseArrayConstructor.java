@@ -77,7 +77,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
                 }
             }
 
-            for( long k=op.start(length); op.atEnd(k, length); k = op.next(k) ) {
+            for( long k=op.start(length-1); op.atEnd(k, length); k = op.next(k) ) {
                 ESValue v = thisObject.getPropertyIfAvailable(k);
                 if (v != null) {
                     if (accumulator == null) {
