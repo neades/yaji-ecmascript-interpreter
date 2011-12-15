@@ -1799,14 +1799,16 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
             int length = node.jjtGetNumChildren();
             for (int i = 0; i < length; i++) {
                 Node child = node.jjtGetChild(i);
-                if (!(i == length - 1 &&  child instanceof ASTElision)) {
+                if (!(child instanceof ASTElision)) {
                     result.putProperty((long)i,(ESValue) child.jjtAccept(this, FOR_VALUE));
+                } else if (i == length-1) {
+                    result.putProperty(StandardProperty.LENGTHstring, ESNumber.valueOf(length-1), StandardProperty.LENGTHhash);
                 }
             }
         } catch (EcmaScriptException e) {
             throw new PackagedException(e, node);
         }
-        return result != null ? result : ESUndefined.theUndefined;
+        return result;
     }
 
     @Override
