@@ -38,7 +38,7 @@ public class Runner {
     private static class Logger implements ILogger, Runnable {
         private final Writer writer;
         private LinkedBlockingQueue<CharSequence> messagesToWrite = new LinkedBlockingQueue<CharSequence>();
-        private transient boolean closeRequested;
+        private volatile boolean closeRequested;
         private Thread thread;
 
         private Logger(String logFile) throws IOException {
@@ -47,7 +47,7 @@ public class Runner {
             } else {
                 writer = new PrintWriter(System.out);
             }
-            thread = new Thread(this);
+            thread = new Thread(this,"Runner Logger");
             thread.start();
         }
 
@@ -174,7 +174,10 @@ public class Runner {
         String excludesFile = arguments.get("excludes");
         this.excludes = new HashSet<String>();
         if (excludesFile != null) {
-            readExcludesFile(excludesFile,this.excludes);
+            String[] excludesFileNames = excludesFile.split(File.pathSeparator);
+            for (String excludesFileName : excludesFileNames) {
+                readExcludesFile(excludesFileName,this.excludes);
+            }
         }
         String originalDirectoryName = arguments.get("originals");
         if (originalDirectoryName != null) {

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.yaji.json.JsonState;
 import org.yaji.util.ArrayUtil;
+import org.yaji.util.UInt32BitSet;
 
 import FESI.Data.ESNull;
 import FESI.Data.ESNumber;
@@ -18,6 +19,7 @@ import FESI.Interpreter.Evaluator;
 public class SparseArrayPrototype extends ESObject {
 
     private static final long serialVersionUID = 7416031370358821189L;
+    private UInt32BitSet sparseValues = null;
 
     protected SparseArrayPrototype(ESObject prototype, Evaluator evaluator) throws EcmaScriptException {
         super(prototype, evaluator);
@@ -43,8 +45,19 @@ public class SparseArrayPrototype extends ESObject {
     private void putProperty(long index, String indexString,
             ESValue propertyValue) throws EcmaScriptException {
         super.putProperty(indexString, propertyValue, indexString.hashCode());
+        updateLength(index);
+    }
+
+    private void updateLength(long index) throws EcmaScriptException {
         long length = getLength();
         if (index >= length) {
+            if (index > length) {
+                if (sparseValues == null) {
+                    sparseValues = new UInt32BitSet();
+                    sparseValues.set(0L,length);
+                }
+                sparseValues.set(index);
+            }
             super.putProperty(StandardProperty.LENGTHstring, ESNumber.valueOf(index+1), StandardProperty.LENGTHhash);
         }
     }
@@ -63,6 +76,19 @@ public class SparseArrayPrototype extends ESObject {
     }
     
     @Override
+    public ESValue defineProperty(String propertyName, ESObject desc)
+            throws EcmaScriptException {
+        ESValue result = super.defineProperty(propertyName, desc);
+        if (isAllDigits(propertyName)) {
+            long longResult = Long.parseLong(propertyName);
+            if (longResult < 0xFFFFFFFFL && longResult >= 0) {
+                updateLength(longResult);
+            }
+        }
+        return result;
+    }
+    
+    @Override
     public void putProperty(String propertyName, ESValue propertyValue, int propertyHash)
             throws EcmaScriptException {
         if (isAllDigits(propertyName)) {
@@ -74,10 +100,52 @@ public class SparseArrayPrototype extends ESObject {
             }
         } else {
             if (StandardProperty.LENGTHhash == propertyHash && StandardProperty.LENGTHstring.equals(propertyName)) {
-                validateLength(propertyValue);
+                long requestedLength = validateLength(propertyValue);
+                long length = getLength();
+                while (requestedLength < length) {
+                    length = decrement(length);
+                    if (length >= requestedLength && (sparseValues == null || sparseValues.get(length))) {
+                        if (!deleteProperty(length)) {
+                            break;
+                        }
+                    }
+                }
+                if (requestedLength < length) {
+                    propertyValue = ESNumber.valueOf(length);
+                }
             }
             super.putProperty(propertyName, propertyValue, propertyHash);
         }
+    }
+    
+    private long decrement(long length) {
+        if (sparseValues == null) {
+            return length - 1L;
+        }
+        return sparseValues.lastSetBit(length-1L);
+    }
+
+    @Override
+    public boolean deleteProperty(long index) throws EcmaScriptException {
+        if (sparseValues != null) {
+            sparseValues.clear(index);
+        }
+        String propertyName = Long.toString(index);
+        return super.deleteProperty(propertyName,propertyName.hashCode());
+    }
+    
+    @Override
+    public boolean deleteProperty(String propertyName, int hash)
+            throws EcmaScriptException {
+        if (isAllDigits(propertyName)) {
+            long longResult = Long.parseLong(propertyName);
+            if (longResult < 0xFFFFFFFFL && longResult >= 0) {
+                if (sparseValues != null) {
+                    sparseValues.clear(longResult);
+                }
+            }
+        }
+        return super.deleteProperty(propertyName, hash);
     }
     
     @Override

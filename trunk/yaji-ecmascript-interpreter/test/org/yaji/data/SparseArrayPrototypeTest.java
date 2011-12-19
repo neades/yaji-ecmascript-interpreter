@@ -730,6 +730,13 @@ public class SparseArrayPrototypeTest extends EvaluatorTestCase {
         array.doIndirectCall(evaluator, array, "reduceRight", new ESValue[] { function } );
     }
     
+    @Test
+    public void reducingLengthDeletesProperties() throws Exception {
+        ESObject array = arrayObject.doConstruct(new ESValue[] { n(0), n(1), n(2), n(3), n(4) });
+        array.putProperty(StandardProperty.LENGTHstring, n(2), StandardProperty.LENGTHhash);
+        assertEquals(ESUndefined.theUndefined, array.getProperty(2L));
+    }
+    
     private static ESNumber n(double value) {
         return ESNumber.valueOf(value);
     }

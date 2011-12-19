@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.yaji.data.SparseArrayConstructor.AbstractArrayPrototypeFunction;
+import org.yaji.util.ArrayUtil;
 
 import FESI.Data.ESObject;
 import FESI.Data.ESValue;
@@ -171,7 +171,7 @@ class ESObjectListWrapper implements List<ESValue> {
 
     public int size() {
         try {
-            return (int)AbstractArrayPrototypeFunction.getLength(object);
+            return (int)ArrayUtil.getArrayLength(object);
         } catch (EcmaScriptException e) {
             throw new PackagedException(e, null);
         }
