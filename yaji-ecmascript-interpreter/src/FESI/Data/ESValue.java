@@ -136,7 +136,7 @@ public abstract class ESValue implements java.io.Serializable {
      *                Not thrown
      */
     public double toInteger() throws EcmaScriptException {
-        double value = this.doubleValue();
+        double value = this.toESNumber().doubleValue();
         if (Double.isNaN(value)) {
             return 0.0;
         } else if ((value == 0.0) || Double.isInfinite(value)) {
@@ -155,6 +155,9 @@ public abstract class ESValue implements java.io.Serializable {
      */
     public int toInt32() throws EcmaScriptException {
         double value = this.toInteger();
+        if (Double.isInfinite(value) || Double.isNaN(value)) {
+            return 0;
+        }
         return (int) value;
     }
 
@@ -167,7 +170,7 @@ public abstract class ESValue implements java.io.Serializable {
      *                Not thrown
      */
     public long toUInt32() throws EcmaScriptException {
-        double value = this.toInteger();
+        double value = this.toESNumber().doubleValue();
         if (Double.isInfinite(value) || Double.isNaN(value)) {
             return 0;
         }

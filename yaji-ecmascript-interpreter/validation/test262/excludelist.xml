@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<excludeList>
+  <test id="15.4.4.22-9-c-i-30">defineProperty in test is not expected to increase length of array and indeed doesn't in chrome (et.al?). However the spec seems to contradict this:
+15.2.3.6   Object.defineProperty states that the DefineOwnProperty internal method is called, and 15.4.5.1 specifies the extended DefineOwnProperty method for arrays as increasing the length if the index exceeds the current length.</test>
+  <test id="15.4.4.22-7-9">sets the prototype of foo before foo is initialised. Relys on hoisting function declarations within function definitions.</test>
+</excludeList>
