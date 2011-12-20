@@ -945,6 +945,11 @@ public class ESWrapper extends ESObject {
         return constructOrCall(arguments, true);
     }
 
+    @Override
+    public boolean isCallable() {
+        return true;
+    }
+    
     // overrides
     @Override
     public ESObject doConstruct(ESValue[] arguments)

@@ -250,7 +250,7 @@ public abstract class ESObject extends ESValue {
 
         if (isAccessorDescriptor(value)) {
             ESValue getter = value.get;
-            return getter == ESUndefined.theUndefined ? getter : getter
+            return ( getter == ESUndefined.theUndefined || getter == null) ? ESUndefined.theUndefined : getter
                     .callFunction(this, EMPTY_ARRAY);
         }
 

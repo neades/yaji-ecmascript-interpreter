@@ -105,6 +105,11 @@ public class ESBeans extends ESLoader {
         throw new EcmaScriptException("Java class not found: '" + buildPrefix()
                 + "'");
     }
+    
+    @Override
+    public boolean isCallable() {
+        return true;
+    }
 
     // overrides
     // instantiates a bean
