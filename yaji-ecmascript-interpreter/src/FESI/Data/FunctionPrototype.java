@@ -121,6 +121,11 @@ public class FunctionPrototype extends ESObject {
             throws EcmaScriptException {
         return ESUndefined.theUndefined;
     }
+    
+    @Override
+    public boolean isCallable() {
+        return true;
+    }
 
     // overrides
     @Override

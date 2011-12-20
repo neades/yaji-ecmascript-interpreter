@@ -68,6 +68,9 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
             ESValue[] functionArgs = new ESValue[4];
             functionArgs[3] = thisObject;
 
+            if (!callbackFn.isCallable()) {
+                throw new TypeError(getFunctionName()+"(fn,initialValue) : a function fn must be supplied");
+            }
             ESValue accumulator = null;
             if (arguments.length > 1) {
                 accumulator = arguments[1];

@@ -130,7 +130,11 @@ public class ESPackages extends ESLoader {
 
     }
 
-    // overrides
+    @Override
+    public boolean isCallable() {
+        return true;
+    }
+    
     @Override
     public String getTypeofString() {
         return "JavaPackage";

@@ -520,4 +520,8 @@ public abstract class ESValue implements java.io.Serializable {
     public boolean isArray() {
         return false;
     }
+
+    public boolean isCallable() {
+        return false;
+    }
 }
