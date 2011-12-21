@@ -767,7 +767,7 @@ TOKEN :
 TOKEN :
 {
   < LPAREN: "(" > : DEFAULT
-| < RPAREN: ")" > : DEFAULT
+| < RPAREN: ")" > : NOREGEXP
 | < LBRACE: "{" > : DEFAULT
 | < RBRACE: "}" > : DEFAULT
 | < LBRACKET: "[" > : DEFAULT
