@@ -3178,9 +3178,8 @@ private static final boolean jjCanMove_2(int hiByte, int i1, int i2, long l1, lo
          return ((jjbitVec43[i2] & l2) != 0L);
       default :
          if ((jjbitVec6[i1] & l1) != 0L) {
-            if ((jjbitVec7[i2] & l2) == 0L) {
-                return false;
-            }
+            if ((jjbitVec7[i2] & l2) == 0L)
+               return false;
             return true;
         }
          if ((jjbitVec5[i1] & l1) != 0L)
@@ -3323,7 +3322,7 @@ public static final int[] jjnewLexState = {
    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
    -1, -1, -1, 2, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, -1, 1, 
-   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 
+   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 1, 0, 0, 
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 };
@@ -3519,7 +3518,7 @@ public Token getNextToken()
            continue;
         }
         catch (java.io.IOException e1) {
-            // ?
+            // Ignored?
         }
      }
      int error_line = input_stream.getEndLine();

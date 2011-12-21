@@ -365,6 +365,33 @@ public class EcmascriptParserTest {
                     + "     <length>" +  eol
                     + "   <\"=\">" +  eol
                     + "   [0]" +  eol
+                },
+                {  "duration = (endTime.getTime() - startTime.getTime()) / 1000; //convert to seconds"+eol
+                   + "saveStateChange();" + eol,
+                   "Program" + eol 
+                   + " Statement" + eol
+                   + "  AssignmentExpression" + eol
+                   + "   <duration>" + eol 
+                   + "   <\"=\">" + eol
+                   + "   BinaryExpressionSequence" + eol
+                   + "    BinaryExpressionSequence" + eol
+                   + "     CompositeReference" + eol
+                   + "      <endTime>" + eol
+                   + "      PropertyIdentifierReference" + eol
+                   + "       <getTime>" + eol
+                   + "      FunctionCallParameters" + eol
+                   + "     <\"-\">" + eol
+                   + "     CompositeReference" + eol
+                   + "      <startTime>" + eol
+                   + "      PropertyIdentifierReference" + eol
+                   + "       <getTime>" + eol
+                   + "      FunctionCallParameters" + eol
+                   + "    <\"/\">" + eol 
+                   + "    [1000]" + eol
+                   + " Statement" + eol
+                   + "  CompositeReference" + eol
+                   + "   <saveStateChange>" + eol
+                   + "   FunctionCallParameters" + eol
                 }
             });
     }
