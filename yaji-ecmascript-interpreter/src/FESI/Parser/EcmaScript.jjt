@@ -149,6 +149,7 @@ SPECIAL_TOKEN :
 /* COMMENTS - EcmaScript 7.3
  * Use states to skip until EOL
  */
+<DEFAULT,NOREGEXP>
 SPECIAL_TOKEN : {
 < SINGLE_LINE_COMMENT: "//"(~["\n","\r"])* ("\n"|"\r"|"\r\n")? > 
 }

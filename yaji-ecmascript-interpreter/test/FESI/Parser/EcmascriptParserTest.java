@@ -392,6 +392,10 @@ public class EcmascriptParserTest {
                    + "  CompositeReference" + eol
                    + "   <saveStateChange>" + eol
                    + "   FunctionCallParameters" + eol
+                },
+                {  "if (lowBound < highBound) // >1 element list\n" 
+                   + " { }",
+                   "Program" + eol
                 }
             });
     }
