@@ -20,6 +20,10 @@ package FESI.Data;
 
 import java.io.ObjectStreamException;
 
+import FESI.Exceptions.EcmaScriptException;
+import FESI.Exceptions.TypeError;
+import FESI.Interpreter.Evaluator;
+
 /**
  * Implements the NULL EcmaScript primitive value
  * <P>
@@ -136,5 +140,10 @@ public final class ESNull extends ESPrimitive {
     @Override
     boolean isObjectCoercible() {
         return false;
+    }
+    
+    @Override
+    public ESObject toESObject(Evaluator evaluator) throws EcmaScriptException {
+        throw new TypeError("'null' cannot be converted to Object");
     }
 }

@@ -22,6 +22,7 @@ import java.io.ObjectStreamException;
 
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.TypeError;
+import FESI.Interpreter.Evaluator;
 
 /**
  * Implements the Undefined primitive value.
@@ -172,4 +173,8 @@ public final class ESUndefined extends ESPrimitive {
         return false;
     }
 
+    @Override
+    public ESObject toESObject(Evaluator evaluator) throws EcmaScriptException {
+        throw new TypeError("'undefined' cannot be converted to Object");
+    }
 }

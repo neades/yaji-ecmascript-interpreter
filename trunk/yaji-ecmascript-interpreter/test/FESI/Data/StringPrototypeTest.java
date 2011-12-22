@@ -16,7 +16,7 @@ import FESI.Exceptions.TypeError;
 public class StringPrototypeTest extends EvaluatorTestCase  {
     private static final Locale TURKISH = new Locale("tr");
 
-    private static final String NON_ASCII_WHITE_SPACE = 
+    public static final String  NON_ASCII_WHITE_SPACE= 
          "\u00A0" //   no-break space
         +"\u1680" //   ogham space mark
         +"\u180E" //   mongolian vowel separator
@@ -40,7 +40,7 @@ public class StringPrototypeTest extends EvaluatorTestCase  {
         +"\u2029" //   Paragraph separator
         +"\uFEFF";//   Byte Order Mark
 
-    private static final String ASCII_WHITE_SPACE = "\u0009\n\u000B\u000C\r\u0020";
+    public static final String ASCII_WHITE_SPACE = "\u0009\n\u000B\u000C\r\u0020";
 
     private Locale defaultLocale;
     

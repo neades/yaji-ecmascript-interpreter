@@ -143,12 +143,19 @@ public final class ESString extends ESPrimitive {
     // overrides
     @Override
     public double doubleValue() {
-        double value = Double.NaN;
+        double value;
         try {
             // Will accept leading / trailing spaces, unlike new Integer !
-            value = (Double.valueOf(toString())).doubleValue();
+            String str = trim(toString());
+            if (str.length() == 0) {
+                value = 0.0;
+            } else if (str.startsWith("0x")) {
+                value = Integer.decode(str).doubleValue();
+            } else {
+                value = (Double.valueOf(str)).doubleValue();
+            }
         } catch (NumberFormatException e) {
-            // do nothing
+            value = Double.NaN;
         }
         return value;
     }
@@ -254,6 +261,25 @@ public final class ESString extends ESPrimitive {
     @Override
     public boolean canJson() {
         return true;
+    }
+
+    static String trim(String string) {
+        char[] s = string.toCharArray();
+        int start = 0; 
+        while (start < s.length && isWhitespace(s[start])) {
+            start++;
+        }
+        int end=s.length-1;
+        while (end > start && isWhitespace(s[end])) {
+            end --;
+        }
+        int length = end-start+1;
+        String value = (length == s.length)?string:new String(s,start,length);
+        return value;
+    }
+
+    private static boolean isWhitespace(char c) {
+        return Character.isWhitespace(c) || Character.isSpaceChar(c) || c == '\uFEFF';
     }
 
     public static ESValue valueOf(int i) {
