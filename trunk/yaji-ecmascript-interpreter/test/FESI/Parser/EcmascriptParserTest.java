@@ -395,9 +395,17 @@ public class EcmascriptParserTest {
                 },
                 {  "if (lowBound < highBound) // >1 element list\n" 
                    + " { }",
-                   "Program" + eol
+                   "Program" + eol 
+                   + " Statement" + eol
+                   + "  IfStatement" + eol
+                   + "   BinaryExpressionSequence" + eol
+                   + "    <lowBound>" + eol 
+                   + "    <\"<\">" + eol
+                   + "    <highBound>" + eol
+                   + "   Statement" + eol
+                   + "    StatementList" + eol
                 }
-            });
+           });
     }
 
     public EcmascriptParserTest(String source, String expected) {
