@@ -59,21 +59,7 @@ public class StringObject extends BuiltinFunctionObject {
 
         @Override
         public ESValue invoke(String string, ESValue[] arguments) throws EcmaScriptException {
-            char[] s = string.toCharArray();
-            int start = 0; 
-            while (start < s.length && isWhitespace(s[start])) {
-                start++;
-            }
-            int end=s.length-1;
-            while (end > start && isWhitespace(s[end])) {
-                end --;
-            }
-            int length = end-start+1;
-            return new ESString((length == s.length)?string:new String(s,start,length));
-        }
-
-        private boolean isWhitespace(char c) {
-            return Character.isWhitespace(c) || Character.isSpaceChar(c) || c == '\uFEFF';
+            return new ESString(ESString.trim(string));
         }
     }
 
