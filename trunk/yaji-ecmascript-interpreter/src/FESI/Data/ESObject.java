@@ -703,14 +703,14 @@ public abstract class ESObject extends ESValue {
 
         if (hint == ESValue.EStypeString) {
             theFunction = this.getProperty(StandardProperty.TOSTRINGstring, StandardProperty.TOSTRINGhash);
-            if (theFunction instanceof ESObject) {
+            if (theFunction.isCallable()) {
                 theResult = theFunction.callFunction(this, new ESValue[0]);
                 if (theResult.isPrimitive()) {
                     return theResult;
                 }
             }
             theFunction = this.getProperty(StandardProperty.VALUEOFstring, StandardProperty.VALUEOFhash);
-            if (theFunction instanceof ESObject) {
+            if (theFunction.isCallable()) {
                 theResult = theFunction.callFunction(this, new ESValue[0]);
                 if (theResult.isPrimitive()) {
                     return theResult;
@@ -722,14 +722,14 @@ public abstract class ESObject extends ESValue {
                     + super.toString() + " and hint " + hint);
         } else if (hint == ESValue.EStypeNumber) {
             theFunction = this.getProperty(StandardProperty.VALUEOFstring, StandardProperty.VALUEOFhash);
-            if (theFunction instanceof ESObject) {
+            if (theFunction.isCallable()) {
                 theResult = theFunction.callFunction(this, new ESValue[0]);
                 if (theResult.isPrimitive()) {
                     return theResult;
                 }
             }
             theFunction = this.getProperty(StandardProperty.TOSTRINGstring, StandardProperty.TOSTRINGhash);
-            if (theFunction instanceof ESObject) {
+            if (theFunction.isCallable()) {
                 theResult = theFunction.callFunction(this, new ESValue[0]);
                 if (theResult.isPrimitive()) {
                     return theResult;
@@ -867,15 +867,8 @@ public abstract class ESObject extends ESValue {
      */
     @Override
     public double doubleValue() throws EcmaScriptException {
-        ESValue value = ESUndefined.theUndefined;
-        double d = Double.NaN;
-        try {
-            value = toESPrimitive(EStypeNumber);
-            d = value.doubleValue();
-        } catch (EcmaScriptException e) {
-            throw new ProgrammingError(e.getMessage());
-        }
-        return d;
+        ESValue value = toESPrimitive(EStypeNumber);
+        return value.doubleValue();
     }
 
     /**
