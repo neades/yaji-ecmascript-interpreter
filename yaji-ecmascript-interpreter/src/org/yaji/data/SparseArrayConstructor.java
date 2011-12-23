@@ -34,9 +34,14 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
         protected ESValue loopOver(ESObject thisObject, ESValue[] arguments, ESObject data) throws EcmaScriptException {
             long length = getLength(thisObject);
             ESValue callbackFn = getArg(arguments,0);
+            if (!callbackFn.isCallable()) {
+                throw new TypeError(getFunctionName() + "(callbackFn,thisArg) : a function callbackFn must be supplied");
+            }
             ESValue thisArg = getArg(arguments,1);
             ESValue[] functionArgs = new ESValue[3];
             functionArgs[2] = thisObject;
+
+            adjustLength(data,length);
             
             ESValue exitCode = null;
             for( long k=0; k<length && exitCode == null; k++ ) {
@@ -49,6 +54,10 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
                 }
             }
             return exitCode;
+        }
+
+        protected void adjustLength(ESObject data, long length) throws EcmaScriptException {
+            // nothing by default;
         }
 
         protected abstract ESValue getExitCode(long index, ESValue originalValue, ESValue result, ESObject data) throws EcmaScriptException;
@@ -218,6 +227,11 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
             loopOver(thisObject, arguments, array);
             return array;
         }
+        
+        @Override
+        protected void adjustLength(ESObject data, long length) throws EcmaScriptException {
+            setLength(data,length);
+        }
 
         @Override
         protected ESValue getExitCode(long index, ESValue originalValue, ESValue result, ESObject data) throws EcmaScriptException {
@@ -308,7 +322,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
                 long end, Op op) throws EcmaScriptException {
             for( long k=start; op.atEnd(k,end); k = op.next(k)) {
                 ESValue v = thisObject.getPropertyIfAvailable(k);
-                if (v.strictEqual(value)) {
+                if (v != null && v.strictEqual(value)) {
                     return ESNumber.valueOf(k);
                 }
             }
@@ -326,9 +340,13 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
         protected ESValue callFunction(ESObject thisObject, ESValue[] arguments) throws EcmaScriptException {
             ESValue value = getArg(arguments,0);
             long length = getLength(thisObject);
-            long start = getArgAsInt32(arguments,1);
+            ESValue startValue = getArg(arguments,1);
+            double start = startValue.doubleValue();
+            if (start > length) {
+                return ESNumber.valueOf(-1);
+            }
             start = (start>=0)?start:Math.max(length+start, 0);
-            return search(thisObject, value, start, length, Op.FORWARD);
+            return search(thisObject, value, (long)start, length, Op.FORWARD);
         }
     }
 

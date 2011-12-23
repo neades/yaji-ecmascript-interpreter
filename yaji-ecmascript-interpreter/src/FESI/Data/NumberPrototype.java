@@ -57,12 +57,6 @@ class NumberPrototype extends ESObject {
 
     // overrides
     @Override
-    public boolean booleanValue() {
-        return value.booleanValue();
-    }
-
-    // overrides
-    @Override
     public String toString() {
         if (value == null)
             return super.toString();
