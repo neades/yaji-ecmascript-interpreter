@@ -50,11 +50,6 @@ class StringPrototype extends ESObject {
     }
 
     @Override
-    public boolean booleanValue() throws EcmaScriptException {
-        return value.booleanValue();
-    }
-
-    @Override
     public double doubleValue() throws EcmaScriptException {
         return value.doubleValue();
     }

@@ -44,6 +44,7 @@ import FESI.AST.ASTStatement;
 import FESI.AST.ASTStatementList;
 import FESI.Data.BuiltinFunctionObject;
 import FESI.Data.ESLoader;
+import FESI.Data.ESNull;
 import FESI.Data.ESObject;
 import FESI.Data.ESPackages;
 import FESI.Data.ESReference;
@@ -1014,7 +1015,11 @@ public class Evaluator implements Serializable {
         ScopeChain previousScopeChain = theScopeChain;
 
         currentVariableObject = variableObject;
-        currentThisObject = thisObject;
+        if (isStrictMode()) {
+            currentThisObject = thisObject;
+        } else {
+            currentThisObject = (thisObject == ESUndefined.theUndefined || thisObject == ESNull.theNull || thisObject == null) ? getGlobalObject() : thisObject.toESObject(this);
+        }
         theScopeChain = new ScopeChain(variableObject, (scopeChain != null) ? scopeChain : globalScope);
         EvaluationSource savedEvaluationSource = currentEvaluationSource;
         currentEvaluationSource = es;

@@ -49,7 +49,7 @@ v = ob.valueOf();
 v && typeof(v)=="boolean";
 
 @test boolean.8
-!Boolean.prototype;
+!!Boolean.prototype;
 
 @test number.1
 b = Number(2)

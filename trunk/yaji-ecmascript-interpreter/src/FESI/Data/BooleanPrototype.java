@@ -54,18 +54,6 @@ class BooleanPrototype extends ESObject {
 
     // overrides
     @Override
-    public ESValue toESBoolean() throws EcmaScriptException {
-        return value;
-    }
-
-    // overrides
-    @Override
-    public boolean booleanValue() {
-        return value.booleanValue();
-    }
-
-    // overrides
-    @Override
     public Object toJavaObject() {
         return Boolean.valueOf(value.booleanValue());
     }

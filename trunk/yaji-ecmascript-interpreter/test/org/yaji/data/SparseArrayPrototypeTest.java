@@ -490,7 +490,7 @@ public class SparseArrayPrototypeTest extends EvaluatorTestCase {
     @Test
     public void everyPassesThisAsUndefined() throws Exception {
         ESValue functionConstructor = globalObject.getProperty("Function", "Function".hashCode());
-        ESObject function = functionConstructor.doConstruct(new ESValue[] { s("v"),s("k"),s("o"),s("thisPassed = this; valuePassed = v; keyPassed = k; objectPassed = o; return false;") });
+        ESObject function = functionConstructor.doConstruct(new ESValue[] { s("v"),s("k"),s("o"),s("'use strict'; thisPassed = this; valuePassed = v; keyPassed = k; objectPassed = o; return false;") });
         ESObject array = arrayObject.doConstruct(new ESValue[] { s("a"), s("b"), s("c"), s("a"), s("b") });
         array.doIndirectCall(evaluator, array, "every", new ESValue[] { function } );
         
