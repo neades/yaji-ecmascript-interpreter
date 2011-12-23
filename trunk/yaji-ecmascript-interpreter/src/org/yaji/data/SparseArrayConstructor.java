@@ -279,15 +279,20 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
                 throws EcmaScriptException {
             ESValue value = getArg(arguments,0);
             long length = getLength(thisObject);
-            ESValue startValue = getArg(arguments,1);
-            long start;
-            if (startValue.getTypeOf() == EStypeUndefined) {
+            double start;
+            if (arguments.length < 2) {
                 start = length-1;
             } else {
-                start = startValue.toInt32();
+                ESValue startValue = getArg(arguments,1);
+                double doubleValue = startValue.doubleValue();
+                if (Double.isInfinite(doubleValue)) {
+                    start = (long) doubleValue;
+                } else {
+                    start = startValue.toInt32();
+                }
             }
             start = (start>=0)?Math.min(start,length-1):length+start;
-            return search(thisObject, value, start, 0, Op.BACKWARD);
+            return search(thisObject, value, (long) start, 0, Op.BACKWARD);
         }
     }
     private static abstract class Op {
@@ -298,7 +303,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
         };
         public static final Op BACKWARD = new Op() {
             @Override public long start(long length) { return length; }
-            @Override public boolean atEnd(long k, long end) { return k>end; }
+            @Override public boolean atEnd(long k, long end) { return k>=end; }
             @Override public long next(long k) { return k-1; }
         };
         public static final Op BACKWARD_TO_ZERO = new Op() {
@@ -345,6 +350,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
             if (start > length) {
                 return ESNumber.valueOf(-1);
             }
+            start = (long) start;
             start = (start>=0)?start:Math.max(length+start, 0);
             return search(thisObject, value, (long)start, length, Op.FORWARD);
         }
