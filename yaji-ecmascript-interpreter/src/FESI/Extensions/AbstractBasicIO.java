@@ -19,7 +19,7 @@ public abstract class AbstractBasicIO extends Extension  implements BasicIOInter
     protected static class GlobalObjectWrite extends BuiltinFunctionObject {
             private static final long serialVersionUID = -6566527750789742896L;
     
-            GlobalObjectWrite(String name, Evaluator evaluator, FunctionPrototype fp) {
+            GlobalObjectWrite(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
                 super(fp, evaluator, name, 1);
             }
     
@@ -37,7 +37,7 @@ public abstract class AbstractBasicIO extends Extension  implements BasicIOInter
             private static final long serialVersionUID = 3381575585055049049L;
     
             GlobalObjectWriteln(String name, Evaluator evaluator,
-                    FunctionPrototype fp) {
+                    FunctionPrototype fp) throws EcmaScriptException {
                 super(fp, evaluator, name, 1);
             }
     
@@ -55,7 +55,7 @@ public abstract class AbstractBasicIO extends Extension  implements BasicIOInter
     protected class GlobalObjectAlert extends BuiltinFunctionObject {
         private static final long serialVersionUID = -2166620554765525108L;
 
-        GlobalObjectAlert(String name, Evaluator evaluator, FunctionPrototype fp) {
+        GlobalObjectAlert(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -77,7 +77,7 @@ public abstract class AbstractBasicIO extends Extension  implements BasicIOInter
             private static final long serialVersionUID = -8434220524336179503L;
     
             GlobalObjectPrompt(String name, Evaluator evaluator,
-                    FunctionPrototype fp) {
+                    FunctionPrototype fp) throws EcmaScriptException {
                 super(fp, evaluator, name, 1);
             }
     
@@ -99,7 +99,7 @@ public abstract class AbstractBasicIO extends Extension  implements BasicIOInter
             private static final long serialVersionUID = 9095937671671011553L;
     
             GlobalObjectConfirm(String name, Evaluator evaluator,
-                    FunctionPrototype fp) {
+                    FunctionPrototype fp) throws EcmaScriptException {
                 super(fp, evaluator, name, 1);
             }
     
@@ -117,7 +117,7 @@ public abstract class AbstractBasicIO extends Extension  implements BasicIOInter
     protected static class GlobalObjectExit extends BuiltinFunctionObject {
             private static final long serialVersionUID = 3561255912463315153L;
     
-            GlobalObjectExit(String name, Evaluator evaluator, FunctionPrototype fp) {
+            GlobalObjectExit(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
                 super(fp, evaluator, name, 1);
             }
     
@@ -136,7 +136,7 @@ public abstract class AbstractBasicIO extends Extension  implements BasicIOInter
     protected static class GlobalObjectNoop extends BuiltinFunctionObject {
             private static final long serialVersionUID = -6324270143112442926L;
     
-            GlobalObjectNoop(String name, Evaluator evaluator, FunctionPrototype fp) {
+            GlobalObjectNoop(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
                 super(fp, evaluator, name, 0); // 0 = Just some default value
             }
     
@@ -151,7 +151,7 @@ public abstract class AbstractBasicIO extends Extension  implements BasicIOInter
     protected static class GlobalObjectLoad extends BuiltinFunctionObject {
             private static final long serialVersionUID = -5671894905688404382L;
     
-            GlobalObjectLoad(String name, Evaluator evaluator, FunctionPrototype fp) {
+            GlobalObjectLoad(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
                 super(fp, evaluator, name, 1); // 0 = Just some default value
             }
     

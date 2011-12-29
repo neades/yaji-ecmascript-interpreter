@@ -471,15 +471,16 @@ public class JSWrapper implements JSObject {
      *            the Evaluator
      * @param jsf
      *            The function to wrap
+     * @throws EcmaScriptException 
      */
-    static public ESObject wrapJSFunction(Evaluator evaluator, JSFunction jsf) {
+    static public ESObject wrapJSFunction(Evaluator evaluator, JSFunction jsf) throws EcmaScriptException {
         synchronized (evaluator) {
             class WrapedJSFunction extends BuiltinFunctionObject {
                 private static final long serialVersionUID = -8475555514443747634L;
                 private final JSFunction theFunction;
 
                 WrapedJSFunction(String name, Evaluator evaluator,
-                        FunctionPrototype fp, JSFunction theFunction) {
+                        FunctionPrototype fp, JSFunction theFunction) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                     this.theFunction = theFunction;
                 }

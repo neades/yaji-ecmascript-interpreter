@@ -1,5 +1,6 @@
 package FESI.Data;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
@@ -27,4 +28,9 @@ public class BooleanPrototypeTest extends EvaluatorTestCase {
         assertTrue(booleanInstance.toESBoolean().booleanValue());
     }
 
+    @Test
+    public void booleanValueOfReturnsBooleanPrimitive() throws Exception {
+        ESObject booleanInstance = booleanObject.doConstruct(new ESValue[] { ESBoolean.FALSE });
+        assertEquals(ESBoolean.FALSE, booleanInstance.doIndirectCall(evaluator, booleanInstance, "valueOf", ESValue.EMPTY_ARRAY));
+    }
 }

@@ -71,8 +71,12 @@ public class SparseArrayConstructorTest {
     @Test
     public void arrayPrototypeIsArrayObjectPrototype() throws Exception {
         ESValue arrayObjectPrototype = arrayConstructor.getProperty(StandardProperty.PROTOTYPEstring,StandardProperty.PROTOTYPEhash);
-        ESObject value = (ESObject) arrayConstructor.callFunction(evaluator.getGlobalObject(), new ESValue[0]);
-        assertSame(arrayObjectPrototype,value.getPrototype());
+        assertSame(arrayObjectPrototype,evaluator.getArrayPrototype());
+    }
+    
+    @Test
+    public void arraySpecialPrototypeIsFunctionObjectPrototype() throws Exception {
+        assertSame(evaluator.getFunctionPrototype(), arrayConstructor.getPrototype());
     }
     
     @Test

@@ -53,7 +53,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DateObjectParse(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -70,7 +70,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DateObjectUTC(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 7);
         }
 
@@ -109,7 +109,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 6509035302938791509L;
 
         public DateObjectNow(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -123,7 +123,7 @@ public class DateObject extends BuiltinFunctionObject {
     private static abstract class DateBuiltinFunctionObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 8694680238052474774L;
 
-        DateBuiltinFunctionObject(FunctionPrototype fp, Evaluator evaluator,String name, int length) {
+        DateBuiltinFunctionObject(FunctionPrototype fp, Evaluator evaluator,String name, int length) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
         
@@ -143,7 +143,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeToString(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -164,7 +164,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeToISOString(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -184,7 +184,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeToJSON(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -207,7 +207,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeValueOf(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -226,7 +226,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeToLocaleString(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -243,7 +243,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeToGMTString(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -260,7 +260,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeGetYear(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -275,7 +275,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeGetFullYear(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -289,7 +289,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeGetUTCFullYear(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -303,7 +303,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeGetMonth(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -317,7 +317,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeGetUTCMonth(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -331,7 +331,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeGetDate(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -345,7 +345,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeGetUTCDate(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -359,7 +359,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeGetDay(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -375,7 +375,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeGetUTCDay(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -389,7 +389,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeGetHours(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -404,7 +404,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeGetUTCHours(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -419,7 +419,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeGetMinutes(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -433,7 +433,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeGetUTCMinutes(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -447,7 +447,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeGetSeconds(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -461,7 +461,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeGetUTCSeconds(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -475,7 +475,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeGetMilliseconds(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -489,7 +489,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeGetUTCMilliseconds(String name,
-                Evaluator evaluator, FunctionPrototype fp) {
+                Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -503,7 +503,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeSetYear(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -517,7 +517,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeSetFullYear(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -532,7 +532,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeSetUTCFullYear(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -548,7 +548,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeSetMonth(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -563,7 +563,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeSetUTCMonth(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -578,7 +578,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeSetDate(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -593,7 +593,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeSetUTCDate(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -608,7 +608,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeSetHours(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -624,7 +624,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeSetUTCHours(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -640,7 +640,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeSetMinutes(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -656,7 +656,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeSetUTCMinutes(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -672,7 +672,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeSetSeconds(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -687,7 +687,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeSetUTCSeconds(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -702,7 +702,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeSetMilliseconds(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -717,7 +717,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeSetUTCMilliseconds(String name,
-                Evaluator evaluator, FunctionPrototype fp) {
+                Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -732,7 +732,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeGetTimezoneOffset(String name,
-                Evaluator evaluator, FunctionPrototype fp) {
+                Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -768,7 +768,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeSetTime(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -791,7 +791,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeToDateString(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -807,7 +807,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeToTimeString(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -823,7 +823,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeToLocaleDateString(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -839,7 +839,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         DatePrototypeToLocaleTimeString(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -851,7 +851,7 @@ public class DateObject extends BuiltinFunctionObject {
         }
     }
 
-    protected DateObject(ESObject prototype, Evaluator evaluator) {
+    protected DateObject(ESObject prototype, Evaluator evaluator) throws EcmaScriptException {
         super(prototype, evaluator, "Date", 7);
     }
 
@@ -969,9 +969,10 @@ public class DateObject extends BuiltinFunctionObject {
      *            The Function prototype attached to the evaluator
      * 
      * @return the Date singleton
+     * @throws EcmaScriptException 
      */
     public static DateObject makeDateObject(Evaluator evaluator,
-            ObjectPrototype objectPrototype, FunctionPrototype functionPrototype) {
+            ObjectPrototype objectPrototype, FunctionPrototype functionPrototype) throws EcmaScriptException {
 
         DatePrototype datePrototype = new DatePrototype(objectPrototype,
                 evaluator);

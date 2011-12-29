@@ -62,6 +62,8 @@ public abstract class ESObject extends ESValue {
     // 5th Edition - 15.2.3.9 - if false no properties may be added to object
     private boolean extensible = true;
 
+    static final String OBJECT_CLASSNAME = "Object";
+
     private static final Enumeration<String> EMPTY_STRING_ENUMERATION = new Enumeration<String> () {
 
         public boolean hasMoreElements() {
@@ -175,7 +177,7 @@ public abstract class ESObject extends ESValue {
      * @return the [[Class]] property of this object
      */
     public String getESClassName() {
-        return "Object";
+        return OBJECT_CLASSNAME;
     }
 
     /**

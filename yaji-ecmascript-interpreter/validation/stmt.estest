@@ -335,7 +335,7 @@ testScope();
 @test scope.3a
 s1 = new String("abc");
 with(s1) {
-  return s1[1] === "b" && length === 3; 
+  s1[1] === "b" && length === 3; 
 }
 
 @test scope.3

@@ -29,7 +29,7 @@ import FESI.Interpreter.Evaluator;
 public class NumberObject extends BuiltinFunctionObject {
     private static final long serialVersionUID = -4773796736269945208L;
 
-    private NumberObject(ESObject prototype, Evaluator evaluator) {
+    private NumberObject(ESObject prototype, Evaluator evaluator) throws EcmaScriptException {
         super(prototype, evaluator, "Number", 1);
     }
 
@@ -70,7 +70,7 @@ public class NumberObject extends BuiltinFunctionObject {
     private static abstract class NumberPrototypeFunctionObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = -1279666619140046881L;
 
-        public NumberPrototypeFunctionObject(FunctionPrototype fp, Evaluator evaluator, String name, int length) {
+        public NumberPrototypeFunctionObject(FunctionPrototype fp, Evaluator evaluator, String name, int length) throws EcmaScriptException {
             super(fp,evaluator,name,length);
         }
         
@@ -87,7 +87,7 @@ public class NumberObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         NumberPrototypeToString(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -114,7 +114,7 @@ public class NumberObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         NumberPrototypeToExponential(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -132,7 +132,7 @@ public class NumberObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         NumberPrototypeValueOf(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -147,7 +147,7 @@ public class NumberObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         NumberPrototypeToPrecision(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -174,7 +174,7 @@ public class NumberObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         NumberPrototypeToFixed(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -200,9 +200,10 @@ public class NumberObject extends BuiltinFunctionObject {
      *            The Function prototype attached to the evaluator
      * 
      * @return the Number singleton
+     * @throws EcmaScriptException 
      */
     public static NumberObject makeNumberObject(Evaluator evaluator,
-            ObjectPrototype objectPrototype, FunctionPrototype functionPrototype) {
+            ObjectPrototype objectPrototype, FunctionPrototype functionPrototype) throws EcmaScriptException {
 
         NumberPrototype numberPrototype = new NumberPrototype(objectPrototype,
                 evaluator);

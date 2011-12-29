@@ -15,7 +15,7 @@ class RegExpObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = -1530678844987141170L;
 
         ESRegExpPrototypetestMethod(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -32,7 +32,7 @@ class RegExpObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 6552738494467189408L;
 
         ESRegExpPrototypeExecMethod(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -49,7 +49,7 @@ class RegExpObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 6552738494467189408L;
 
         ESRegExpPrototypeToStringMethod(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 

@@ -81,7 +81,7 @@ public class GlobalObject extends ObjectPrototype {
                 private static final long serialVersionUID = 1L;
 
                 GlobalObjectThrowError(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -111,7 +111,7 @@ public class GlobalObject extends ObjectPrototype {
                 private static final long serialVersionUID = 1L;
 
                 GlobalObjectTryEval(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -167,7 +167,7 @@ public class GlobalObject extends ObjectPrototype {
                 private static final long serialVersionUID = 1L;
 
                 GlobalObjectEval(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -194,7 +194,7 @@ public class GlobalObject extends ObjectPrototype {
                 private static final long serialVersionUID = 1L;
 
                 GlobalObjectParseInt(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 2);
                 }
 
@@ -266,7 +266,7 @@ public class GlobalObject extends ObjectPrototype {
                 private static final long serialVersionUID = 1L;
 
                 GlobalObjectParseFloat(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -315,7 +315,7 @@ public class GlobalObject extends ObjectPrototype {
                 private static final long serialVersionUID = 1L;
 
                 GlobalObjectEscape(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -355,7 +355,7 @@ public class GlobalObject extends ObjectPrototype {
                 private static final long serialVersionUID = 1L;
 
                 GlobalObjectUnescape(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -400,7 +400,7 @@ public class GlobalObject extends ObjectPrototype {
                 private static final long serialVersionUID = 1L;
 
                 GlobalObjectIsNaN(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -417,7 +417,7 @@ public class GlobalObject extends ObjectPrototype {
                 private static final long serialVersionUID = 1L;
 
                 GlobalObjectIsFinite(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -440,7 +440,7 @@ public class GlobalObject extends ObjectPrototype {
                 private final int opts;
 
                 GlobalObjectURIHandler(String name, Evaluator evaluator,
-                        FunctionPrototype fp, int opts) {
+                        FunctionPrototype fp, int opts) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                     this.opts = opts;
                 }

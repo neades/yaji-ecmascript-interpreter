@@ -36,7 +36,7 @@ public class ObjectPrototype extends ESObject {
         private static final long serialVersionUID = 1L;
 
         ObjectPrototypeToString(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -60,7 +60,7 @@ public class ObjectPrototype extends ESObject {
         private static final long serialVersionUID = 1L;
 
         ObjectPrototypeValueOf(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -75,7 +75,7 @@ public class ObjectPrototype extends ESObject {
         private static final long serialVersionUID = 1L;
 
         ObjectPrototypeToLocaleString(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -92,7 +92,7 @@ public class ObjectPrototype extends ESObject {
         private static final long serialVersionUID = 1L;
 
         ObjectPrototypeHasOwnProperty(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -109,7 +109,7 @@ public class ObjectPrototype extends ESObject {
         private static final long serialVersionUID = 1L;
 
         public ObjectPrototypeIsPrototypeOf(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -134,7 +134,7 @@ public class ObjectPrototype extends ESObject {
         private static final long serialVersionUID = 1L;
 
         public ObjectPrototypePropertyIsEnumerable(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 

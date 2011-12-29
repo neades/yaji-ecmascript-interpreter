@@ -38,8 +38,9 @@ public class ArrayObject extends BuiltinFunctionObject {
      *            Must be an ArrayPrototype
      * @param evaluator
      *            the evaluator
+     * @throws EcmaScriptException 
      */
-    private ArrayObject(ESObject prototype, Evaluator evaluator) {
+    private ArrayObject(ESObject prototype, Evaluator evaluator) throws EcmaScriptException {
         super(prototype, evaluator, StandardProperty.ARRAYstring, 1);
     }
 
@@ -113,7 +114,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
                 ArrayPrototypeToString(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -133,7 +134,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
                 ArrayPrototypeJoin(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -167,7 +168,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
                 ArrayPrototypeReverse(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 0);
                 }
 
@@ -181,7 +182,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
                 ArrayPrototypeSort(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -198,7 +199,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
                 ArrayPrototypePop(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -212,7 +213,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
                 ArrayPrototypePush(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -226,7 +227,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
                 ArrayPrototypeShift(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -240,7 +241,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
                 ArrayPrototypeUnshift(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -254,7 +255,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
                 ArrayPrototypeSlice(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 2);
                 }
 
@@ -268,7 +269,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
                 ArrayPrototypeSplice(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 2);
                 }
 
@@ -282,7 +283,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
                 ArrayPrototypeIndexOf(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -296,7 +297,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
                 ArrayPrototypeLastIndexOf(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -310,7 +311,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
                 ArrayPrototypeConcat(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -324,7 +325,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
                 ArrayPrototypeReduce(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -338,7 +339,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
                 ArrayPrototypeReduceRight(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -352,7 +353,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
                 ArrayPrototypeEvery(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -366,7 +367,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
                 ArrayPrototypeSome(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -380,7 +381,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
                 ArrayPrototypeForEach(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -394,7 +395,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
                 ArrayPrototypeMap(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -408,7 +409,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
                 ArrayPrototypeFilter(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -478,7 +479,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
                 ArrayIsArray(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 

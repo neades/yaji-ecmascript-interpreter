@@ -509,7 +509,7 @@ try {
   x instanceof "non-object";
   false;
 } catch( e ) {
-  return "TypeError" === e.name;
+  "TypeError" === e.name;
 }
 
 @test instanceof.15.3.5.3.4.b

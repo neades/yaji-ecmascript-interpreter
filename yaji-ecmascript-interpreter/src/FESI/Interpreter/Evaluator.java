@@ -1002,12 +1002,12 @@ public class Evaluator implements Serializable {
             ESObject variableObject, List<String> localVariableNames,
             ESObject thisObject) throws EcmaScriptException {
         return evaluateFunctionInScope(node,es, variableObject,
-                localVariableNames, thisObject, null);
+                localVariableNames, thisObject, null, true).value;
     }
-    public ESValue evaluateFunctionInScope(ASTStatementList node,
+    public EvaluationResult evaluateFunctionInScope(ASTStatementList node,
                 EvaluationSource es, ESObject variableObject,
                 List<String> localVariableNames, ESValue thisObject,
-                ScopeChain scopeChain) throws EcmaScriptException {
+                ScopeChain scopeChain, boolean normalReturnsUndefined) throws EcmaScriptException {
         ESValue theValue = ESUndefined.theUndefined;
 
         ESObject savedVariableObject = currentVariableObject;
@@ -1033,23 +1033,22 @@ public class Evaluator implements Serializable {
                     useRepresentationOptimisation, representationOutputBuffer);
             theValue = evaluationVisitor.evaluateFunction(node, es);
             int cc = evaluationVisitor.getCompletionCode();
-//            if (cc == EcmaScriptEvaluateVisitor.C_NORMAL) {
-//                theValue = ESUndefined.theUndefined; // ES5.1 13.2.1.6
-//            } else 
+            if (cc == EcmaScriptEvaluateVisitor.C_NORMAL && normalReturnsUndefined) {
+                theValue = ESUndefined.theUndefined; // ES5.1 13.2.1.6
+            } else 
                 if ((cc != EcmaScriptEvaluateVisitor.C_NORMAL)
                     && (cc != EcmaScriptEvaluateVisitor.C_RETURN)) {
                 throw new EcmaScriptException("Unexpected "
                         + evaluationVisitor.getCompletionCodeString()
                         + " in function");
             }
+            return new EvaluationResult(theValue,cc);
         } finally {
             currentVariableObject = savedVariableObject;
             theScopeChain = previousScopeChain;
             currentThisObject = savedThisObject;
             currentEvaluationSource = savedEvaluationSource;
         }
-
-        return theValue;
     }
 
     public ESValue executeRepresentation(ASTStatementList node,
@@ -1063,6 +1062,14 @@ public class Evaluator implements Serializable {
         return result;
     }
 
+    public static class EvaluationResult {
+        public EvaluationResult(ESValue value, int completionCode) {
+            this.value = value;
+            this.completionCode = completionCode;
+        }
+        public ESValue value;
+        public int completionCode;
+    }
     /**
      * Sub evaluator - evaluate a with node (inside a program evaluation)
      * 
@@ -1076,19 +1083,18 @@ public class Evaluator implements Serializable {
      * @exception EmcaScriptException
      *                In case of any error during evaluation
      */
-    public ESValue evaluateWith(ASTStatement node, ESObject scopeObject,
-            EvaluationSource es) throws EcmaScriptException {
+    public EvaluationResult evaluateWith(ASTStatement node, ESObject scopeObject, EvaluationSource es) throws EcmaScriptException {
         ESValue theValue = ESUndefined.theUndefined;
 
         theScopeChain = new ScopeChain(scopeObject, theScopeChain == null ? globalScope : theScopeChain);
         try {
             EcmaScriptEvaluateVisitor evaluationVisitor = newEcmaScriptEvaluateVisitor();
             theValue = evaluationVisitor.evaluateWith(node, es);
+            return new EvaluationResult(theValue,evaluationVisitor.getCompletionCode());
         } finally {
             theScopeChain = theScopeChain.previousScope();
         }
 
-        return theValue;
     }
 
     /**

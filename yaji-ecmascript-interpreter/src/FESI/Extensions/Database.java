@@ -761,7 +761,7 @@ public class Database extends Extension {
         private static final long serialVersionUID = 1476645330609136920L;
 
         GlobalObjectDatabase(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -797,7 +797,7 @@ public class Database extends Extension {
         private static final long serialVersionUID = -817855141956128587L;
 
         DatabaseGetLastError(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -812,7 +812,7 @@ public class Database extends Extension {
     static class DatabaseRelease extends BuiltinFunctionObject {
         private static final long serialVersionUID = -2788460251115154264L;
 
-        DatabaseRelease(String name, Evaluator evaluator, FunctionPrototype fp) {
+        DatabaseRelease(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -827,7 +827,7 @@ public class Database extends Extension {
     static class DatabaseConnect extends BuiltinFunctionObject {
         private static final long serialVersionUID = -160119919076836632L;
 
-        DatabaseConnect(String name, Evaluator evaluator, FunctionPrototype fp) {
+        DatabaseConnect(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -843,7 +843,7 @@ public class Database extends Extension {
         private static final long serialVersionUID = -2124435785806562065L;
 
         DatabaseDisconnect(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -859,7 +859,7 @@ public class Database extends Extension {
         private static final long serialVersionUID = 553887088268457954L;
 
         DatabaseExecuteRetrieval(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -875,7 +875,7 @@ public class Database extends Extension {
         private static final long serialVersionUID = 7421773759587066619L;
 
         DatabaseExecuteCommand(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -891,7 +891,7 @@ public class Database extends Extension {
         private static final long serialVersionUID = 8387083082824146713L;
 
         DatabaseGetMetaData(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -906,7 +906,7 @@ public class Database extends Extension {
     static class RowSetRelease extends BuiltinFunctionObject {
         private static final long serialVersionUID = -6169075232727703900L;
 
-        RowSetRelease(String name, Evaluator evaluator, FunctionPrototype fp) {
+        RowSetRelease(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -921,7 +921,7 @@ public class Database extends Extension {
     static class RowSetNext extends BuiltinFunctionObject {
         private static final long serialVersionUID = -2799372218763475297L;
 
-        RowSetNext(String name, Evaluator evaluator, FunctionPrototype fp) {
+        RowSetNext(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -937,7 +937,7 @@ public class Database extends Extension {
         private static final long serialVersionUID = -7034764698384513090L;
 
         RowSetGetColumnCount(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -953,7 +953,7 @@ public class Database extends Extension {
         private static final long serialVersionUID = -5955002519715567919L;
 
         RowSetGetColumnName(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -979,7 +979,7 @@ public class Database extends Extension {
         private static final long serialVersionUID = -8695359080807943092L;
 
         RowSetGetColumnItem(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -1000,7 +1000,7 @@ public class Database extends Extension {
         private static final long serialVersionUID = -1921386817405372093L;
 
         RowSetGetColumnDatatypeNumber(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -1021,7 +1021,7 @@ public class Database extends Extension {
         private static final long serialVersionUID = -5178877749779743085L;
 
         RowSetGetColumnDatatypeName(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -1048,7 +1048,7 @@ public class Database extends Extension {
     static class RowSetHasMoreRows extends BuiltinFunctionObject {
         private static final long serialVersionUID = -1322566915756923713L;
 
-        RowSetHasMoreRows(String name, Evaluator evaluator, FunctionPrototype fp) {
+        RowSetHasMoreRows(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -1063,7 +1063,7 @@ public class Database extends Extension {
     static class RowSetGetMetaData extends BuiltinFunctionObject {
         private static final long serialVersionUID = 3826426631039858729L;
 
-        RowSetGetMetaData(String name, Evaluator evaluator, FunctionPrototype fp) {
+        RowSetGetMetaData(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 

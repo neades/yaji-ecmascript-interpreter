@@ -45,7 +45,7 @@ public class FunctionObject extends BuiltinFunctionObject implements
         private static final long serialVersionUID = 1L;
 
         FunctionPrototypeToString(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -63,9 +63,37 @@ public class FunctionObject extends BuiltinFunctionObject implements
         }
     }
     
+    private static class FunctionPrototypeBind extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+        FunctionPrototypeBind(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
+            super(fp, evaluator, name, 1);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisValue, ESValue[] arguments) throws EcmaScriptException {
+            if (!thisValue.isCallable()) {
+                throw new TypeError("bind must be called on a Function");
+            }
+            ESObject target = thisValue.toESObject(getEvaluator());
+            int length = target.getProperty(StandardProperty.LENGTHstring,StandardProperty.LENGTHhash).toInt32();
+            ESValue[] boundArgs;
+            if (arguments.length > 1) {
+                int extraArgumentsLength = arguments.length - 1;
+                length = Math.max(0, length - extraArgumentsLength);
+                boundArgs = new ESValue[extraArgumentsLength];
+                System.arraycopy(arguments, 1, boundArgs, 0, extraArgumentsLength);
+            } else {
+                boundArgs = ESValue.EMPTY_ARRAY;
+            }
+            FunctionPrototype function = new BoundFunctionPrototype(getEvaluator().getFunctionPrototype(), getEvaluator(), length, target, getArg(arguments,0), boundArgs);
+            return function;
+        }
+        
+    }
+    
     private static class FunctionPrototypeCall extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
-        FunctionPrototypeCall(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FunctionPrototypeCall(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -89,7 +117,7 @@ public class FunctionObject extends BuiltinFunctionObject implements
     
     private static class FunctionPrototypeApply extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
-        FunctionPrototypeApply(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FunctionPrototypeApply(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 2);
         }
 
@@ -133,6 +161,7 @@ public class FunctionObject extends BuiltinFunctionObject implements
                 new FunctionPrototypeToString("toString", evaluator, prototype));
         prototype.putHiddenProperty("call", new FunctionPrototypeCall("call", evaluator, prototype));
         prototype.putHiddenProperty("apply", new FunctionPrototypeApply("apply", evaluator, prototype));
+        prototype.putHiddenProperty("bind", new FunctionPrototypeBind("bind", evaluator, prototype));
     }
 
     // overrides

@@ -96,6 +96,7 @@ import FESI.Data.StandardProperty;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
 import FESI.Exceptions.TypeError;
+import FESI.Interpreter.Evaluator.EvaluationResult;
 import FESI.Parser.EcmaScriptConstants;
 import FESI.Parser.StrictMode;
 import FESI.Util.IAppendable;
@@ -771,7 +772,9 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                     FOR_VALUE));
             ASTStatement statementNode = (ASTStatement) (node.jjtGetChild(1));
             ESObject scopeObject = scopeValue.toESObject(evaluator);
-            result = evaluator.evaluateWith(statementNode, scopeObject, es);
+            EvaluationResult evaluationResult = evaluator.evaluateWith(statementNode, scopeObject, es);
+            result = evaluationResult.value;
+            completionCode = evaluationResult.completionCode;
         } catch (EcmaScriptException e) {
             throw new PackagedException(e, node);
         }
@@ -1876,7 +1879,9 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
             List<String> lvn = new ArrayList<String>();
             scopeObject.putProperty(propertyName, (ESValue) data, propertyName.hashCode());
             
-            result = evaluator.evaluateFunctionInScope(statementNode, es, scopeObject, lvn, evaluator.getThisObject(),evaluator.getScopeChain());
+            EvaluationResult evaluationResult = evaluator.evaluateFunctionInScope(statementNode, es, scopeObject, lvn, evaluator.getThisObject(),evaluator.getScopeChain(), false);
+            result = evaluationResult.value;
+            completionCode = evaluationResult.completionCode;
         } catch (EcmaScriptException e) {
             throw new PackagedException(e, node);
         }

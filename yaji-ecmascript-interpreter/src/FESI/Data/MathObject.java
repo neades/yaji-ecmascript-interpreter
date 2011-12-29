@@ -235,7 +235,7 @@ public class MathObject extends ObjectPrototype {
         private static final long serialVersionUID = -403656694341333710L;
 
         BuiltinMathFunctionZero(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -253,7 +253,7 @@ public class MathObject extends ObjectPrototype {
         private static final long serialVersionUID = -4281492306473644175L;
 
         BuiltinMathFunctionOne(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -276,7 +276,7 @@ public class MathObject extends ObjectPrototype {
         private static final long serialVersionUID = 978692357189557419L;
 
         BuiltinMathFunctionTwo(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 2);
         }
 
@@ -305,7 +305,7 @@ public class MathObject extends ObjectPrototype {
         private static final long serialVersionUID = 978692357189557419L;
 
         BuiltinMathFunctionN(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, (int)Double.POSITIVE_INFINITY);
         }
 

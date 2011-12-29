@@ -146,6 +146,8 @@ public class Runner {
 
     private int threadCount;
 
+    private File overrideDirectory;
+
     private static class Arguments extends HashMap<String,String> {
 
         private static final long serialVersionUID = -45926745254286446L;
@@ -184,6 +186,12 @@ public class Runner {
             originalDirectory = new File(originalDirectoryName);
         } else {
             originalDirectory = null;
+        }
+        String overrideDirectoryName = arguments.get("overrideDir");
+        if (overrideDirectoryName != null) {
+            overrideDirectory = new File(overrideDirectoryName);
+        } else {
+            overrideDirectory = null;
         }
         String threads = arguments.get("threads");
         if (threads == null) {
@@ -318,8 +326,17 @@ public class Runner {
         private final File testFile;
 
         public TestFile(File rootDirectory, File testFile) {
-            this.testFile = testFile;
             testName = getTestName(rootDirectory, testFile);
+            if (overrideDirectory != null) {
+                File overrideFile = new File(overrideDirectory,testName+".js");
+                if (overrideFile.exists()) {
+                    this.testFile = overrideFile;
+                } else {
+                    this.testFile = testFile;
+                }
+            } else {
+                this.testFile = testFile;
+            }
             testId = testName.substring(testName.lastIndexOf(File.separatorChar)+1);
             negative = isNegative(testName);
         }

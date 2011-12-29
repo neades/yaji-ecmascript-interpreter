@@ -36,7 +36,7 @@ public class StringObject extends BuiltinFunctionObject {
     private static abstract class CoercedStringFunction extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
         
-        public CoercedStringFunction(ESObject functionPrototype, Evaluator evaluator, String functionName, int length) {
+        public CoercedStringFunction(ESObject functionPrototype, Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype,evaluator,functionName,length);
         }
         
@@ -53,7 +53,7 @@ public class StringObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         private StringPrototypeTrim(String functionName,
-                Evaluator evaluator, ESObject functionPrototype) {
+                Evaluator evaluator, ESObject functionPrototype) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, 0);
         }
 
@@ -68,7 +68,7 @@ public class StringObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         StringPrototypeToString(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -85,7 +85,7 @@ public class StringObject extends BuiltinFunctionObject {
     private static class StringPrototypeSlice extends CoercedStringFunction {
         private static final long serialVersionUID = 1L;
 
-        StringPrototypeSlice(String name, Evaluator evaluator, FunctionPrototype fp) {
+        StringPrototypeSlice(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 2);
         }
 
@@ -114,7 +114,7 @@ public class StringObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = -3110437308530985673L;
 
         StringPrototypeSearch(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -145,7 +145,7 @@ public class StringObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = -5972680989663620329L;
 
         StringPrototypeReplace(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -178,7 +178,7 @@ public class StringObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = -4817060573308387732L;
 
         StringPrototypeMatch(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -221,7 +221,7 @@ public class StringObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 2991853591081656659L;
 
         StringPrototypeSplit(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -307,7 +307,7 @@ public class StringObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         StringPrototypeValueOf(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -325,7 +325,7 @@ public class StringObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         StringPrototypeCharAt(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -349,7 +349,7 @@ public class StringObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         StringPrototypeCharCodeAt(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -371,7 +371,7 @@ public class StringObject extends BuiltinFunctionObject {
 
     private static class StringPrototypeConcat extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
-        StringPrototypeConcat(String name, Evaluator evaluator, FunctionPrototype fp) {
+        StringPrototypeConcat(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
         
@@ -391,7 +391,7 @@ public class StringObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         StringPrototypeIndexOf(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -416,7 +416,7 @@ public class StringObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         StringPrototypeLastIndexOf(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -443,7 +443,7 @@ public class StringObject extends BuiltinFunctionObject {
     private static class StringPrototypeSubstring extends CoercedStringFunction {
         private static final long serialVersionUID = 1L;
 
-        StringPrototypeSubstring(String name, Evaluator evaluator, FunctionPrototype fp) {
+        StringPrototypeSubstring(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -480,7 +480,7 @@ public class StringObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         StringPrototypeToLowerCase(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -494,7 +494,7 @@ public class StringObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         StringPrototypeToLocaleLowerCase(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -508,7 +508,7 @@ public class StringObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         StringPrototypeToUpperCase(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -522,7 +522,7 @@ public class StringObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         StringPrototypeToLocaleUpperCase(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -537,7 +537,7 @@ public class StringObject extends BuiltinFunctionObject {
         private Collator collator;
 
         StringPrototypeLocaleCompare(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
             evaluator.setLocaleListener(this);
             collator = Collator.getInstance(evaluator.getDefaultLocale());
@@ -560,7 +560,7 @@ public class StringObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         StringObjectFromCharCode(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -583,7 +583,7 @@ public class StringObject extends BuiltinFunctionObject {
 
     private static final long serialVersionUID = -5722531882648574621L;
 
-    private StringObject(ESObject prototype, Evaluator evaluator) {
+    private StringObject(ESObject prototype, Evaluator evaluator) throws EcmaScriptException {
         super(prototype, evaluator, "String", 1);
     }
 
@@ -630,9 +630,10 @@ public class StringObject extends BuiltinFunctionObject {
      *            The Function prototype attached to the evaluator
      * 
      * @return the String singleton
+     * @throws EcmaScriptException 
      */
     public static StringObject makeStringObject(Evaluator evaluator,
-            ObjectPrototype objectPrototype, FunctionPrototype functionPrototype) {
+            ObjectPrototype objectPrototype, FunctionPrototype functionPrototype) throws EcmaScriptException {
 
         ESObject stringPrototype = new StringPrototype(objectPrototype,
                 evaluator);

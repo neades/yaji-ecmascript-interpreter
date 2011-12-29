@@ -1,7 +1,6 @@
 package FESI.Data;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.io.StringReader;
 
@@ -64,13 +63,9 @@ public class FunctionConstructorTest extends EvaluatorTestCase {
         assertEquals("Called:op1:op2:",value.toString());
     }
     
-    @Test public void shouldImplementApplyOnFunctionDeclarations_InvalidArgs() throws Exception {
-        try {
-            function.doIndirectCall(evaluator, function, "apply", new ESValue[] { evaluator.getGlobalObject(), new ESString("arguments") });
-            fail("Should throw error");
-        } catch (TypeError e) {
-            // expected result
-        }
-
+    @Test(expected=TypeError.class)
+    public void shouldImplementApplyOnFunctionDeclarations_InvalidArgs() throws Exception {
+        function.doIndirectCall(evaluator, function, "apply", new ESValue[] { evaluator.getGlobalObject(), new ESString("arguments") });
     }
+    
 }
