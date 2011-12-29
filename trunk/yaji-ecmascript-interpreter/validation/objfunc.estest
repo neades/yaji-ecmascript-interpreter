@@ -99,33 +99,33 @@ o1.f1 == 2 && "mmm" == o1.f2 && o1["sp ace"] == 3;
 
 // 15.2.5.
 @test function.1
-f1 = Function("x","x+1");
+f1 = Function("x","return x+1");
 f1(2)==3 && typeof(f1)=="function"
 
 @test function.2
-f2 = new Function("x","x+1");
+f2 = new Function("x","return x+1");
 f2(2)==3;
 
 @test function.3
-f3 = new Function("x","y", "x+y+1");
+f3 = new Function("x","y", "return x+y+1");
 f3(3,4)==8;
 
 @test function.4
-f4 = new Function("x,y", "x+y+1");
+f4 = new Function("x,y", "return x+y+1");
 f4(3,4)==8;
 
 @test function.5
-f5 = new Function("x ","  y ", "x+y+1");
+f5 = new Function("x ","  y ", "return x+y+1");
 f5(3,4)==8;
 
 @test function.5.1
 f5 = function f51(x,y) {
-  x+y+1
+  return x+y+1
 };
 f5(3,4)==8;
 
 @test function.6
-f6 = new Function(" x, y ", "x+y+1");
+f6 = new Function(" x, y ", "return x+y+1");
 f6(3,4)==8 && f6.length==2;
 
 @test function.7
@@ -135,7 +135,7 @@ of7.p==3 && typeof(of7)=="object";
 
 @test function.8
 f7p = new Object();
-f7p.f = new Function("this.p + 5");
+f7p.f = new Function("return this.p + 5");
 f7.prototype = f7p;
 f7o = new f7(2);
 f7o.f()==8
@@ -189,7 +189,7 @@ typeof gfa2 == "undefined";
 
 
 @test prototype.1
-String.prototype.tag = new Function('x',"'<'+x+'>'+this+'</'+x+'>'");
+String.prototype.tag = new Function('x',"return '<'+x+'>'+this+'</'+x+'>'");
 s1 = new String("hello");
 s1.tag('B')=='<B>hello</B>';
 

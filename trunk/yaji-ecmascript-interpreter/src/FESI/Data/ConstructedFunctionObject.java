@@ -46,7 +46,7 @@ public class ConstructedFunctionObject extends FunctionPrototype {
             Evaluator evaluator, String functionName,
             EvaluationSource evaluationSource, String functionSource,
             String[] arguments, List<String> localVariableNames,
-            ASTStatementList aFunctionAST, ScopeChain scopeChain, boolean isStrictMode) {
+            ASTStatementList aFunctionAST, ScopeChain scopeChain, boolean isStrictMode) throws EcmaScriptException {
         super(functionPrototype, evaluator, functionName, arguments.length);
         this.evaluationSource = evaluationSource;
         this.functionSource = functionSource;
@@ -128,7 +128,7 @@ public class ConstructedFunctionObject extends FunctionPrototype {
         try {
             evaluator.setStrictMode(strictMode || isStrictMode);
             value = getEvaluator().evaluateFunctionInScope(theFunctionAST,
-                    evaluationSource, args, localVariableNames, thisObject, scopeChain);
+                    evaluationSource, args, localVariableNames, thisObject, scopeChain, true).value;
         } finally {
             currentArguments = oldArguments;
             evaluator.setStrictMode(strictMode);
@@ -140,14 +140,18 @@ public class ConstructedFunctionObject extends FunctionPrototype {
     public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
         ESValue prototype = getProperty(StandardProperty.PROTOTYPEstring, StandardProperty.PROTOTYPEhash);
-        ESObject op = getEvaluator().getObjectPrototype();
+        Evaluator evaluator = getEvaluator();
+        ESObject op = evaluator.getObjectPrototype();
         if (!(prototype instanceof ESObject))
             prototype = op;
         ESObject obj = new ObjectPrototype((ESObject) prototype, getEvaluator());
-        callFunction(obj, arguments);
-        // The next line was probably a misinterpretation of // 15.3.2.1 (18)
-        // which returned an other object if the function returned an object
-        // if (result instanceof ESObject) obj = (ESObject) result;
+        ESValue result = callFunction(obj, arguments);
+        if (result instanceof ESObject) {
+            ESObject object = (ESObject) result;
+            if (object.getTypeOf() == EStypeObject) {
+                obj = (ESObject) result;
+            }
+        } 
         return obj;
     }
 

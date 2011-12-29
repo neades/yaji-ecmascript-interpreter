@@ -37,7 +37,7 @@ public class JavaAccess extends Extension {
         private static final long serialVersionUID = 1436041700328969737L;
 
         GlobalObjectJavaTypeOf(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -59,7 +59,7 @@ public class JavaAccess extends Extension {
         private static final long serialVersionUID = -164035943654712169L;
 
         GlobalObjectLoadExtension(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 

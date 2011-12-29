@@ -41,7 +41,7 @@ f2.length == 4;
 // 10.1.6
 @test function.4
 function f3(a, b, c) {
-   arguments.a == arguments.c && arguments.a != arguments.b
+   return arguments.a == arguments.c && arguments.a != arguments.b
 }
 f3 (2.4,5,2.4);
 
@@ -60,7 +60,7 @@ f4(3) && (b == 3);
 
 @test function.6
 function f5() {
-  arguments.length==3 && arguments[2]==5;
+  return arguments.length==3 && arguments[2]==5;
 }
 f5(1,"aa",5);
 
@@ -72,7 +72,7 @@ this.a==a;
 
 @test context.2
 function fc1(x) {
-   this.a == x;
+   return this.a == x;
 }
 fc1(a);
 

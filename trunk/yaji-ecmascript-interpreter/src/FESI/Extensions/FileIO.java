@@ -664,7 +664,7 @@ public class FileIO extends Extension {
     class GlobalObjectFile extends BuiltinFunctionObject {
         private static final long serialVersionUID = 8414668332754933785L;
 
-        GlobalObjectFile(String name, Evaluator evaluator, FunctionPrototype fp) {
+        GlobalObjectFile(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -721,7 +721,7 @@ public class FileIO extends Extension {
     static class FileWriteln extends BuiltinFunctionObject {
         private static final long serialVersionUID = -1212940361346379188L;
 
-        FileWriteln(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileWriteln(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -736,7 +736,7 @@ public class FileIO extends Extension {
     static class FileReadln extends BuiltinFunctionObject {
         private static final long serialVersionUID = -6563844058409689916L;
 
-        FileReadln(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileReadln(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -756,7 +756,7 @@ public class FileIO extends Extension {
     static class FileEof extends BuiltinFunctionObject {
         private static final long serialVersionUID = -4173944880733445209L;
 
-        FileEof(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileEof(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -771,7 +771,7 @@ public class FileIO extends Extension {
     static class FileExists extends BuiltinFunctionObject {
         private static final long serialVersionUID = 7326672957348254206L;
 
-        FileExists(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileExists(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -786,7 +786,7 @@ public class FileIO extends Extension {
     static class FileIsOpened extends BuiltinFunctionObject {
         private static final long serialVersionUID = 8354315134724021693L;
 
-        FileIsOpened(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileIsOpened(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -801,7 +801,7 @@ public class FileIO extends Extension {
     static class FileIsAbsolute extends BuiltinFunctionObject {
         private static final long serialVersionUID = 686656951279531101L;
 
-        FileIsAbsolute(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileIsAbsolute(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -816,7 +816,7 @@ public class FileIO extends Extension {
     static class FileIsFile extends BuiltinFunctionObject {
         private static final long serialVersionUID = 9013756116339087947L;
 
-        FileIsFile(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileIsFile(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -831,7 +831,7 @@ public class FileIO extends Extension {
     static class FileIsDirectory extends BuiltinFunctionObject {
         private static final long serialVersionUID = 353394458055715978L;
 
-        FileIsDirectory(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileIsDirectory(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -846,7 +846,7 @@ public class FileIO extends Extension {
     static class FileWrite extends BuiltinFunctionObject {
         private static final long serialVersionUID = 5761934263495777587L;
 
-        FileWrite(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileWrite(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -861,7 +861,7 @@ public class FileIO extends Extension {
     static class FileOpen extends BuiltinFunctionObject {
         private static final long serialVersionUID = 3197833025539110487L;
 
-        FileOpen(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileOpen(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -877,7 +877,7 @@ public class FileIO extends Extension {
     static class FileClose extends BuiltinFunctionObject {
         private static final long serialVersionUID = -8172955647017598492L;
 
-        FileClose(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileClose(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -892,7 +892,7 @@ public class FileIO extends Extension {
     static class FileFlush extends BuiltinFunctionObject {
         private static final long serialVersionUID = -6292904766666156870L;
 
-        FileFlush(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileFlush(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -907,7 +907,7 @@ public class FileIO extends Extension {
     static class FileGetLength extends BuiltinFunctionObject {
         private static final long serialVersionUID = -5649442104693910207L;
 
-        FileGetLength(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileGetLength(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -922,7 +922,7 @@ public class FileIO extends Extension {
     static class FileLastModified extends BuiltinFunctionObject {
         private static final long serialVersionUID = 6586666475850937489L;
 
-        FileLastModified(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileLastModified(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -940,7 +940,7 @@ public class FileIO extends Extension {
     static class FileError extends BuiltinFunctionObject {
         private static final long serialVersionUID = -2034139369850182826L;
 
-        FileError(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileError(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -955,7 +955,7 @@ public class FileIO extends Extension {
     static class FileClearError extends BuiltinFunctionObject {
         private static final long serialVersionUID = 8499703287448417367L;
 
-        FileClearError(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileClearError(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -971,7 +971,7 @@ public class FileIO extends Extension {
     static class FileRemove extends BuiltinFunctionObject {
         private static final long serialVersionUID = 2926292978390363433L;
 
-        FileRemove(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileRemove(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -986,7 +986,7 @@ public class FileIO extends Extension {
     class FileRenameTo extends BuiltinFunctionObject {
         private static final long serialVersionUID = 2614804455764561224L;
 
-        FileRenameTo(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileRenameTo(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 
@@ -1010,7 +1010,7 @@ public class FileIO extends Extension {
     static class FileCanWrite extends BuiltinFunctionObject {
         private static final long serialVersionUID = 6165625127683518191L;
 
-        FileCanWrite(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileCanWrite(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -1025,7 +1025,7 @@ public class FileIO extends Extension {
     static class FileCanRead extends BuiltinFunctionObject {
         private static final long serialVersionUID = -1390115713208254039L;
 
-        FileCanRead(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileCanRead(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -1040,7 +1040,7 @@ public class FileIO extends Extension {
     static class FileGetName extends BuiltinFunctionObject {
         private static final long serialVersionUID = 5290629150488957956L;
 
-        FileGetName(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileGetName(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -1055,7 +1055,7 @@ public class FileIO extends Extension {
     static class FileGetParent extends BuiltinFunctionObject {
         private static final long serialVersionUID = 5056689866244089478L;
 
-        FileGetParent(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileGetParent(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -1071,7 +1071,7 @@ public class FileIO extends Extension {
     static class FileGetPath extends BuiltinFunctionObject {
         private static final long serialVersionUID = -5427120519594023452L;
 
-        FileGetPath(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileGetPath(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -1087,7 +1087,7 @@ public class FileIO extends Extension {
         private static final long serialVersionUID = -6901269335876770825L;
 
         FileGetAbsolutePath(String name, Evaluator evaluator,
-                FunctionPrototype fp) {
+                FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -1102,7 +1102,7 @@ public class FileIO extends Extension {
     static class FileMkdir extends BuiltinFunctionObject {
         private static final long serialVersionUID = 2139015631181199033L;
 
-        FileMkdir(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileMkdir(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -1117,7 +1117,7 @@ public class FileIO extends Extension {
     static class FileList extends BuiltinFunctionObject {
         private static final long serialVersionUID = 41287224913507091L;
 
-        FileList(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileList(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 0);
         }
 
@@ -1141,7 +1141,7 @@ public class FileIO extends Extension {
     static class FileReadAll extends BuiltinFunctionObject {
         private static final long serialVersionUID = 778630085159043813L;
 
-        FileReadAll(String name, Evaluator evaluator, FunctionPrototype fp) {
+        FileReadAll(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
             super(fp, evaluator, name, 1);
         }
 

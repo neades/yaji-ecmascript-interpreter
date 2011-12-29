@@ -56,4 +56,6 @@ public interface StandardProperty {
     public static final int CONSTRUCTORhash = CONSTRUCTORstring.hashCode();
     public static final String ARRAYstring = "Array";
     public static final int ARRAYhash = ARRAYstring.hashCode();
+    public static final String CALLERstring = "caller";
+    public static final int CALLERhash = CALLERstring.hashCode();
 }

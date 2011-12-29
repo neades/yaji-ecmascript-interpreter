@@ -29,7 +29,7 @@ public abstract class BuiltinFunctionObject extends FunctionPrototype {
     private static final long serialVersionUID = 8812972956505265898L;
 
     protected BuiltinFunctionObject(ESObject functionPrototype,
-            Evaluator evaluator, String functionName, int length) {
+            Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
         super(functionPrototype, evaluator, functionName, length);
     }
 

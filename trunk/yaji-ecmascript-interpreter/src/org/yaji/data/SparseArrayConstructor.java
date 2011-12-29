@@ -27,7 +27,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
         
         private static final long serialVersionUID = 6291503290995311855L;
 
-        private AbstractArrayPrototypeCallbackFunction( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) {
+        private AbstractArrayPrototypeCallbackFunction( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
 
@@ -66,7 +66,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
     private static abstract class AbstractArrayPrototypeReduceFunction extends AbstractArrayPrototypeFunction {
         private static final long serialVersionUID = -2347237482759579505L;
 
-        public AbstractArrayPrototypeReduceFunction(ESObject functionPrototype, Evaluator evaluator, String functionName, int length) {
+        public AbstractArrayPrototypeReduceFunction(ESObject functionPrototype, Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
 
@@ -114,7 +114,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
         
         private static final long serialVersionUID = 6291503290995311855L;
 
-        private ArrayPrototypeReduce( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) {
+        private ArrayPrototypeReduce( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
 
@@ -128,7 +128,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
         
         private static final long serialVersionUID = 6291503290995311855L;
 
-        private ArrayPrototypeReduceRight( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) {
+        private ArrayPrototypeReduceRight( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
 
@@ -141,7 +141,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
     private static final class ArrayPrototypeEvery extends AbstractArrayPrototypeCallbackFunction {
         private static final long serialVersionUID = 5041355975337134239L;
 
-        private ArrayPrototypeEvery( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) {
+        private ArrayPrototypeEvery( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
 
@@ -166,7 +166,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
     private static final class ArrayPrototypeSome extends AbstractArrayPrototypeCallbackFunction {
         private static final long serialVersionUID = 5041355975337134239L;
 
-        private ArrayPrototypeSome( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) {
+        private ArrayPrototypeSome( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
 
@@ -193,7 +193,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
 
         private static final long serialVersionUID = 3700602868158923461L;
 
-        private ArrayPrototypeForEach( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) {
+        private ArrayPrototypeForEach( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
 
@@ -215,7 +215,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
 
         private static final long serialVersionUID = 3700602868158923461L;
 
-        private ArrayPrototypeMap( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) {
+        private ArrayPrototypeMap( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
 
@@ -244,7 +244,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
 
         private static final long serialVersionUID = 3700602868158923461L;
 
-        private ArrayPrototypeFilter( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) {
+        private ArrayPrototypeFilter( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
 
@@ -270,7 +270,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
     private static final class ArrayPrototypeLastIndexOf extends AbstractArrayPrototypeIndexFunction {
         private static final long serialVersionUID = 7434987247465599789L;
 
-        private ArrayPrototypeLastIndexOf( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) {
+        private ArrayPrototypeLastIndexOf( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
 
@@ -319,7 +319,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
     private static abstract class AbstractArrayPrototypeIndexFunction extends AbstractArrayPrototypeFunction {
         private static final long serialVersionUID = -8665273231324670975L;
 
-        private AbstractArrayPrototypeIndexFunction( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) {
+        private AbstractArrayPrototypeIndexFunction( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
 
@@ -337,7 +337,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
     private static class ArrayPrototypeIndexOf extends AbstractArrayPrototypeIndexFunction {
         private static final long serialVersionUID = -6241106443340287500L;
 
-        private ArrayPrototypeIndexOf( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) {
+        private ArrayPrototypeIndexOf( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
 
@@ -359,7 +359,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
     private static final class ArrayPrototypeUnshift extends AbstractArrayPrototypeFunction {
         private static final long serialVersionUID = 206678619907564785L;
 
-        private ArrayPrototypeUnshift(ESObject functionPrototype, Evaluator evaluator, String functionName, int length) {
+        private ArrayPrototypeUnshift(ESObject functionPrototype, Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
 
@@ -385,7 +385,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
     private static final class ArrayPrototypeSplice extends AbstractArrayPrototypeFunction {
         private static final long serialVersionUID = 7599487781557227781L;
 
-        private ArrayPrototypeSplice( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) {
+        private ArrayPrototypeSplice( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
 
@@ -442,7 +442,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
             AbstractArrayPrototypeFunction {
         private static final long serialVersionUID = 5041355975337134239L;
 
-        private ArrayPrototypeSort( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) {
+        private ArrayPrototypeSort( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
 
@@ -485,7 +485,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
     private static final class ArrayPrototypeSlice extends AbstractArrayPrototypeFunction {
         private static final long serialVersionUID = 8979182986148299638L;
 
-        private ArrayPrototypeSlice( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) {
+        private ArrayPrototypeSlice( ESObject functionPrototype, Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
 
@@ -517,7 +517,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
     private static class ArrayPrototypeShift extends AbstractArrayPrototypeFunction {
         private static final long serialVersionUID = 5041355975337134239L;
 
-        private ArrayPrototypeShift(ESObject functionPrototype, Evaluator evaluator, String functionName, int length) {
+        private ArrayPrototypeShift(ESObject functionPrototype, Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
 
@@ -552,7 +552,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
         private static final long serialVersionUID = 557643967369109715L;
 
         private ArrayPrototypeReverse(ESObject functionPrototype,
-                Evaluator evaluator, String functionName, int length) {
+                Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
 
@@ -572,7 +572,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
         private static final long serialVersionUID = 5041355975337134239L;
 
         private ArrayPrototypePush(ESObject functionPrototype,
-                Evaluator evaluator, String functionName, int length) {
+                Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
 
@@ -591,7 +591,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
         private static final long serialVersionUID = 5419061284666339120L;
 
         protected AbstractArrayPrototypeFunction(ESObject functionPrototype,
-                Evaluator evaluator, String functionName, int length) {
+                Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
         
@@ -630,7 +630,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1996538016909813790L;
 
         private ArrayPrototypePop(ESObject functionPrototype,
-                Evaluator evaluator, String functionName, int length) {
+                Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
 
@@ -657,7 +657,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
         private static final long serialVersionUID = 8819892791499592087L;
 
         private ArrayPrototypeConcat(ESObject functionPrototype,
-                Evaluator evaluator, String functionName, int length) {
+                Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
 
@@ -690,7 +690,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
         private static final long serialVersionUID = -4163809301044076356L;
 
         private ArrayPrototypeToString(ESObject functionPrototype,
-                Evaluator evaluator, String functionName, int length) {
+                Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
 
@@ -708,7 +708,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
         private static final long serialVersionUID = -1601012834773820841L;
 
         private ArrayPrototypeJoin(ESObject functionPrototype,
-                Evaluator evaluator, String functionName, int length) {
+                Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
 
@@ -759,7 +759,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         private ArrayConstructorIsArray(ESObject functionPrototype,
-                Evaluator evaluator, String functionName, int length) {
+                Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
 
@@ -775,7 +775,6 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
 
     protected SparseArrayConstructor(ESObject prototype, Evaluator evaluator) throws EcmaScriptException {
         super(prototype, evaluator, StandardProperty.ARRAYstring,1);
-        putProperty(StandardProperty.PROTOTYPEstring, 0, prototype);
     }
     
     @Override
@@ -818,7 +817,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
         SparseArrayPrototype arrayPrototype = new SparseArrayPrototype(objectPrototype, evaluator);
         evaluator.setArrayPrototype(arrayPrototype);
 
-        SparseArrayConstructor sparseArrayConstructor = new SparseArrayConstructor(arrayPrototype, evaluator);
+        SparseArrayConstructor sparseArrayConstructor = new SparseArrayConstructor(functionPrototype, evaluator);
         sparseArrayConstructor.putHiddenProperty("isArray", new ArrayConstructorIsArray(functionPrototype, evaluator, "isArray", 1));
         
         arrayPrototype.putProperty(StandardProperty.CONSTRUCTORstring, WRITEABLE|CONFIGURABLE, sparseArrayConstructor);
@@ -842,6 +841,8 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
         arrayPrototype.putHiddenProperty("filter", new ArrayPrototypeFilter(functionPrototype, evaluator, "filter", 1));
         arrayPrototype.putHiddenProperty("reduce", new ArrayPrototypeReduce(functionPrototype, evaluator, "reduce", 1));
         arrayPrototype.putHiddenProperty("reduceRight", new ArrayPrototypeReduceRight(functionPrototype, evaluator, "reduceRight", 1));
+        
+        sparseArrayConstructor.putProperty(StandardProperty.PROTOTYPEstring, 0, arrayPrototype);
         return sparseArrayConstructor;
     }
 

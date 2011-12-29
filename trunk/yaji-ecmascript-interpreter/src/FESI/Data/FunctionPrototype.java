@@ -20,7 +20,6 @@ package FESI.Data;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
-import FESI.Interpreter.ScopeChain;
 
 /**
  * Implements the prototype and is the class of all Function objects
@@ -28,18 +27,17 @@ import FESI.Interpreter.ScopeChain;
 public class FunctionPrototype extends ESObject {
     private static final long serialVersionUID = 5228262867569754052L;
     private String functionName = null;
-    private int length = 0;
 
     FunctionPrototype(ESObject prototype, Evaluator evaluator,
-            String functionName, int length) {
+            String functionName, int length) throws EcmaScriptException {
         super(prototype, evaluator);
         this.functionName = functionName;
-        this.length = length;
+        putProperty(StandardProperty.LENGTHstring, 0, ESNumber.valueOf(length));
     }
 
-    FunctionPrototype(ESObject prototype, Evaluator evaluator, int length) {
+    FunctionPrototype(ESObject prototype, Evaluator evaluator, int length) throws EcmaScriptException {
         super(prototype, evaluator);
-        this.length = length;
+        putProperty(StandardProperty.LENGTHstring, 0, ESNumber.valueOf(length));
     }
 
     // overrides
@@ -77,43 +75,19 @@ public class FunctionPrototype extends ESObject {
      * Get the number of arguments property
      */
     public int getLengthProperty() {
-        return length;
-    }
-
-    // overrides
-    @Override
-    public ESValue getPropertyInScope(String propertyName,
-            ScopeChain previousScope, int hash) throws EcmaScriptException {
-        if (hash == StandardProperty.LENGTHhash && propertyName.equals(StandardProperty.LENGTHstring)) {
-            return ESNumber.valueOf(length);
+        try {
+            return getProperty(StandardProperty.LENGTHstring, StandardProperty.LENGTHhash).toInt32();
+        } catch ( EcmaScriptException e ) {
+            return 0;
         }
-        return super.getPropertyInScope(propertyName, previousScope, hash);
     }
 
-    @Override
-    public ESValue getPropertyIfAvailable(String propertyName, int hash)
-            throws EcmaScriptException {
-        if (hash == StandardProperty.LENGTHhash && propertyName.equals(StandardProperty.LENGTHstring)) {
-            return ESNumber.valueOf(length);
-        }
-        return super.getPropertyIfAvailable(propertyName, hash);
-    }
-
-    // overrides
-    @Override
-    public void putProperty(String propertyName, ESValue propertyValue, int hash)
-            throws EcmaScriptException {
-        if (!(hash == StandardProperty.LENGTHhash && propertyName.equals(StandardProperty.LENGTHstring))) {
-            super.putProperty(propertyName, propertyValue, hash);
-        } // Allowed via putHiddenProperty, used internally !
-    }
-
-    // overrides
     @Override
     public String[] getSpecialPropertyNames() {
         String[] ns = { StandardProperty.LENGTHstring };
         return ns;
     }
+    
 
     // overrides
     @Override

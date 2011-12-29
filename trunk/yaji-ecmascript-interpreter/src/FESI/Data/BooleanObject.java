@@ -27,7 +27,7 @@ import FESI.Interpreter.Evaluator;
 public class BooleanObject extends BuiltinFunctionObject {
     private static final long serialVersionUID = -4829252326779899183L;
 
-    private BooleanObject(ESObject prototype, Evaluator evaluator) {
+    private BooleanObject(ESObject prototype, Evaluator evaluator) throws EcmaScriptException {
         super(prototype, evaluator, "Boolean", 1);
     }
 
@@ -75,9 +75,10 @@ public class BooleanObject extends BuiltinFunctionObject {
      *            The Function prototype attached to the evaluator
      * 
      * @return the Boolean singleton
+     * @throws EcmaScriptException 
      */
     public static BooleanObject makeBooleanObject(Evaluator evaluator,
-            ObjectPrototype objectPrototype, FunctionPrototype functionPrototype) {
+            ObjectPrototype objectPrototype, FunctionPrototype functionPrototype) throws EcmaScriptException {
 
         BooleanPrototype booleanPrototype = new BooleanPrototype(
                 objectPrototype, evaluator);
@@ -89,7 +90,7 @@ public class BooleanObject extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
                 BooleanPrototypeToString(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
@@ -105,7 +106,7 @@ public class BooleanObject extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
 
                 BooleanPrototypeValueOf(String name, Evaluator evaluator,
-                        FunctionPrototype fp) {
+                        FunctionPrototype fp) throws EcmaScriptException {
                     super(fp, evaluator, name, 1);
                 }
 
