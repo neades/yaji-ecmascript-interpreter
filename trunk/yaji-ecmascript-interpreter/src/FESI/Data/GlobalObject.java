@@ -500,9 +500,6 @@ public class GlobalObject extends ObjectPrototype {
 
             objectPrototype.initialise(objectObject, evaluator, functionPrototype);
             
-            functionObject.putProperty(StandardProperty.PROTOTYPEstring, 0, functionPrototype);
-            functionObject.putHiddenProperty("length", ESNumber.valueOf(1));
-            
             ErrorObject errorObject = ErrorObject.make(evaluator, objectPrototype, functionPrototype);
             ErrorPrototype errorPrototype = errorObject.getPrototypeProperty();
 
