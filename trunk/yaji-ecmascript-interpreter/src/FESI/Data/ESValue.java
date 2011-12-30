@@ -52,10 +52,6 @@ public abstract class ESValue implements java.io.Serializable {
     static public final int COMPARE_FALSE = 1;
     public static final ESValue[] EMPTY_ARRAY = new ESValue[0];
     
-    // Object literal get and set
-    protected ESValue get = ESUndefined.theUndefined;
-    protected ESValue set = ESUndefined.theUndefined;
-    
     // The following routines access the value as a primitive type. They are
     // the prefered way to access the value of a primitive type or the default
     // value of an object if its type is known.
@@ -285,9 +281,6 @@ public abstract class ESValue implements java.io.Serializable {
         throw new TypeError("Function called on non object: " + this);
     }
 
-//    public ESObject doConstruct(ESObject thisObject, ESValue[] arguments)
-//    }
-
     /**
      * [[Construct]] support (to ease check of type)
      * 
@@ -462,32 +455,32 @@ public abstract class ESValue implements java.io.Serializable {
         return false;
     }
     
-    public ESValue getGetAccessorDescriptor() {
-        return get;
+    public ESValue getGetAccessorDescriptor() throws EcmaScriptException {
+        throw new EcmaScriptException("Attempt to get getter on non-accessor descriptor");
     }
 
-    public void setGetAccessorDescriptor(ESValue get) {
-        this.get = get;
+    public void setGetAccessorDescriptor(ESValue get) throws EcmaScriptException {
+        throw new EcmaScriptException("Attempt to set getter on non-accessor descriptor");
     }
 
-    public ESValue getSetAccessorDescriptor() {
-        return set;
+    public ESValue getSetAccessorDescriptor() throws EcmaScriptException {
+        throw new EcmaScriptException("Attempt to call setter on non-accessor descriptor");
     }
 
-    public void setSetAccessorDescriptor(ESValue set) {
-        this.set = set;
+    public void setSetAccessorDescriptor(ESValue set) throws EcmaScriptException {
+        throw new EcmaScriptException("Attempt to set setter on non-accessor descriptor");
     }
 
-    public static boolean isAccessorDescriptor(ESValue desc) {
-        return hasSetAccessorDescriptor(desc) || hasGetAccessorDescriptor(desc);
+    public boolean isAccessorDescriptor() {
+        return false;
     }
     
-    public static boolean hasSetAccessorDescriptor(ESValue desc) {
-        return desc != null && desc.set != null && desc.set != ESUndefined.theUndefined;
+    public boolean hasSetAccessorDescriptor() {
+        return false;
     }
     
-    public static boolean hasGetAccessorDescriptor(ESValue desc) {
-        return desc != null && desc.get != null && desc.get != ESUndefined.theUndefined;
+    public boolean hasGetAccessorDescriptor() {
+        return false;
     }
     
     public void toJson(Appendable appendable, JsonState state, String parentPropertyName) throws IOException, EcmaScriptException {

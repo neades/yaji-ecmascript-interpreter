@@ -17,13 +17,11 @@
 
 package FESI.Interpreter;
 
-import static FESI.Data.ESValue.hasGetAccessorDescriptor;
-import static FESI.Data.ESValue.hasSetAccessorDescriptor;
-import static FESI.Data.ESValue.isAccessorDescriptor;
-
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+
+import org.yaji.data.ESAccessorValue;
 
 import FESI.AST.ASTAllocationExpression;
 import FESI.AST.ASTAndExpressionSequence;
@@ -1691,7 +1689,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                                 new String[0], variableNames, sl,
                                 evaluator.getScopeChain(), StrictMode.hasStrictModeDirective(sl));
 
-                value = ObjectObject.createObject(evaluator);
+                value = new ESAccessorValue();
                 value.setGetAccessorDescriptor(cfo);
             } else if (nameNode instanceof ASTSetAccessor) {
                 node.assertFourChildren();
@@ -1707,7 +1705,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                                 new String[] { ((ASTIdentifier) node.jjtGetChild(2))
                                 .getName() }, variableNames, sl, evaluator.getScopeChain(), StrictMode.hasStrictModeDirective(sl));
 
-                value = ObjectObject.createObject(evaluator);
+                value = new ESAccessorValue();
                 value.setSetAccessorDescriptor(cfo);
             } else {
                 node.assertTwoChildren();
@@ -1725,24 +1723,24 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
 
             ESValue previous = object.getOwnProperty(property, property.hashCode());
             if (previous != null) {
-                if ((!isAccessorDescriptor(previous) && isAccessorDescriptor(value))
-                        || (isAccessorDescriptor(previous) && !isAccessorDescriptor(value))) {
+                if ((!previous.isAccessorDescriptor() && value.isAccessorDescriptor())
+                        || (previous.isAccessorDescriptor() && !value.isAccessorDescriptor())) {
                     throw new EcmaScriptException(
                             "Object literal may not have data and accessor property with the same name");
                 }
 
-                if (isAccessorDescriptor(previous) && isAccessorDescriptor(value)
-                        && (hasGetAccessorDescriptor(previous) && hasGetAccessorDescriptor(value))
-                        || (hasSetAccessorDescriptor(previous) && hasSetAccessorDescriptor(value))) {
+                if (previous.isAccessorDescriptor() && value.isAccessorDescriptor()
+                        && (previous.hasGetAccessorDescriptor() && value.hasGetAccessorDescriptor())
+                        || (previous.hasSetAccessorDescriptor() && value.hasSetAccessorDescriptor())) {
                     throw new EcmaScriptException(
                             "Object literal may not have multiple get/set accessors with the same name");
                 }
                 
-                if (hasSetAccessorDescriptor(previous)) {
+                if (previous.hasSetAccessorDescriptor()) {
                     value.setSetAccessorDescriptor(previous.getSetAccessorDescriptor());
                 }
                 
-                if (hasGetAccessorDescriptor(previous)) {
+                if (previous.hasGetAccessorDescriptor()) {
                     value.setGetAccessorDescriptor(previous.getGetAccessorDescriptor());
                 }
             }

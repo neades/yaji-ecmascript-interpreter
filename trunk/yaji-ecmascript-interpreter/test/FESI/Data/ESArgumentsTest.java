@@ -6,6 +6,8 @@ import static org.junit.Assert.assertFalse;
 import org.junit.Before;
 import org.junit.Test;
 
+import FESI.Exceptions.TypeError;
+
 public class ESArgumentsTest extends EvaluatorTestCase {
 
     private ESArguments environment;
@@ -87,5 +89,27 @@ public class ESArgumentsTest extends EvaluatorTestCase {
         arguments.freeze();
         assertFalse( arguments.deleteProperty("0", "0".hashCode()) );
         assertEquals(ESNumber.valueOf(100),arguments.getProperty(0L));
+    }
+    
+    @Test
+    public void argumentsShouldBeLinkedToParameters() throws Exception {
+        ESObject arguments = (ESObject) environment.getPropertyInScope("arguments",null,"arguments".hashCode());
+        environment.putProperty("arg1",ESNumber.valueOf(123));
+        assertEquals(ESNumber.valueOf(123), arguments.getProperty(0L));
+    }
+    
+    @Test
+    public void argumentsShouldNotBeLinkedToParametersInStrictMode() throws Exception {
+        evaluator.setStrictMode(true);
+        ESObject arguments = (ESObject) environment.getPropertyInScope("arguments",null,"arguments".hashCode());
+        environment.putProperty("arg1",ESNumber.valueOf(123));
+        assertEquals(ESNumber.valueOf(100), arguments.getProperty(0L));
+    }
+    
+    @Test(expected=TypeError.class)
+    public void shouldThrowExceptonIfReadingCalleeInStrictMode() throws Exception {
+        evaluator.setStrictMode(true);
+        ESObject arguments = (ESObject) environment.getPropertyInScope("arguments",null,"arguments".hashCode());
+        arguments.getProperty(StandardProperty.CALLEEstring);
     }
 }

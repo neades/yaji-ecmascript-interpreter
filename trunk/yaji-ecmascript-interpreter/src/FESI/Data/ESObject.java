@@ -250,8 +250,8 @@ public abstract class ESObject extends ESValue {
                     : prototype.getPropertyIfAvailable(propertyName, hash);
         }
 
-        if (isAccessorDescriptor(value)) {
-            ESValue getter = value.get;
+        if (value.isAccessorDescriptor()) {
+            ESValue getter = value.getGetAccessorDescriptor();
             return ( getter == ESUndefined.theUndefined || getter == null) ? ESUndefined.theUndefined : getter
                     .callFunction(this, EMPTY_ARRAY);
         }
@@ -554,8 +554,8 @@ public abstract class ESObject extends ESValue {
             }
         } else {
             ESValue desc = getOwnProperty(propertyName, hash);
-            if (hasSetAccessorDescriptor(desc)) {
-                ESValue setter = desc.set;
+            if (desc != null && desc.hasSetAccessorDescriptor()) {
+                ESValue setter = desc.getSetAccessorDescriptor();
                 if (setter != ESUndefined.theUndefined) {
                     setter.callFunction(this, new ESValue[] {propertyValue});
                 }
