@@ -680,7 +680,7 @@ public abstract class ESObject extends ESValue {
     public boolean deleteProperty(String propertyName, int hash)
             throws EcmaScriptException {
         if (hasPropertyMap()) {
-            getPropertyMap().remove(propertyName, hash, isStrictMode());
+            return getPropertyMap().remove(propertyName, hash, isStrictMode());
         }
         return true; // either it did not exist or was deleted !
     }
@@ -1241,7 +1241,12 @@ public abstract class ESObject extends ESValue {
     }
 
     public ESValue getOwnPropertyDescriptor(String propertyName) throws EcmaScriptException {
-        return hasNoPropertyMap() ? ESUndefined.theUndefined : getPropertyMap().getOwnPropertyDescriptor(propertyName,getEvaluator());
+        ESValue descriptor = getOwnPropertyDescriptorIfAvailable(propertyName);
+        return (descriptor == null) ? ESUndefined.theUndefined : descriptor;
+    }
+
+    protected ESObject getOwnPropertyDescriptorIfAvailable(String propertyName) throws EcmaScriptException {
+        return hasNoPropertyMap() ? null : getPropertyMap().getOwnPropertyDescriptor(propertyName,getEvaluator());
     }
 
     public ESValue defineProperty(final String propertyName, ESObject desc) throws EcmaScriptException {

@@ -37,7 +37,7 @@ public class ESArguments extends ESObject {
     private final ESObject callee; // Called object
     private final int length; // Number of arguments
     protected String[] argumentNames; // Argument names from 0 to n
-    private ESArgumentsObject argumentsObject;
+    private ESObject argumentsObject;
     
     private class ESArgumentsObject extends ESObject {
         private static final long serialVersionUID = 7532306514655719417L;
@@ -45,6 +45,66 @@ public class ESArguments extends ESObject {
         private HashSet<String> argumentNameSet;
 
         protected ESArgumentsObject(Evaluator evaluator) throws EcmaScriptException {
+            super(evaluator.getObjectPrototype(), evaluator);
+            putHiddenProperty(StandardProperty.LENGTHstring, ESNumber.valueOf(length));
+            putHiddenProperty(StandardProperty.CALLEEstring, callee);
+            int i=0;
+            for (String argumentName : argumentNames) {
+                String propertyName = Integer.toString(i++);
+                argumentMap .put(propertyName,argumentName);
+                putProperty(propertyName,ESArguments.this.getProperty(propertyName, propertyName.hashCode()));
+            }
+            for(; i<length; i++) {
+                String propertyName = Integer.toString(i);
+                putProperty(propertyName,ESArguments.this.getProperty(propertyName, propertyName.hashCode()));
+            }
+            argumentNameSet = new HashSet<String>(Arrays.asList(argumentNames));
+        }
+
+        @Override
+        public ESValue getPropertyIfAvailable(String propertyName, int hash)
+                throws EcmaScriptException {
+            ESValue result = null;
+            if (isAllDigits(propertyName)) {
+                String mappedPropertyName = argumentMap.get(propertyName);
+                if (mappedPropertyName != null) {
+                    result = ESArguments.this.getPropertyIfAvailable(mappedPropertyName, mappedPropertyName.hashCode());
+                } else {
+                    result = ESArguments.this.getPropertyIfAvailable(propertyName, hash);
+                }
+            } else if (argumentNameSet.contains(propertyName)){
+                result = ESArguments.this.getPropertyIfAvailable(propertyName, hash);
+            }
+            if (result == null) {
+                result = super.getPropertyIfAvailable(propertyName, hash);
+            }
+            return result;
+        }
+        
+        @Override
+        public boolean deleteProperty(String propertyName, int hash)
+                throws EcmaScriptException {
+            boolean result = super.deleteProperty(propertyName, hash);
+            if (result && isAllDigits(propertyName)) {
+                if (argumentMap.remove(propertyName) != null) {
+                    return true;
+                }
+            }
+            return result;
+        }
+        
+        @Override
+        public String getESClassName() {
+            return "Arguments";
+        }
+    }
+
+    private class ESStrictArgumentsObject extends ESObject {
+        private static final long serialVersionUID = 7532306514655719417L;
+        private Map<String,String> argumentMap = new HashMap<String, String>();
+        private HashSet<String> argumentNameSet;
+
+        protected ESStrictArgumentsObject(Evaluator evaluator) throws EcmaScriptException {
             super(evaluator.getObjectPrototype(), evaluator);
             putHiddenProperty(StandardProperty.LENGTHstring, ESNumber.valueOf(length));
             putHiddenProperty(StandardProperty.CALLEEstring, callee);
@@ -152,9 +212,12 @@ public class ESArguments extends ESObject {
 
     }
 
-    private ESArgumentsObject getArgumentsObject() throws EcmaScriptException {
+    private ESObject getArgumentsObject() throws EcmaScriptException {
         if (argumentsObject == null) {
-            argumentsObject = new ESArgumentsObject(getEvaluator());
+            Evaluator evaluator = getEvaluator();
+            argumentsObject = evaluator.isStrictMode()
+                                ? new ESStrictArgumentsObject(evaluator)
+                                : new ESArgumentsObject(evaluator);
         }
         return argumentsObject;
     }

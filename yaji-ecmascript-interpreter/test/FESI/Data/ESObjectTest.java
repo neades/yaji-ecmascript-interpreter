@@ -1,6 +1,11 @@
 package FESI.Data;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.Before;
@@ -8,7 +13,6 @@ import org.junit.Test;
 
 import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
-import FESI.Util.EvaluatorAccess;
 
 public class ESObjectTest extends EvaluatorTestCase {
 
@@ -18,8 +22,9 @@ public class ESObjectTest extends EvaluatorTestCase {
         super.setUp();
     }
     
+    @Override
     @After public void tearDown() throws Exception {
-        EvaluatorAccess.setAccessor(null);
+        super.tearDown();
     }
     
     @Test public void testNewObjectNotFrozen() throws Exception {

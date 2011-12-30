@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import FESI.Exceptions.EcmaScriptException;
-import FESI.Util.EvaluatorAccess;
 
 public class MathObjectTest extends EvaluatorTestCase {
     
@@ -25,9 +24,9 @@ public class MathObjectTest extends EvaluatorTestCase {
             
         }
 
-        @After 
-        public void tearDown() throws Exception {
-            EvaluatorAccess.setAccessor(null);
+        @Override
+        @After public void tearDown() throws Exception {
+            super.tearDown();
         }
         
         @Test

@@ -21,6 +21,7 @@ import java.util.Enumeration;
 
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Interpreter.Evaluator;
+import FESI.Interpreter.FesiHashtable;
 import FESI.Interpreter.ScopeChain;
 
 class StringPrototype extends ESObject {
@@ -112,5 +113,24 @@ class StringPrototype extends ESObject {
     @Override
     public Enumeration<String> getOwnPropertyNames() {
         return new ArrayPropertyNamesEnumeration(super.getOwnPropertyNames(), value.getStringLength());
+    }
+    
+    @Override
+    public ESValue getOwnPropertyDescriptor(String propertyName) throws EcmaScriptException {
+        ESValue descriptor = super.getOwnPropertyDescriptorIfAvailable(propertyName);
+        if (descriptor == null) {
+            if (isAllDigits(propertyName)) {
+                int index = Integer.parseInt(propertyName);
+                String primitive = value.toString();
+                if (index < primitive.length()) {
+                    descriptor = FesiHashtable.createPropertyDescriptor(getEvaluator(), new ESString(primitive.substring(index,index+1)), false, true, false);
+                } else {
+                    descriptor = ESUndefined.theUndefined;
+                }
+            } else {
+                descriptor = ESUndefined.theUndefined;
+            }
+        }
+        return descriptor;
     }
 }

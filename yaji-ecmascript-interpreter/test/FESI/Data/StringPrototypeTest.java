@@ -51,8 +51,9 @@ public class StringPrototypeTest extends EvaluatorTestCase  {
         defaultLocale = Locale.getDefault();
     }
     
-    @After
-    public void tearDown() {
+    @Override
+    @After public void tearDown() throws Exception {
+        super.tearDown();
         Locale.setDefault(defaultLocale);
     }
     
@@ -72,23 +73,23 @@ public class StringPrototypeTest extends EvaluatorTestCase  {
     
     @Test
     public void shouldConcat2Strings() throws Exception {
-        ESObject originalObject = new ESString("start").toESObject(evaluator);
-        ESValue result = originalObject.doIndirectCall(evaluator, originalObject, "concat", new ESValue[] { new ESString("end") });
-        assertEquals(new ESString("startend"),result);
+        ESObject originalObject = s("start").toESObject(evaluator);
+        ESValue result = originalObject.doIndirectCall(evaluator, originalObject, "concat", new ESValue[] { s("end") });
+        assertEquals(s("startend"),result);
     }
     
     @Test
     public void charAtWorksWithString() throws Exception {
-        ESObject originalObject = new ESString("start").toESObject(evaluator);
+        ESObject originalObject = s("start").toESObject(evaluator);
         ESValue result = originalObject.doIndirectCall(evaluator, originalObject, "charAt", new ESValue[] { ESNumber.valueOf(1) });
-        assertEquals(new ESString("t"),result);
+        assertEquals(s("t"),result);
     }
     
     @Test
     public void charAtWorksPassedString() throws Exception {
-        ESObject originalObject = new ESString("start").toESObject(evaluator);
+        ESObject originalObject = s("start").toESObject(evaluator);
         ESValue result = originalObject.doIndirectCall(evaluator, originalObject, "charAt", new ESValue[] { ESNumber.valueOf(10) });
-        assertEquals(new ESString(""),result);
+        assertEquals(s(""),result);
     }
     
     @Test
@@ -96,32 +97,32 @@ public class StringPrototypeTest extends EvaluatorTestCase  {
         ESObject originalObject = ESNumber.valueOf(123).toESObject(evaluator);
         ESValue  charAtFunction = getStringPrototype().getProperty("charAt", "charAt".hashCode());
         ESValue result = charAtFunction.callFunction(originalObject, new ESValue[] { ESNumber.valueOf(1) });
-        assertEquals(new ESString("2"),result);
+        assertEquals(s("2"),result);
     }
     
     @Test
     public void indexedAccessToString() throws Exception {
-        ESObject originalObject = new ESString("start").toESObject(evaluator);
-        assertEquals(new ESString("a"), originalObject.getProperty("2","2".hashCode()));
+        ESObject originalObject = s("start").toESObject(evaluator);
+        assertEquals(s("a"), originalObject.getProperty("2","2".hashCode()));
     }
     
     @Test
     public void accessToPropertyOnStringObject() throws Exception {
-        ESObject originalObject = new ESString("start").toESObject(evaluator);
-        originalObject.putProperty("z", new ESString("x"), "z".hashCode());
-        assertEquals(new ESString("x"), originalObject.getProperty("z","z".hashCode()));
+        ESObject originalObject = s("start").toESObject(evaluator);
+        originalObject.putProperty("z", s("x"), "z".hashCode());
+        assertEquals(s("x"), originalObject.getProperty("z","z".hashCode()));
     }
 
     @Test
     public void trimShoulRemoveLeadingSpaces() throws Exception {
-        ESObject originalObject = new ESString(" start").toESObject(evaluator);
+        ESObject originalObject = s(" start").toESObject(evaluator);
         ESValue trimmed = originalObject.doIndirectCall(evaluator, originalObject, "trim", ESValue.EMPTY_ARRAY);
         assertEquals("start",trimmed.toString());
     }
     
     @Test
     public void trimShouldRemoveLeadingAndTrilingUnicodeSpaces() throws Exception {
-        ESObject originalObject = new ESString(ASCII_WHITE_SPACE +
+        ESObject originalObject = s(ASCII_WHITE_SPACE +
                  "\u0001sta rt"
                 + NON_ASCII_WHITE_SPACE
 		).toESObject(evaluator);
@@ -131,21 +132,21 @@ public class StringPrototypeTest extends EvaluatorTestCase  {
     
     @Test
     public void trimShoulRemoveTrailingSpaces() throws Exception {
-        ESObject originalObject = new ESString(" start  ").toESObject(evaluator);
+        ESObject originalObject = s(" start  ").toESObject(evaluator);
         ESValue trimmed = originalObject.doIndirectCall(evaluator, originalObject, "trim", ESValue.EMPTY_ARRAY);
         assertEquals("start",trimmed.toString());
     }
     
     @Test
     public void trimShouldTrimeEmptyString() throws Exception {
-        ESObject originalObject = new ESString("").toESObject(evaluator);
+        ESObject originalObject = s("").toESObject(evaluator);
         ESValue trimmed = originalObject.doIndirectCall(evaluator, originalObject, "trim", ESValue.EMPTY_ARRAY);
         assertEquals("",trimmed.toString());
     }
     
     @Test
     public void trimShouldTrimeWhiteSpaceString() throws Exception {
-        ESObject originalObject = new ESString(ASCII_WHITE_SPACE+NON_ASCII_WHITE_SPACE).toESObject(evaluator);
+        ESObject originalObject = s(ASCII_WHITE_SPACE+NON_ASCII_WHITE_SPACE).toESObject(evaluator);
         ESValue trimmed = originalObject.doIndirectCall(evaluator, originalObject, "trim", ESValue.EMPTY_ARRAY);
         assertEquals("",trimmed.toString());
     }
@@ -153,7 +154,7 @@ public class StringPrototypeTest extends EvaluatorTestCase  {
     @Test
     public void toLowerCaseIsLocaleAgnositic() throws Exception {
         Locale.setDefault(TURKISH);
-        ESObject originalObject = new ESString("TITLE").toESObject(evaluator);
+        ESObject originalObject = s("TITLE").toESObject(evaluator);
         ESValue lowerCase = originalObject.doIndirectCall(evaluator, originalObject, "toLowerCase", ESValue.EMPTY_ARRAY);
         assertEquals("title",lowerCase.toString());
     }
@@ -173,7 +174,7 @@ public class StringPrototypeTest extends EvaluatorTestCase  {
     @Test
     public void toLocaleLowerCaseIsntLocaleAgnositic() throws Exception {
         Locale.setDefault(TURKISH);
-        ESObject originalObject = new ESString("TITLE").toESObject(evaluator);
+        ESObject originalObject = s("TITLE").toESObject(evaluator);
         ESValue lowerCase = originalObject.doIndirectCall(evaluator, originalObject, "toLocaleLowerCase", ESValue.EMPTY_ARRAY);
         assertEquals("t\u0131tle",lowerCase.toString());
     }
@@ -182,7 +183,7 @@ public class StringPrototypeTest extends EvaluatorTestCase  {
     @Test
     public void toUpperCaseIsLocaleAgnositic() throws Exception {
         Locale.setDefault(TURKISH);
-        ESObject originalObject = new ESString("title").toESObject(evaluator);
+        ESObject originalObject = s("title").toESObject(evaluator);
         ESValue upperCase = originalObject.doIndirectCall(evaluator, originalObject, "toUpperCase", ESValue.EMPTY_ARRAY);
         assertEquals("TITLE",upperCase.toString());
     }
@@ -226,14 +227,14 @@ public class StringPrototypeTest extends EvaluatorTestCase  {
     
     @Test
     public void  substringStartAsNanSetToZero() throws Exception {
-        ESObject originalObject = new ESString("title").toESObject(evaluator);
+        ESObject originalObject = s("title").toESObject(evaluator);
         ESValue result = originalObject.doIndirectCall(evaluator, originalObject, "substring", new ESValue[] { ESNumber.valueOf(Double.NaN), ESNumber.valueOf(3) });
         assertEquals("tit",result.toString());
     }
     
     @Test
     public void  substringEndAsNanSetToZero() throws Exception {
-        ESObject originalObject = new ESString("title").toESObject(evaluator);
+        ESObject originalObject = s("title").toESObject(evaluator);
         ESValue result = originalObject.doIndirectCall(evaluator, originalObject, "substring", new ESValue[] { ESNumber.valueOf(3), ESNumber.valueOf(Double.NaN) });
         assertEquals("tit",result.toString());
     }
@@ -253,22 +254,22 @@ public class StringPrototypeTest extends EvaluatorTestCase  {
     @Test
     public void toLocaleUpperCaseIsntLocaleAgnositic() throws Exception {
         Locale.setDefault(TURKISH);
-        ESObject originalObject = new ESString("title").toESObject(evaluator);
+        ESObject originalObject = s("title").toESObject(evaluator);
         ESValue lowerCase = originalObject.doIndirectCall(evaluator, originalObject, "toLocaleUpperCase", ESValue.EMPTY_ARRAY);
         assertEquals("T\u0130TLE",lowerCase.toString());
     }
 
     @Test
     public void splitWithNoSeparatorReturnsString() throws Exception {
-        ESObject originalObject = new ESString("title").toESObject(evaluator);
+        ESObject originalObject = s("title").toESObject(evaluator);
         ESValue splitResult = originalObject.doIndirectCall(evaluator, originalObject, "split", ESValue.EMPTY_ARRAY);
-        assertEquals(new ESString("title"),splitResult);
+        assertEquals(s("title"),splitResult);
     }
     
     @Test
     public void splitWithStringReturnsArrayOfStrings() throws Exception {
-        ESObject originalObject = new ESString("a,b,c").toESObject(evaluator);
-        ESObject splitResult = (ESObject) originalObject.doIndirectCall(evaluator, originalObject, "split", new ESValue[] { new ESString(",") });
+        ESObject originalObject = s("a,b,c").toESObject(evaluator);
+        ESObject splitResult = (ESObject) originalObject.doIndirectCall(evaluator, originalObject, "split", new ESValue[] { s(",") });
         assertEquals("a",splitResult.getProperty(0L).toString());
         assertEquals("b",splitResult.getProperty(1L).toString());
         assertEquals("c",splitResult.getProperty(2L).toString());
@@ -277,8 +278,8 @@ public class StringPrototypeTest extends EvaluatorTestCase  {
     
     @Test
     public void splitWithEmptyStringReturnsArrayOfcharacters() throws Exception {
-        ESObject originalObject = new ESString("abc").toESObject(evaluator);
-        ESObject splitResult = (ESObject) originalObject.doIndirectCall(evaluator, originalObject, "split", new ESValue[] { new ESString("") });
+        ESObject originalObject = s("abc").toESObject(evaluator);
+        ESObject splitResult = (ESObject) originalObject.doIndirectCall(evaluator, originalObject, "split", new ESValue[] { s("") });
         assertEquals("a",splitResult.getProperty(0L).toString());
         assertEquals("b",splitResult.getProperty(1L).toString());
         assertEquals("c",splitResult.getProperty(2L).toString());
@@ -287,11 +288,11 @@ public class StringPrototypeTest extends EvaluatorTestCase  {
     @Test
     public void splitAcceptsNonStringValue() throws Exception {
         ESValue arrayObject = evaluator.getGlobalObject().getProperty("Array");
-        ESObject a = arrayObject.doConstruct(new ESValue[] { new ESString("abc"), ESNumber.valueOf("123"), new ESString("xyz") });
+        ESObject a = arrayObject.doConstruct(new ESValue[] { s("abc"), ESNumber.valueOf("123"), s("xyz") });
         ESValue function = getStringPrototype().getProperty("split");
-        ESObject splitResult = (ESObject) function.callFunction(a, new ESValue[] { new ESString(",") });
+        ESObject splitResult = (ESObject) function.callFunction(a, new ESValue[] { s(",") });
         assertEquals("abc",splitResult.getProperty(0L).toString());
-        assertEquals(new ESString("123"),splitResult.getProperty(1L));
+        assertEquals(s("123"),splitResult.getProperty(1L));
         assertEquals("xyz",splitResult.getProperty(2L).toString());
         assertEquals(3,splitResult.getProperty(StandardProperty.LENGTHstring).toInt32());
     }
@@ -300,18 +301,18 @@ public class StringPrototypeTest extends EvaluatorTestCase  {
     @Test(expected=TypeError.class)
     public void splitRejectsNullAsThis() throws Exception {
         ESValue function = getStringPrototype().getProperty("split");
-        function.callFunction(ESNull.theNull, new ESValue[] { new ESString(",") });
+        function.callFunction(ESNull.theNull, new ESValue[] { s(",") });
     }
     
     @Test(expected=TypeError.class)
     public void splitRejectsUndefinedAsThis() throws Exception {
         ESValue function = getStringPrototype().getProperty("split");
-        function.callFunction(ESUndefined.theUndefined, new ESValue[] { new ESString(",") });
+        function.callFunction(ESUndefined.theUndefined, new ESValue[] { s(",") });
     }
     
     @Test
     public void splitWithRegexpReturnsArrayOfStrings() throws Exception {
-        ESObject originalObject = new ESString("A<B>bold</B>").toESObject(evaluator);
+        ESObject originalObject = s("A<B>bold</B>").toESObject(evaluator);
         ESObject splitResult = (ESObject) originalObject.doIndirectCall(evaluator, originalObject, "split", new ESValue[] { createRegExp("[<>]") });
         assertEquals("A",splitResult.getProperty(0L).toString());
         assertEquals("B",splitResult.getProperty(1L).toString());
@@ -323,7 +324,7 @@ public class StringPrototypeTest extends EvaluatorTestCase  {
 
     @Test
     public void splitWithRegexpReturnsLimitedArrayOfStrings() throws Exception {
-        ESObject originalObject = new ESString("A<B>bold</B>").toESObject(evaluator);
+        ESObject originalObject = s("A<B>bold</B>").toESObject(evaluator);
         ESObject splitResult = (ESObject) originalObject.doIndirectCall(evaluator, originalObject, "split", new ESValue[] { createRegExp("[<>]"), ESNumber.valueOf(2) });
         assertEquals("A",splitResult.getProperty(0L).toString());
         assertEquals("B",splitResult.getProperty(1L).toString());
@@ -332,7 +333,7 @@ public class StringPrototypeTest extends EvaluatorTestCase  {
 
     @Test
     public void splitIncludesCaptureGroups() throws Exception {
-        ESObject originalObject = new ESString("A<B>bold</B>and<CODE>coded</CODE>").toESObject(evaluator);
+        ESObject originalObject = s("A<B>bold</B>and<CODE>coded</CODE>").toESObject(evaluator);
         ESObject splitResult = (ESObject) originalObject.doIndirectCall(evaluator, originalObject, "split", new ESValue[] { createRegExp("<(\\/)?([^<>]+)>") });
         assertEquals("A,,B,bold,/,B,and,,CODE,coded,/,CODE,",splitResult.doIndirectCall(evaluator, splitResult, "toString", ESValue.EMPTY_ARRAY).toString());
         assertEquals(13,splitResult.getProperty(StandardProperty.LENGTHstring).toInt32());
@@ -340,7 +341,7 @@ public class StringPrototypeTest extends EvaluatorTestCase  {
 
     @Test
     public void splitBehavesSesnsiblyWithSimpleRegexp() throws Exception {
-        ESObject originalObject = new ESString("a,b:c").toESObject(evaluator);
+        ESObject originalObject = s("a,b:c").toESObject(evaluator);
         ESObject splitResult = (ESObject) originalObject.doIndirectCall(evaluator, originalObject, "split", new ESValue[] { createRegExp("[,:]") });
         assertEquals("a,b,c",splitResult.doIndirectCall(evaluator, splitResult, "toString", ESValue.EMPTY_ARRAY).toString());
         assertEquals(3,splitResult.getProperty(StandardProperty.LENGTHstring).toInt32());
@@ -365,65 +366,76 @@ public class StringPrototypeTest extends EvaluatorTestCase  {
     
     @Test
     public void sliceShouldDoABasicSlice() throws Exception {
-        assertEquals(new ESString("bcd"),callSlice("abcdef", ESNumber.valueOf(1), ESNumber.valueOf(4)));
+        assertEquals(s("bcd"),callSlice("abcdef", ESNumber.valueOf(1), ESNumber.valueOf(4)));
     }
 
     @Test
     public void sliceNegativeStartShouldCountFromEnd() throws Exception {
-        assertEquals(new ESString("de"),callSlice("abcdef", ESNumber.valueOf(-3), ESNumber.valueOf(5)));
+        assertEquals(s("de"),callSlice("abcdef", ESNumber.valueOf(-3), ESNumber.valueOf(5)));
     }
     
     @Test
     public void sliceNegativeEndShouldCountFromEnd() throws Exception {
-        assertEquals(new ESString("abcde"),callSlice("abcdef", ESNumber.valueOf(0), ESNumber.valueOf(-1)));
+        assertEquals(s("abcde"),callSlice("abcdef", ESNumber.valueOf(0), ESNumber.valueOf(-1)));
     }
     
     @Test
     public void sliceUndefinedEndShouldBeStringLength() throws Exception {
-        assertEquals(new ESString("cdef"),callSlice("abcdef", ESNumber.valueOf(2), ESUndefined.theUndefined));
+        assertEquals(s("cdef"),callSlice("abcdef", ESNumber.valueOf(2), ESUndefined.theUndefined));
     }
     
     @Test
     public void sliceEndGreaterThanStartReturnsEmptyString() throws Exception {
-        assertEquals(new ESString(""),callSlice("abcdef", ESNumber.valueOf(2), ESNumber.valueOf(1)));
+        assertEquals(s(""),callSlice("abcdef", ESNumber.valueOf(2), ESNumber.valueOf(1)));
     }
     
     @Test
     public void sliceNegativeStartGreaterThenLengthIsZero() throws Exception {
-        assertEquals(new ESString("abc"),callSlice("abcdef", ESNumber.valueOf(-10), ESNumber.valueOf(3)));
+        assertEquals(s("abc"),callSlice("abcdef", ESNumber.valueOf(-10), ESNumber.valueOf(3)));
     }
     
     @Test
     public void sliceStartGreaterThanEndIsEmptyString() throws Exception {
-        assertEquals(new ESString(""),callSlice("abcdef", ESNumber.valueOf(10), ESNumber.valueOf(13)));
+        assertEquals(s(""),callSlice("abcdef", ESNumber.valueOf(10), ESNumber.valueOf(13)));
     }
     
     @Test
     public void sliceNegativeEndBeforeStringStartReturnsEmptyString() throws Exception {
-        assertEquals(new ESString(""),callSlice("abcdef", ESNumber.valueOf(10), ESNumber.valueOf(-13)));
+        assertEquals(s(""),callSlice("abcdef", ESNumber.valueOf(10), ESNumber.valueOf(-13)));
     }
     
     @Test
     public void sliceEndGreaterLengthShouldBeLength() throws Exception {
-        assertEquals(new ESString("def"),callSlice("abcdef", ESNumber.valueOf(3), ESNumber.valueOf(13)));
+        assertEquals(s("def"),callSlice("abcdef", ESNumber.valueOf(3), ESNumber.valueOf(13)));
     }
 
     @Test
     public void localeCompareReturnsZeroForSameValue() throws Exception {
-        ESObject theThis = new ESString("aaaaaa").toESObject(evaluator);
-        assertEquals(ESNumber.valueOf(0), theThis.doIndirectCall(evaluator, theThis, "localeCompare", new ESValue[] { new ESString("aaaaaa") }));
+        ESObject theThis = s("aaaaaa").toESObject(evaluator);
+        assertEquals(ESNumber.valueOf(0), theThis.doIndirectCall(evaluator, theThis, "localeCompare", new ESValue[] { s("aaaaaa") }));
     }
     
     @Test
     public void localeCompareReturnsGreaterZeroForThisGreaterThanThatValue() throws Exception {
-        ESObject theThis = new ESString("bbbbbb").toESObject(evaluator);
-        assertTrue(theThis.doIndirectCall(evaluator, theThis, "localeCompare", new ESValue[] { new ESString("aaaaaa") }).toInt32() > 0);
+        ESObject theThis = s("bbbbbb").toESObject(evaluator);
+        assertTrue(theThis.doIndirectCall(evaluator, theThis, "localeCompare", new ESValue[] { s("aaaaaa") }).toInt32() > 0);
     }
     
     @Test
     public void localeCompareReturnsLessThanZeroForThisLessThanThatValue() throws Exception {
-        ESObject theThis = new ESString("bbbbbb").toESObject(evaluator);
-        assertTrue(theThis.doIndirectCall(evaluator, theThis, "localeCompare", new ESValue[] { new ESString("cccccc") }).toInt32() < 0);
+        ESObject theThis = s("bbbbbb").toESObject(evaluator);
+        assertTrue(theThis.doIndirectCall(evaluator, theThis, "localeCompare", new ESValue[] { s("cccccc") }).toInt32() < 0);
+    }
+
+    private ESString s(String value) {
+        return new ESString(value);
+    }
+
+    @Test
+    public void getOwnPropertyDescriptorReturnsValueForIndexedProperty() throws Exception {
+        ESObject string = s("bbbbbb").toESObject(evaluator);
+        ESObject desc = (ESObject) string.getOwnPropertyDescriptor("0");
+        assertEquals(s("b"),desc.getProperty(StandardProperty.VALUEstring));
     }
     
 //    @Test
@@ -447,7 +459,7 @@ public class StringPrototypeTest extends EvaluatorTestCase  {
     }
 
     private String execSubstring(int start, int end) throws EcmaScriptException, NoSuchMethodException {
-        ESObject originalObject = new ESString("title").toESObject(evaluator);
+        ESObject originalObject = s("title").toESObject(evaluator);
         ESValue result = originalObject.doIndirectCall(evaluator, originalObject, "substring", new ESValue[] { ESNumber.valueOf(start), ESNumber.valueOf(end) });
         String string = result.toString();
         return string;
@@ -455,12 +467,12 @@ public class StringPrototypeTest extends EvaluatorTestCase  {
 
     private ESObject createRegExp(String regexp) throws EcmaScriptException {
         ESValue regExpConstructor = evaluator.getGlobalObject().getProperty("RegExp");
-        ESObject regExp = regExpConstructor.doConstruct( new ESValue[] { new ESString(regexp) });
+        ESObject regExp = regExpConstructor.doConstruct( new ESValue[] { s(regexp) });
         return regExp;
     }
     
     private ESValue callSlice(String string, ESValue start, ESValue end) throws EcmaScriptException, NoSuchMethodException {
-        ESObject originalObject = new ESString(string).toESObject(evaluator);
+        ESObject originalObject = s(string).toESObject(evaluator);
         ESValue value = originalObject.doIndirectCall(evaluator, originalObject, "slice", new ESValue[] { start, end });
         return value;
     }

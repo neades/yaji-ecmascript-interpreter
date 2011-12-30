@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Interpreter.Evaluator;
+import FESI.Util.EvaluatorAccess;
+import FESI.Util.IEvaluatorAccess;
 
 public class EvaluatorTestCase {
 
@@ -15,11 +17,21 @@ public class EvaluatorTestCase {
 
     protected void setUp() throws Exception {
         evaluator = new Evaluator();
+        EvaluatorAccess.setAccessor(new IEvaluatorAccess() {
+            
+            public Evaluator getEvaluator() {
+                return evaluator;
+            }
+        });
         globalObject = evaluator.getGlobalObject();
 
         objectObject = (BuiltinFunctionObject) globalObject.getProperty("Object","Object".hashCode());
         arrayObject = (BuiltinFunctionObject) globalObject.getProperty("Array","Array".hashCode());
         dateObject = (BuiltinFunctionObject) globalObject.getProperty("Date");
+    }
+    
+    protected void tearDown() throws Exception {
+        EvaluatorAccess.setAccessor(null);
     }
 
     protected ESObject createFunction(String... params) throws EcmaScriptException {
