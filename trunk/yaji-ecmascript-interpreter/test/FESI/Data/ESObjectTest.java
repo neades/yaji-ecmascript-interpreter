@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
+import FESI.Util.EvaluatorAccess;
 
 public class ESObjectTest extends EvaluatorTestCase {
 
@@ -47,6 +48,7 @@ public class ESObjectTest extends EvaluatorTestCase {
     }
     
     @Test public void testShouldReturnNullEvaluatorAfterFreezingIfNotOtherwiseSpecified() throws Exception {
+        EvaluatorAccess.setAccessor(null);
         ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
         object.freeze();
         assertNull(object.getEvaluator());
