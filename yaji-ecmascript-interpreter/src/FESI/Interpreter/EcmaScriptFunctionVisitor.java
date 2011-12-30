@@ -127,9 +127,7 @@ public class EcmaScriptFunctionVisitor extends AbstractEcmaScriptVisitor impleme
                             variableNames, sl, null, node.isStrictMode());
             evaluator.putValue(newVar, func);
         } catch (EcmaScriptException e) {
-            e.printStackTrace();
-            throw new ProgrammingError("Unexpected error registering function"
-                    + e.getMessage());
+            throw new PackagedException(e, node);
         }
         return data;
     }
