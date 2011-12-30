@@ -673,8 +673,14 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         }
         ObjectPrototype object = ObjectObject.createObject(evaluator);
         if (ESValue.isAccessorDescriptor(e.value)) {
-            object.putProperty(StandardProperty.SETstring,e.value.getSetAccessorDescriptor(),StandardProperty.SEThash);
-            object.putProperty(StandardProperty.GETstring, e.value.getGetAccessorDescriptor(), StandardProperty.GEThash);
+            ESValue setter = e.value.getSetAccessorDescriptor();
+            if (setter != null) {
+                object.putProperty(StandardProperty.SETstring, setter, StandardProperty.SEThash);
+            }
+            ESValue getter = e.value.getGetAccessorDescriptor();
+            if (getter != null) {
+                object.putProperty(StandardProperty.GETstring, getter, StandardProperty.GEThash);
+            }
         } else {
             object.putProperty(StandardProperty.VALUEstring,e.value,StandardProperty.VALUEhash);
             object.putProperty(StandardProperty.WRITABLEstring, ESBoolean.valueOf(!e.readonly), StandardProperty.WRITABLEhash);

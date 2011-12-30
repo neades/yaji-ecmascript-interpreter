@@ -32,6 +32,8 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.yaji.util.OS;
 
 import FESI.Interpreter.Evaluator;
+import FESI.Util.EvaluatorAccess;
+import FESI.Util.IEvaluatorAccess;
 
 public class Runner {
 
@@ -148,6 +150,8 @@ public class Runner {
 
     private File overrideDirectory;
 
+    private static ThreadLocal<Evaluator> currentEvaluator = new ThreadLocal<Evaluator>();
+    
     private static class Arguments extends HashMap<String,String> {
 
         private static final long serialVersionUID = -45926745254286446L;
@@ -203,6 +207,12 @@ public class Runner {
                 threadCount = 1;
             }
         }
+        EvaluatorAccess.setAccessor(new IEvaluatorAccess() {
+            
+            public Evaluator getEvaluator() {
+                return currentEvaluator.get();
+            }
+        });
     }
 
     private void readExcludesFile(String excludesFile, final HashSet<String> excludesSet) {
@@ -361,6 +371,7 @@ public class Runner {
     
     private boolean executeTest(File file, String testName) throws IOException {
         Evaluator evaluator = new Evaluator();
+        currentEvaluator.set(evaluator);
         evaluator.setDefaultTimeZone(TimeZone.getTimeZone("UTC"));
         boolean passed = false;
         logStart(testName);
@@ -369,6 +380,8 @@ public class Runner {
             passed = true;
         } catch (Throwable e) {
             logException(e);
+        } finally {
+            currentEvaluator.set(null);
         }
         return passed;
     }
