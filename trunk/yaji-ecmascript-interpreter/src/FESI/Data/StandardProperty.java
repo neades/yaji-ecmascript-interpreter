@@ -58,4 +58,6 @@ public interface StandardProperty {
     public static final int ARRAYhash = ARRAYstring.hashCode();
     public static final String CALLERstring = "caller";
     public static final int CALLERhash = CALLERstring.hashCode();
+    public static final String EVALstring = "eval";
+    public static final int EVALhash = EVALstring.hashCode();
 }
