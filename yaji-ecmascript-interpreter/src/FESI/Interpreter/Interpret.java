@@ -42,6 +42,8 @@ import FESI.Data.ESWrapper;
 import FESI.Data.ValueDescription;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Extensions.BasicIOInterface;
+import FESI.Util.EvaluatorAccess;
+import FESI.Util.IEvaluatorAccess;
 import FESI.gui.Console;
 import FESI.gui.GuiFactory;
 import FESI.gui.InterpreterCommands;
@@ -1079,7 +1081,12 @@ public class Interpret implements InterpreterCommands {
                 if (interactive)
                     printStream.println("@@ Loading file '" + file.getPath()
                             + "' . . .");
-
+                EvaluatorAccess.setAccessor(new IEvaluatorAccess() {
+                    
+                    public Evaluator getEvaluator() {
+                        return evaluator;
+                    }
+                });
                 theValue = evaluator.evaluateLoadFile(file); // EVALUATION
                 if (interactive && theValue != null) {
                     printStream.println("@@ Resulting in: " + theValue);

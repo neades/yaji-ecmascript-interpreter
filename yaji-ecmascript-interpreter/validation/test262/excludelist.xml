@@ -2,5 +2,8 @@
 <excludeList>
   <test id="15.4.4.22-9-c-i-30">defineProperty in test is not expected to increase length of array and indeed doesn't in chrome (et.al?). However the spec seems to contradict this:
 15.2.3.6   Object.defineProperty states that the DefineOwnProperty internal method is called, and 15.4.5.1 specifies the extended DefineOwnProperty method for arrays as increasing the length if the index exceeds the current length.</test>
-  <test id="15.4.4.22-7-9">sets the prototype of foo before foo is initialised. Relys on hoisting function declarations within function definitions.</test>
+  <test id="15.2.4.2-1-1">Testing Object.prototype.toString. Passes undefined but spec says ToObject should be applied to this and ToObject says that it should throw TypeError for undefined</test>
+  <test id="15.2.4.2-1-2">Testing Object.prototype.toString. Passes undefined but spec says ToObject should be applied to this and ToObject says that it should throw TypeError for undefined</test>
+  <test id="15.2.4.2-2-1">Testing Object.prototype.toString. Passes null but spec says ToObject should be applied to this and ToObject says that it should throw TypeError for null</test>
+  <test id="15.2.4.2-2-2">Testing Object.prototype.toString. Passes null but spec says ToObject should be applied to this and ToObject says that it should throw TypeError for null</test>
 </excludeList>
