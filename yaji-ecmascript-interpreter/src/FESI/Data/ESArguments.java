@@ -23,9 +23,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.yaji.data.ESAccessorValue;
+
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
 import FESI.Exceptions.ReferenceError;
+import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
 import FESI.Interpreter.ScopeChain;
 
@@ -39,41 +42,75 @@ public class ESArguments extends ESObject {
     protected String[] argumentNames; // Argument names from 0 to n
     private ESObject argumentsObject;
     
+    private static class ThrowerAccessor extends ESAccessorValue {
+        
+        private static final long serialVersionUID = -5153856263348832243L;
+        
+        private ThrowerAccessor(Evaluator evaluator, String functionName) throws EcmaScriptException {
+            getter = new Thrower(evaluator, "Get"+functionName);
+            setter = new Thrower(evaluator, "Set"+functionName);
+        }
+    }
+    
+    private static class Thrower extends BuiltinFunctionObject {
+        private static final long serialVersionUID = -6490832850915595008L;
+        
+        private Thrower(Evaluator evaluator, String functionName) throws EcmaScriptException {
+            super(evaluator.getFunctionPrototype(), evaluator, functionName, 0);
+        }
+        
+        @Override
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments) throws EcmaScriptException {
+            throw new TypeError(getFunctionName()+" not valid in strict mode");
+        }
+    }
+    
     private class ESArgumentsObject extends ESObject {
         private static final long serialVersionUID = 7532306514655719417L;
-        private Map<String,String> argumentMap = new HashMap<String, String>();
+        private Map<String,String> argumentMap;
         private HashSet<String> argumentNameSet;
 
         protected ESArgumentsObject(Evaluator evaluator) throws EcmaScriptException {
             super(evaluator.getObjectPrototype(), evaluator);
             putHiddenProperty(StandardProperty.LENGTHstring, ESNumber.valueOf(length));
-            putHiddenProperty(StandardProperty.CALLEEstring, callee);
+            boolean strictMode = evaluator.isStrictMode();
+            if (!strictMode) {
+                argumentMap = new HashMap<String, String>();
+                argumentNameSet = new HashSet<String>(Arrays.asList(argumentNames));
+                putHiddenProperty(StandardProperty.CALLEEstring, callee);
+            } else {
+                putProperty(StandardProperty.CALLEEstring, 0, new ThrowerAccessor(evaluator, StandardProperty.CALLEEstring+"Thrower"));
+                putProperty(StandardProperty.CALLERstring, 0, new ThrowerAccessor(evaluator, StandardProperty.CALLERstring+"Thrower"));
+            }
             int i=0;
             for (String argumentName : argumentNames) {
                 String propertyName = Integer.toString(i++);
-                argumentMap .put(propertyName,argumentName);
-                putProperty(propertyName,ESArguments.this.getProperty(propertyName, propertyName.hashCode()));
+                if (!strictMode) {
+                    argumentMap .put(propertyName,argumentName);
+                }
+                putProperty(propertyName,ESArguments.this.getProperty(argumentName, argumentName.hashCode()));
             }
             for(; i<length; i++) {
                 String propertyName = Integer.toString(i);
                 putProperty(propertyName,ESArguments.this.getProperty(propertyName, propertyName.hashCode()));
             }
-            argumentNameSet = new HashSet<String>(Arrays.asList(argumentNames));
         }
 
         @Override
         public ESValue getPropertyIfAvailable(String propertyName, int hash)
                 throws EcmaScriptException {
             ESValue result = null;
-            if (isAllDigits(propertyName)) {
-                String mappedPropertyName = argumentMap.get(propertyName);
-                if (mappedPropertyName != null) {
-                    result = ESArguments.this.getPropertyIfAvailable(mappedPropertyName, mappedPropertyName.hashCode());
-                } else {
+            if (argumentMap != null) { 
+                if (isAllDigits(propertyName)) {
+                    String mappedPropertyName = argumentMap.get(propertyName);
+                    if (mappedPropertyName != null) {
+                        result = ESArguments.this.getPropertyIfAvailable(mappedPropertyName, mappedPropertyName.hashCode());
+                    } else {
+                        result = ESArguments.this.getPropertyIfAvailable(propertyName, hash);
+                    }
+                } else if (argumentNameSet.contains(propertyName)){
                     result = ESArguments.this.getPropertyIfAvailable(propertyName, hash);
                 }
-            } else if (argumentNameSet.contains(propertyName)){
-                result = ESArguments.this.getPropertyIfAvailable(propertyName, hash);
             }
             if (result == null) {
                 result = super.getPropertyIfAvailable(propertyName, hash);
@@ -85,7 +122,7 @@ public class ESArguments extends ESObject {
         public boolean deleteProperty(String propertyName, int hash)
                 throws EcmaScriptException {
             boolean result = super.deleteProperty(propertyName, hash);
-            if (result && isAllDigits(propertyName)) {
+            if (result && argumentMap != null && isAllDigits(propertyName)) {
                 if (argumentMap.remove(propertyName) != null) {
                     return true;
                 }
@@ -98,70 +135,6 @@ public class ESArguments extends ESObject {
             return "Arguments";
         }
     }
-
-    private class ESStrictArgumentsObject extends ESObject {
-        private static final long serialVersionUID = 7532306514655719417L;
-        private Map<String,String> argumentMap = new HashMap<String, String>();
-        private HashSet<String> argumentNameSet;
-
-        protected ESStrictArgumentsObject(Evaluator evaluator) throws EcmaScriptException {
-            super(evaluator.getObjectPrototype(), evaluator);
-            putHiddenProperty(StandardProperty.LENGTHstring, ESNumber.valueOf(length));
-            putHiddenProperty(StandardProperty.CALLEEstring, callee);
-            int i=0;
-            for (String argumentName : argumentNames) {
-                argumentMap .put(Integer.toString(i++),argumentName);
-            }
-            argumentNameSet = new HashSet<String>(Arrays.asList(argumentNames));
-        }
-
-        @Override
-        public ESValue getPropertyIfAvailable(String propertyName, int hash)
-                throws EcmaScriptException {
-            ESValue result = super.getPropertyIfAvailable(propertyName, hash);
-            if (result == null) {
-                if (isDigits(propertyName)) {
-                    String mappedPropertyName = argumentMap.get(propertyName);
-                    if (mappedPropertyName != null) {
-                        result = ESArguments.this.getPropertyIfAvailable(mappedPropertyName, mappedPropertyName.hashCode());
-                    } else {
-                        result = ESArguments.this.getPropertyIfAvailable(propertyName, hash);
-                    }
-                } else if (argumentNameSet.contains(propertyName)){
-                    result = ESArguments.this.getPropertyIfAvailable(propertyName, hash);
-                }
-            }
-            return result;
-        }
-        
-        @Override
-        public boolean deleteProperty(String propertyName, int hash)
-                throws EcmaScriptException {
-            if (isDigits(propertyName)) {
-                if (argumentMap.remove(propertyName) != null) {
-                    return true;
-                }
-            }
-            return super.deleteProperty(propertyName, hash);
-        }
-        
-        private boolean isDigits(String propertyName) {
-            boolean allDigits = false;
-            for (char ch : propertyName.toCharArray()) {
-                if (!Character.isDigit(ch)) {
-                    return false;
-                }
-                allDigits = true;
-            }
-            return allDigits;
-        }
-
-        @Override
-        public String getESClassName() {
-            return "Arguments";
-        }
-    }
-
 
     // (not readily available) int [] hashCodes; // Argument hash codes from 0
     // to n
@@ -215,9 +188,7 @@ public class ESArguments extends ESObject {
     private ESObject getArgumentsObject() throws EcmaScriptException {
         if (argumentsObject == null) {
             Evaluator evaluator = getEvaluator();
-            argumentsObject = evaluator.isStrictMode()
-                                ? new ESStrictArgumentsObject(evaluator)
-                                : new ESArgumentsObject(evaluator);
+            argumentsObject = new ESArgumentsObject(evaluator);
         }
         return argumentsObject;
     }

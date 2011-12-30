@@ -9,6 +9,7 @@ import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.yaji.data.ESAccessorValue;
 
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.TypeError;
@@ -171,7 +172,7 @@ public class ObjectObjectTest extends EvaluatorTestCase {
     @Test
     public void getOwnPropertyReturnsSetterAndGetter() throws Exception {
         ESObject object = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
-        ESValue v = objectObject.doConstruct(ESValue.EMPTY_ARRAY);
+        ESValue v = new ESAccessorValue();
         v.setGetAccessorDescriptor(createFunction("return null;"));
         v.setSetAccessorDescriptor(createFunction("return void 0;"));
         object.putProperty("test", v, "test".hashCode());
