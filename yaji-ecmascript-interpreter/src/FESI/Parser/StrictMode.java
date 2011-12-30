@@ -28,7 +28,7 @@ import FESI.Interpreter.PackagedException;
 
 public class StrictMode extends AbstractEcmaScriptVisitor {
     
-    private static final String EXCEPTION_PREFIX = "Strict mode restriction: ";
+    public static final String EXCEPTION_PREFIX = "Strict mode restriction: ";
 
     private static class StrictModeState {
 

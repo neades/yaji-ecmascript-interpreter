@@ -17,14 +17,16 @@
 
 package FESI.Data;
 
+import java.util.HashSet;
 import java.util.List;
 
 import FESI.AST.ASTStatementList;
 import FESI.Exceptions.EcmaScriptException;
-import FESI.Exceptions.ProgrammingError;
+import FESI.Exceptions.SyntaxError;
 import FESI.Interpreter.EvaluationSource;
 import FESI.Interpreter.Evaluator;
 import FESI.Interpreter.ScopeChain;
+import FESI.Parser.StrictMode;
 
 /**
  * Implements functions constructed from source text
@@ -56,11 +58,27 @@ public class ConstructedFunctionObject extends FunctionPrototype {
         this.scopeChain = scopeChain;
         this.isStrictMode = isStrictMode;
 
+        if (isStrictMode) {
+            validateStrictMode(theArguments);
+        }
         // try {
         // targetObject.putProperty(functionName, this);
         // } catch (EcmaScriptException e) {
         // throw new ProgrammingError(e.getMessage());
         // }
+    }
+
+    private void validateStrictMode(String[] formalParameterNames) throws EcmaScriptException {
+        HashSet<String> existing = new HashSet<String>();
+        for (String formalParameterName : formalParameterNames) {
+            if (formalParameterName.equals(StandardProperty.ARGUMENTSstring) || formalParameterName.equals(StandardProperty.EVALstring)) {
+                throw new SyntaxError(StrictMode.EXCEPTION_PREFIX+formalParameterName+" cannot be used as a parameter name");
+            }
+            if (existing.contains(formalParameterName)) {
+                throw new SyntaxError(StrictMode.EXCEPTION_PREFIX+formalParameterName+" cannot be repeated in formal parameter list");
+            }
+            existing.add(formalParameterName);
+        }
     }
 
     /**
@@ -196,29 +214,26 @@ public class ConstructedFunctionObject extends FunctionPrototype {
      * @param scopeChain 
      *            the current Scope Chain for Function Expressions - null for Function Declarations
      * @param isStrictMode 
+     *            indication if function is in strict mode
      * @return A new function object
+     * @throws EcmaScriptException 
      */
     public static ConstructedFunctionObject makeNewConstructedFunction(
             Evaluator evaluator, String functionName,
             EvaluationSource evaluationSource, String sourceString,
             String[] arguments, List<String> localVariableNames,
-            ASTStatementList aFunctionAST, ScopeChain scopeChain, boolean isStrictMode) {
+            ASTStatementList aFunctionAST, ScopeChain scopeChain, boolean isStrictMode) throws EcmaScriptException {
+
+        FunctionPrototype fp = (FunctionPrototype) evaluator
+                .getFunctionPrototype();
 
         ConstructedFunctionObject theNewFunction = null;
-        try {
-            FunctionPrototype fp = (FunctionPrototype) evaluator
-                    .getFunctionPrototype();
-
-            theNewFunction = new ConstructedFunctionObject(fp, evaluator,
-                    functionName, evaluationSource, sourceString, arguments,
-                    localVariableNames, aFunctionAST, scopeChain, isStrictMode);
-            ObjectPrototype thePrototype = ObjectObject.createObject(evaluator);
-            theNewFunction.putHiddenProperty(StandardProperty.PROTOTYPEstring, fp);
-            thePrototype.putHiddenProperty("constructor", theNewFunction);
-        } catch (EcmaScriptException e) {
-            e.printStackTrace();
-            throw new ProgrammingError(e.getMessage());
-        }
+        theNewFunction = new ConstructedFunctionObject(fp, evaluator,
+                functionName, evaluationSource, sourceString, arguments,
+                localVariableNames, aFunctionAST, scopeChain, isStrictMode);
+        ObjectPrototype thePrototype = ObjectObject.createObject(evaluator);
+        theNewFunction.putHiddenProperty(StandardProperty.PROTOTYPEstring, fp);
+        thePrototype.putHiddenProperty("constructor", theNewFunction);
         return theNewFunction;
     }
 

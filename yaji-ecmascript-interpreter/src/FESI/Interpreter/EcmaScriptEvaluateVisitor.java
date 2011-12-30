@@ -1674,55 +1674,55 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
             throw new ProgrammingError("Bad AST in function expression");
         }
 
-        String property;
-        ESValue value;
-        if (nameNode instanceof ASTGetAccessor) {
-            node.assertThreeChildren();
-            
-            property = ((ASTIdentifier) node.jjtGetChild(1)).getName();
-            FunctionEvaluationSource fes = new FunctionEvaluationSource(
-                    evaluationSource, property);
-            ASTStatementList sl = (ASTStatementList) (node.jjtGetChild(2));
-            List<String> variableNames = evaluator.getVarDeclarationVisitor()
-                    .processVariableDeclarations(sl, fes);
-            ConstructedFunctionObject cfo = ConstructedFunctionObject
-                    .makeNewConstructedFunction(evaluator, property, fes, "",
-                            new String[0], variableNames, sl,
-                            evaluator.getScopeChain(), StrictMode.hasStrictModeDirective(sl));
-            
-            value = ObjectObject.createObject(evaluator);
-            value.setGetAccessorDescriptor(cfo);
-        } else if (nameNode instanceof ASTSetAccessor) {
-            node.assertFourChildren();
-          
-            property = ((ASTIdentifier) node.jjtGetChild(1)).getName();
-            FunctionEvaluationSource fes = new FunctionEvaluationSource(
-                    evaluationSource, property);
-            ASTStatementList sl = (ASTStatementList) (node.jjtGetChild(3));
-            List<String> variableNames = evaluator.getVarDeclarationVisitor()
-                    .processVariableDeclarations(sl, fes);
-            ConstructedFunctionObject cfo = ConstructedFunctionObject
-                    .makeNewConstructedFunction(evaluator, property, fes, "",
-                            new String[] { ((ASTIdentifier) node.jjtGetChild(2))
-                            .getName() }, variableNames, sl, evaluator.getScopeChain(), StrictMode.hasStrictModeDirective(sl));
-
-            value = ObjectObject.createObject(evaluator);
-            value.setSetAccessorDescriptor(cfo);
-        } else {
-            node.assertTwoChildren();
-            property = nameNode.toString();
-            if (nameNode instanceof ASTIdentifier) {
-                ASTIdentifier identifier = (ASTIdentifier) nameNode;
-                property = identifier.getName();
-            } else {
-                property = nameNode.jjtAccept(this, FOR_VALUE).toString();
-            }
-            value = (ESValue) node.jjtGetChild(1).jjtAccept(this, FOR_VALUE);
-        }
-        
         try {
+            String property;
+            ESValue value;
+            if (nameNode instanceof ASTGetAccessor) {
+                node.assertThreeChildren();
+
+                property = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+                FunctionEvaluationSource fes = new FunctionEvaluationSource(
+                        evaluationSource, property);
+                ASTStatementList sl = (ASTStatementList) (node.jjtGetChild(2));
+                List<String> variableNames = evaluator.getVarDeclarationVisitor()
+                        .processVariableDeclarations(sl, fes);
+                ConstructedFunctionObject cfo = ConstructedFunctionObject
+                        .makeNewConstructedFunction(evaluator, property, fes, "",
+                                new String[0], variableNames, sl,
+                                evaluator.getScopeChain(), StrictMode.hasStrictModeDirective(sl));
+
+                value = ObjectObject.createObject(evaluator);
+                value.setGetAccessorDescriptor(cfo);
+            } else if (nameNode instanceof ASTSetAccessor) {
+                node.assertFourChildren();
+
+                property = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+                FunctionEvaluationSource fes = new FunctionEvaluationSource(
+                        evaluationSource, property);
+                ASTStatementList sl = (ASTStatementList) (node.jjtGetChild(3));
+                List<String> variableNames = evaluator.getVarDeclarationVisitor()
+                        .processVariableDeclarations(sl, fes);
+                ConstructedFunctionObject cfo = ConstructedFunctionObject
+                        .makeNewConstructedFunction(evaluator, property, fes, "",
+                                new String[] { ((ASTIdentifier) node.jjtGetChild(2))
+                                .getName() }, variableNames, sl, evaluator.getScopeChain(), StrictMode.hasStrictModeDirective(sl));
+
+                value = ObjectObject.createObject(evaluator);
+                value.setSetAccessorDescriptor(cfo);
+            } else {
+                node.assertTwoChildren();
+                property = nameNode.toString();
+                if (nameNode instanceof ASTIdentifier) {
+                    ASTIdentifier identifier = (ASTIdentifier) nameNode;
+                    property = identifier.getName();
+                } else {
+                    property = nameNode.jjtAccept(this, FOR_VALUE).toString();
+                }
+                value = (ESValue) node.jjtGetChild(1).jjtAccept(this, FOR_VALUE);
+            }
+
             ESObject object = (ESObject) data;
-            
+
             ESValue previous = object.getOwnProperty(property, property.hashCode());
             if (previous != null) {
                 if ((!isAccessorDescriptor(previous) && isAccessorDescriptor(value))
@@ -1776,11 +1776,15 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         EcmaScriptVariableVisitor varDeclarationVisitor = evaluator.getVarDeclarationVisitor();
         List<String> variableNames = varDeclarationVisitor.processVariableDeclarations(sl, fes);
 
-        ConstructedFunctionObject func = ConstructedFunctionObject
-        .makeNewConstructedFunction(evaluator, procName,
-                fes, "", fpl.getArguments(),
-                variableNames, sl, evaluator.getScopeChain(), node.isStrictMode());
-        return func;
+        try {
+            ConstructedFunctionObject func = ConstructedFunctionObject
+                    .makeNewConstructedFunction(evaluator, procName,
+                            fes, "", fpl.getArguments(),
+                            variableNames, sl, evaluator.getScopeChain(), node.isStrictMode());
+            return func;
+        } catch (EcmaScriptException e) {
+            throw new PackagedException(e, node);
+        }
     }
 
     @Override
