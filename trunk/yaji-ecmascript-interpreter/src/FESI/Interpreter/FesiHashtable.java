@@ -475,12 +475,11 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
      * 
      * @param key
      *            the key that needs to be removed.
-     * @return the value to which the key had been mapped in this hashtable, or
-     *         <code>null</code> if the key did not have a mapping.
+     * @return true if value didn't exist or was successfully deleted.
      * @throws EcmaScriptException
      * @since JDK1.0
      */
-    public ESValue remove(String key, int hash, boolean throwError)
+    public boolean remove(String key, int hash, boolean throwError)
             throws EcmaScriptException {
         HashtableEntry tab[] = getTable();
         int index = (hash & 0x7FFFFFFF) % tab.length;
@@ -493,16 +492,16 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
                         tab[index] = e.next;
                     }
                     count--;
-                    return e.value;
+                    return true;
                 }
                 if (throwError) {
                     throw new TypeError("Property " + key
                             + " cannot be deleted.");
                 }
-                return null;
+                return false;
             }
         }
-        return null;
+        return true;
     }
 
     /**
@@ -666,27 +665,37 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         return sortedList;
     }
 
-    public ESValue getOwnPropertyDescriptor(String propertyName, Evaluator evaluator) throws EcmaScriptException {
+    public ESObject getOwnPropertyDescriptor(String propertyName, Evaluator evaluator) throws EcmaScriptException {
         HashtableEntry e = getHashtableEntry(propertyName, propertyName.hashCode());
         if (e == null) {
-            return ESUndefined.theUndefined;
+            return null;
         }
+        ESValue value = e.value;
+        boolean writable = !e.readonly;
+        boolean enumerable = !e.hidden;
+        boolean configurable = e.configurable;
+        return createPropertyDescriptor(evaluator, value, writable, enumerable,
+                configurable);
+    }
+
+    public static ESObject createPropertyDescriptor(Evaluator evaluator, ESValue value, boolean writable, boolean enumerable,
+            boolean configurable) throws EcmaScriptException {
         ObjectPrototype object = ObjectObject.createObject(evaluator);
-        if (ESValue.isAccessorDescriptor(e.value)) {
-            ESValue setter = e.value.getSetAccessorDescriptor();
+        if (ESValue.isAccessorDescriptor(value)) {
+            ESValue setter = value.getSetAccessorDescriptor();
             if (setter != null) {
                 object.putProperty(StandardProperty.SETstring, setter, StandardProperty.SEThash);
             }
-            ESValue getter = e.value.getGetAccessorDescriptor();
+            ESValue getter = value.getGetAccessorDescriptor();
             if (getter != null) {
                 object.putProperty(StandardProperty.GETstring, getter, StandardProperty.GEThash);
             }
         } else {
-            object.putProperty(StandardProperty.VALUEstring,e.value,StandardProperty.VALUEhash);
-            object.putProperty(StandardProperty.WRITABLEstring, ESBoolean.valueOf(!e.readonly), StandardProperty.WRITABLEhash);
+            object.putProperty(StandardProperty.VALUEstring,value,StandardProperty.VALUEhash);
+            object.putProperty(StandardProperty.WRITABLEstring, ESBoolean.valueOf(writable), StandardProperty.WRITABLEhash);
         }
-        object.putProperty(StandardProperty.ENUMERABLEstring, ESBoolean.valueOf(!e.hidden), StandardProperty.ENUMERABLEhash);
-        object.putProperty(StandardProperty.CONFIGURABLEstring, ESBoolean.valueOf(e.configurable), StandardProperty.CONFIGURABLEhash);
+        object.putProperty(StandardProperty.ENUMERABLEstring, ESBoolean.valueOf(enumerable), StandardProperty.ENUMERABLEhash);
+        object.putProperty(StandardProperty.CONFIGURABLEstring, ESBoolean.valueOf(configurable), StandardProperty.CONFIGURABLEhash);
         return object;
     }
 

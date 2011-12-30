@@ -8,7 +8,6 @@ import org.junit.Test;
 
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.TypeError;
-import FESI.Util.EvaluatorAccess;
 
 
 public class GlobalObjectTest extends EvaluatorTestCase {
@@ -23,9 +22,9 @@ public class GlobalObjectTest extends EvaluatorTestCase {
         super.setUp();
     }
 
-    @After 
-    public void tearDown() throws Exception {
-        EvaluatorAccess.setAccessor(null);
+    @Override
+    @After public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     @Test

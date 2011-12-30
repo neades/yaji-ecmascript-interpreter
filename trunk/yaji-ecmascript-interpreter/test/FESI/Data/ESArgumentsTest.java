@@ -1,6 +1,7 @@
 package FESI.Data;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -80,4 +81,11 @@ public class ESArgumentsTest extends EvaluatorTestCase {
         assertEquals(ESUndefined.theUndefined,arguments.getProperty(0L));
     }
     
+    @Test
+    public void argumentsShouldntBeDeletedIfNotConfigurable() throws Exception {
+        ESObject arguments = (ESObject) environment.getPropertyInScope("arguments",null,"arguments".hashCode());
+        arguments.freeze();
+        assertFalse( arguments.deleteProperty("0", "0".hashCode()) );
+        assertEquals(ESNumber.valueOf(100),arguments.getProperty(0L));
+    }
 }

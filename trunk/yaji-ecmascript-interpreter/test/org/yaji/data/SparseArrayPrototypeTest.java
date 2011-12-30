@@ -34,8 +34,9 @@ public class SparseArrayPrototypeTest extends EvaluatorTestCase {
         super.setUp();
     }
     
-    @After
-    public void tearDown() {
+    @Override
+    @After public void tearDown() throws Exception {
+        super.tearDown();
         GlobalObject.useSparse = originalUseSparseState;
     }
 
