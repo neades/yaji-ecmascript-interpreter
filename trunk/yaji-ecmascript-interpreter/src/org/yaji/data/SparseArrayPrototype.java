@@ -127,17 +127,21 @@ public class SparseArrayPrototype extends ESObject {
 
     @Override
     public boolean deleteProperty(long index) throws EcmaScriptException {
-        if (sparseValues != null) {
-            sparseValues.clear(index);
-        }
         String propertyName = Long.toString(index);
-        return super.deleteProperty(propertyName,propertyName.hashCode());
+        boolean result = super.deleteProperty(propertyName,propertyName.hashCode());
+        if (result) {
+            if (sparseValues != null) {
+                sparseValues.clear(index);
+            }
+        }
+        return result;
     }
     
     @Override
     public boolean deleteProperty(String propertyName, int hash)
             throws EcmaScriptException {
-        if (isAllDigits(propertyName)) {
+        boolean result = super.deleteProperty(propertyName, hash);
+        if (result && isAllDigits(propertyName)) {
             long longResult = Long.parseLong(propertyName);
             if (longResult < 0xFFFFFFFFL && longResult >= 0) {
                 if (sparseValues != null) {
@@ -145,7 +149,7 @@ public class SparseArrayPrototype extends ESObject {
                 }
             }
         }
-        return super.deleteProperty(propertyName, hash);
+        return result;
     }
     
     @Override
