@@ -6,4 +6,9 @@
   <test id="15.2.4.2-1-2">Testing Object.prototype.toString. Passes undefined but spec says ToObject should be applied to this and ToObject says that it should throw TypeError for undefined</test>
   <test id="15.2.4.2-2-1">Testing Object.prototype.toString. Passes null but spec says ToObject should be applied to this and ToObject says that it should throw TypeError for null</test>
   <test id="15.2.4.2-2-2">Testing Object.prototype.toString. Passes null but spec says ToObject should be applied to this and ToObject says that it should throw TypeError for null</test>
+  <test id="15.2.3.7-6-a-93">Assumes an ordering to keys</test>
+  <test id="15.2.3.7-6-a-93-4">Assumes an ordering to keys</test>
+  <test id="15.2.3.7-6-a-93-3">Assumes an ordering to keys</test>
+  <test id="15.2.3.7-6-a-93-2">Assumes an ordering to keys</test>
+  <test id="15.2.3.7-6-a-93-1">Assumes an ordering to keys</test>
 </excludeList>
