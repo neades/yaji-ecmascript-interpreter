@@ -163,6 +163,9 @@ public final class ESNumber extends ESPrimitive {
         if (Double.isNaN(d)) {
             return "NaN";
         }
+        if (d == 0.0) {
+            return "0";
+        }
         StringBuilder sb = new StringBuilder();
         if (d < 0) {
             sb.append('-');
