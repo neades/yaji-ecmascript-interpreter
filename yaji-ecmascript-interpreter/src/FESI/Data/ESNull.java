@@ -146,4 +146,9 @@ public final class ESNull extends ESPrimitive {
     public ESObject toESObject(Evaluator evaluator) throws EcmaScriptException {
         throw new TypeError("'null' cannot be converted to Object");
     }
+    
+    @Override
+    protected boolean sameValueTypeChecked(ESValue other) {
+        return true;
+    }
 }

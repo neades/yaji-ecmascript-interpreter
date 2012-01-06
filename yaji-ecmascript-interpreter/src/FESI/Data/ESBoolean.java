@@ -203,4 +203,9 @@ public final class ESBoolean extends ESPrimitive {
     public boolean canJson() {
         return true;
     }
+    
+    @Override
+    protected boolean sameValueTypeChecked(ESValue other) throws EcmaScriptException {
+        return booleanValue() == other.booleanValue();
+    }
 }

@@ -91,4 +91,9 @@ public class ESAccessorValue extends ESValue {
     public boolean hasSetAccessorDescriptor() {
         return setter != null && setter.isCallable();
     }
+    
+    @Override
+    protected boolean sameValueTypeChecked(ESValue other) {
+        return this == other;
+    }
 }

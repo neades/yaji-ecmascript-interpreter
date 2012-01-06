@@ -290,4 +290,9 @@ public final class ESString extends ESPrimitive {
         return new ESString(str);
     }
 
+    @Override
+    protected boolean sameValueTypeChecked(ESValue other)
+            throws EcmaScriptException {
+        return toString().equals(other.toString());
+    }
 }
