@@ -747,13 +747,21 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
                 if (valueIsAccessor != newValueIsAccessor) {
                     return reporter.reject("Cannot change accessor state of property "+ propertyName+ " It is not configurable");
                 } else if (valueIsAccessor && newValueIsAccessor) {
-                    if (value.hasSetAccessorDescriptor() && !value.getSetAccessorDescriptor().equalsSameType(setter)) {
-                        return reporter.reject("Cannot change \"set\" accessor of property "+ propertyName+ " It is not configurable");
+                    ESValue existingSetter = value.getSetAccessorDescriptor();
+                    if (existingSetter != null && !sameValue(existingSetter, setter)) {
+                        if (setter != null) {
+                            return reporter.reject("Cannot change \"set\" accessor of property "+ propertyName+ " It is not configurable");
+                        }
+                        setter = existingSetter;
                     }
-                    if (value.hasGetAccessorDescriptor() && !value.getGetAccessorDescriptor().equalsSameType(getter)) {
-                        return reporter.reject("Cannot change \"get\" accessor of property "+ propertyName+ " It is not configurable");
+                    ESValue existingGetter = value.getGetAccessorDescriptor();
+                    if (existingGetter != null && !sameValue(existingGetter, getter)) {
+                        if (getter != null) {
+                            return reporter.reject("Cannot change \"get\" accessor of property "+ propertyName+ " It is not configurable");
+                        }
+                        getter = existingGetter;
                     }
-                } else if (newValue != null && !writable && !value.equalsSameType(newValue)) {
+                } else if (newValue != null && !writable && !sameValue(value, newValue)) {
                     return reporter.reject("Cannot change value of property "+propertyName+". It is not writable.");
                 }
             }
@@ -775,6 +783,11 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         }
         put(propertyName,propertNameHash,Flag.fromBoolean(!enumerable),Flag.fromBoolean(!writable),value,Flag.fromBoolean(configurable));
         return true;
+    }
+
+    private boolean sameValue(ESValue existingSetter, ESValue setter)
+            throws EcmaScriptException {
+        return existingSetter.sameValue(setter);
     }
 
     private boolean updateBoolean(boolean configurable,

@@ -177,4 +177,9 @@ public final class ESUndefined extends ESPrimitive {
     public ESObject toESObject(Evaluator evaluator) throws EcmaScriptException {
         throw new TypeError("'undefined' cannot be converted to Object");
     }
+    
+    @Override
+    protected boolean sameValueTypeChecked(ESValue other) {
+        return true;
+    }
 }

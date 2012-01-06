@@ -1303,4 +1303,8 @@ public abstract class ESObject extends ESValue {
         return allDigits;
     }
 
+    @Override
+    protected boolean sameValueTypeChecked(ESValue other) {
+        return this == other;
+    }
 }

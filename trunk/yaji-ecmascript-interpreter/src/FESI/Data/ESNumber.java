@@ -81,13 +81,17 @@ public final class ESNumber extends ESPrimitive {
      */
     private ESNumber(double value) {
         long intValue = (long) value;
-        if (intValue == value) {
+        if (intValue == value && !isNegativeZero(value)) {
             this.longValue = intValue;
             this.isLongValue = true;
         } else {
             this.isLongValue = false;
         }
         this.value = value;
+    }
+
+    private boolean isNegativeZero(double d) {
+        return d == 0 && Double.doubleToLongBits(d) < 0;
     }
 
     public static ESNumber valueOf(long l) {
@@ -426,5 +430,15 @@ public final class ESNumber extends ESPrimitive {
     @Override
     public boolean isFinite() {
         return isLongValue || !(Double.isNaN(value) || Double.isInfinite(value));
+    }
+    
+    @Override
+    protected boolean sameValueTypeChecked(ESValue other) throws EcmaScriptException {
+        double d = doubleValue();
+        double otherD = other.doubleValue();
+        
+        return (Double.isNaN(d) && Double.isNaN(otherD))
+                || ( d == 0.0 && otherD == 0.0 && Double.valueOf(d).compareTo(Double.valueOf(otherD)) == 0)
+                || ( d != 0.0 && d == otherD );
     }
 }

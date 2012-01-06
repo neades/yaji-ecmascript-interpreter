@@ -517,4 +517,10 @@ public abstract class ESValue implements java.io.Serializable {
     public boolean isCallable() {
         return false;
     }
+    
+    public boolean sameValue(ESValue other) throws EcmaScriptException {
+        return other != null && getTypeOf() == other.getTypeOf() && sameValueTypeChecked(other);
+    }
+    
+    protected abstract boolean sameValueTypeChecked(ESValue other) throws EcmaScriptException;
 }
