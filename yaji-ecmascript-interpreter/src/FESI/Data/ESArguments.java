@@ -101,21 +101,69 @@ public class ESArguments extends ESObject {
                 throws EcmaScriptException {
             ESValue result = null;
             if (argumentMap != null) { 
-                if (isAllDigits(propertyName)) {
-                    String mappedPropertyName = argumentMap.get(propertyName);
-                    if (mappedPropertyName != null) {
-                        result = ESArguments.this.getPropertyIfAvailable(mappedPropertyName, mappedPropertyName.hashCode());
-                    } else {
-                        result = ESArguments.this.getPropertyIfAvailable(propertyName, hash);
-                    }
-                } else if (argumentNameSet.contains(propertyName)){
-                    result = ESArguments.this.getPropertyIfAvailable(propertyName, hash);
+                String mappedPropertyName = getMappedPropertyName(propertyName);
+                if (mappedPropertyName != null) {
+                    result = ESArguments.this.getPropertyIfAvailable(mappedPropertyName, mappedPropertyName.hashCode());
                 }
             }
             if (result == null) {
                 result = super.getPropertyIfAvailable(propertyName, hash);
             }
             return result;
+        }
+        
+        @Override
+        public ESValue defineProperty(String propertyName, ESObject desc)
+                throws EcmaScriptException {
+            ESValue result = super.defineProperty(propertyName, desc);
+            if (argumentMap != null) {
+                String mappedPropertyName = getMappedPropertyName(propertyName);
+                if (mappedPropertyName != null) {
+                    ESValue getter = desc.getProperty(StandardProperty.GETstring,StandardProperty.GEThash);
+                    ESValue setter = desc.getProperty(StandardProperty.SETstring,StandardProperty.SEThash);
+                    if (getter != null || setter != null) {
+                        argumentMap.remove(propertyName);
+                    } else {
+                        ESValue descValue = desc.getProperty(StandardProperty.VALUEstring, StandardProperty.VALUEhash);
+                        if (descValue != null) {
+                            ESArguments.this.putProperty(mappedPropertyName, descValue, mappedPropertyName.hashCode());
+                        }
+                        ESValue writable = desc.getProperty(StandardProperty.WRITABLEstring, StandardProperty.WRITABLEhash); 
+                        if (writable != null && !writable.booleanValue() ) {
+                            argumentMap.remove(propertyName);
+                        }
+                        
+                    }
+                }
+            }
+            return result;
+        }
+        
+        @Override
+        public ESValue getOwnPropertyDescriptor(String propertyName)
+                throws EcmaScriptException {
+            ESValue desc = super.getOwnPropertyDescriptor(propertyName);
+            if (desc.getTypeOf() != EStypeUndefined) {
+                ESObject descObject = (ESObject) desc;
+                if (argumentMap != null) {
+                    String mappedPropertyName = getMappedPropertyName(propertyName);
+                    if (mappedPropertyName != null) {
+                        descObject.putProperty(StandardProperty.VALUEstring, ESArguments.this.getProperty(mappedPropertyName, mappedPropertyName.hashCode()),StandardProperty.VALUEhash);
+                    }
+                }
+                
+            }
+            return desc;
+        }
+
+        private String getMappedPropertyName(String propertyName) {
+            String mappedPropertyName = null;
+            if (isAllDigits(propertyName)) {
+                mappedPropertyName = argumentMap.get(propertyName);
+            } else if (argumentNameSet.contains(propertyName)){
+                mappedPropertyName = propertyName;
+            }
+            return mappedPropertyName;
         }
         
         @Override
