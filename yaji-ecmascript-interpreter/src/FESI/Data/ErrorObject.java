@@ -6,9 +6,9 @@ import FESI.Interpreter.Evaluator;
 public class ErrorObject extends BuiltinFunctionObject {
     private static final long serialVersionUID = 866651721781282211L;
 
-    private ErrorObject(ESObject functionPrototype, Evaluator evaluator) throws EcmaScriptException {
+    private ErrorObject(ESObject functionPrototype, Evaluator evaluator, ObjectPrototype objectPrototype) throws EcmaScriptException {
         super(functionPrototype, evaluator, "Error", 1);
-        ErrorPrototype errorPrototype = new ErrorPrototype(evaluator);
+        ErrorPrototype errorPrototype = new ErrorPrototype(objectPrototype,evaluator);
         errorPrototype.putProperty("constructor", this, "constructor".hashCode());
         errorPrototype.putProperty("name", ESString.valueOf("Error"), "name".hashCode());
         errorPrototype.putProperty("message", ESString.valueOf(""), "message".hashCode());
@@ -41,7 +41,7 @@ public class ErrorObject extends BuiltinFunctionObject {
     
     public static ErrorObject make(Evaluator evaluator,
             ObjectPrototype objectPrototype, FunctionPrototype functionPrototype) throws EcmaScriptException {
-        return new ErrorObject(functionPrototype,evaluator);
+        return new ErrorObject(functionPrototype,evaluator,objectPrototype);
     }
 
     public ErrorPrototype getPrototypeProperty() throws EcmaScriptException {
