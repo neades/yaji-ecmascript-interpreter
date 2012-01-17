@@ -86,7 +86,7 @@ public class ObjectObject extends BuiltinFunctionObject {
             public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                     throws EcmaScriptException {
                 ESObject object = getArgAsObject(arguments,0);
-                String propertyName = getArg(arguments,1).toString();
+                String propertyName = getArg(arguments,1).callToString();
                 return object.getOwnPropertyDescriptor(propertyName);
             }
         });
@@ -97,7 +97,7 @@ public class ObjectObject extends BuiltinFunctionObject {
             public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                     throws EcmaScriptException {
                 ESObject object = getArgAsObject(arguments,0);
-                String propertyName = getArg(arguments,1).toString();
+                String propertyName = getArg(arguments,1).callToString();
                 ESObject desc = getArgAsObject(arguments, 2);
                 return object.defineProperty(propertyName,desc);
             }
@@ -109,8 +109,8 @@ public class ObjectObject extends BuiltinFunctionObject {
             public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                     throws EcmaScriptException {
                 ESObject object = getArgAsObject(arguments,0);
-                ESObject p = getArgAsObject(arguments, 1);
-                return defineProperties(object, p);
+                ESValue p = getArg(arguments, 1);
+                return defineProperties(object, p.toESObject(getEvaluator()));
             }
         });
         putHiddenProperty("getOwnPropertyNames", new BuiltinFunctionObject(prototype, evaluator, "getOwnPropertyNames", 1) {
@@ -268,10 +268,13 @@ public class ObjectObject extends BuiltinFunctionObject {
 
     private ESValue defineProperties(ESObject object, ESObject p)
             throws EcmaScriptException {
-        Enumeration<String> ownPropertyNames = p.getOwnPropertyNames();
+        Enumeration<String> ownPropertyNames = p.keys();
         while (ownPropertyNames.hasMoreElements()) {
             String propertyName = ownPropertyNames.nextElement();
             ESValue desc = p.getProperty(propertyName);
+            if (!(desc instanceof ESObject)) {
+                throw new TypeError("Object.defineProperties: property "+propertyName+" must have an object as its descriptor");
+            }
             object.defineProperty(propertyName,desc.toESObject(getEvaluator()));
         }
         return object;

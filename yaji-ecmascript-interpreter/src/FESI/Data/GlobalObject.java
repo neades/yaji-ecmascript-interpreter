@@ -204,7 +204,7 @@ public class GlobalObject extends ObjectPrototype {
                     if (arguments.length < 1)
                         return ESNumber.valueOf(Double.NaN);
                     int radix = 10;
-                    String s = arguments[0].toString().trim();
+                    String s = arguments[0].callToString().trim();
                     if (arguments.length > 1) {
                         radix = arguments[1].toInt32();
                         if (radix < 2 || radix > 36)
@@ -275,7 +275,7 @@ public class GlobalObject extends ObjectPrototype {
                         ESValue[] arguments) throws EcmaScriptException {
                     if (arguments.length < 1)
                         return ESNumber.valueOf(Double.NaN);
-                    String s = arguments[0].toString().trim();
+                    String s = arguments[0].callToString().trim();
                     Double d = new Double(Double.NaN);
                     int i; // approximate look for a prefix
                     boolean efound = false;
@@ -449,7 +449,7 @@ public class GlobalObject extends ObjectPrototype {
                 public ESValue callFunction(ESValue thisObject,
                         ESValue[] arguments) throws EcmaScriptException {
                     if (arguments.length >= 1) {
-                        String s = String.valueOf(arguments[0]);
+                        String s = getArg(arguments,0).callToString();
                         switch (opts) {
                         case ENCODE:
                         case ENCODE | COMPONENT:

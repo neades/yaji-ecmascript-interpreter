@@ -205,9 +205,8 @@ public final class ESString extends ESPrimitive {
         }
 
         if (o instanceof ESValue) {
-            ESString other = (ESString) ((ESValue) o).toESString();
             String thisString = this.toString();
-            String otherString = other == null ? null : other.toString();
+            String otherString = o.toString();
             return thisString == null ? otherString == null : thisString
                     .equals(otherString);
         }

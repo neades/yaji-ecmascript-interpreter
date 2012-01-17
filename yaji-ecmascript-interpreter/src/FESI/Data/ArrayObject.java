@@ -144,7 +144,7 @@ public class ArrayObject extends BuiltinFunctionObject {
                     StringBuilder buffer = new StringBuilder();
                     String separator = ",";
                     if (arguments.length > 0) {
-                        separator = arguments[0].toString();
+                        separator = arguments[0].callToString();
                     }
                     ESObject thisObject = thisValue.toESObject(getEvaluator());
                     int length = (thisObject.getProperty(

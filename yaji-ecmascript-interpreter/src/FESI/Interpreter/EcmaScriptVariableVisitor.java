@@ -219,14 +219,20 @@ public class EcmaScriptVariableVisitor extends AbstractEcmaScriptVisitor impleme
 
     @Override
     public Object visit(ASTForVarStatement node, Object data) {
-        data = node.childrenAccept(this, data);
-        return data;
+        return node.childrenAccept(this, data);
     }
 
     @Override
     public Object visit(ASTForVarInStatement node, Object data) {
-        data = node.childrenAccept(this, data);
-        return data;
+        int nChildren = node.jjtGetNumChildren();
+        if (nChildren != 4) {
+            throw new ProgrammingError("Bad AST in variable declaration");
+        }
+        ASTIdentifier idNode = (ASTIdentifier) (node.jjtGetChild(0));
+        if (debug)
+            System.out.println("VAR DECL: " + idNode.getName());
+        variableList.addElement(idNode.getName());
+        return node.childrenAccept(this, data);
     }
 
     @Override
