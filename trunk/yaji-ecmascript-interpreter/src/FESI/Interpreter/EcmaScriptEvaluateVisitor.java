@@ -1745,7 +1745,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                 }
             }
             
-            object.putProperty(property, value, property.hashCode());
+            object.putOwnProperty(property, value, property.hashCode());
             return object;
         } catch (EcmaScriptException e) {
             throw new PackagedException(e, node);
@@ -1805,7 +1805,8 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
             for (int i = 0; i < length; i++) {
                 Node child = node.jjtGetChild(i);
                 if (!(child instanceof ASTElision)) {
-                    result.putProperty((long)i,(ESValue) child.jjtAccept(this, FOR_VALUE));
+                    result.putOwnProperty((long)i,(ESValue) child.jjtAccept(this, FOR_VALUE));
+                    result.putProperty(StandardProperty.LENGTHstring, ESNumber.valueOf(i+1), StandardProperty.LENGTHhash);
                 } else if (i == length-1) {
                     result.putProperty(StandardProperty.LENGTHstring, ESNumber.valueOf(length-1), StandardProperty.LENGTHhash);
                 }

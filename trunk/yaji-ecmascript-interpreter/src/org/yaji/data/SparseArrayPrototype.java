@@ -11,9 +11,11 @@ import FESI.Data.ESNumber;
 import FESI.Data.ESObject;
 import FESI.Data.ESString;
 import FESI.Data.ESValue;
+import FESI.Data.ObjectObject;
 import FESI.Data.StandardProperty;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.RangeError;
+import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
 
 public class SparseArrayPrototype extends ESObject {
@@ -23,7 +25,7 @@ public class SparseArrayPrototype extends ESObject {
 
     protected SparseArrayPrototype(ESObject prototype, Evaluator evaluator) throws EcmaScriptException {
         super(prototype, evaluator);
-        putProperty(StandardProperty.LENGTHstring, WRITEABLE|CONFIGURABLE, ESNumber.valueOf(0));
+        putProperty(StandardProperty.LENGTHstring, WRITEABLE, ESNumber.valueOf(0));
     }
 
     @Override
@@ -44,11 +46,18 @@ public class SparseArrayPrototype extends ESObject {
 
     private void putProperty(long index, String indexString,
             ESValue propertyValue) throws EcmaScriptException {
+        updateLength(index, isStrictMode());
         super.putProperty(indexString, propertyValue, indexString.hashCode());
-        updateLength(index);
     }
 
-    private void updateLength(long index) throws EcmaScriptException {
+    @Override
+    public void putOwnProperty(long index, ESValue propertyValue)
+            throws EcmaScriptException {
+        updateLength(index, isStrictMode());
+        super.putOwnProperty(index, propertyValue);
+    }
+    
+    private void updateLength(long index, boolean shouldThrow) throws EcmaScriptException {
         long length = getLength();
         if (index >= length) {
             if (index > length) {
@@ -58,7 +67,7 @@ public class SparseArrayPrototype extends ESObject {
                 }
                 sparseValues.set(index);
             }
-            super.putProperty(StandardProperty.LENGTHstring, ESNumber.valueOf(index+1), StandardProperty.LENGTHhash);
+            super.putProperty(StandardProperty.LENGTHstring, ESNumber.valueOf(index+1), StandardProperty.LENGTHhash, shouldThrow);
         }
     }
 
@@ -78,16 +87,57 @@ public class SparseArrayPrototype extends ESObject {
     @Override
     public ESValue defineProperty(String propertyName, ESObject desc)
             throws EcmaScriptException {
-        ESValue result = super.defineProperty(propertyName, desc);
         if (isAllDigits(propertyName)) {
             long longResult = Long.parseLong(propertyName);
             if (longResult < 0xFFFFFFFFL && longResult >= 0) {
-                updateLength(longResult);
+                updateLength(longResult, true);
+            }
+        } else if (StandardProperty.LENGTHhash == propertyName.hashCode() && StandardProperty.LENGTHstring.equals(propertyName)) {
+            ESValue propertyValue = desc.getPropertyIfAvailable(StandardProperty.VALUEstring, StandardProperty.VALUEhash);
+            if (propertyValue != null) {
+                long newLen = validateLength(propertyValue);
+                if (newLen != propertyValue.doubleValue()) {
+                    throw new RangeError("Array[[defineProperty]]: Length must be an integer value");
+                }
+                desc = copyDescriptor(desc);
+                desc.putProperty(StandardProperty.VALUEstring, ESNumber.valueOf(newLen), StandardProperty.VALUEhash);
+                long currentLength = getLength();
+                if (newLen < currentLength) {
+                    if (!canPut(StandardProperty.LENGTHstring,StandardProperty.LENGTHhash)) {
+                        throw new TypeError("Cannot change length of array because the length is read only");
+                    }
+                    ESValue newPropertyValue = trimArray(propertyValue);
+                    if (newPropertyValue != propertyValue) {
+                        desc.putProperty(StandardProperty.VALUEstring, newPropertyValue, StandardProperty.VALUEhash);
+                        super.defineProperty(propertyName, desc);
+                        throw new TypeError("Cannot change length of array because element is not configurable");
+                    }
+                }
             }
         }
-        return result;
+
+        return super.defineProperty(propertyName, desc);
     }
     
+    private ESObject copyDescriptor(ESObject desc) throws EcmaScriptException {
+        ESObject copy = ObjectObject.createObject(getEvaluator());
+        copyPropertyIfSet(desc, copy, StandardProperty.CONFIGURABLEstring, StandardProperty.CONFIGURABLEhash);
+        copyPropertyIfSet(desc, copy, StandardProperty.ENUMERABLEstring, StandardProperty.ENUMERABLEhash);
+        copyPropertyIfSet(desc, copy, StandardProperty.VALUEstring, StandardProperty.VALUEhash);
+        copyPropertyIfSet(desc, copy, StandardProperty.WRITABLEstring, StandardProperty.WRITABLEhash);
+        copyPropertyIfSet(desc, copy, StandardProperty.GETstring, StandardProperty.GEThash);
+        copyPropertyIfSet(desc, copy, StandardProperty.SETstring, StandardProperty.SEThash);
+        return copy;
+    }
+
+    protected void copyPropertyIfSet(ESObject desc, ESObject copy, String propertyName, int propertyNameHashCode)
+            throws EcmaScriptException {
+        ESValue value = desc.getPropertyIfAvailable(propertyName, propertyNameHashCode);
+        if (value != null) {
+            copy.putProperty(propertyName, value, propertyNameHashCode);
+        }
+    }
+
     @Override
     public void putProperty(String propertyName, ESValue propertyValue, int propertyHash)
             throws EcmaScriptException {
@@ -100,22 +150,29 @@ public class SparseArrayPrototype extends ESObject {
             }
         } else {
             if (StandardProperty.LENGTHhash == propertyHash && StandardProperty.LENGTHstring.equals(propertyName)) {
-                long requestedLength = validateLength(propertyValue);
-                long length = getLength();
-                while (requestedLength < length) {
-                    length = decrement(length);
-                    if (length >= requestedLength && (sparseValues == null || sparseValues.get(length))) {
-                        if (!deleteProperty(length)) {
-                            break;
-                        }
-                    }
-                }
-                if (requestedLength < length) {
-                    propertyValue = ESNumber.valueOf(length);
-                }
+                propertyValue = trimArray(propertyValue);
             }
             super.putProperty(propertyName, propertyValue, propertyHash);
         }
+    }
+
+    protected ESValue trimArray(ESValue propertyValue)
+            throws EcmaScriptException, RangeError {
+        long requestedLength = validateLength(propertyValue);
+        long length = getLength();
+        while (requestedLength < length) {
+            length = decrement(length);
+            if (length >= requestedLength && (sparseValues == null || sparseValues.get(length))) {
+                if (!deleteProperty(length)) {
+                    length ++;
+                    break;
+                }
+            }
+        }
+        if (requestedLength < length) {
+            propertyValue = ESNumber.valueOf(length);
+        }
+        return propertyValue;
     }
     
     private long decrement(long length) {
@@ -186,6 +243,6 @@ public class SparseArrayPrototype extends ESObject {
     public boolean canJson() {
         return true;
     }
-    
+
 
 }

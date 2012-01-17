@@ -119,16 +119,16 @@ public class ESArguments extends ESObject {
             if (argumentMap != null) {
                 String mappedPropertyName = getMappedPropertyName(propertyName);
                 if (mappedPropertyName != null) {
-                    ESValue getter = desc.getProperty(StandardProperty.GETstring,StandardProperty.GEThash);
-                    ESValue setter = desc.getProperty(StandardProperty.SETstring,StandardProperty.SEThash);
+                    ESValue getter = desc.getPropertyIfAvailable(StandardProperty.GETstring,StandardProperty.GEThash);
+                    ESValue setter = desc.getPropertyIfAvailable(StandardProperty.SETstring,StandardProperty.SEThash);
                     if (getter != null || setter != null) {
                         argumentMap.remove(propertyName);
                     } else {
-                        ESValue descValue = desc.getProperty(StandardProperty.VALUEstring, StandardProperty.VALUEhash);
+                        ESValue descValue = desc.getPropertyIfAvailable(StandardProperty.VALUEstring, StandardProperty.VALUEhash);
                         if (descValue != null) {
                             ESArguments.this.putProperty(mappedPropertyName, descValue, mappedPropertyName.hashCode());
                         }
-                        ESValue writable = desc.getProperty(StandardProperty.WRITABLEstring, StandardProperty.WRITABLEhash); 
+                        ESValue writable = desc.getPropertyIfAvailable(StandardProperty.WRITABLEstring, StandardProperty.WRITABLEhash); 
                         if (writable != null && !writable.booleanValue() ) {
                             argumentMap.remove(propertyName);
                         }

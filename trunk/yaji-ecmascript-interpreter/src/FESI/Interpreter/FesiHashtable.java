@@ -57,7 +57,7 @@ import FESI.Interpreter.FesiHashtable.Flag;
 /**
  * Hashtable collision list.
  */
-class HashtableEntry implements java.io.Serializable {
+class HashtableEntry implements IPropertyDescriptor, java.io.Serializable {
     private static final long serialVersionUID = 4541703187276273804L;
     int hash;
     String key;
@@ -85,6 +85,26 @@ class HashtableEntry implements java.io.Serializable {
         this.hidden = hidden.from(this.hidden);
         this.readonly = readonly.from(this.readonly);
         this.configurable = configurable.from(this.configurable);
+    }
+
+    public String getName() {
+        return key;
+    }
+
+    public ESValue getValue() {
+        return value;
+    }
+
+    public boolean isEnumerable() {
+        return !hidden;
+    }
+
+    public boolean isWritable() {
+        return !readonly;
+    }
+
+    public boolean isConfigurable() {
+        return configurable;
     }
 }
 
@@ -684,13 +704,9 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         ObjectPrototype object = ObjectObject.createObject(evaluator);
         if (value.isAccessorDescriptor()) {
             ESValue setter = value.getSetAccessorDescriptor();
-            if (setter != null) {
-                object.putProperty(StandardProperty.SETstring, setter, StandardProperty.SEThash);
-            }
+            object.putProperty(StandardProperty.SETstring, setter==null?ESUndefined.theUndefined:setter, StandardProperty.SEThash);
             ESValue getter = value.getGetAccessorDescriptor();
-            if (getter != null) {
-                object.putProperty(StandardProperty.GETstring, getter, StandardProperty.GEThash);
-            }
+            object.putProperty(StandardProperty.GETstring, getter==null?ESUndefined.theUndefined:getter, StandardProperty.GEThash);
         } else {
             object.putProperty(StandardProperty.VALUEstring,value,StandardProperty.VALUEhash);
             object.putProperty(StandardProperty.WRITABLEstring, ESBoolean.valueOf(writable), StandardProperty.WRITABLEhash);
@@ -704,7 +720,7 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         public boolean reject(String message) throws TypeError;
     }
     
-    public boolean defineProperty(String propertyName, FesiHashtable desc, IReporter reporter, boolean extensible, Evaluator evaluator) throws EcmaScriptException {
+    public boolean defineProperty(String propertyName, ESObject desc, IReporter reporter, boolean extensible, Evaluator evaluator) throws EcmaScriptException {
         int propertNameHash = propertyName.hashCode();
         HashtableEntry e = getHashtableEntry(propertyName, propertNameHash);
         boolean enumerable = false;
@@ -713,12 +729,14 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         ESValue value = ESUndefined.theUndefined;
         
         
-        ESValue configurableValue = desc.get(StandardProperty.CONFIGURABLEstring, StandardProperty.CONFIGURABLEhash);
-        ESValue enumerableValue = desc.get(StandardProperty.ENUMERABLEstring, StandardProperty.ENUMERABLEhash);
-        ESValue newValue = desc.get(StandardProperty.VALUEstring, StandardProperty.VALUEhash);
-        ESValue writableValue = desc.get(StandardProperty.WRITABLEstring, StandardProperty.WRITABLEhash);
-        ESValue getter = desc.get(StandardProperty.GETstring, StandardProperty.GEThash);
-        ESValue setter = desc.get(StandardProperty.SETstring, StandardProperty.SEThash);
+        ESValue configurableValue = desc.getPropertyIfAvailable(StandardProperty.CONFIGURABLEstring, StandardProperty.CONFIGURABLEhash);
+        ESValue enumerableValue = desc.getPropertyIfAvailable(StandardProperty.ENUMERABLEstring, StandardProperty.ENUMERABLEhash);
+        ESValue newValue = desc.getPropertyIfAvailable(StandardProperty.VALUEstring, StandardProperty.VALUEhash);
+        ESValue writableValue = desc.getPropertyIfAvailable(StandardProperty.WRITABLEstring, StandardProperty.WRITABLEhash);
+        ESValue getter = desc.getPropertyIfAvailable(StandardProperty.GETstring, StandardProperty.GEThash);
+        checkCallable(getter);
+        ESValue setter = desc.getPropertyIfAvailable(StandardProperty.SETstring, StandardProperty.SEThash);
+        checkCallable(setter);
         
         if (newValue != null || writableValue != null) {
             if (getter != null || setter != null) {
@@ -728,13 +746,14 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         
         if (e != null) {
             enumerable = !e.hidden;
-            writable = !e.readonly;
             configurable = e.configurable;
             value = e.value;
-            
             boolean valueIsAccessor = value.isAccessorDescriptor();
+            writable = valueIsAccessor ? false : !e.readonly;
             boolean newValueIsAccessor = (setter != null || getter != null);
-            if (!configurable) {
+            if (configurableValue == null && enumerableValue == null && newValue == null && writableValue == null && getter == null && setter == null) {
+                return true;
+            } else if (!configurable) {
                 if (configurableValue != null && configurableValue.booleanValue()) {
                     return reporter.reject("Cannot change configurable state of property "+ propertyName+ " It is not configurable");
                 }
@@ -748,14 +767,14 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
                     return reporter.reject("Cannot change accessor state of property "+ propertyName+ " It is not configurable");
                 } else if (valueIsAccessor && newValueIsAccessor) {
                     ESValue existingSetter = value.getSetAccessorDescriptor();
-                    if (existingSetter != null && !sameValue(existingSetter, setter)) {
+                    if (!sameValue(existingSetter, setter)) {
                         if (setter != null) {
                             return reporter.reject("Cannot change \"set\" accessor of property "+ propertyName+ " It is not configurable");
                         }
                         setter = existingSetter;
                     }
                     ESValue existingGetter = value.getGetAccessorDescriptor();
-                    if (existingGetter != null && !sameValue(existingGetter, getter)) {
+                    if (!sameValue(existingGetter, getter)) {
                         if (getter != null) {
                             return reporter.reject("Cannot change \"get\" accessor of property "+ propertyName+ " It is not configurable");
                         }
@@ -763,6 +782,13 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
                     }
                 } else if (newValue != null && !writable && !sameValue(value, newValue)) {
                     return reporter.reject("Cannot change value of property "+propertyName+". It is not writable.");
+                }
+            } else  if (valueIsAccessor && newValueIsAccessor) {
+                if (setter == null) {
+                    setter = value.getSetAccessorDescriptor();
+                }
+                if (getter == null) {
+                    getter = value.getGetAccessorDescriptor();
                 }
             }
         } else {
@@ -785,8 +811,17 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         return true;
     }
 
+    protected void checkCallable(ESValue getter) throws TypeError {
+        if (getter != null && getter.getTypeOf() != ESValue.EStypeUndefined && !getter.isCallable()) {
+            throw new TypeError("[[DefineOwnProperty]] get value is not a function");
+        }
+    }
+
     private boolean sameValue(ESValue existingSetter, ESValue setter)
             throws EcmaScriptException {
+        existingSetter = existingSetter == null ? ESUndefined.theUndefined : existingSetter;
+        setter = setter == null ? ESUndefined.theUndefined : setter;
+        
         return existingSetter.sameValue(setter);
     }
 
@@ -800,6 +835,15 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
 
     public Enumeration<String> enumerableKeys() {
         return new EnumerableHashtableKeyEnumerator(table);
+    }
+
+    public Boolean canPut(String propertyName, int hash) {
+        HashtableEntry e = getHashtableEntry(propertyName, hash);
+        return e==null?null:Boolean.valueOf( (e.value.isAccessorDescriptor() && e.value.hasSetAccessorDescriptor() ) || !e.readonly);
+    }
+
+    public IPropertyDescriptor getDescriptor(String propertyName, int hash) {
+        return getHashtableEntry(propertyName, hash);
     }
 }
 

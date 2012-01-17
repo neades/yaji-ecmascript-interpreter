@@ -26,6 +26,7 @@ import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
 import FESI.Interpreter.FesiHashtable;
 import FESI.Interpreter.FesiHashtable.IReporter;
+import FESI.Interpreter.IPropertyDescriptor;
 import FESI.Interpreter.ScopeChain;
 import FESI.Util.EvaluatorAccess;
 
@@ -283,8 +284,12 @@ public abstract class ESObject extends ESValue {
 
     public ESValue getOwnProperty(String propertyName, int hash)
             throws EcmaScriptException {
-        ESValue property = hasNoPropertyMap() ? null : getPropertyMap().get(propertyName, hash);
-        return property;
+        return hasNoPropertyMap() ? null : getPropertyMap().get(propertyName, hash);
+    }
+
+    public IPropertyDescriptor getOwnPropertyDescriptor(String propertyName, int hash)
+            throws EcmaScriptException {
+        return hasNoPropertyMap() ? null : getPropertyMap().getDescriptor(propertyName, hash);
     }
 
     /**
@@ -547,26 +552,67 @@ public abstract class ESObject extends ESValue {
      */
     public void putProperty(String propertyName, ESValue propertyValue, int hash)
             throws EcmaScriptException {
-        if (!canPut(propertyName, hash)) {
-            if (isStrictMode()) {
+        putProperty(propertyName, propertyValue, hash, isStrictMode());
+    }
+
+    protected void putProperty(String propertyName, ESValue propertyValue,
+            int hash, boolean shouldThrow) throws TypeError,
+            EcmaScriptException {
+        IPropertyDescriptor desc = getPropertyDescriptor(propertyName, hash);
+        if (!canPut(desc)) {
+            if (shouldThrow) {
                 throw new TypeError("Property " + propertyName
                         + " cannot be modified");
             }
         } else {
-            ESValue desc = getOwnProperty(propertyName, hash);
-            if (desc != null && desc.hasSetAccessorDescriptor()) {
-                ESValue setter = desc.getSetAccessorDescriptor();
-                if (setter != ESUndefined.theUndefined) {
-                    setter.callFunction(this, new ESValue[] {propertyValue});
-                }
-            } else {
-                getPropertyMap().put(propertyName, hash, FesiHashtable.Flag.Default, FesiHashtable.Flag.Default,
-                    propertyValue, FesiHashtable.Flag.Default);
-            }
+            putOwnProperty(propertyName, propertyValue, hash, desc);
         }
     }
 
-    private boolean isStrictMode() {
+    private boolean canPut(IPropertyDescriptor desc) {
+        if (desc != null) {
+            if (desc.getValue().isAccessorDescriptor()) {
+                return desc.getValue().hasSetAccessorDescriptor();
+            }
+            return desc.isWritable();
+        }
+        return extensible;
+    }
+
+    private IPropertyDescriptor getPropertyDescriptor(String propertyName, int hash) throws EcmaScriptException {
+        IPropertyDescriptor desc = getOwnPropertyDescriptor(propertyName, hash);
+        ESObject currentPrototype = prototype;
+        while (desc == null && currentPrototype != null) {
+            desc = currentPrototype.hasPropertyMap() ? currentPrototype.getOwnPropertyDescriptor(propertyName, hash) : null;
+            currentPrototype = currentPrototype.prototype;
+        }
+        return desc;
+    }
+    
+    public void putOwnProperty(String propertyName, ESValue propertyValue,
+            int hash) throws EcmaScriptException {
+        IPropertyDescriptor desc = getOwnPropertyDescriptor(propertyName, hash);
+        putOwnProperty(propertyName, propertyValue, hash, desc);
+    }
+
+    protected void putOwnProperty(String propertyName, ESValue propertyValue,
+            int hash, IPropertyDescriptor desc) throws EcmaScriptException {
+        if (desc != null && desc.getValue().hasSetAccessorDescriptor()) {
+            ESValue setter = desc.getValue().getSetAccessorDescriptor();
+            if (setter != ESUndefined.theUndefined) {
+                setter.callFunction(this, new ESValue[] {propertyValue});
+            }
+        } else if (desc != null ){
+            getPropertyMap().put(propertyName, hash, FesiHashtable.Flag.fromBoolean(!desc.isEnumerable()), 
+                    FesiHashtable.Flag.fromBoolean(!desc.isWritable()),
+                    propertyValue, FesiHashtable.Flag.fromBoolean(desc.isConfigurable()));
+        } else {
+            getPropertyMap().put(propertyName, hash, FesiHashtable.Flag.Default, FesiHashtable.Flag.Default,
+                propertyValue, FesiHashtable.Flag.Default);
+        }
+    }
+
+    protected boolean isStrictMode() {
         final Evaluator evaluator = getEvaluator();
         if (evaluator == null) {
             return true;
@@ -574,8 +620,8 @@ public abstract class ESObject extends ESValue {
         return evaluator.isStrictMode();
     }
 
-    private boolean canPut(String propertyName, int hash) {
-        return !getPropertyMap().isReadonly(propertyName, hash, extensible);
+    protected boolean canPut(String propertyName, int hash) throws EcmaScriptException {
+        return canPut(getPropertyDescriptor(propertyName, hash));
     }
 
     /**
@@ -619,7 +665,12 @@ public abstract class ESObject extends ESValue {
         String iString = Long.toString(index);
         putProperty(iString, propertyValue, iString.hashCode());
     }
-
+    
+    public void putOwnProperty(long index, ESValue propertyValue) throws EcmaScriptException {
+        String iString = Long.toString(index);
+        putOwnProperty(iString, propertyValue, iString.hashCode());
+    }
+    
     /**
      * Separated from putProperty to allow read only fields to be initialised at
      * ESObject level this simply behaves the same as putProperty - it is
@@ -738,7 +789,7 @@ public abstract class ESObject extends ESValue {
                 }
             }
         }
-        throw new TypeError("No default value for " + this
+        throw new TypeError("No default value for " + this.toDetailString()
                 + " and hint " + hint);
     }
 
@@ -886,16 +937,17 @@ public abstract class ESObject extends ESValue {
     }
 
     @Override
+    public String callToString() throws EcmaScriptException {
+        return toESPrimitive(EStypeString).toString();
+    }
+    
+    @Override
     public String toString() {
-        ESValue value = ESUndefined.theUndefined;
-        String string = null;
         try {
-            value = toESPrimitive(EStypeString);
+            return callToString();
         } catch (EcmaScriptException e) {
             return this.toDetailString();
         }
-        string = value.toString();
-        return string;
     }
 
     /**
@@ -1250,7 +1302,7 @@ public abstract class ESObject extends ESValue {
     }
 
     public ESValue defineProperty(final String propertyName, ESObject desc) throws EcmaScriptException {
-        getPropertyMap().defineProperty(propertyName,desc.getPropertyMap(), new IReporter() {
+        getPropertyMap().defineProperty(propertyName,desc, new IReporter() {
             
             public boolean reject(String message) throws TypeError{
                 throw new TypeError("Cannot define property "+propertyName+" on Object : "+message);

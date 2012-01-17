@@ -612,7 +612,7 @@ public class StringObject extends BuiltinFunctionObject {
         ESObject sp = getEvaluator().getStringPrototype();
         theObject = new StringPrototype(sp, getEvaluator());
         if (arguments.length > 0) {
-            theObject.value = new ESString(arguments[0].toString());
+            theObject.value = (ESString)arguments[0].toESString();
         } else {
             theObject.value = new ESString("");
         }

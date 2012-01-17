@@ -211,11 +211,21 @@ public abstract class ESValue implements java.io.Serializable {
      * Convert the value to an EcmaScript string (9.8) if possible
      * 
      * @return The EcmaScript string value (there is always one!)
+     * @throws EcmaScriptException 
      */
-    public ESValue toESString() {
-        return new ESString(this.toString());
+    public ESValue toESString() throws EcmaScriptException {
+        return new ESString(this.callToString());
     }
 
+    /**
+     * Convert the value to a Java string according to the rules in 9.8
+     * 
+     * @return The Java String value (or Type Error)
+     */
+    public String callToString() throws EcmaScriptException {
+        return toString();
+    }
+    
     /**
      * Convert the value to an EcmaScript number (9.3) if possible
      * 

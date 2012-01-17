@@ -235,7 +235,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
 
         @Override
         protected ESValue getExitCode(long index, ESValue originalValue, ESValue result, ESObject data) throws EcmaScriptException {
-            data.putProperty(index, result);
+            data.putOwnProperty(index, result);
             return null;
         }
     }
@@ -261,7 +261,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
         protected ESValue getExitCode(long index, ESValue originalValue, ESValue result, ESObject data) throws EcmaScriptException {
             if (result.booleanValue()) {
                 long length = getLength(data);
-                data.putProperty(length, originalValue);
+                data.putOwnProperty(length, originalValue);
             }
             return null;
         }
@@ -401,7 +401,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
             for (long k=0L; k<actualDeleteCount; k++) {
                 ESValue v = thisObject.getPropertyIfAvailable(start+k);
                 if (v != null) {
-                    result.putProperty(k, v);
+                    result.putOwnProperty(k, v);
                 }
             }
             if (itemCount < actualDeleteCount) {
@@ -410,7 +410,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
                     long to = k+itemCount;
                     ESValue v = thisObject.getPropertyIfAvailable(from);
                     if (v != null) {
-                        thisObject.putProperty(to, v);
+                        thisObject.putOwnProperty(to, v);
                     } else {
                         thisObject.deleteProperty(to);
                     }
@@ -424,14 +424,14 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
                     long to = k+itemCount-1;
                     ESValue v = thisObject.getPropertyIfAvailable(from);
                     if (v != null) {
-                        thisObject.putProperty(to, v);
+                        thisObject.putOwnProperty(to, v);
                     } else {
                         thisObject.deleteProperty(to);
                     }
                 }
             }
             for( int k=0; k<itemCount; k++) {
-                thisObject.putProperty(k+start, getArg(arguments,k+2));
+                thisObject.putOwnProperty(k+start, getArg(arguments,k+2));
             }
             setLength(thisObject, length-actualDeleteCount+itemCount);
             return result;
@@ -507,7 +507,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
             for( long k=start; k<end; k++) {
                 ESValue v = thisObject.getPropertyIfAvailable(k);
                 if (v != null) {
-                    array.putProperty(n, v);
+                    array.putOwnProperty(n, v);
                 }
                 n++;
             }
@@ -673,7 +673,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
                     for (long k=0; k<length; k++) {
                         ESValue subElement = element.getPropertyIfAvailable(k);
                         if (subElement != null) {
-                            result.putProperty(n, subElement);
+                            result.putOwnProperty(n, subElement);
                         }
                         n++;
                     }
@@ -801,8 +801,9 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
         default:
             long i = 0;
             for (ESValue argument : arguments) {
-                sparseArrayPrototype.putProperty(i++, argument);
+                sparseArrayPrototype.putOwnProperty(i++, argument);
             }
+            sparseArrayPrototype.putProperty(StandardProperty.LENGTHstring,ESNumber.valueOf(arguments.length),StandardProperty.LENGTHhash);
         }
         return sparseArrayPrototype;
     }

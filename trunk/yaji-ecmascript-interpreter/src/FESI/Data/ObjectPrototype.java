@@ -99,7 +99,7 @@ public class ObjectPrototype extends ESObject {
         @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
-            String propertyName = getArg(arguments,0).toESString().toString();
+            String propertyName = getArg(arguments,0).callToString();
             ESObject object = thisObject.toESObject(getEvaluator());
             return ESBoolean.valueOf(object.getOwnProperty(propertyName, propertyName.hashCode()) != null);
         }
@@ -141,7 +141,7 @@ public class ObjectPrototype extends ESObject {
         @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
-            String P = getArg(arguments,0).toESString().toString();
+            String P = getArg(arguments,0).callToString();
             ESObject o = thisObject.toESObject(getEvaluator());
             return ESBoolean.valueOf(o.hasEnumerableProperty(P, P.hashCode()));
         }
