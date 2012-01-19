@@ -29,8 +29,9 @@ class StringPrototype extends ESObject {
 
     ESString value = new ESString("");
 
-    StringPrototype(ESObject prototype, Evaluator evaluator) {
+    StringPrototype(ESObject prototype, Evaluator evaluator) throws EcmaScriptException {
         super(prototype, evaluator);
+        putProperty(StandardProperty.LENGTHstring, 0, ESNumber.valueOf(0));
     }
 
     @Override

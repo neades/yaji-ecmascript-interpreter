@@ -36,12 +36,14 @@ import java.util.TimeZone;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.yaji.data.SparseArrayConstructor;
 import org.yaji.debugger.DebugEcmaScriptEvaluateVisitor;
 import org.yaji.debugger.Debugger;
 
 import FESI.AST.ASTProgram;
 import FESI.AST.ASTStatement;
 import FESI.AST.ASTStatementList;
+import FESI.Data.ArrayObject;
 import FESI.Data.BuiltinFunctionObject;
 import FESI.Data.ESLoader;
 import FESI.Data.ESNull;
@@ -55,7 +57,6 @@ import FESI.Data.ESWrapper;
 import FESI.Data.GlobalObject;
 import FESI.Data.IObjectProfiler;
 import FESI.Data.JSGlobalWrapper;
-import FESI.Data.StandardProperty;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.EcmaScriptLexicalException;
 import FESI.Exceptions.EcmaScriptParseException;
@@ -1543,6 +1544,9 @@ public class Evaluator implements Serializable {
     }
 
     public ESObject createArray() throws EcmaScriptException {
-        return globalObject.getProperty(StandardProperty.ARRAYstring,StandardProperty.ARRAYhash).doConstruct(ESValue.EMPTY_ARRAY);
+        if (GlobalObject.useSparse) {
+            return SparseArrayConstructor.createArray(this, ESValue.EMPTY_ARRAY);
+        }
+        return ArrayObject.createArray(this,ESValue.EMPTY_ARRAY);
     }
 }

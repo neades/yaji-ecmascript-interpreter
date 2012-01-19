@@ -129,7 +129,7 @@ public class ObjectObject extends BuiltinFunctionObject {
                 return array;
             }
         });
-        putHiddenProperty("create", new BuiltinFunctionObject(prototype, evaluator, "create", 1) {
+        putHiddenProperty("create", new BuiltinFunctionObject(prototype, evaluator, "create", 2) {
             private static final long serialVersionUID = 7813753201649697905L;
             
             @Override

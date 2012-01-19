@@ -3,6 +3,8 @@ package FESI.Data;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
+import java.util.Locale;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -89,5 +91,14 @@ public class ArrayPrototypeTest extends EvaluatorTestCase{
         String string = "4294967294";
         object.putProperty(string, ESNull.theNull);
         assertEquals(ESNumber.valueOf(4294967295L), object.getProperty(StandardProperty.LENGTHstring));
+    }
+    
+    @Test
+    public void toLocaleStringUsesLocale() throws Exception {
+        evaluator.setDefaultLocale(Locale.FRENCH);
+        ESObject object = arrayObject.doConstruct(new ESValue[] { ESNumber.valueOf(123.456), ESNumber.valueOf(2) });
+        ESValue result = object.doIndirectCall(evaluator, object, "toLocaleString", ESValue.EMPTY_ARRAY);
+        String string = result.toString();
+        assertEquals("123,456\u00a02",string);
     }
 }

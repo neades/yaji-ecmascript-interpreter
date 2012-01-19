@@ -2,6 +2,7 @@ package FESI.Data;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Locale;
 import java.util.Random;
 
 import org.junit.Before;
@@ -32,6 +33,14 @@ public class NumberPrototypeTest extends EvaluatorTestCase {
         ESObject number = ESNumber.valueOf(Double.NaN).toESObject(evaluator);
         ESValue value = number.doIndirectCall(evaluator, number, "toPrecision", new ESValue[] { ESNumber.valueOf(5) });
         assertEquals(new ESString("NaN"), value);
+    }
+
+    @Test
+    public void testToLocaleString() throws Exception {
+        evaluator.setDefaultLocale(Locale.GERMAN);
+        ESObject number = ESNumber.valueOf(123.456).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toLocaleString", ESValue.EMPTY_ARRAY);
+        assertEquals(new ESString("123,456"), value);
     }
 
     @Test

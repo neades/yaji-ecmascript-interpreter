@@ -17,6 +17,8 @@
 
 package FESI.Data;
 
+import java.text.NumberFormat;
+
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
 import FESI.Exceptions.RangeError;
@@ -107,6 +109,22 @@ public class NumberObject extends BuiltinFunctionObject {
                 s = thisObject.toString();
             }
             return new ESString(s);
+        }
+    }
+    
+    private static class NumberPrototypeToLocaleString extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        NumberPrototypeToLocaleString(String name, Evaluator evaluator,
+                FunctionPrototype fp) throws EcmaScriptException {
+            super(fp, evaluator, name, 1);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments) throws EcmaScriptException {
+            double d = thisObject.doubleValue();
+            String string = NumberFormat.getNumberInstance(getEvaluator().getDefaultLocale()).format(d);
+            return new ESString(string);
         }
     }
     
@@ -240,6 +258,9 @@ public class NumberObject extends BuiltinFunctionObject {
                             functionPrototype));
             numberPrototype.putHiddenProperty("toExponential",
                     new NumberPrototypeToExponential("toExponential", evaluator,
+                            functionPrototype));
+            numberPrototype.putHiddenProperty("toLocaleString",
+                    new NumberPrototypeToLocaleString("toLocaleString", evaluator,
                             functionPrototype));
         } catch (EcmaScriptException e) {
             e.printStackTrace();
