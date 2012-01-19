@@ -48,6 +48,7 @@ public class ArrayObject extends BuiltinFunctionObject {
         ESObject ap = evaluator.getArrayPrototype();
         return new ArrayPrototype(ap, evaluator);
     }
+    
     // overrides
     @Override
     public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
@@ -59,8 +60,13 @@ public class ArrayObject extends BuiltinFunctionObject {
     @Override
     public ESObject doConstruct(ESValue[] arguments)
             throws EcmaScriptException {
-        ESObject ap = getEvaluator().getArrayPrototype();
-        ArrayPrototype theArray = new ArrayPrototype(ap, getEvaluator());
+        return createArray(getEvaluator(), arguments);
+    }
+
+    public static ArrayPrototype createArray(Evaluator evaluator, ESValue[] arguments)
+            throws EcmaScriptException {
+        ESObject ap = evaluator.getArrayPrototype();
+        ArrayPrototype theArray = new ArrayPrototype(ap, evaluator);
         if (arguments.length > 1) {
             for (int i = 0; i < arguments.length; i++) {
                 String iString = Integer.toString(i);

@@ -1,5 +1,6 @@
 package org.yaji.data;
 
+import java.text.DecimalFormatSymbols;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -685,8 +686,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
         }
     }
 
-    private static final class ArrayPrototypeToString extends
-            AbstractArrayPrototypeFunction {
+    private static final class ArrayPrototypeToString extends AbstractArrayPrototypeFunction {
         private static final long serialVersionUID = -4163809301044076356L;
 
         private ArrayPrototypeToString(ESObject functionPrototype,
@@ -701,6 +701,89 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
                 func = getEvaluator().getObjectPrototype().getProperty(StandardProperty.TOSTRINGstring, StandardProperty.TOSTRINGhash);
             }
             return func.callFunction(thisObject, ESValue.EMPTY_ARRAY);
+        }
+    }
+
+    private static final class ArrayPrototypeToLocaleString extends AbstractArrayPrototypeFunction {
+        private static final long serialVersionUID = -6773790155346682016L;
+
+        private ArrayPrototypeToLocaleString(ESObject functionPrototype,
+                Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
+            super(functionPrototype, evaluator, functionName, length);
+        }
+
+        @Override
+        public ESValue callFunction(ESObject thisObject, ESValue[] arguments) throws EcmaScriptException {
+            // Let O be the result of calling ToObject passing the this value as the argument.
+            Evaluator evaluator = getEvaluator();
+            ESObject target = thisObject.toESObject(evaluator);
+            //Let arrayLen be the result of calling the [[Get]] internal method of array with argument "length".
+            //Let len be ToUint32(arrayLen).
+            long length = getLength(target);
+            //If len is zero, return the empty String.
+            if (length == 0) {
+                return ESString.valueOf("");
+            }
+            //Let separator be the String value for the list-separator String appropriate for the host environment’s current locale (this is derived in an implementation-defined way).
+            char separator = new DecimalFormatSymbols(evaluator.getDefaultLocale()).getGroupingSeparator();
+            //Let firstElement be the result of calling the [[Get]] internal method of array with argument "0".
+            ESValue element = target.getProperty(0L);
+            
+            ESValue result;
+            //If firstElement is undefined or null, then
+            if (element.getTypeOf() == EStypeUndefined || element.getTypeOf() == EStypeNull) {
+                //Let R be the empty String.
+                result = ESString.valueOf("");
+                //Else
+            } else {
+                //Let elementObj be ToObject(firstElement).
+                //
+                ESObject elementObj = element.toESObject(evaluator);
+
+                //Let func be the result of calling the [[Get]] internal method of elementObj with argument "toLocaleString".
+                ESValue func = elementObj.getProperty(StandardProperty.TO_LOCALE_STRINGstring, StandardProperty.TO_LOCAL_STRINGhash);
+                //If IsCallable(func) is false, throw a TypeError exception.
+                if (!func.isCallable()) {
+                    throw new TypeError("Array.prototype.toLocaleString: element 0 of array does not have a 'toLocaleString' function");
+                }
+
+                //Let R be the result of calling the [[Call]] internal method of func providing elementObj as the this value and an empty arguments list.
+                result = func.callFunction(element, EMPTY_ARRAY);
+            }
+            //9.     Let k be 1
+            if (length > 1) {
+                //10.    Repeat, while k < len
+                StringBuilder sb = new StringBuilder(result.toString());
+                for (long index=1L; index < length; index ++) {
+                    //Let S be a String value produced by concatenating R and separator.
+                    //Let nextElement be the result of calling the [[Get]] internal method of array with argument ToString(k).
+                    ESValue nextElement = target.getProperty(index);
+                    //If nextElement is undefined or null, then
+                    String s;
+                    if (nextElement.getTypeOf() == EStypeUndefined || nextElement.getTypeOf() == EStypeNull) {
+                        //  Let R be the empty String.
+                        s = "";
+                        //Else
+                    } else {
+                        //  Let elementObj be ToObject(nextElement).
+                        ESObject nextElementObj = nextElement.toESObject(evaluator);
+                        //  Let func be the result of calling the [[Get]] internal method of elementObj with argument "toLocaleString".
+                        ESValue func = nextElementObj.getProperty(StandardProperty.TO_LOCALE_STRINGstring, StandardProperty.TO_LOCAL_STRINGhash);
+                        //  If IsCallable(func) is false, throw a TypeError exception.
+                        if (!func.isCallable()) {
+                            throw new TypeError("Array.prototype.toLocaleString: element "+index+" of array does not have a 'toLocaleString' function");
+                        }
+                        //  Let R be the result of calling the [[Call]] internal method of func providing elementObj as the this value and an empty arguments list.
+                        s = func.callFunction(nextElement, EMPTY_ARRAY).toString();
+                    }
+                    //Let R be a String value produced by concatenating S and R.
+                    sb.append(separator).append(s);
+                    //Increase k by 1.
+                }
+                result = new ESString(sb.toString());
+            }
+            //11.    Return R.
+            return result;
         }
     }
 
@@ -786,13 +869,18 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
     @Override
     public ESObject doConstruct(ESValue[] arguments) throws EcmaScriptException {
         Evaluator evaluator = getEvaluator();
-        SparseArrayPrototype sparseArrayPrototype = new SparseArrayPrototype(getEvaluator().getArrayPrototype(),evaluator);
+        return createArray(evaluator, arguments);
+    }
+
+    public static ESObject createArray(Evaluator evaluator, ESValue[] arguments)
+            throws EcmaScriptException, RangeError {
+        SparseArrayPrototype sparseArrayPrototype = new SparseArrayPrototype(evaluator.getArrayPrototype(),evaluator);
         switch (arguments.length) {
         case 0:
             break;
         case 1:
             if (arguments[0].isNumberValue()) {
-                if (isInteger(arguments[0])) {
+                if (arguments[0].isUInt32()) {
                     sparseArrayPrototype.putProperty(StandardProperty.LENGTHstring,arguments[0],StandardProperty.LENGTHhash);
                     break;
                 }
@@ -809,10 +897,6 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
     }
     
 
-    private boolean isInteger(ESValue esValue) throws EcmaScriptException {
-        return esValue.isUInt32();
-    }
-
     public static ESObject makeArrayObject(Evaluator evaluator,
             ObjectPrototype objectPrototype, FunctionPrototype functionPrototype) throws EcmaScriptException {
         SparseArrayPrototype arrayPrototype = new SparseArrayPrototype(objectPrototype, evaluator);
@@ -824,6 +908,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
         arrayPrototype.putProperty(StandardProperty.CONSTRUCTORstring, WRITEABLE|CONFIGURABLE, sparseArrayConstructor);
         arrayPrototype.putHiddenProperty(JOINstring,new ArrayPrototypeJoin(functionPrototype, evaluator, JOINstring, 1));
         arrayPrototype.putHiddenProperty(StandardProperty.TOSTRINGstring,new ArrayPrototypeToString(functionPrototype, evaluator, StandardProperty.TOSTRINGstring, 0));
+        arrayPrototype.putHiddenProperty("toLocaleString",new ArrayPrototypeToLocaleString(functionPrototype, evaluator, "toLocaleString", 0));
         arrayPrototype.putHiddenProperty("concat", new ArrayPrototypeConcat(functionPrototype, evaluator, "concat", 1));
         arrayPrototype.putHiddenProperty("pop", new ArrayPrototypePop(functionPrototype, evaluator, "pop", 0));
         arrayPrototype.putHiddenProperty("push", new ArrayPrototypePush(functionPrototype, evaluator, "push", 1));

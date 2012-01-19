@@ -11,4 +11,6 @@
   <test id="15.2.3.7-6-a-93-3">Assumes an ordering to keys</test>
   <test id="15.2.3.7-6-a-93-2">Assumes an ordering to keys</test>
   <test id="15.2.3.7-6-a-93-1">Assumes an ordering to keys</test>
+  <test id="15.2.3.5-4-40">Assumes an ordering to keys</test>
+  <test id="15.2.3.3-4-74">substr is non-normative</test>
 </excludeList>

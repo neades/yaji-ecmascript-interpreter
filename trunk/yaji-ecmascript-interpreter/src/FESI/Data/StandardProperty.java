@@ -60,4 +60,6 @@ public interface StandardProperty {
     public static final int CALLERhash = CALLERstring.hashCode();
     public static final String EVALstring = "eval";
     public static final int EVALhash = EVALstring.hashCode();
+    public static final String TO_LOCALE_STRINGstring = "toLocaleString";
+    public static final int TO_LOCAL_STRINGhash = TO_LOCALE_STRINGstring.hashCode();
 }
