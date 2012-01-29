@@ -110,46 +110,48 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants/*@ege
 }
 PARSER_END(EcmaScript)
 
-
-/* WHITE SPACE - 7.1*/
+/* WHITE SPACE - 7.1 */
 <DEFAULT,NOREGEXP>
-SKIP :
+SKIP : 
 {
-  " "      /* SPACE */
-| "\t"     /* TAB */
-| "\r"     /* CR */
-| "\f"     /* LF */
-| "\u0085" /* NEL */
-| "\ufeff" /* BOM */
-| "\u00a0" /* NO-BREAK SPACE */
-| "\u1680" /* OGHAM SPACE MARK */
-| "\u180e" /* MONGOLIAN VOWEL SEPARATOR */
-| "\u2000" /* EN QUAD */
-| "\u2001" /* EM QUAD */
-| "\u2002" /* EN SPACE */
-| "\u2003" /* EM SPACE */
-| "\u2004" /* THREE-PER-EM SPACE */
-| "\u2005" /* FOUR-PER-EM SPACE */
-| "\u2006" /* SIX-PER-EM SPACE */
-| "\u2007" /* FIGURE SPACE */
-| "\u2008" /* PUNCTUATION SPACE */
-| "\u2009" /* THIN SPACE */
-| "\u200a" /* HAIR SPACE */
-| "\u2028" /* LS (LINE SEPARATOR) */
-| "\u2029" /* PS (PARAGRAPH SEPARATOR) */
-| "\u202f" /* NARROW NO-BREAK SPACE */
-| "\u205f" /* MEDIUM MATHEMATICAL SPACE */
-| "\u3000" /* IDEOGRAPHIC SPACE */
+	< TAB: "	" >
+|   < VT: "\u000b" >
+|   < FF: "" >
+|   < SP: " " >
+|   < NBSP: "\u00a0" >
+|   < BOM: "\ufeff" >
+|   < USP: 
+	[
+        "\u1680", /* OGHAM SPACE MARK */
+		"\u180e", /* MONGOLIAN VOWEL SEPARATOR */
+		"\u2000", /* EN QUAD */
+		"\u2001", /* EM QUAD */
+		"\u2002", /* EN SPACE */
+		"\u2003", /* EM SPACE */
+		"\u2004", /* THREE-PER-EM SPACE */
+		"\u2005", /* FOUR-PER-EM SPACE */
+		"\u2006", /* SIX-PER-EM SPACE */
+		"\u2007", /* FIGURE SPACE */
+		"\u2008", /* PUNCTUATION SPACE */
+		"\u2009", /* THIN SPACE */
+		"\u200a", /* HAIR SPACE */
+		"\u2028", /* LS (LINE SEPARATOR) */
+		"\u2029", /* PS (PARAGRAPH SEPARATOR) */
+		"\u202f", /* NARROW NO-BREAK SPACE */
+		"\u205f", /* MEDIUM MATHEMATICAL SPACE */
+		"\u3000" /* IDEOGRAPHIC SPACE */
+	] >
 }
 
-/* Line terminator (EmcaScript 7.2)
- * Handled especialyl due to the EOL as semicolon rules
- * Splical token do not impact parse, but are available for examination 
- */
+/* 7.2 - LINE TERMINATORS */
 <DEFAULT,NOREGEXP>
-SPECIAL_TOKEN :
+SPECIAL_TOKEN : 
 {
-  <EOL: (["\n","\r"])+ >
+	< EOL: <CR>(<LF>)?|<LF>|<LS>|<PS> >
+|   < #LF: "\n" >
+|   < #CR: "\r" >
+|   < #LS: "\u2028" >
+|   < #PS: "\u2029" >
 }
 
 /* COMMENTS - EcmaScript 7.3
@@ -157,7 +159,8 @@ SPECIAL_TOKEN :
  */
 <DEFAULT,NOREGEXP>
 SPECIAL_TOKEN : {
-< SINGLE_LINE_COMMENT: "//"(~["\n","\r"])* ("\n"|"\r"|"\r\n")? > 
+/* < SINGLE_LINE_COMMENT: "//"(~["\n","\r"])* ("\n"|"\r"|"\r\n")? >  */
+< SINGLE_LINE_COMMENT: "//" (~["\n", "\r", "\u2028", "\u2029"])* >
 }
 
 <DEFAULT,NOREGEXP>

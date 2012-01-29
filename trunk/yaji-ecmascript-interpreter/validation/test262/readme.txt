@@ -1,8 +1,11 @@
 To run test262 tests:
 
-Install python.
+Install python (version 2).
 
-Download tests: http://hg.ecmascript.org/tests/test262/
+Download or checkout tests:
+- http://hg.ecmascript.org/tests/test262/
+- hg clone http://hg.ecmascript.org/tests/test262 test262
+
 
 (Instructions: http://wiki.ecmascript.org/doku.php?id=test262:command)
 
