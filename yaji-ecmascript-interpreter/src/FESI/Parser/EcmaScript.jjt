@@ -104,54 +104,54 @@ public class EcmaScript {
 }
 PARSER_END(EcmaScript)
 
-
-/* WHITE SPACE - 7.1*/
+/* WHITE SPACE - 7.2 */
 <DEFAULT,NOREGEXP>
-SKIP :
+SKIP : 
 {
-  " "      /* SPACE */
-| "\t"     /* TAB */
-| "\r"     /* CR */
-| "\f"     /* LF */
-| "\u0085" /* NEL */
-| "\ufeff" /* BOM */
-| "\u00A0" /* NO-BREAK SPACE */
-| "\u1680" /* OGHAM SPACE MARK */
-| "\u180E" /* MONGOLIAN VOWEL SEPARATOR */
-| "\u2000" /* EN QUAD */
-| "\u2001" /* EM QUAD */
-| "\u2002" /* EN SPACE */
-| "\u2003" /* EM SPACE */
-| "\u2004" /* THREE-PER-EM SPACE */
-| "\u2005" /* FOUR-PER-EM SPACE */
-| "\u2006" /* SIX-PER-EM SPACE */
-| "\u2007" /* FIGURE SPACE */
-| "\u2008" /* PUNCTUATION SPACE */
-| "\u2009" /* THIN SPACE */
-| "\u200A" /* HAIR SPACE */
-| "\u2028" /* LS (LINE SEPARATOR) */
-| "\u2029" /* PS (PARAGRAPH SEPARATOR) */
-| "\u202F" /* NARROW NO-BREAK SPACE */
-| "\u205F" /* MEDIUM MATHEMATICAL SPACE */
-| "\u3000" /* IDEOGRAPHIC SPACE */
+	< TAB: 	"\u0009" >
+|   < VT: 	"\u000B" >
+|   < FF: 	"\u000C" >
+|   < SP: 	"\u0020" >
+|   < NBSP: "\u00A0" >
+|   < BOM:	"\uFEFF" >
+|   < USP: 
+	[
+        "\u1680", /* OGHAM SPACE MARK */
+		"\u180E", /* MONGOLIAN VOWEL SEPARATOR */
+		"\u2000", /* EN QUAD */
+		"\u2001", /* EM QUAD */
+		"\u2002", /* EN SPACE */
+		"\u2003", /* EM SPACE */
+		"\u2004", /* THREE-PER-EM SPACE */
+		"\u2005", /* FOUR-PER-EM SPACE */
+		"\u2006", /* SIX-PER-EM SPACE */
+		"\u2007", /* FIGURE SPACE */
+		"\u2008", /* PUNCTUATION SPACE */
+		"\u2009", /* THIN SPACE */
+		"\u200A", /* HAIR SPACE */
+		"\u2028", /* LS (LINE SEPARATOR) */
+		"\u2029", /* PS (PARAGRAPH SEPARATOR) */
+		"\u202F", /* NARROW NO-BREAK SPACE */
+		"\u205F", /* MEDIUM MATHEMATICAL SPACE */
+		"\u3000" /* IDEOGRAPHIC SPACE */
+	] >
 }
 
-/* Line terminator (EmcaScript 7.2)
- * Handled especialyl due to the EOL as semicolon rules
- * Splical token do not impact parse, but are available for examination 
- */
+/* 7.3 - LINE TERMINATORS */
 <DEFAULT,NOREGEXP>
-SPECIAL_TOKEN :
+SPECIAL_TOKEN : 
 {
-  <EOL: (["\n","\r"])+ >
+	< EOL: <CR>(<LF>)?|<LF>|<LS>|<PS> >
+|   < #LF: "\n" >
+|   < #CR: "\r" >
+|   < #LS: "\u2028" >
+|   < #PS: "\u2029" >
 }
 
-/* COMMENTS - EcmaScript 7.3
- * Use states to skip until EOL
- */
+/* 7.4 - COMMENTS */
 <DEFAULT,NOREGEXP>
 SPECIAL_TOKEN : {
-< SINGLE_LINE_COMMENT: "//"(~["\n","\r"])* ("\n"|"\r"|"\r\n")? > 
+	< SINGLE_LINE_COMMENT: "//" (~["\n", "\r", "\u2028", "\u2029"])* >
 }
 
 <DEFAULT,NOREGEXP>
