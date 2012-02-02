@@ -711,6 +711,7 @@ public class Evaluator implements Serializable {
         }
         java.io.StringReader is = new java.io.StringReader(theSource);
         EcmaScript parser = new EcmaScript(is);
+        parser.setStrict(isStrictMode());
         try {
             // ASTProgram n = parser.Program();
             programNode = (ASTProgram) parser.Program();

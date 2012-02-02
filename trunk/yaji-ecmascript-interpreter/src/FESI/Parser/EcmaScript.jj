@@ -107,19 +107,24 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants/*@ege
     {
     }
 
+	public void setStrict(boolean strictMode) {
+	   this.strictMode = strictMode;
+	}
+
+    private boolean strictMode = false;
 }
 PARSER_END(EcmaScript)
 
-/* WHITE SPACE - 7.1 */
+/* WHITE SPACE - 7.2 */
 <DEFAULT,NOREGEXP>
 SKIP : 
 {
-	< TAB: "	" >
-|   < VT: "\u000b" >
-|   < FF: "" >
-|   < SP: " " >
+	< TAB: 	"	" >
+|   < VT: 	"\u000b" >
+|   < FF: 	"" >
+|   < SP: 	" " >
 |   < NBSP: "\u00a0" >
-|   < BOM: "\ufeff" >
+|   < BOM:	"\ufeff" >
 |   < USP: 
 	[
         "\u1680", /* OGHAM SPACE MARK */
@@ -143,7 +148,7 @@ SKIP :
 	] >
 }
 
-/* 7.2 - LINE TERMINATORS */
+/* 7.3 - LINE TERMINATORS */
 <DEFAULT,NOREGEXP>
 SPECIAL_TOKEN : 
 {
@@ -154,13 +159,10 @@ SPECIAL_TOKEN :
 |   < #PS: "\u2029" >
 }
 
-/* COMMENTS - EcmaScript 7.3
- * Use states to skip until EOL
- */
+/* 7.4 - COMMENTS */
 <DEFAULT,NOREGEXP>
 SPECIAL_TOKEN : {
-/* < SINGLE_LINE_COMMENT: "//"(~["\n","\r"])* ("\n"|"\r"|"\r\n")? >  */
-< SINGLE_LINE_COMMENT: "//" (~["\n", "\r", "\u2028", "\u2029"])* >
+	< SINGLE_LINE_COMMENT: "//" (~["\n", "\r", "\u2028", "\u2029"])* >
 }
 
 <DEFAULT,NOREGEXP>
@@ -5101,7 +5103,7 @@ SimpleNode Program()          :
     jjtreeCloseNodeScope(jjtn000);
   }
 /*@egen*/
-  { return StrictMode.validate(jjtn000); }/*@bgen(jjtree)*/
+  { return StrictMode.validate(jjtn000,strictMode); }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);

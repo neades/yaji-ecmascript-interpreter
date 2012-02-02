@@ -1,6 +1,7 @@
 package FESI.Parser;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 import FESI.AST.ASTAssignmentExpression;
 import FESI.AST.ASTCompositeReference;
@@ -34,8 +35,8 @@ public class StrictMode extends AbstractEcmaScriptVisitor {
 
         private boolean strict;
 
-        public StrictModeState(ASTProgram program) {
-            // TODO Auto-generated constructor stub
+        public StrictModeState(ASTProgram program, boolean strictMode) {
+            strict = strictMode;
         }
 
         public StrictModeState(StrictModeState outerState) {
@@ -52,9 +53,9 @@ public class StrictMode extends AbstractEcmaScriptVisitor {
         
     }
     
-    public static SimpleNode validate(ASTProgram program) {
+    public static SimpleNode validate(ASTProgram program, boolean strictMode) {
         StrictMode strictModeVisitor = new StrictMode();
-        StrictModeState state = new StrictModeState(program);
+        StrictModeState state = new StrictModeState(program, strictMode);
         lookAheadForDirectives(program,state);
         strictModeVisitor.visit(program, state);
         program.setStrictMode(state.isStrictMode());
@@ -215,6 +216,33 @@ public class StrictMode extends AbstractEcmaScriptVisitor {
             throw createException("'with' statement not permitted.", node);
         }
         return super.visit(node, data);
+    }
+    
+    private static final HashSet<String> strictModeReserved = new HashSet<String>() {
+        private static final long serialVersionUID = -6226874034788426181L;
+        {
+            add("implements");
+            add("let");
+            add("private");
+            add("public");
+            add("interface");
+            add("package");
+            add("protected");
+            add("static");
+            add("yield");
+        }
+    };
+     
+    @Override
+    public Object visit(ASTIdentifier node, Object data) {
+        if (isStrictMode(data) && isStrictModeReserved(node.getName())) {
+            throw createException(node.getName() + " is reserved in strict mode", node);
+        }
+        return super.visit(node, data);
+    }
+
+    private boolean isStrictModeReserved(String name) {
+        return strictModeReserved.contains(name);
     }
 
     private void checkEvalAndArguments(SimpleNode node, Object data, int childIndex) {

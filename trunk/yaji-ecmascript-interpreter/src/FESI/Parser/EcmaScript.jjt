@@ -101,6 +101,11 @@ public class EcmaScript {
     {
     }
 
+	public void setStrict(boolean strictMode) {
+	   this.strictMode = strictMode;
+	}
+
+    private boolean strictMode = false;
 }
 PARSER_END(EcmaScript)
 
@@ -1823,7 +1828,7 @@ SimpleNode Program() #Program :
 {}
 {
   ( SourceElement() )*  <EOF>
-  { return StrictMode.validate(jjtThis); }
+  { return StrictMode.validate(jjtThis,strictMode); }
 }
 
 void SourceElement() #void :

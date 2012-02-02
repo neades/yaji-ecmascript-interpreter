@@ -66,6 +66,12 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     {
     }
 
+        public void setStrict(boolean strictMode) {
+           this.strictMode = strictMode;
+        }
+
+    private boolean strictMode = false;
+
   final public void NumericLiteral() throws ParseException {
  /*@bgen(jjtree) Literal */
   ASTLiteral jjtn000 = new ASTLiteral(JJTLITERAL);
@@ -5588,7 +5594,7 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
     jjtreeCloseNodeScope(jjtn000);
-    {if (true) return StrictMode.validate(jjtn000);}
+    {if (true) return StrictMode.validate(jjtn000,strictMode);}
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -5807,37 +5813,6 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     try { return !jj_3_8(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(7, xla); }
-  }
-
-  private boolean jj_3R_157() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(19)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(30)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(28)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(106)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(107)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(108)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(109)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(95)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(94)) return true;
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    return false;
   }
 
   private boolean jj_3R_230() {
@@ -7835,6 +7810,37 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
   private boolean jj_3R_125() {
     if (jj_scan_token(COMMA)) return true;
     if (jj_3R_85()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_157() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(19)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(30)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(28)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(106)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(107)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(108)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(109)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(95)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(94)) return true;
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
     return false;
   }
 
