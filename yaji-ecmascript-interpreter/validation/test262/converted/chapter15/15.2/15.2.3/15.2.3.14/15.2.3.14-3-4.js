@@ -923,19 +923,19 @@ if (/opera/i.test(navigator.userAgent)) {
     })();
 }*/
 function testcase() {
-  function testArgs2(x, y, z) {
+  var testArgs2 = function testArgs2(x, y, z) {
     // Properties of the arguments object are enumerable.
     var a = Object.keys(arguments);
     if (a.length === 2 && a[0] === "0" && a[1] === "1")
       return true;
   }
-  function testArgs3(x, y, z) {
+  var testArgs3 = function testArgs3(x, y, z) {
     // Properties of the arguments object are enumerable.
     var a = Object.keys(arguments);
     if (a.length === 3 && a[0] === "0" && a[1] === "1" && a[2] === "2")
       return true;
   }
-  function testArgs4(x, y, z) {
+  var testArgs4 = function testArgs4(x, y, z) {
     // Properties of the arguments object are enumerable.
     var a = Object.keys(arguments);
     if (a.length === 4 && a[0] === "0" && a[1] === "1" && a[2] === "2" && a[3] === "3")

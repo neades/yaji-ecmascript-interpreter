@@ -32,16 +32,16 @@ Error.prototype.name === 'Error';
 Error.prototype.message === '';
 
 @test error.8 ES5 15.11.4.4
-Error.prototype.toString() === 'Error: ';
+Error.prototype.toString() === 'Error';
 
 @test error.9 ES5 15.11.4.4
 var error = Error('x');
 error.toString() === 'Error: x';
 
-@test error.9 ES5 15.11.4.4
+@test error.10 ES5 15.11.4.4
 var error = Error('x');
 error.message = undefined;
-error.toString() === undefined;
+error.toString() === 'Error';
 
 
 @test evalerror.1 ES5 15.11.7.2
@@ -63,7 +63,7 @@ EvalError.prototype.name === 'EvalError';
 EvalError.prototype.message === '';
 
 @test evalerror.7 ES5 15.11.7.10
-EvalError.prototype.toString() === 'EvalError: ';
+EvalError.prototype.toString() === 'EvalError';
 
 @test evalerror.8 ES5 15.11.7.10
 var error = EvalError('x');
@@ -88,7 +88,7 @@ RangeError.prototype.name === 'RangeError';
 RangeError.prototype.message === '';
 
 @test rangerror.7 ES5 15.11.7.10
-RangeError.prototype.toString() === 'RangeError: ';
+RangeError.prototype.toString() === 'RangeError';
 
 @test rangerror.8 ES5 15.11.7.10
 var error = RangeError('x');
@@ -113,7 +113,7 @@ ReferenceError.prototype.name === 'ReferenceError';
 ReferenceError.prototype.message === '';
 
 @test referenceerror.7 ES5 15.11.7.10
-ReferenceError.prototype.toString() === 'ReferenceError: ';
+ReferenceError.prototype.toString() === 'ReferenceError';
 
 @test referenceerror.8 ES5 15.11.7.10
 var error = ReferenceError('x');
@@ -139,7 +139,7 @@ SyntaxError.prototype.name === 'SyntaxError';
 SyntaxError.prototype.message === '';
 
 @test syntaxerror.7 ES5 15.11.7.10
-SyntaxError.prototype.toString() === 'SyntaxError: ';
+SyntaxError.prototype.toString() === 'SyntaxError';
 
 @test syntaxerror.8 ES5 15.11.7.10
 var error = SyntaxError('x');
@@ -165,7 +165,7 @@ TypeError.prototype.name === 'TypeError';
 TypeError.prototype.message === '';
 
 @test typeerror.7 ES5 15.11.7.10
-TypeError.prototype.toString() === 'TypeError: ';
+TypeError.prototype.toString() === 'TypeError';
 
 @test typeerror.8 ES5 15.11.7.10
 var error = TypeError('x');
@@ -191,7 +191,7 @@ URIError.prototype.name === 'URIError';
 URIError.prototype.message === '';
 
 @test urierror.7 ES5 15.11.7.10
-URIError.prototype.toString() === 'URIError: ';
+URIError.prototype.toString() === 'URIError';
 
 @test urierror.8 ES5 15.11.7.10
 var error = URIError('x');

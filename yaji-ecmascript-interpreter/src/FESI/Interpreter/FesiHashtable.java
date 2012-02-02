@@ -605,7 +605,7 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         HashtableEntry[] tab = getTable();
         for (HashtableEntry hashtableEntry : tab) {
             for (HashtableEntry e = hashtableEntry; e != null && frozen; e = e.next) {
-                frozen = e.readonly;
+                frozen = e.readonly && !e.configurable;
             }
         }
         return frozen;

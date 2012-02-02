@@ -232,16 +232,12 @@ public class NumberObject extends BuiltinFunctionObject {
             
 
             numberObject.putProperty(StandardProperty.PROTOTYPEstring, 0, numberPrototype);
-            numberObject.putHiddenProperty("length", ESNumber.valueOf(1));
-            numberObject.putHiddenProperty("MAX_VALUE", ESNumber
-                    .valueOf(Double.MAX_VALUE));
-            numberObject.putHiddenProperty("MIN_VALUE", ESNumber
-                    .valueOf(Double.MIN_VALUE));
-            numberObject.putHiddenProperty("NaN", ESNumber.valueOf(Double.NaN));
-            numberObject.putHiddenProperty("NEGATIVE_INFINITY", ESNumber
-                    .valueOf(Double.NEGATIVE_INFINITY));
-            numberObject.putHiddenProperty("POSITIVE_INFINITY", ESNumber
-                    .valueOf(Double.POSITIVE_INFINITY));
+            numberObject.putProperty("length", 0, ESNumber.valueOf(1));
+            numberObject.putProperty("MAX_VALUE", 0, ESNumber.valueOf(Double.MAX_VALUE));
+            numberObject.putProperty("MIN_VALUE", 0, ESNumber.valueOf(Double.MIN_VALUE));
+            numberObject.putProperty("NaN", 0, ESNumber.valueOf(Double.NaN));
+            numberObject.putProperty("NEGATIVE_INFINITY", 0, ESNumber.valueOf(Double.NEGATIVE_INFINITY));
+            numberObject.putProperty("POSITIVE_INFINITY", 0, ESNumber.valueOf(Double.POSITIVE_INFINITY));
 
             numberPrototype.putHiddenProperty("constructor", numberObject);
             numberPrototype.putHiddenProperty("toString",

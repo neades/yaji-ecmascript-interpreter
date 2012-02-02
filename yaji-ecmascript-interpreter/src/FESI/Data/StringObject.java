@@ -642,7 +642,7 @@ public class StringObject extends BuiltinFunctionObject {
 
         try {
             stringObject.putProperty(StandardProperty.PROTOTYPEstring, 0, stringPrototype);
-            stringObject.putHiddenProperty("length", ESNumber.valueOf(1));
+            stringObject.putProperty("length", 0, ESNumber.valueOf(1));
             stringObject.putHiddenProperty("fromCharCode",
                     new StringObjectFromCharCode("fromCharCode", evaluator,
                             functionPrototype));

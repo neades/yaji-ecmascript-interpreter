@@ -37,14 +37,14 @@ public class MathObject extends ObjectPrototype {
         // some problemsto the users of JBuilder. So it is moved in
         // the constructor
 
-        putHiddenProperty("E", ESNumber.valueOf(Math.E));
-        putHiddenProperty("LN10", ESNumber.valueOf(Math.log(10.0d)));
-        putHiddenProperty("LN2", ESNumber.valueOf(Math.log(2.0d)));
-        putHiddenProperty("LOG2E", ESNumber.valueOf(1.0d / Math.log(2.0d)));
-        putHiddenProperty("LOG10E", ESNumber.valueOf(1.0d / Math.log(10.0d)));
-        putHiddenProperty("PI", ESNumber.valueOf(Math.PI));
-        putHiddenProperty("SQRT1_2", ESNumber.valueOf(1.0d / Math.sqrt(2.0d)));
-        putHiddenProperty("SQRT2", ESNumber.valueOf(Math.sqrt(2.0d)));
+        putProperty("E", 0, ESNumber.valueOf(Math.E));
+        putProperty("LN10", 0, ESNumber.valueOf(Math.log(10.0d)));
+        putProperty("LN2", 0, ESNumber.valueOf(Math.log(2.0d)));
+        putProperty("LOG2E", 0, ESNumber.valueOf(1.0d / Math.log(2.0d)));
+        putProperty("LOG10E", 0, ESNumber.valueOf(1.0d / Math.log(10.0d)));
+        putProperty("PI", 0, ESNumber.valueOf(Math.PI));
+        putProperty("SQRT1_2", 0, ESNumber.valueOf(1.0d / Math.sqrt(2.0d)));
+        putProperty("SQRT2", 0, ESNumber.valueOf(Math.sqrt(2.0d)));
 
         putHiddenProperty("abs", new BuiltinMathFunctionOne("abs", evaluator,
                 functionPrototype) {

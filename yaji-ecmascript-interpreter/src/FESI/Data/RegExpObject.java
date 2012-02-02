@@ -93,8 +93,7 @@ class RegExpObject extends BuiltinFunctionObject {
         return doConstruct(getArg(arguments, 0), getArg(arguments, 1));
     }
 
-    private ESObject doConstruct(ESValue arg0, ESValue arg1) throws TypeError,
-            SyntaxError {
+    private ESObject doConstruct(ESValue arg0, ESValue arg1) throws EcmaScriptException {
         RegExpPrototype regExp = null;
         if (arg0 instanceof RegExpPrototype) {
             if (arg1 != ESUndefined.theUndefined) {

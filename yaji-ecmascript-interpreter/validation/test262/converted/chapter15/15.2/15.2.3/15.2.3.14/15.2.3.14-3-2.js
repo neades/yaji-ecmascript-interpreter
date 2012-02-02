@@ -923,7 +923,7 @@ if (/opera/i.test(navigator.userAgent)) {
     })();
 }*/
 function testcase() {
-  function foo() {}
+  var foo = function foo() {}
   foo.x = 1;
   
   var a = Object.keys(foo);

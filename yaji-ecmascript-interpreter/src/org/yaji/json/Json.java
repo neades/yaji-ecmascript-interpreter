@@ -15,7 +15,7 @@ import FESI.Interpreter.Evaluator;
 public class Json implements JsonConstants {
 
         private String unescape(String s) {
-          return s.substring(1,s.length()-1);
+          return JsonUtil.unescape(s);
         }
 
         private Evaluator evaluator;

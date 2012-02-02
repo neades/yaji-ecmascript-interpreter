@@ -923,9 +923,9 @@ if (/opera/i.test(navigator.userAgent)) {
     })();
 }*/
 function testcase() {
-  function base() {}
+  var base = function base() {}
 
-  function derived() {}
+  var derived = function derived() {}
   derived.prototype = new base();
 
   var d = new derived();

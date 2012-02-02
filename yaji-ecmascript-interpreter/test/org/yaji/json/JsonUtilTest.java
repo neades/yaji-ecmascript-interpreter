@@ -80,4 +80,18 @@ public class JsonUtilTest {
         assertEquals("[123,\"test\"]",JsonUtil.stringify(evaluator,array,ESUndefined.theUndefined, ESUndefined.theUndefined));
     }
     
+    @Test
+    public void testUnescapeSlashes() throws Exception {
+        assertEquals("\\",JsonUtil.unescape("\"\\\\\""));
+    }
+    
+    @Test
+    public void testUnescape() throws Exception {
+        assertEquals("\b\t\n\r\f\"",JsonUtil.unescape("\"\\b\\t\\n\\r\\f\\\"\""));
+    }
+    
+    @Test
+    public void testUnescapeUnicode() throws Exception {
+        assertEquals("X",JsonUtil.unescape("\"\\u0058\""));
+    }
 }
