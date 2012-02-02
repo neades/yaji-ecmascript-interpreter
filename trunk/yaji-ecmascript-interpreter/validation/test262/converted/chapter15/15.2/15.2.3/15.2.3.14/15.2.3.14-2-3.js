@@ -923,7 +923,7 @@ if (/opera/i.test(navigator.userAgent)) {
     })();
 }*/
 function testcase() {
-  function Array() { }
+  var Array = function Array() { }
 
   var o = { x: 1, y: 2};
 

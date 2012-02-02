@@ -82,4 +82,69 @@ public abstract class JsonUtil {
         }
     }
 
+    public static String unescape(String quotedString) {
+        StringBuilder sb = new StringBuilder(quotedString.length()-2);
+        char[] charArray = quotedString.toCharArray();
+        boolean inEscape = false;
+        int unicodeCount = 0;
+        char uc = 0;
+        for (int i=1; i<charArray.length-1; i++) {
+            char c = charArray[i];
+            if (inEscape) {
+                switch(c) {
+                case '\\': sb.append('\\'); break;
+                case '/':  sb.append('/');  break;
+                case 'b':  sb.append('\b'); break;
+                case 'f':  sb.append('\f'); break;
+                case 'n':  sb.append('\n'); break;
+                case 'r':  sb.append('\r'); break;
+                case 't':  sb.append('\t'); break;
+                case '"':  sb.append('"');  break;
+                case 'u':  unicodeCount = 4; break;
+                }
+                inEscape = false;
+            } else if (unicodeCount != 0) {
+                uc <<= 4;
+                uc += fromHex(c);
+                unicodeCount --;
+                if (unicodeCount == 0) {
+                    sb.append(uc);
+                    uc = 0;
+                }
+            } else if (c == '\\') {
+                inEscape = true;
+            } else { 
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    private static char fromHex(char c) {
+        switch(c) {
+        case '0': return 0;
+        case '1': return 1;
+        case '2': return 2;
+        case '3': return 3;
+        case '4': return 4;
+        case '5': return 5;
+        case '6': return 6;
+        case '7': return 7;
+        case '8': return 8;
+        case '9': return 9;
+        case 'a':
+        case 'A': return 10;
+        case 'b':
+        case 'B': return 11;
+        case 'c':
+        case 'C': return 12;
+        case 'd':
+        case 'D': return 13;
+        case 'e':
+        case 'E': return 14;
+        case 'f':
+        case 'F': return 15;
+        }
+        return 0;
+    }
 }

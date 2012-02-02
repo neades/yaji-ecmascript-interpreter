@@ -1979,6 +1979,10 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
     
     @Override
     public Object visit(ASTRegexp node, Object data) {
-        return new RegExpPrototype(evaluator.getRegExpPrototype(), evaluator, node.getBody(), node.getFlags());
+        try {
+            return new RegExpPrototype(evaluator.getRegExpPrototype(), evaluator, node.getBody(), node.getFlags());
+        } catch(EcmaScriptException e) {
+            throw new PackagedException(e, node);
+        }
     }
 }

@@ -85,4 +85,11 @@ public class JsonParserTest {
         assertEquals(0,value.toInteger(),0.0);
         assertEquals("null",value.toString());
     }
+    
+    @Test
+    public void shouldParseTab() throws Exception {
+        Json json = newJson("\"\\t\"");
+        ESValue value = json.Parse();
+        assertEquals("\t",value.toString());
+    }
 }

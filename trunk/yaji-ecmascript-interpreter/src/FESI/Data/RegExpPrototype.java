@@ -6,39 +6,38 @@ import java.util.regex.PatternSyntaxException;
 
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Interpreter.Evaluator;
-import FESI.Interpreter.ScopeChain;
 
 public class RegExpPrototype extends ESObject {
 
     private static final long serialVersionUID = 1319585947413414602L;
-    private String regExpString;
-    private boolean ignoreCase = false;
-    private boolean global = false;
-    private boolean multiline = false;
-    private int lastIndex = 0;
     private Pattern pattern = null; // null means no valid pattern
 
     // Prototype constructor
-    public RegExpPrototype(ESObject prototype, Evaluator evaluator) {
-        super(prototype, evaluator);
-        this.regExpString = "";
+    public RegExpPrototype(ESObject prototype, Evaluator evaluator) throws EcmaScriptException {
+        super(prototype,evaluator);
+        putProperty(StandardProperty.SOURCEstring, 0, new ESString(""));
+        putProperty(StandardProperty.GLOBALstring, 0, ESBoolean.valueOf(false));
+        putProperty(StandardProperty.IGNORE_CASEstring, 0, ESBoolean.valueOf(false));
+        putProperty(StandardProperty.MULTILINEstring, 0, ESBoolean.valueOf(false));
+        putProperty(StandardProperty.LAST_INDEXstring, WRITEABLE, ESNumber.valueOf(0));
     }
 
     public RegExpPrototype(ESObject regExpPrototype, Evaluator evaluator,
-            String body, String flags) {
-        super(regExpPrototype,evaluator);
-        this.regExpString = body;
-        global = flags.contains("g");
-        ignoreCase = flags.contains("i");
-        multiline = flags.contains("m");
+            String body, String flags) throws EcmaScriptException {
+        this(regExpPrototype, evaluator, body, flags.contains("i"), flags.contains("g"), flags.contains("m"));
     }
 
-    public RegExpPrototype(ESObject regExpPrototype, Evaluator evaluator, RegExpPrototype other) {
+    public RegExpPrototype(ESObject regExpPrototype, Evaluator evaluator, RegExpPrototype other) throws EcmaScriptException {
+        this(regExpPrototype, evaluator, other.getSource(), other.isIgnoreCase(), other.isGlobal(), other.isMultiline());
+    }
+    
+    private RegExpPrototype(ESObject regExpPrototype, Evaluator evaluator, String source, boolean ignoreCase, boolean global, boolean multiline) throws EcmaScriptException {
         super(regExpPrototype,evaluator);
-        this.regExpString = other.regExpString;
-        this.global = other.global;
-        this.ignoreCase = other.ignoreCase;
-        this.multiline = other.multiline;
+        putProperty(StandardProperty.SOURCEstring,0,new ESString(source));
+        putProperty(StandardProperty.GLOBALstring,0,ESBoolean.valueOf(global));
+        putProperty(StandardProperty.IGNORE_CASEstring,0,ESBoolean.valueOf(ignoreCase));
+        putProperty(StandardProperty.MULTILINEstring,0,ESBoolean.valueOf(multiline));
+        putProperty(StandardProperty.LAST_INDEXstring, WRITEABLE, ESUndefined.theUndefined);
     }
 
     public Pattern getPattern() throws EcmaScriptException {
@@ -49,19 +48,15 @@ public class RegExpPrototype extends ESObject {
         return pattern;
     }
 
-    public boolean isGlobal() {
-        return global;
-    }
-
     public void compile() throws EcmaScriptException {
         // Recompile the pattern
         try {
-            pattern = Pattern.compile(regExpString,
-                    (ignoreCase ? Pattern.CASE_INSENSITIVE : 0)
-                    | (multiline ? Pattern.MULTILINE : 0));
+            pattern = Pattern.compile(getSource(),
+                    (isIgnoreCase() ? Pattern.CASE_INSENSITIVE : 0)
+                    | (isMultiline() ? Pattern.MULTILINE : 0));
         } catch (PatternSyntaxException e) {
             throw new EcmaScriptException("PatternSyntaxException: /"
-                    + regExpString + "/", e);
+                    + getSource() + "/", e);
         }
     }
 
@@ -71,63 +66,29 @@ public class RegExpPrototype extends ESObject {
     }
 
     @Override
-    public String toString() {
-        if (regExpString == null)
+    public String callToString() throws EcmaScriptException {
+        String source = getSource();
+        if (source == null)
             return "/<null>/";
-        return "/" + regExpString + "/" 
-                + (global?"g":"")
-                + (ignoreCase?"i":"")
-                + (multiline?"m":"");
+        return "/" + source + "/" 
+                + (isGlobal()?"g":"")
+                + (isIgnoreCase()?"i":"")
+                + (isMultiline()?"m":"");
     }
 
+    @Override
+    public String toString() {
+        try {
+            return callToString();
+        } catch( EcmaScriptException e ) {
+            return "*RegExp - toString Exception - "+e.getMessage();
+        }
+    }
+    
     @Override
     public String toDetailString() {
         return "ES:[Object: builtin " + this.getClass().getName() + ":"
                 + this.toString() + "]";
-    }
-
-    @Override
-    public ESValue getPropertyInScope(String propertyName,
-            ScopeChain previousScope, int hash) throws EcmaScriptException {
-        ESValue result = getLocalProperty(propertyName, hash);
-        return (result == null) ? super.getPropertyInScope(propertyName, previousScope, hash) : result;
-    }
-
-    @Override
-    public ESValue getPropertyIfAvailable(String propertyName, int hash)
-            throws EcmaScriptException {
-        ESValue result = getLocalProperty(propertyName, hash);
-        return (result == null) ? super.getPropertyIfAvailable(propertyName, hash) : result;
-    }
-    
-    private ESValue getLocalProperty(String propertyName, int hash) {
-        if (hash == StandardProperty.IGNORE_CASEhash && propertyName.equals(StandardProperty.IGNORE_CASEstring)) {
-            return ESBoolean.valueOf(ignoreCase);
-        } else if (hash == StandardProperty.GLOBALhash && propertyName.equals(StandardProperty.GLOBALstring)) {
-            return ESBoolean.valueOf(global);
-        } else if (hash == StandardProperty.MULTILINEhash && propertyName.equals(StandardProperty.MULTILINEstring)) {
-            return ESBoolean.valueOf(multiline);
-        } else if (hash == StandardProperty.LAST_INDEXhash && propertyName.equals(StandardProperty.LAST_INDEXstring)) {
-            return ESNumber.valueOf(lastIndex);
-        } else if (hash == StandardProperty.SOURCEhash && propertyName.equals(StandardProperty.SOURCEstring)) {
-            return new ESString(regExpString);
-        }
-        return null;
-    }
-
-    @Override
-    public void putProperty(String propertyName, ESValue propertyValue, int hash)
-            throws EcmaScriptException {
-        if ((hash == StandardProperty.IGNORE_CASEhash && propertyName.equals(StandardProperty.IGNORE_CASEstring))
-            || (hash == StandardProperty.MULTILINEhash && propertyName.equals(StandardProperty.MULTILINEstring))
-            || (hash == StandardProperty.GLOBALhash && propertyName.equals(StandardProperty.GLOBALstring))
-            || (hash == StandardProperty.SOURCEhash && propertyName.equals(StandardProperty.SOURCEstring))) {
-            // not writable
-        } else if (hash == StandardProperty.LAST_INDEXhash && propertyName.equals(StandardProperty.LAST_INDEXstring)) {
-            lastIndex = propertyValue.toInt32();
-        } else {
-            super.putProperty(propertyName, propertyValue, hash);
-        }
     }
 
     @Override
@@ -140,12 +101,12 @@ public class RegExpPrototype extends ESObject {
         String str = value.toString();
         String string;
         int startIndex = 0;
-        if (global) {
-            if (lastIndex >= 0 && lastIndex <= str.length()) {
-                string = str.substring(lastIndex);
-                startIndex = lastIndex;
+        if (isGlobal()) {
+            if (getLastIndex() >= 0 && getLastIndex() <= str.length()) {
+                string = str.substring(getLastIndex());
+                startIndex = getLastIndex();
             } else {
-                lastIndex = 0;
+                setLastIndex(0);
                 return ESNull.theNull;
             }
         } else {
@@ -161,11 +122,35 @@ public class RegExpPrototype extends ESObject {
             for (int i = 0; i <= matcher.groupCount(); i++) {
                 resultArray.putProperty((long)i,new ESString(matcher.group(i)));
             } // for
-            lastIndex = matcher.end() + startIndex;
+            setLastIndex(matcher.end() + startIndex);
             return resultArray;
         }
-        lastIndex = 0;
+        setLastIndex(0);
         return ESNull.theNull;
+    }
+
+    private boolean isMultiline() throws EcmaScriptException {
+        return getProperty(StandardProperty.MULTILINEstring,StandardProperty.MULTILINEhash).booleanValue();
+    }
+
+    public boolean isGlobal() throws EcmaScriptException {
+        return getProperty(StandardProperty.GLOBALstring,StandardProperty.GLOBALhash).booleanValue();
+    }
+
+    private boolean isIgnoreCase() throws EcmaScriptException {
+        return getProperty(StandardProperty.IGNORE_CASEstring,StandardProperty.IGNORE_CASEhash).booleanValue();
+    }
+
+    private String getSource() throws EcmaScriptException {
+        return getProperty(StandardProperty.SOURCEstring,StandardProperty.SOURCEhash).callToString();
+    }
+
+    private int getLastIndex() throws EcmaScriptException {
+        return getProperty(StandardProperty.LAST_INDEXstring,StandardProperty.LAST_INDEXhash).toInt32();
+    }
+
+    private void setLastIndex(int lastIndex) throws EcmaScriptException {
+        putProperty(StandardProperty.LAST_INDEXstring,ESNumber.valueOf(lastIndex),StandardProperty.LAST_INDEXhash);
     }
 
 }
