@@ -124,7 +124,7 @@ public class DateObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 8694680238052474774L;
 
         DateBuiltinFunctionObject(FunctionPrototype fp, Evaluator evaluator,String name, int length) throws EcmaScriptException {
-            super(fp, evaluator, name, 0);
+            super(fp, evaluator, name, length);
         }
         
         @Override
@@ -504,7 +504,7 @@ public class DateObject extends BuiltinFunctionObject {
 
         DatePrototypeSetYear(String name, Evaluator evaluator,
                 FunctionPrototype fp) throws EcmaScriptException {
-            super(fp, evaluator, name, 0);
+            super(fp, evaluator, name, 1);
         }
 
         @Override
@@ -518,7 +518,7 @@ public class DateObject extends BuiltinFunctionObject {
 
         DatePrototypeSetFullYear(String name, Evaluator evaluator,
                 FunctionPrototype fp) throws EcmaScriptException {
-            super(fp, evaluator, name, 0);
+            super(fp, evaluator, name, 3);
         }
 
         @Override
@@ -533,7 +533,7 @@ public class DateObject extends BuiltinFunctionObject {
 
         DatePrototypeSetUTCFullYear(String name, Evaluator evaluator,
                 FunctionPrototype fp) throws EcmaScriptException {
-            super(fp, evaluator, name, 0);
+            super(fp, evaluator, name, 3);
         }
 
         @Override
@@ -549,7 +549,7 @@ public class DateObject extends BuiltinFunctionObject {
 
         DatePrototypeSetMonth(String name, Evaluator evaluator,
                 FunctionPrototype fp) throws EcmaScriptException {
-            super(fp, evaluator, name, 0);
+            super(fp, evaluator, name, 2);
         }
 
         @Override
@@ -564,7 +564,7 @@ public class DateObject extends BuiltinFunctionObject {
 
         DatePrototypeSetUTCMonth(String name, Evaluator evaluator,
                 FunctionPrototype fp) throws EcmaScriptException {
-            super(fp, evaluator, name, 0);
+            super(fp, evaluator, name, 2);
         }
 
         @Override
@@ -579,7 +579,7 @@ public class DateObject extends BuiltinFunctionObject {
 
         DatePrototypeSetDate(String name, Evaluator evaluator,
                 FunctionPrototype fp) throws EcmaScriptException {
-            super(fp, evaluator, name, 0);
+            super(fp, evaluator, name, 1);
         }
 
         @Override
@@ -594,7 +594,7 @@ public class DateObject extends BuiltinFunctionObject {
 
         DatePrototypeSetUTCDate(String name, Evaluator evaluator,
                 FunctionPrototype fp) throws EcmaScriptException {
-            super(fp, evaluator, name, 0);
+            super(fp, evaluator, name, 1);
         }
 
         @Override
@@ -609,7 +609,7 @@ public class DateObject extends BuiltinFunctionObject {
 
         DatePrototypeSetHours(String name, Evaluator evaluator,
                 FunctionPrototype fp) throws EcmaScriptException {
-            super(fp, evaluator, name, 0);
+            super(fp, evaluator, name, 4);
         }
 
         @Override
@@ -625,7 +625,7 @@ public class DateObject extends BuiltinFunctionObject {
 
         DatePrototypeSetUTCHours(String name, Evaluator evaluator,
                 FunctionPrototype fp) throws EcmaScriptException {
-            super(fp, evaluator, name, 0);
+            super(fp, evaluator, name, 4);
         }
 
         @Override
@@ -641,7 +641,7 @@ public class DateObject extends BuiltinFunctionObject {
 
         DatePrototypeSetMinutes(String name, Evaluator evaluator,
                 FunctionPrototype fp) throws EcmaScriptException {
-            super(fp, evaluator, name, 0);
+            super(fp, evaluator, name, 3);
         }
 
         @Override
@@ -657,7 +657,7 @@ public class DateObject extends BuiltinFunctionObject {
 
         DatePrototypeSetUTCMinutes(String name, Evaluator evaluator,
                 FunctionPrototype fp) throws EcmaScriptException {
-            super(fp, evaluator, name, 0);
+            super(fp, evaluator, name, 3);
         }
 
         @Override
@@ -673,7 +673,7 @@ public class DateObject extends BuiltinFunctionObject {
 
         DatePrototypeSetSeconds(String name, Evaluator evaluator,
                 FunctionPrototype fp) throws EcmaScriptException {
-            super(fp, evaluator, name, 0);
+            super(fp, evaluator, name, 2);
         }
 
         @Override
@@ -688,7 +688,7 @@ public class DateObject extends BuiltinFunctionObject {
 
         DatePrototypeSetUTCSeconds(String name, Evaluator evaluator,
                 FunctionPrototype fp) throws EcmaScriptException {
-            super(fp, evaluator, name, 0);
+            super(fp, evaluator, name, 2);
         }
 
         @Override
@@ -703,7 +703,7 @@ public class DateObject extends BuiltinFunctionObject {
 
         DatePrototypeSetMilliseconds(String name, Evaluator evaluator,
                 FunctionPrototype fp) throws EcmaScriptException {
-            super(fp, evaluator, name, 0);
+            super(fp, evaluator, name, 1);
         }
 
         @Override
@@ -718,7 +718,7 @@ public class DateObject extends BuiltinFunctionObject {
 
         DatePrototypeSetUTCMilliseconds(String name,
                 Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
-            super(fp, evaluator, name, 0);
+            super(fp, evaluator, name, 1);
         }
 
         @Override
@@ -769,7 +769,7 @@ public class DateObject extends BuiltinFunctionObject {
 
         DatePrototypeSetTime(String name, Evaluator evaluator,
                 FunctionPrototype fp) throws EcmaScriptException {
-            super(fp, evaluator, name, 0);
+            super(fp, evaluator, name, 1);
         }
 
         @Override
@@ -994,7 +994,7 @@ public class DateObject extends BuiltinFunctionObject {
  
             // For dateObject
             dateObject.putProperty(StandardProperty.PROTOTYPEstring, 0, datePrototype);
-            dateObject.putHiddenProperty("length", ESNumber.valueOf(7));
+            dateObject.putProperty("length", 0, ESNumber.valueOf(7));
             dateObject.putHiddenProperty("parse", new DateObjectParse("parse",
                     evaluator, functionPrototype));
             dateObject.putHiddenProperty("UTC", new DateObjectUTC("UTC",
