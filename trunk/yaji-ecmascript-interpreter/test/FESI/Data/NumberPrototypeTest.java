@@ -147,6 +147,12 @@ public class NumberPrototypeTest extends EvaluatorTestCase {
     }
     
     @Test(expected=RangeError.class)
+    public void toFixedThrowsRangeErrorForFractionDigitsInfinite() throws Exception {
+        ESObject number = ESNumber.valueOf(123.456).toESObject(evaluator);
+        number.doIndirectCall(evaluator, number, "toFixed", new ESValue[] { ESNumber.valueOf(Double.POSITIVE_INFINITY) });
+    }
+    
+    @Test(expected=RangeError.class)
     public void toFixedThrowsRangeErrorForFractionDigitsForLessThan0() throws Exception {
         ESObject number = ESNumber.valueOf(123.456).toESObject(evaluator);
         number.doIndirectCall(evaluator, number, "toFixed", new ESValue[] { ESNumber.valueOf(-1) });
