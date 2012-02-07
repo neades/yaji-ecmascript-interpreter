@@ -166,6 +166,13 @@ public class NumberPrototypeTest extends EvaluatorTestCase {
     }
 
     @Test
+    public void toFixedWithNoPrecision() throws Exception {
+        ESObject number = ESNumber.valueOf(1).toESObject(evaluator);
+        ESValue value = number.doIndirectCall(evaluator, number, "toFixed", ESValue.EMPTY_ARRAY);
+        assertEquals(new ESString("1"),value);
+    }
+
+    @Test
     public void toFixedRoundUp() throws Exception {
         ESObject number = ESNumber.valueOf(123.456).toESObject(evaluator);
         ESValue value = number.doIndirectCall(evaluator, number, "toFixed", new ESValue[] { ESNumber.valueOf(2) });

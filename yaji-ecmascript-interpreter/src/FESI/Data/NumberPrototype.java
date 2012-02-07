@@ -208,7 +208,7 @@ class NumberPrototype extends ESObject {
             s.append('-');
             d = -d;
         }
-        if (d > 1) {
+        if (d >= 1) {
             s.append(Long.toString((long)d));
         } else {
             s.append('0');

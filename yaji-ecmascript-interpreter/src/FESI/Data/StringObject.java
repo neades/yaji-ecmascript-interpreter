@@ -538,7 +538,7 @@ public class StringObject extends BuiltinFunctionObject {
 
         StringPrototypeLocaleCompare(String name, Evaluator evaluator,
                 FunctionPrototype fp) throws EcmaScriptException {
-            super(fp, evaluator, name, 0);
+            super(fp, evaluator, name, 1);
             evaluator.setLocaleListener(this);
             collator = Collator.getInstance(evaluator.getDefaultLocale());
         }
