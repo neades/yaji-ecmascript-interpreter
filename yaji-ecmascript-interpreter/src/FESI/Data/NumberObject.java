@@ -157,7 +157,13 @@ public class NumberObject extends BuiltinFunctionObject {
         @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
-            return ((NumberPrototype) thisObject).value;
+            if (thisObject instanceof ESNumber) {
+                return thisObject;
+            }
+            if (thisObject instanceof NumberPrototype) {
+                return ((NumberPrototype) thisObject).value;
+            }
+            throw new TypeError("Cannot apply Number.prototype.valueOf to an object which is not a Number");
         }
     }
     
@@ -199,11 +205,11 @@ public class NumberObject extends BuiltinFunctionObject {
         @Override
         public ESValue invoke(NumberPrototype thisNumber,
                 ESValue[] arguments) throws EcmaScriptException {
-            int fractionDigits = getArg(arguments,0).toInt32();
+            double fractionDigits = getArg(arguments,0).toInteger();
             if (fractionDigits < 0 || fractionDigits > 20) {
                 throw new RangeError("fractionDigits should be in range 0-20");
             }
-            return new ESString(thisNumber.toFixed(fractionDigits));
+            return new ESString(thisNumber.toFixed((int) fractionDigits));
         }
     }
     
