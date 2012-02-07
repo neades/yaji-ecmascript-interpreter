@@ -96,12 +96,20 @@ public class NumberObject extends BuiltinFunctionObject {
         @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
+            if ( ! (thisObject instanceof ESNumber) 
+                    && ! (thisObject instanceof NumberPrototype)) {
+                throw new TypeError("Cannot apply Number.prototype.toString to an object which is not a Number");
+            }
+            ESValue radix = getArg(arguments,0);
             String s;
-            if (arguments.length > 0) {
-                double d = arguments[0].doubleValue();
-                if (!Double.isNaN(d)) {
-                    s = Long
-                            .toString(((long) thisObject.doubleValue()), (int) d);
+            if (radix.getTypeOf() != EStypeUndefined) {
+                double d = radix.toInteger();
+                if (d < 2 || d > 36) {
+                    throw new RangeError("Number.prototype.toString(radix) : radix must be between 2 and 36 inclusive");
+                }
+                double doubleValue = thisObject.doubleValue();
+                if (!Double.isNaN(doubleValue) && !Double.isInfinite(doubleValue)) {
+                    s = Long.toString(((long) doubleValue), (int) d);
                 } else {
                     s = thisObject.toString();
                 }
