@@ -167,10 +167,13 @@ public class MathObject extends ObjectPrototype {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public double applyMathFunction(double arg1, double arg2) {
+            public double applyMathFunction(double x, double y) {
                 double d = Double.NaN;
                 try {
-                    d = Math.pow(arg1, arg2);
+                    if (y == 0.0) {
+                        return 1.0;
+                    }
+                    d = Math.pow(x, y);
                 } catch (ArithmeticException e) {
                     // return NaN
                 }
@@ -192,6 +195,11 @@ public class MathObject extends ObjectPrototype {
 
             @Override
             public double applyMathFunction(double arg) {
+                if (arg == 0.0 || Double.isInfinite(arg) || Double.isNaN(arg)) {
+                    return arg;
+                } else if (arg < 0.0 && arg >= -0.5) {
+                    return -0.0;
+                }
                 return Math.round(arg);
             }
         });
@@ -285,17 +293,8 @@ public class MathObject extends ObjectPrototype {
         @Override
         public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
                 throws EcmaScriptException {
-            if (arguments.length < 2) {
-                throw new EcmaScriptException("Missing parameter in function "
-                        + this);
-            }
-            double arg1 = (arguments.length > 0) ? arguments[0].doubleValue()
-                    : Double.NaN;
-            double arg2 = (arguments.length > 1) ? arguments[1].doubleValue()
-                    : Double.NaN;
-            if (Double.isNaN(arg1) || Double.isNaN(arg2)) {
-                return ESNumber.valueOf(Double.NaN);
-            }
+            double arg1 = getArg(arguments,0).doubleValue();
+            double arg2 = getArg(arguments,1).doubleValue();
             return ESNumber.valueOf(applyMathFunction(arg1, arg2));
         }
     }
@@ -306,7 +305,7 @@ public class MathObject extends ObjectPrototype {
 
         BuiltinMathFunctionN(String name, Evaluator evaluator,
                 FunctionPrototype fp) throws EcmaScriptException {
-            super(fp, evaluator, name, (int)Double.POSITIVE_INFINITY);
+            super(fp, evaluator, name, 2);
         }
 
         abstract double applyMathFunction(double[] arguments);
