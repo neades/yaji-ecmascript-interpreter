@@ -885,6 +885,9 @@ public abstract class ESObject extends ESValue {
         ESValue theFunction = hasNoPropertyMap() ? null : getPropertyMap().get(
                 functionName, hash);
         if (theFunction == null) {
+            if (prototype != null) {
+                return prototype.doIndirectCallInScope(evaluator, previousScope, thisObject, functionName, hash, arguments);
+            }
             if (previousScope == null) {
                 throw new EcmaScriptException("no global function named '"
                         + functionName + "'");

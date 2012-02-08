@@ -379,9 +379,9 @@ public class StringObject extends BuiltinFunctionObject {
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
             IAppendable appendable = getEvaluator().createAppendable(arguments.length + 1, 1000);
-            appendable.append(thisObject.toString());
+            appendable.append(thisObject.callToString());
             for (ESValue argument : arguments) {
-                appendable.append(argument.toString());
+                appendable.append(argument.callToString());
             }
             return new ESString(appendable);
         }
@@ -398,14 +398,14 @@ public class StringObject extends BuiltinFunctionObject {
         @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
-            String str = thisObject.toString();
+            String str = thisObject.callToString();
             int pos = 0;
             if (arguments.length <= 0) {
                 return ESNumber.valueOf(-1);
             }
-            String searched = arguments[0].toString();
+            String searched = getArg(arguments,0).callToString();
             if (arguments.length > 1) {
-                pos = arguments[1].toInt32();
+                pos = (int)getArg(arguments,1).toInteger();
             }
             int res = str.indexOf(searched, pos);
             return ESNumber.valueOf(res);
@@ -423,16 +423,17 @@ public class StringObject extends BuiltinFunctionObject {
         @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
-            String str = thisObject.toString();
+            String str = thisObject.callToString();
             int pos = str.length();
             if (arguments.length <= 0) {
                 return ESNumber.valueOf(-1);
             }
-            String searched = arguments[0].toString();
+            String searched = getArg(arguments,0).callToString();
             if (arguments.length > 1) {
-                double p = arguments[1].doubleValue();
+                ESValue arg = getArg(arguments,1);
+                double p = arg.doubleValue();
                 if (!Double.isNaN(p)) {
-                    pos = arguments[1].toInt32();
+                    pos = (int)arg.toInteger();
                 }
             }
             int res = str.lastIndexOf(searched, pos);

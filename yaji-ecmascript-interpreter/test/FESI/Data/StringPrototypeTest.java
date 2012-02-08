@@ -451,7 +451,14 @@ public class StringPrototypeTest extends EvaluatorTestCase  {
 //        ESObject theThis = new ESString("p").toESObject(evaluator);
 //        assertTrue(theThis.doIndirectCall(evaluator, theThis, "localeCompare", new ESValue[] { new ESString("\u00F6") }).toInt32() < 0);
 //    }
-//    
+//
+    
+    @Test
+    public void lastIndexOfHandlesNaNPosition() throws Exception {
+        ESObject string = s("bbbbba").toESObject(evaluator);
+        ESValue result = string.doIndirectCall(evaluator, string, "lastIndexOf", new ESValue[] { s("a"), ESNumber.NaN });
+        assertEquals(ESNumber.valueOf(5),result);
+    }
     private ESObject getStringPrototype() throws EcmaScriptException {
         ESObject stringObject = (ESObject) evaluator.getGlobalObject().getProperty("String","String".hashCode());
         ESObject stringPrototype = (ESObject) stringObject.getProperty(StandardProperty.PROTOTYPEstring,StandardProperty.PROTOTYPEhash);
