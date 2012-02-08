@@ -30,6 +30,7 @@ public class ScopeChain implements java.io.Serializable {
     private static final long serialVersionUID = -6458140452839959671L;
     private final ScopeChain previousElement;
     private final ESObject thisElement;
+    private final boolean provideThis;
 
     /**
      * CReate a new scope chain linked to a previous one (which is null only for
@@ -41,8 +42,22 @@ public class ScopeChain implements java.io.Serializable {
      *            previous object in scope chain
      */
     public ScopeChain(ESObject thisElement, ScopeChain previousElement) {
+        this(thisElement,previousElement,false);
+    }
+
+    /**
+     * CReate a new scope chain linked to a previous one (which is null only for
+     * the topmost chain)
+     * 
+     * @param thisElement
+     *            Object to look at at this level
+     * @param previousElement
+     *            previous object in scope chain
+     */
+    public ScopeChain(ESObject thisElement, ScopeChain previousElement, boolean provideThis) {
         this.previousElement = previousElement;
         this.thisElement = thisElement;
+        this.provideThis = provideThis;
     }
 
     /**
@@ -163,7 +178,7 @@ public class ScopeChain implements java.io.Serializable {
             String functionName, int hash, ESValue[] arguments)
             throws EcmaScriptException {
         return thisElement.doIndirectCallInScope(evaluator, previousElement,
-                thisObject, functionName, hash, arguments);
+                provideThis?thisElement:thisObject, functionName, hash, arguments);
     }
 
 }

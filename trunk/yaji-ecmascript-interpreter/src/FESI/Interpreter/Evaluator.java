@@ -1088,7 +1088,7 @@ public class Evaluator implements Serializable {
     public EvaluationResult evaluateWith(ASTStatement node, ESObject scopeObject, EvaluationSource es) throws EcmaScriptException {
         ESValue theValue = ESUndefined.theUndefined;
 
-        theScopeChain = new ScopeChain(scopeObject, theScopeChain == null ? globalScope : theScopeChain);
+        theScopeChain = new ScopeChain(scopeObject, theScopeChain == null ? globalScope : theScopeChain, true);
         try {
             EcmaScriptEvaluateVisitor evaluationVisitor = newEcmaScriptEvaluateVisitor();
             theValue = evaluationVisitor.evaluateWith(node, es);

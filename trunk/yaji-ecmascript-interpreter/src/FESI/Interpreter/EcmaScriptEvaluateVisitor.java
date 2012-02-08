@@ -1827,9 +1827,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         ASTCatch catchStatement = null;
         ASTFinally finallyStatement = null;
         int nChildren = node.jjtGetNumChildren();
-        if (nChildren == 0) {
-            throw new ProgrammingError("Bad AST in function expression");
-        } else if (nChildren == 3){
+        if (nChildren == 3){
             catchStatement = (ASTCatch) node.jjtGetChild(1);
             finallyStatement = (ASTFinally) node.jjtGetChild(2);
         } else if (nChildren == 2){
@@ -1839,6 +1837,8 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
             } else {
                 finallyStatement = (ASTFinally) child;
             }
+        } else {
+            throw new ProgrammingError("Bad AST in try statement");
         }
         Object B,C,F;
         try {
