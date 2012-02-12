@@ -1,4 +1,4 @@
-package FESI.log;
+package org.yaji.log;
 
 /**
  * YAJI log interface

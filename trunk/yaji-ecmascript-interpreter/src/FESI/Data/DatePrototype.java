@@ -108,7 +108,6 @@ public class DatePrototype extends ESObject {
         if (d < 100) {
             d += 1900;
         }
-        // System.out.println("SETYEAR to " + d);
         cal.set(Calendar.YEAR, (int) d);
         setDate(cal.getTime());
         long t = date.getTime();
@@ -143,7 +142,6 @@ public class DatePrototype extends ESObject {
                 date = null;
                 return ESNumber.valueOf(Double.NaN);
             }
-            // System.out.println("SET " + argTypes[iarg] + " to " + d);
             cal.set(argTypes[iarg], (int) d);
         }
         setDate(cal.getTime());
@@ -184,7 +182,6 @@ public class DatePrototype extends ESObject {
                 date = null;
                 return ESNumber.valueOf(Double.NaN);
             }
-            // System.out.println("UTCSET " + argTypes[iarg] + " to " + d);
             cal.set(argTypes[iarg], (int) d);
         }
         setDate(cal.getTime());

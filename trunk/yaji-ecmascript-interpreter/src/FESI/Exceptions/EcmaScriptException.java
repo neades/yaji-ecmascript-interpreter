@@ -17,9 +17,13 @@
 
 package FESI.Exceptions;
 
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+
+import org.yaji.log.ILog;
+import org.yaji.log.Logs;
 
 import FESI.Data.ESString;
 import FESI.Data.ESValue;
@@ -30,8 +34,8 @@ import FESI.Interpreter.Evaluator;
  * Superclass of all common exceptions used by the FESI system
  */
 public class EcmaScriptException extends Exception {
-
     private static final long serialVersionUID = 2454976099425774732L;
+    private static final ILog log = Logs.getLog(EcmaScriptException.class);
 
     /**
      * The end of line string for this machine.
@@ -191,8 +195,7 @@ public class EcmaScriptException extends Exception {
      */
     @Override
     public void printStackTrace() {
-        System.err.println(this);
-        printStackTrace0(new PrintWriter(System.err));
+        log.asError("EcmaScriptException:", this);
     }
 
     /**
@@ -200,7 +203,7 @@ public class EcmaScriptException extends Exception {
      * print stream.
      */
     @Override
-    public void printStackTrace(java.io.PrintStream s) {
+    public void printStackTrace(PrintStream s) {
         s.println(this);
         PrintWriter w = new PrintWriter(s);
         printStackTrace0(w);
@@ -211,7 +214,7 @@ public class EcmaScriptException extends Exception {
      * print writer.
      */
     @Override
-    public void printStackTrace(java.io.PrintWriter w) {
+    public void printStackTrace(PrintWriter w) {
         w.println(this);
         printStackTrace0(w);
     }

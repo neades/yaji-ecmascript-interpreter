@@ -19,6 +19,8 @@ package FESI.Data;
 
 import java.util.Date;
 
+import org.yaji.log.ILog;
+import org.yaji.log.Logs;
 import org.yaji.util.ArrayUtil;
 
 import FESI.Exceptions.EcmaScriptException;
@@ -34,6 +36,8 @@ import FESI.jslib.JSFunction;
  */
 public abstract class ESLoader extends ESObject {
     private static final long serialVersionUID = -6946722052427701762L;
+    private static final ILog log = Logs.getLog(ESLoader.class);
+    
     // Debug support
     static protected boolean debugJavaAccess = false;
 
@@ -512,8 +516,8 @@ public abstract class ESLoader extends ESObject {
             } // if ! null
 
             if (debugJavaAccess) {
-                System.out.println(" Assign " + sourceClass + " to "
-                        + target[i] + debugInfo);
+                log.asDebug(" Assign " + sourceClass + " to " + target[i]
+                        + debugInfo);
             }
             if (!accepted) {
                 return nonCompatible;

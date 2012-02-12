@@ -1,4 +1,4 @@
-package FESI.log;
+package org.yaji.log;
 
 /**
  * Instances of ILogFactory should create new or return existing ILog instances

@@ -1,6 +1,6 @@
-package FESI.log.impl;
+package org.yaji.log.impl;
 
-import FESI.log.ILogFactory;
+import org.yaji.log.ILogFactory;
 
 /**
  * The binding of the YAJI ILogFactory interface to a host implementation needs

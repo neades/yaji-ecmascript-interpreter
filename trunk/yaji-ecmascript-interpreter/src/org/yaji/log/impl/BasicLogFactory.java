@@ -1,10 +1,11 @@
-package FESI.log.impl;
+package org.yaji.log.impl;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import FESI.log.ILog;
-import FESI.log.ILogFactory;
+import org.yaji.log.ILog;
+import org.yaji.log.ILogFactory;
+
 
 /**
  * A very basic ILogFactory implementation for storing and returning ILog

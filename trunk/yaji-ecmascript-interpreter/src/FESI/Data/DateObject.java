@@ -753,12 +753,6 @@ public class DateObject extends BuiltinFunctionObject {
                     .get(Calendar.DAY_OF_MONTH), cal
                     .get(Calendar.DAY_OF_WEEK), millis);
 
-            // int offset = TimeZone.getDefault().getRawOffset();
-            // System.out.println("TimeZone.getDefault().getID(): " +
-            // TimeZone.getDefault().getID());
-            // System.out.println("TimeZone.getDefault().getRawOffset(): "
-            // + TimeZone.getDefault().getRawOffset());
-
             int minutes = -(offset / 1000 / 60); // convert to minutes
             return ESNumber.valueOf(minutes);
         }
@@ -933,7 +927,6 @@ public class DateObject extends BuiltinFunctionObject {
         int second = dateComponents[SECOND_POSITION];
         int ms = dateComponents[MILLISECOND_POSITION];
         // Using current current locale, set it to the specified time
-        // System.out.println("YEAR IS " + year);
         Date time = mktime(timeZone, year, month, day, hour, minute, second, ms);
         if (time.before(MIN_DATE) || time.after(MAX_DATE)) {
             return null;

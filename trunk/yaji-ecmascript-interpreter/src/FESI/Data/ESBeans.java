@@ -20,6 +20,9 @@ package FESI.Data;
 import java.beans.Beans;
 import java.io.IOException;
 
+import org.yaji.log.ILog;
+import org.yaji.log.Logs;
+
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
 import FESI.Interpreter.Evaluator;
@@ -31,6 +34,7 @@ import FESI.Interpreter.LocalClassLoader;
  */
 public class ESBeans extends ESLoader {
     private static final long serialVersionUID = 3540708121565818932L;
+    private static final ILog log = Logs.getLog(ESBeans.class);
 
     /**
      * Create the top level bean loader (object Bean)
@@ -128,7 +132,7 @@ public class ESBeans extends ESLoader {
         try {
             Object bean = Beans.instantiate(classLoader, beanName);
             if (debugJavaAccess) {
-                System.out.println(" ** Bean '" + beanName + "' created");
+                log.asDebug(" ** Bean '" + beanName + "' created");
             }
             value = new ESWrapper(bean, getEvaluator(), true);
         } catch (ClassNotFoundException e) {

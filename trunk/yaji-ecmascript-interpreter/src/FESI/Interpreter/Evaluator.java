@@ -39,6 +39,8 @@ import java.util.zip.ZipFile;
 import org.yaji.data.SparseArrayConstructor;
 import org.yaji.debugger.DebugEcmaScriptEvaluateVisitor;
 import org.yaji.debugger.Debugger;
+import org.yaji.log.ILog;
+import org.yaji.log.Logs;
 
 import FESI.AST.ASTProgram;
 import FESI.AST.ASTStatement;
@@ -61,8 +63,6 @@ import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.EcmaScriptLexicalException;
 import FESI.Exceptions.EcmaScriptParseException;
 import FESI.Extensions.Extension;
-import FESI.Extensions.FESILog;
-import FESI.Extensions.IFESILog;
 import FESI.Parser.EcmaScript;
 import FESI.Parser.ParseException;
 import FESI.Parser.TokenMgrError;
@@ -78,6 +78,7 @@ import FESI.jslib.JSExtension;
  */
 public class Evaluator implements Serializable {
     private static final long serialVersionUID = -7530811329761640032L;
+    private static final ILog log = Logs.getLog(Evaluator.class);
 
     private static String eol = System.getProperty("line.separator", "\n");
     protected IAppendableFactory appendableFactory = null;
@@ -139,8 +140,6 @@ public class Evaluator implements Serializable {
     // List of loaded extensions
     private Hashtable<String, Object> extensions = null;
 
-    private transient IFESILog log = null;
-
     private long nextObjectId = 0;
 
     private ESObject regExpPrototype;
@@ -157,7 +156,6 @@ public class Evaluator implements Serializable {
         globalScope = new ScopeChain(globalObject, null);
         packageObject = new ESPackages(this);
         extensions = new Hashtable<String, Object>(); // forget extensions
-        initFESILog();
     }
 
     // handler for profiling logging
@@ -716,29 +714,18 @@ public class Evaluator implements Serializable {
             // ASTProgram n = parser.Program();
             programNode = (ASTProgram) parser.Program();
             if (debugParse) {
-                System.out.println();
-                System.out.println("Dump parse tree of eval (debugParse true)");
+                log.asDebug("Dump parse tree of eval (debugParse true)");
                 programNode.dump("");
             }
 
         } catch (ParseException e) {
             if (debugParse) {
-                System.out
-                        .println("[[PARSING ERROR DETECTED: (debugParse true)]]");
-                System.out.println(e.getMessage());
-                System.out.println("[[BY ROUTINE:]]");
-                e.printStackTrace();
-                System.out.println();
+                log.asDebug("[[PARSING ERROR DETECTED: (debugParse true)]]", e);
             }
             throw new EcmaScriptParseException(e, es);
         } catch (TokenMgrError e) {
             if (debugParse) {
-                System.out
-                        .println("[[LEXICAL ERROR DETECTED: (debugParse true)]]");
-                System.out.println(e.getMessage());
-                System.out.println("[[BY ROUTINE:]]");
-                e.printStackTrace();
-                System.out.println();
+                log.asDebug("[[LEXICAL ERROR DETECTED: (debugParse true)]]", e);
             }
             throw new EcmaScriptLexicalException(e, es);
         }
@@ -830,7 +817,7 @@ public class Evaluator implements Serializable {
         String path = System.getProperty("FESI.path", null);
         if (path == null)
             path = System.getProperty("java.class.path", null);
-        // System.out.println("** Try loading via " + path);
+        // log.println("** Try loading via " + path);
 
         ESValue value = ESUndefined.theUndefined;
         if (path == null || moduleName.charAt(0) == '/' || moduleName.charAt(0) == '.') {
@@ -880,7 +867,7 @@ public class Evaluator implements Serializable {
      */
     private ESValue tryLoad(String tryPath, String moduleName, boolean hasSuffix)
             throws EcmaScriptException {
-        // System.out.println("** tryPath: " + tryPath);
+        // log.println("** tryPath: " + tryPath);
         File dir = new File(tryPath);
         if (dir.isDirectory()) {
             File file;
@@ -901,7 +888,7 @@ public class Evaluator implements Serializable {
             return evaluateLoadFile(file);
 
         } else if (dir.isFile()) {
-            // System.out.println("** Looking in jar/zip: " + dir);
+            // log.println("** Looking in jar/zip: " + dir);
             ZipFile zipFile;
             try {
                 String cp = dir.getCanonicalPath();
@@ -943,7 +930,7 @@ public class Evaluator implements Serializable {
                 inputStream.close();
             } catch (IOException e) {
                 if (ESLoader.isDebugLoader())
-                    System.out.println(" ** Error reading jar: " + e);
+                    log.asError(" ** Error reading jar: " + e);
                 return null;
             }
 
@@ -1210,29 +1197,18 @@ public class Evaluator implements Serializable {
         try {
             programNode = (ASTProgram) parser.Program();
             if (debugParse) {
-                System.out.println();
-                System.out.println("@@ Dumping parse tree (debugParse true)");
+                log.asDebug("@@ Dumping parse tree (debugParse true)");
                 programNode.dump("");
             }
 
         } catch (ParseException e) {
             if (debugParse) {
-                System.out
-                        .println("[[PARSING ERROR DETECTED: (debugParse true)]]");
-                System.out.println(e.getMessage());
-                System.out.println("[[BY ROUTINE:]]");
-                e.printStackTrace();
-                System.out.println();
+                log.asError("[[PARSING ERROR DETECTED: (debugParse true)]]", e);
             }
             throw new EcmaScriptParseException(e, es);
         } catch (TokenMgrError e) {
             if (debugParse) {
-                System.out
-                        .println("[[LEXICAL ERROR DETECTED: (debugParse true)]]");
-                System.out.println(e.getMessage());
-                System.out.println("[[BY ROUTINE:]]");
-                e.printStackTrace();
-                System.out.println();
+                log.asError("[[LEXICAL ERROR DETECTED: (debugParse true)]]", e);
             }
             throw new EcmaScriptLexicalException(e, es);
         }
@@ -1407,18 +1383,6 @@ public class Evaluator implements Serializable {
                 is.close();
         }
         return v;
-    }
-
-    public IFESILog getLog() {
-        return log;
-    }
-
-    protected void initFESILog() {
-        log = createFESILog();
-    }
-
-    protected IFESILog createFESILog() {
-        return new FESILog();
     }
 
     // log a function element to profile log

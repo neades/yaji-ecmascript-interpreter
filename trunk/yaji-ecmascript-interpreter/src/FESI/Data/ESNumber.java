@@ -22,6 +22,8 @@ import java.util.Formatter;
 import java.util.Locale;
 
 import org.yaji.json.JsonState;
+import org.yaji.log.ILog;
+import org.yaji.log.Logs;
 
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Interpreter.Evaluator;
@@ -35,6 +37,8 @@ import FESI.Interpreter.Evaluator;
 
 public final class ESNumber extends ESPrimitive {
     private static final long serialVersionUID = 3695852528633071467L;
+    private static final ILog log = Logs.getLog(ESNumber.class);
+    
     public static final ESNumber ZERO;
     public static final ESNumber NEGATIVE_ZERO;
     public static final Double DOUBLE_ZERO;
@@ -54,8 +58,8 @@ public final class ESNumber extends ESPrimitive {
                     "com.gtnet.fesi.esnumcachesize", 128).intValue();
         } catch (NumberFormatException e) {
             maxESNumberCached = 128;
-            System.err
-                    .println("Property com.gtnet.fesi.esnumcachesize set to invalid value : using 128");
+            log.asError("Property com.gtnet.fesi.esnumcachesize set to invalid" +
+            		" value : using 128", e);
         }
         final int low = -128;
         cache = new ESNumber[(maxESNumberCached - low) + 1];

@@ -1,6 +1,6 @@
-package FESI.log;
+package org.yaji.log;
 
-import FESI.log.impl.LogBinder;
+import org.yaji.log.impl.LogBinder;
 
 /**
  * A utility class used for log access throughout YAJI.

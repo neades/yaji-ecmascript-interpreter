@@ -28,7 +28,6 @@ import org.yaji.data.SparseArrayConstructor;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.EcmaScriptParseException;
 import FESI.Exceptions.ProgrammingError;
-import FESI.Interpreter.EvaluationSource;
 import FESI.Interpreter.Evaluator;
 
 /**
@@ -40,27 +39,6 @@ public class GlobalObject extends ObjectPrototype {
     
     private GlobalObject(ESObject prototype, Evaluator evaluator) {
         super(prototype, evaluator);
-    }
-
-    @Override
-    public void putProperty(String propertyName, ESValue propertyValue, int hash)
-            throws EcmaScriptException {
-        StringBuilder sb = new StringBuilder(64);
-        sb.append("Warning, setting property [");
-        sb.append(propertyName);
-        sb.append("] on GLOBAL SCOPE within context [");
-        sb.append(getEvaluator().getThisObject());
-        sb.append("]\n");
-
-        EvaluationSource currentEvaluationSource = getEvaluator()
-                .getCurrentEvaluationSource();
-        if (currentEvaluationSource != null) {
-            sb.append(currentEvaluationSource.toString());
-        }
-
-        getEvaluator().getLog().asWarning(sb.toString());
-
-        super.putProperty(propertyName, propertyValue, hash);
     }
 
     /**
@@ -300,7 +278,6 @@ public class GlobalObject extends ObjectPrototype {
                         }
                         break;
                     }
-                    // System.out.println("i="+i+", s="+s);
                     s = s.substring(0, i);
                     try {
                         d = Double.valueOf(s);
