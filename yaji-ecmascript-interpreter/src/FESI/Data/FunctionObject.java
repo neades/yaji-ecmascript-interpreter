@@ -19,6 +19,9 @@ package FESI.Data;
 
 import java.util.List;
 
+import org.yaji.log.ILog;
+import org.yaji.log.Logs;
+
 import FESI.AST.ASTFormalParameterList;
 import FESI.AST.ASTStatementList;
 import FESI.AST.EcmaScriptTreeConstants;
@@ -39,6 +42,8 @@ import FESI.Parser.StrictMode;
 public class FunctionObject extends BuiltinFunctionObject implements
         EcmaScriptTreeConstants {
     private static final long serialVersionUID = 8501827292633127950L;
+    private static final ILog log = Logs.getLog(FunctionObject.class);
+    
     static boolean debugParse = false;
     // For functionPrototype
     private static class FunctionPrototypeToString extends BuiltinFunctionObject {
@@ -216,12 +221,7 @@ public class FunctionObject extends BuiltinFunctionObject implements
                 is.close();
             } catch (ParseException e) {
                 if (debugParse) {
-                    System.out
-                            .println("[[PARSING ERROR DETECTED: (debugParse true)]]");
-                    System.out.println(e.getMessage());
-                    System.out.println("[[BY ROUTINE:]]");
-                    e.printStackTrace();
-                    System.out.println();
+                    log.asError("[[PARSING ERROR DETECTED: (debugParse true)]]", e);
                 }
                 throw new EcmaScriptParseException(e,
                         new StringEvaluationSource(fullFunctionText, null));
@@ -234,12 +234,7 @@ public class FunctionObject extends BuiltinFunctionObject implements
             is.close();
         } catch (ParseException e) {
             if (debugParse) {
-                System.out
-                        .println("[[PARSING ERROR DETECTED: (debugParse true)]]");
-                System.out.println(e.getMessage());
-                System.out.println("[[BY ROUTINE:]]");
-                e.printStackTrace();
-                System.out.println();
+                log.asError("[[PARSING ERROR DETECTED: (debugParse true)]]", e);
             }
             throw new EcmaScriptParseException(e, new StringEvaluationSource(
                     fullFunctionText, null));

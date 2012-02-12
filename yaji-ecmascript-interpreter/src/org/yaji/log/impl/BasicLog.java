@@ -1,6 +1,6 @@
-package FESI.log.impl;
+package org.yaji.log.impl;
 
-import FESI.log.AbstractLog;
+import org.yaji.log.AbstractLog;
 
 /**
  * A very basic logger implementation.

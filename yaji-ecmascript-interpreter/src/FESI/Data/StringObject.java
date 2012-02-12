@@ -287,8 +287,6 @@ public class StringObject extends BuiltinFunctionObject {
                             int pos = str.indexOf(sep, start);
                             if (pos < 0)
                                 pos = str.length();
-                            // System.out.println("start: " + start +
-                            // ", pos: " + pos);
                             theArray.putProperty((long)i,new ESString(str.substring(start, pos)));
                             start = pos + sep.length();
                             i++;

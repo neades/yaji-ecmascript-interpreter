@@ -1,10 +1,9 @@
-package FESI.log;
+package org.yaji.log;
 
 public abstract class AbstractLog implements ILog {
-
     protected abstract void log(String l, String m, Throwable t);
 
-    private static final String DEBUG = "WARN";
+    private static final String DEBUG = "DEBUG";
     private static final String ERROR = "ERROR";
     private static final String INFO = "INFO";
     private static final String TRACE = "TRACE";
@@ -49,5 +48,4 @@ public abstract class AbstractLog implements ILog {
     public void asWarning(String m, Throwable t) {
         log(WARN, m, t);
     }
-
 }

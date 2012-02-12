@@ -33,6 +33,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Enumeration;
 
+import org.yaji.log.ILog;
+import org.yaji.log.Logs;
 import org.yaji.util.ArrayUtil;
 
 import FESI.Exceptions.EcmaScriptException;
@@ -47,6 +49,8 @@ import FESI.Interpreter.ScopeChain;
  */
 public class ESWrapper extends ESObject {
     private static final long serialVersionUID = 6345193769772917533L;
+    private static final ILog log = Logs.getLog(ESWrapper.class);
+    
     // For debugging
     static boolean debugEvent = false;
 
@@ -156,8 +160,6 @@ public class ESWrapper extends ESObject {
     public ESValue getPropertyInScope(String propertyName,
             ScopeChain previousScope, int hash) throws EcmaScriptException {
         ESValue value;
-        // if (ESLoader.debugJavaAccess)
-        // System.out.println("** Property searched in scope: " + propertyName);
         if (asBean) {
             value = getBeanProperty(propertyName);
             if (value != noPropertyMarker)
@@ -218,8 +220,7 @@ public class ESWrapper extends ESObject {
                 String className = ((Class<?>) javaObject).getName() + "$"
                         + propertyName;
                 if (ESLoader.debugJavaAccess)
-                    System.out
-                            .println("** Check if inside class: " + className);
+                    log.asDebug("** Check if inside class: " + className);
                 Class<?> insideClass = null;
                 try {
                     insideClass = Class.forName(className);
@@ -258,7 +259,7 @@ public class ESWrapper extends ESObject {
     private ESValue getBeanProperty(String propertyName)
             throws EcmaScriptException {
         if (ESLoader.debugJavaAccess)
-            System.out.println("** Bean property searched: " + propertyName);
+            log.asDebug("** Bean property searched: " + propertyName);
         Class<? extends Object> cls = null;
         if (javaObject instanceof Class<?>) {
             cls = (Class<?>) javaObject;
@@ -283,7 +284,7 @@ public class ESWrapper extends ESObject {
                     + propertyName);
         }
         if (ESLoader.debugJavaAccess)
-            System.out.println("** Read method found for: " + propertyName);
+            log.asDebug("** Read method found for: " + propertyName);
         Object obj = null;
         try {
             obj = readMethod.invoke(javaObject, (Object[]) null);
@@ -315,7 +316,7 @@ public class ESWrapper extends ESObject {
     private ESValue getCorbaProperty(String propertyName)
             throws EcmaScriptException {
         if (ESLoader.debugJavaAccess)
-            System.out.println("** CORBA property searched: " + propertyName);
+            log.asDebug("** CORBA property searched: " + propertyName);
         Class<? extends Object> cls = javaObject.getClass();
         Method readMethod = null;
         try {
@@ -334,7 +335,7 @@ public class ESWrapper extends ESObject {
         }
 
         if (ESLoader.debugJavaAccess)
-            System.out.println("** CORBA read method found for: "
+            log.asDebug("** CORBA read method found for: "
                     + propertyName);
         Object obj = null;
         try {
@@ -369,8 +370,7 @@ public class ESWrapper extends ESObject {
     private ESValue getObjectProperty(String propertyName)
             throws EcmaScriptException {
         if (ESLoader.debugJavaAccess)
-            System.out
-                    .println("** Java object field searched: " + propertyName);
+            log.asDebug("** Java object field searched: " + propertyName);
         try {
             Class<? extends Object> cls = null;
             Object theObject = null; // means static
@@ -465,7 +465,7 @@ public class ESWrapper extends ESObject {
     private boolean putBeanProperty(String propertyName, ESValue propertyValue)
             throws EcmaScriptException {
         if (ESLoader.debugJavaAccess)
-            System.out.println("** Bean property searched: " + propertyName);
+            log.asDebug("** Bean property searched: " + propertyName);
         if (propertyValue == ESUndefined.theUndefined) {
             throw new ProgrammingError("Cannot set bean property "
                     + propertyName + " to undefined");
@@ -494,7 +494,7 @@ public class ESWrapper extends ESObject {
                     + propertyName + "'");
         }
         if (ESLoader.debugJavaAccess)
-            System.out.println("** Write method found for: " + propertyName);
+            log.asDebug("** Write method found for: " + propertyName);
         Object params[] = new Object[1];
         if (propClass.isArray()) {
             if (!(propertyValue.isArray())) {
@@ -521,7 +521,7 @@ public class ESWrapper extends ESObject {
                             + propertyName + ": " + e.getMessage());
         }
         if (ESLoader.debugJavaAccess)
-            System.out.println("** Property set: " + propertyName);
+            log.asDebug("** Property set: " + propertyName);
         return true;
     }
 
@@ -538,7 +538,7 @@ public class ESWrapper extends ESObject {
     private boolean putCorbaProperty(String propertyName, ESValue propertyValue)
             throws EcmaScriptException {
         if (ESLoader.debugJavaAccess)
-            System.out.println("** Corba property searched: " + propertyName);
+            log.asDebug("** Corba property searched: " + propertyName);
         if (propertyValue == ESUndefined.theUndefined) {
             throw new ProgrammingError("Cannot set non EcmaScript property "
                     + propertyName + " to undefined");
@@ -562,8 +562,7 @@ public class ESWrapper extends ESObject {
         }
 
         if (ESLoader.debugJavaAccess)
-            System.out.println("** CORBA write method found for: "
-                    + propertyName);
+            log.asDebug("** CORBA write method found for: " + propertyName);
 
         try {
             writeMethod.invoke(javaObject, params); // System will check
@@ -581,7 +580,7 @@ public class ESWrapper extends ESObject {
                             + propertyName + ": " + e.getMessage());
         }
         if (ESLoader.debugJavaAccess)
-            System.out.println("** Property set: " + propertyName);
+            log.asDebug("** Property set: " + propertyName);
         return true;
     }
 
@@ -599,7 +598,7 @@ public class ESWrapper extends ESObject {
     private boolean putObjectProperty(String propertyName, ESValue propertyValue)
             throws EcmaScriptException {
         if (ESLoader.debugJavaAccess)
-            System.out.println("** Object field searched: " + propertyName);
+            log.asDebug("** Object field searched: " + propertyName);
         if (propertyValue == ESUndefined.theUndefined) {
             throw new ProgrammingError("Cannot set java object field "
                     + propertyName + " to undefined");
@@ -754,7 +753,7 @@ public class ESWrapper extends ESObject {
 
         int nArgs = params.length;
         if (ESLoader.debugJavaAccess)
-            System.out.println("** " + (asBean ? "Bean" : "Class")
+            log.asDebug("** " + (asBean ? "Bean" : "Class")
                     + " method lookup: " + (staticMethod ? "static " : "")
                     + functionName);
         Class<? extends Object> cls = null;
@@ -790,8 +789,7 @@ public class ESWrapper extends ESObject {
         for (int i = 0; i < methods.length; i++) {
             Method method = methods[i];
             if (ESLoader.debugJavaAccess)
-                System.out.println("** Method to validate: "
-                        + method.toString());
+                log.asDebug("** Method to validate: " + method.toString());
             int modifiers = method.getModifiers();
             if (staticMethod && !Modifier.isStatic(modifiers))
                 continue; // for static only
@@ -805,7 +803,7 @@ public class ESWrapper extends ESObject {
             if (distance < 0)
                 continue; // Method not applicable
             if (ESLoader.debugJavaAccess)
-                System.out.println("** Method acceptable(" + distance + " : "
+                log.asDebug("** Method acceptable(" + distance + " : "
                         + Modifier.toString(modifiers) + " "
                         + methods[i].toString());
             // Optimization - if perfect match return immediately
@@ -832,8 +830,7 @@ public class ESWrapper extends ESObject {
                     multipleAtSameDistance = false;
                 } else if (distance == distanceOfNearestMethodFound) {
                     if (ESLoader.debugJavaAccess)
-                        System.out
-                                .println("** Same distance as previous method!");
+                        log.asDebug("** Same distance as previous method!");
                     if (distance != 0) {
                         // if 0 (due to debugging) accept any good one
                         multipleAtSameDistance = true;
@@ -854,8 +851,7 @@ public class ESWrapper extends ESObject {
                     + "' matching parameters in " + this);
         }
         if (ESLoader.debugJavaAccess)
-            System.out
-                    .println("** Method rejected - did not match attribute or parameters");
+            log.asDebug("** Method rejected - did not match attribute or parameters");
         if (staticMethod)
             return null; // A second try will be done
         throw new EcmaScriptException("No method named '" + functionName
@@ -870,7 +866,7 @@ public class ESWrapper extends ESObject {
             throws EcmaScriptException, NoSuchMethodException {
         int nArgs = arguments.length;
         if (ESLoader.debugJavaAccess)
-            System.out.println("** Method searched: " + functionName
+            log.asDebug("** Method searched: " + functionName
                     + " in object of class " + javaObject.getClass());
         Object[] params = new Object[nArgs];
         for (int k = 0; k < nArgs; k++) {
@@ -922,8 +918,7 @@ public class ESWrapper extends ESObject {
             ScopeChain previousScope, ESObject thisObject, String functionName,
             int hash, ESValue[] arguments) throws EcmaScriptException {
         if (ESLoader.debugJavaAccess)
-            System.out
-                    .println("** Method searched (indirect): " + functionName);
+            log.asDebug("** Method searched (indirect): " + functionName);
         try {
             return doIndirectCall(evaluator, thisObject, functionName,
                     arguments);
@@ -975,7 +970,7 @@ public class ESWrapper extends ESObject {
     private ESObject constructOrCall(ESValue[] arguments, boolean isCall)
             throws EcmaScriptException {
         if (ESLoader.debugJavaAccess)
-            System.out.println("** Constructor searched for: "
+            log.asDebug("** Constructor searched for: "
                     + javaObject.toString());
         if (javaObject instanceof Class<?>) {
             int nArgs = arguments.length;
@@ -1001,7 +996,7 @@ public class ESWrapper extends ESObject {
                 for (int i = 0; i < constructors.length; i++) {
                     Constructor<?> constructor = constructors[i];
                     if (ESLoader.debugJavaAccess)
-                        System.out.println("** Contructor examined: "
+                        log.asDebug("** Contructor examined: "
                                 + constructor.toString());
                     Class<?>[] paramTypes = constructor.getParameterTypes();
                     int modifiers = constructor.getModifiers();
@@ -1016,7 +1011,7 @@ public class ESWrapper extends ESObject {
                     if (distance < 0)
                         continue; // Constructor not applicable
                     if (ESLoader.debugJavaAccess)
-                        System.out.println("** Constructor acceptable("
+                        log.asDebug("** Constructor acceptable("
                                 + distance + " : "
                                 + Modifier.toString(modifiers) + " "
                                 + constructors[i].toString());
@@ -1047,8 +1042,7 @@ public class ESWrapper extends ESObject {
                             multipleAtSameDistance = false;
                         } else if (distance == distanceOfNearestConstructorFound) {
                             if (ESLoader.debugJavaAccess)
-                                System.out
-                                        .println("** Same distance as previous constructor!");
+                                log.asDebug("** Same distance as previous constructor!");
                             if (distance != 0) {
                                 // if 0 (due to debugging) accept any good one
                                 multipleAtSameDistance = true;
@@ -1065,7 +1059,7 @@ public class ESWrapper extends ESObject {
                     }
                     descriptorOfNearestConstructorFound.convert(params);
                     if (ESLoader.debugJavaAccess)
-                        System.out.println("** Contructor called: "
+                        log.asDebug("** Contructor called: "
                                 + nearestConstructorFound.toString());
                     Object obj = null;
                     try {

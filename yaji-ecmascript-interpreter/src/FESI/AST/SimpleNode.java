@@ -2,12 +2,17 @@
 
 package FESI.AST;
 
+import org.yaji.log.ILog;
+import org.yaji.log.Logs;
+
 import FESI.Exceptions.ProgrammingError;
 import FESI.Parser.EcmaScript;
 import FESI.Parser.EcmaScriptConstants;
 
 public abstract class SimpleNode implements Node, EcmaScriptConstants {
     private static final long serialVersionUID = -6168608763891131314L;
+    private static final ILog log = Logs.getLog(SimpleNode.class);
+    
     protected Node parent;
     protected Node[] children;
     protected int id;
@@ -97,7 +102,7 @@ public abstract class SimpleNode implements Node, EcmaScriptConstants {
      */
 
     public void dump(String prefix) {
-        System.out.println(toString(prefix));
+        log.asDebug(toString(prefix));
         if (children != null) {
             for (int i = 0; i < children.length; ++i) {
                 SimpleNode n = (SimpleNode) children[i];

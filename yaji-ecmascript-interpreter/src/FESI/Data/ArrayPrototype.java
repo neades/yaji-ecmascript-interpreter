@@ -805,10 +805,8 @@ public class ArrayPrototype extends ESObject {
             if (v2p == ESUndefined.theUndefined) {
                 return -1;
             }
-            // System.out.println("v1p = " + v1 + " v2p = " + v2);
             String s1 = v1.toString();
             String s2 = v2.toString();
-            // System.out.println("s1 = " + s1 + " s2 = " + s2);
             return s1.compareTo(s2);
         }
     }

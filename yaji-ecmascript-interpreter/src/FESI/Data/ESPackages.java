@@ -17,6 +17,9 @@
 
 package FESI.Data;
 
+import org.yaji.log.ILog;
+import org.yaji.log.Logs;
+
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
 import FESI.Interpreter.Evaluator;
@@ -28,6 +31,7 @@ import FESI.Interpreter.LocalClassLoader;
  */
 public class ESPackages extends ESLoader {
     private static final long serialVersionUID = -6121538130460867220L;
+    private static final ILog log = Logs.getLog(ESPackages.class);
 
     /**
      * Create the top level package loader (object Package)
@@ -91,14 +95,13 @@ public class ESPackages extends ESLoader {
             try {
                 Class<?> cls = loadClass(fullName);
                 if (debugJavaAccess) {
-                    System.out.println("** Class '" + fullName + "' loaded");
+                    log.asDebug("** Class '" + fullName + "' loaded");
                 }
                 value = new ESWrapper(cls, getEvaluator());
             } catch (ClassNotFoundException e) {
                 if (debugJavaAccess) {
-                    System.out.println("** Could not load '" + fullName
-                            + "' by " + this);
-                    System.out.println("** Exception: " + e);
+                    log.asDebug("** Could not load '" + fullName
+                            + "' by " + this, e);
                 }
                 value = new ESPackages(propertyName, this, classLoader,
                         getEvaluator());
