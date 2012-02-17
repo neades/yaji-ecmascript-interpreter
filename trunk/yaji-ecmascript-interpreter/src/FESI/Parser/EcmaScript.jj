@@ -3934,7 +3934,7 @@ void ExpressionInES()                     :
  	Block()
  | 	VariableStatement()
  |	EmptyStatement()
- |	ExpressionStatement()
+ |	ExpressionOrLabelledStatement()
  |	IfStatement()
  |	IterationStatement()
  |	ContinueStatement()
@@ -4087,11 +4087,20 @@ void ExpressionInES()                     :
  	";"
  }
  
- void ExpressionStatement()       :
+ void ExpressionOrLabelledStatement()       :
  {}
  {
- 	//LOOKAHEAD( { getToken(1).kind != LBRACE } )
- 	ExpressionInES() Sc() 
+ 	( LOOKAHEAD( Identifier() ":" )
+ 	 LabelledStatement() 
+ 	| ExpressionInES() Sc() ) 
+ }
+ 
+ void LabelledStatement()       :
+ {
+   String label;
+ } 
+ {
+   Identifier() { label = jjtree.popNode().toString(); } ":" Statement() { ((ASTStatement)jjtree.peekNode()).addLabel(label); } 
  }
  
  JAVACODE
@@ -4556,7 +4565,21 @@ void ExpressionInES()                     :
  {/*@bgen(jjtree) ContinueStatement */
         try {
 /*@egen*/
- 	"continue" Sc()/*@bgen(jjtree)*/
+ 	"continue" [ Identifier() ] Sc()/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
         } finally {
           if (jjtc000) {
             jjtree.closeNodeScope(jjtn000, true);
@@ -4576,7 +4599,21 @@ void ExpressionInES()                     :
  {/*@bgen(jjtree) BreakStatement */
         try {
 /*@egen*/
- 	"break" Sc()/*@bgen(jjtree)*/
+ 	"break" [ Identifier() ] Sc()/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
         } finally {
           if (jjtc000) {
             jjtree.closeNodeScope(jjtn000, true);

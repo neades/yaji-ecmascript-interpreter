@@ -404,7 +404,19 @@ public class EcmascriptParserTest {
                    + "    <highBound>" + eol
                    + "   Statement" + eol
                    + "    StatementList" + eol
+                },
+                {  "label: for( var i in x ) { }",
+                    "Program" + eol 
+                    + " Statement" + eol
+                    + "  Statement" + eol
+                    + "   ForVarInStatement" + eol 
+                    + "    <i>" + eol 
+                    + "    EmptyExpression" + eol 
+                    + "    <x>" + eol 
+                    + "    Statement" + eol 
+                    + "     StatementList" + eol
                 }
+                
            });
     }
 

@@ -3223,7 +3223,7 @@ private static final boolean jjCanMove_3(int hiByte, int i1, int i2, long l1, lo
             if ((jjbitVec3[i2] & l2) == 0L)
                return false;
             return true;
-         }
+        }
          if ((jjbitVec9[i1] & l1) != 0L)
             return true;
          return false;
@@ -3312,7 +3312,7 @@ private static final boolean jjCanMove_4(int hiByte, int i1, int i2, long l1, lo
             if ((jjbitVec3[i2] & l2) == 0L)
                return false;
             return true;
-         }
+        }
          if ((jjbitVec9[i1] & l1) != 0L)
             return true;
          return false;
@@ -3416,7 +3416,7 @@ public void SwitchTo(int lexState)
 {
    if (lexState >= 3 || lexState < 0)
       throw new TokenMgrError("Error: Ignoring invalid lexical state : " + lexState + ". State unchanged.", TokenMgrError.INVALID_LEXICAL_STATE);
-   curLexState = lexState;
+curLexState = lexState;
 }
 
 protected Token jjFillToken()
@@ -3549,7 +3549,7 @@ public Token getNextToken()
            continue;
         }
         catch (java.io.IOException e1) {
-            // Nothing to see here
+            // Not used
         }
      }
      int error_line = input_stream.getEndLine();

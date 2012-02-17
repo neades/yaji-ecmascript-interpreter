@@ -1534,7 +1534,7 @@ void ExpressionInES() #ExpressionList(>1) :
  	Block()
  | 	VariableStatement()
  |	EmptyStatement()
- |	ExpressionStatement()
+ |	ExpressionOrLabelledStatement()
  |	IfStatement()
  |	IterationStatement()
  |	ContinueStatement()
@@ -1595,11 +1595,20 @@ void ExpressionInES() #ExpressionList(>1) :
  	";"
  }
  
- void ExpressionStatement() #void :
+ void ExpressionOrLabelledStatement() #void :
  {}
  {
- 	//LOOKAHEAD( { getToken(1).kind != LBRACE } )
- 	ExpressionInES() Sc() 
+ 	( LOOKAHEAD( Identifier() ":" )
+ 	 LabelledStatement() 
+ 	| ExpressionInES() Sc() ) 
+ }
+ 
+ void LabelledStatement() #void :
+ {
+   String label;
+ } 
+ {
+   Identifier() { label = jjtree.popNode().toString(); } ":" Statement() { ((ASTStatement)jjtree.peekNode()).addLabel(label); } 
  }
  
  JAVACODE
@@ -1687,13 +1696,13 @@ void ExpressionInES() #ExpressionList(>1) :
  void ContinueStatement() #ContinueStatement :
  {}
  {
- 	"continue" Sc()
+ 	"continue" [ Identifier() ] Sc()
  }
  
  void BreakStatement() #BreakStatement :
  {}
  {
- 	"break" Sc()
+ 	"break" [ Identifier() ] Sc()
  }
  
  void ReturnStatement() #ReturnStatement :

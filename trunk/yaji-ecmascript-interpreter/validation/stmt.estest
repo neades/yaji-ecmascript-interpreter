@@ -128,6 +128,7 @@ while (i<4) {
   continue;
   ir = -1;
 }
+writeln("ir == "+ir);
 ir == 3;
 
 
@@ -656,3 +657,13 @@ do {
   ir = -1;
 } while (i<4);
 ir == 3;
+
+@test labelled.statement.1
+outer: 
+for( var i=0; i<10; i++ ) {
+  for( var j=0; j<10; j++ ) {
+    break outer;
+  }
+}
+writeln("i == "+i);
+i == 0;

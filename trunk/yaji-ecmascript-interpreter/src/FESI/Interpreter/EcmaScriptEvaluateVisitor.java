@@ -135,6 +135,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
     private boolean useRepresentationOptimisation = false;
     private IAppendable representationOutputBuffer = null;
     private EvaluationSource evaluationSource;
+    private String targetLabel;
     
     /**
      * Create a new visitor
@@ -496,12 +497,20 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                 if (completionCode == C_RETURN) {
                     return result;
                 } else if (completionCode == C_BREAK) {
-                    completionCode = C_NORMAL;
+                    if (targetLabel == null || node.labelSetContains(targetLabel)) {
+                        completionCode = C_NORMAL;
+                        targetLabel = null;
+                    }
                     return result;
                 } else if (completionCode == C_CONTINUE) {
-                    testValue = acceptNull(node.jjtGetChild(0).jjtAccept(this,
-                            FOR_VALUE));
-                    completionCode = C_NORMAL;
+                    if (targetLabel == null || node.labelSetContains(targetLabel)) {
+                        testValue = acceptNull(node.jjtGetChild(0).jjtAccept(this,
+                                FOR_VALUE));
+                        completionCode = C_NORMAL;
+                        targetLabel = null;
+                    } else {
+                        return result;
+                    }
                 } else {
                     testValue = acceptNull(node.jjtGetChild(0).jjtAccept(this,
                             FOR_VALUE));
@@ -524,14 +533,22 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                 if (completionCode == C_RETURN) {
                     return result;
                 } else if (completionCode == C_BREAK) {
-                    completionCode = C_NORMAL;
+                    if (targetLabel == null || node.labelSetContains(targetLabel)) {
+                        completionCode = C_NORMAL;
+                        targetLabel = null;
+                    }
                     return result;
                 } else {
-                    if (completionCode == C_CONTINUE) {
-                        completionCode = C_NORMAL;
+                    if (targetLabel == null || node.labelSetContains(targetLabel)) {
+                        if (completionCode == C_CONTINUE) {
+                            completionCode = C_NORMAL;
+                            targetLabel = null;
+                        }
+                        testValue = acceptNull(node.jjtGetChild(1).jjtAccept(this,
+                                FOR_VALUE));
+                    } else {
+                        return result;
                     }
-                    testValue = acceptNull(node.jjtGetChild(1).jjtAccept(this,
-                            FOR_VALUE));
                 }
             } while (testValue.booleanValue());
         } catch (EcmaScriptException e) {
@@ -561,17 +578,25 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                 if (completionCode == C_RETURN) {
                     return result;
                 } else if (completionCode == C_BREAK) {
-                    completionCode = C_NORMAL;
+                    if (targetLabel == null || node.labelSetContains(targetLabel)) {
+                        completionCode = C_NORMAL;
+                        targetLabel = null;
+                    }
                     return result;
                 } else if (completionCode == C_CONTINUE) {
-                    node.jjtGetChild(2).jjtAccept(this, FOR_VALUE);
-                    if (testNode instanceof ASTEmptyExpression) {
-                        testValue = ESBoolean.valueOf(true);
+                    if (targetLabel == null || node.labelSetContains(targetLabel)) {
+                        node.jjtGetChild(2).jjtAccept(this, FOR_VALUE);
+                        if (testNode instanceof ASTEmptyExpression) {
+                            testValue = ESBoolean.valueOf(true);
+                        } else {
+                            testValue = acceptNull(testNode.jjtAccept(this,
+                                    FOR_VALUE));
+                        }
+                        completionCode = C_NORMAL;
+                        targetLabel = null;
                     } else {
-                        testValue = acceptNull(testNode.jjtAccept(this,
-                                FOR_VALUE));
+                        return result;
                     }
-                    completionCode = C_NORMAL;
                 } else {
                     node.jjtGetChild(2).jjtAccept(this, FOR_VALUE);
                     if (testNode instanceof ASTEmptyExpression) {
@@ -610,17 +635,25 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                 if (completionCode == C_RETURN) {
                     return result;
                 } else if (completionCode == C_BREAK) {
-                    completionCode = C_NORMAL;
+                    if (targetLabel == null || node.labelSetContains(targetLabel)) {
+                        completionCode = C_NORMAL;
+                        targetLabel = null;
+                    }
                     return result;
                 } else if (completionCode == C_CONTINUE) {
-                    node.jjtGetChild(2).jjtAccept(this, FOR_VALUE);
-                    if (testNode instanceof ASTEmptyExpression) {
-                        testValue = ESBoolean.valueOf(true);
+                    if (targetLabel == null || node.labelSetContains(targetLabel)) {
+                        node.jjtGetChild(2).jjtAccept(this, FOR_VALUE);
+                        if (testNode instanceof ASTEmptyExpression) {
+                            testValue = ESBoolean.valueOf(true);
+                        } else {
+                            testValue = acceptNull(testNode.jjtAccept(this,
+                                    FOR_VALUE));
+                        }
+                        completionCode = C_NORMAL;
+                        targetLabel = null;
                     } else {
-                        testValue = acceptNull(testNode.jjtAccept(this,
-                                FOR_VALUE));
+                    	return result;
                     }
-                    completionCode = C_NORMAL;
                 } else {
                     node.jjtGetChild(2).jjtAccept(this, FOR_VALUE);
                     if (testNode instanceof ASTEmptyExpression) {
@@ -670,11 +703,18 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                 if (completionCode == C_RETURN) {
                     break;
                 } else if (completionCode == C_BREAK) {
-                    completionCode = C_NORMAL;
+                    if (targetLabel == null || node.labelSetContains(targetLabel)) {
+                        completionCode = C_NORMAL;
+                        targetLabel = null;
+                    }
                     break;
                 } else if (completionCode == C_CONTINUE) {
-                    completionCode = C_NORMAL;
-                    continue;
+                    if (targetLabel == null || node.labelSetContains(targetLabel)) {
+                        completionCode = C_NORMAL;
+                        targetLabel = null;
+                        continue;
+                    }
+                    break;
                 }
             }
 
@@ -688,7 +728,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
     public Object visit(ASTForVarInStatement node, Object data) {
         Object result = null; // No value by default
         node.assertFourChildren();
-
+        
         try {
             Object lvo = node.jjtGetChild(0).jjtAccept(this, FOR_REFERENCE);
             ESReference lv;
@@ -724,11 +764,17 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                 if (completionCode == C_RETURN) {
                     break;
                 } else if (completionCode == C_BREAK) {
-                    completionCode = C_NORMAL;
+                    if (targetLabel == null || node.labelSetContains(targetLabel)) {
+                        completionCode = C_NORMAL;
+                        targetLabel = null;
+                    }
                     break;
                 } else if (completionCode == C_CONTINUE) {
-                    completionCode = C_NORMAL;
-                    continue;
+                    if (targetLabel == null || node.labelSetContains(targetLabel)) {
+                        completionCode = C_NORMAL;
+                        continue;
+                    }
+                    break;
                 }
             }
 
@@ -740,14 +786,28 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
 
     @Override
     public Object visit(ASTContinueStatement node, Object data) {
-        node.assertNoChildren();
+        int n = node.jjtGetNumChildren();
+        if (n == 1) {
+            targetLabel = node.jjtGetChild(0).toString();
+        } else if (n == 0) {
+            targetLabel = null;
+        } else {
+            throw new ProgrammingError("AST Should have zero or one child");
+        }
         completionCode = C_CONTINUE;
         return null;
     }
 
     @Override
     public Object visit(ASTBreakStatement node, Object data) {
-        node.assertNoChildren();
+        int n = node.jjtGetNumChildren();
+        if (n == 1) {
+            targetLabel = node.jjtGetChild(0).toString();
+        } else if (n == 0) {
+            targetLabel = null;
+        } else {
+            throw new ProgrammingError("AST Should have zero or one child");
+        }
         completionCode = C_BREAK;
         return null;
     }
@@ -1985,4 +2045,5 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
             throw new PackagedException(e, node);
         }
     }
+    
 }
