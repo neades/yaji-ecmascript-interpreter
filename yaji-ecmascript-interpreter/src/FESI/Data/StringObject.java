@@ -110,7 +110,7 @@ public class StringObject extends BuiltinFunctionObject {
         }
     }
 
-    private static class StringPrototypeSearch extends BuiltinFunctionObject {
+    private static class StringPrototypeSearch extends CoercedStringFunction {
         private static final long serialVersionUID = -3110437308530985673L;
 
         StringPrototypeSearch(String name, Evaluator evaluator,
@@ -119,19 +119,13 @@ public class StringObject extends BuiltinFunctionObject {
         }
 
         @Override
-        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
-                throws EcmaScriptException {
-            if (arguments.length < 1) {
-                throw new EcmaScriptException(
-                        "search requires 1 pattern argument");
-            }
-            String str = thisObject.toString();
+        public ESValue invoke(String str, ESValue[] arguments) throws EcmaScriptException {
+            ESValue regexp = getArg(arguments,0);
             RegExpPrototype pattern;
-            if (arguments[0] instanceof RegExpPrototype) {
-                pattern = (RegExpPrototype) arguments[0];
+            if (regexp instanceof RegExpPrototype) {
+                pattern = (RegExpPrototype) regexp;
             } else {
-                throw new EcmaScriptException(
-                        "The search argument must be a RegExp");
+                pattern = (RegExpPrototype) getEvaluator().getGlobalObject().getProperty("RegExp","RegExp".hashCode()).doConstruct(new ESValue[] { regexp });
             }
             Matcher matcher = pattern.getPattern().matcher(str);
             if (matcher.find()) {
