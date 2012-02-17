@@ -25,11 +25,20 @@ cd <test262 download directory>
 
 The Runner can then be invoked using:
 
-java -cp <yaji-ecmascript-interpreter>/build org.yaji.test.Runner --testDir=<test262 download directory>/converted --logFile=/tmp/test.txt --excludes=<test262 download directory>/test/config/excludelist.xml --originals=<test262 download directory>/test/suite
+java -cp <yaji-ecmascript-interpreter>/build org.yaji.test.Runner \
+     --testDir=<test262 download directory>/converted \
+     --logFile=/tmp/test.txt \
+     --excludes=<test262 download directory>/test/config/excludelist.xml:<project.dir>/validation/test262/excludelist.xml \
+     --originals=<test262 download directory>/test/suite \
+     --overrideDir=<project.dir>/validation/test262/converted
 
 To explain the options:
 
---testDir - directory containing converted tests
+--excludes - a list of files containing lists of tests to exclude (shipped with test262 download)
+             There is also a list of additional excludes where the tests are faulty
 --logFile - filename of report file. 
---excludes - a list of tests to exclude (shipped with test262 download)
 --originals - directory containing the unconverted tests - needed to determine if it is "negative" test i.e. expected to fail.
+--overrideDir - directory containing modified versions of test262 tests which override the downloaded version 
+--testDir - directory containing converted tests
+--threads=<n> Number of concurrent tests to run
+
