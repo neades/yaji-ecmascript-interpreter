@@ -757,14 +757,14 @@ public abstract class ESObject extends ESValue {
         if (hint == ESValue.EStypeString) {
             theFunction = this.getProperty(StandardProperty.TOSTRINGstring, StandardProperty.TOSTRINGhash);
             if (theFunction.isCallable()) {
-                theResult = theFunction.callFunction(this, new ESValue[0]);
+                theResult = theFunction.callFunction(this, ESValue.EMPTY_ARRAY);
                 if (theResult.isPrimitive()) {
                     return theResult;
                 }
             }
             theFunction = this.getProperty(StandardProperty.VALUEOFstring, StandardProperty.VALUEOFhash);
             if (theFunction.isCallable()) {
-                theResult = theFunction.callFunction(this, new ESValue[0]);
+                theResult = theFunction.callFunction(this, ESValue.EMPTY_ARRAY);
                 if (theResult.isPrimitive()) {
                     return theResult;
                 }
@@ -776,14 +776,14 @@ public abstract class ESObject extends ESValue {
         } else if (hint == ESValue.EStypeNumber) {
             theFunction = this.getProperty(StandardProperty.VALUEOFstring, StandardProperty.VALUEOFhash);
             if (theFunction.isCallable()) {
-                theResult = theFunction.callFunction(this, new ESValue[0]);
+                theResult = theFunction.callFunction(this, ESValue.EMPTY_ARRAY);
                 if (theResult.isPrimitive()) {
                     return theResult;
                 }
             }
             theFunction = this.getProperty(StandardProperty.TOSTRINGstring, StandardProperty.TOSTRINGhash);
             if (theFunction.isCallable()) {
-                theResult = theFunction.callFunction(this, new ESValue[0]);
+                theResult = theFunction.callFunction(this, ESValue.EMPTY_ARRAY);
                 if (theResult.isPrimitive()) {
                     return theResult;
                 }

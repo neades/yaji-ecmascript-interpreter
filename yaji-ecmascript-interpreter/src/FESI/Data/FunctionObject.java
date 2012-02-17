@@ -17,6 +17,7 @@
 
 package FESI.Data;
 
+import java.io.StringReader;
 import java.util.List;
 
 import org.yaji.log.ILog;
@@ -200,21 +201,20 @@ public class FunctionObject extends BuiltinFunctionObject implements
             String arg = arguments[i].toString();
             parameters.append(arg);
         }
-        String body = arguments[i].toString();
+        String body = nArgs == 0 ? "" : arguments[i].toString();
 
         String trimmedParams = parameters.toString().trim();
 
         String fullFunctionText = "function anonymous (" + trimmedParams
                 + ") {" + body.toString() + "}";
 
-        java.io.StringReader is;
         EcmaScript parser;
 
         // Special case for empty parameters
         if (trimmedParams.length() == 0) {
             fpl = new ASTFormalParameterList(JJTFORMALPARAMETERLIST);
         } else {
-            is = new java.io.StringReader(trimmedParams);
+            StringReader is = new java.io.StringReader(trimmedParams);
             parser = new EcmaScript(is);
             try {
                 fpl = (ASTFormalParameterList) parser.FormalParameterList();
@@ -227,19 +227,22 @@ public class FunctionObject extends BuiltinFunctionObject implements
                         new StringEvaluationSource(fullFunctionText, null));
             }
         }
-        is = new java.io.StringReader(body.toString());
-        parser = new EcmaScript(is);
-        try {
-            sl = (ASTStatementList) parser.StatementList();
-            is.close();
-        } catch (ParseException e) {
-            if (debugParse) {
-                log.asError("[[PARSING ERROR DETECTED: (debugParse true)]]", e);
+        if (body.length() > 0) {
+            StringReader is = new java.io.StringReader(body.toString());
+            parser = new EcmaScript(is);
+            try {
+                sl = (ASTStatementList) parser.StatementList();
+                is.close();
+            } catch (ParseException e) {
+                if (debugParse) {
+                    log.asError("[[PARSING ERROR DETECTED: (debugParse true)]]", e);
+                }
+                throw new EcmaScriptParseException(e, new StringEvaluationSource(
+                        fullFunctionText, null));
             }
-            throw new EcmaScriptParseException(e, new StringEvaluationSource(
-                    fullFunctionText, null));
+        } else {
+            sl = new ASTStatementList(0);
         }
-
         FunctionEvaluationSource fes = new FunctionEvaluationSource(
                 new StringEvaluationSource(fullFunctionText, null),
                 "<anonymous function>");
