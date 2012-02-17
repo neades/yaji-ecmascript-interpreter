@@ -43,7 +43,7 @@ public class StringObject extends BuiltinFunctionObject {
         @Override
         public ESValue callFunction(ESValue thisObject,ESValue[] arguments) throws EcmaScriptException {
             checkThisObjectCoercible(thisObject);
-            return invoke(thisObject.internalToString(),arguments);
+            return invoke(thisObject.callToString(),arguments);
         }
 
         protected abstract ESValue invoke(String string, ESValue[] arguments) throws EcmaScriptException;
@@ -222,7 +222,7 @@ public class StringObject extends BuiltinFunctionObject {
 
         StringPrototypeSplit(String name, Evaluator evaluator,
                 FunctionPrototype fp) throws EcmaScriptException {
-            super(fp, evaluator, name, 1);
+            super(fp, evaluator, name, 2);
         }
 
         private void split(Pattern pattern, ESObject matchList, CharSequence input, int limit) throws EcmaScriptException {
@@ -270,8 +270,11 @@ public class StringObject extends BuiltinFunctionObject {
             } else {
                 if (arguments[0] instanceof RegExpPrototype) {
                     RegExpPrototype regexp = (RegExpPrototype) arguments[0];
-                    int limit = getArgAsInt32(arguments,1);
-                    split(regexp.getPattern(),theArray,str,limit);
+                    ESValue limitValue = getArg(arguments,1);
+                    int limit = (limitValue.getTypeOf() == EStypeUndefined) ? Integer.MAX_VALUE : limitValue.toInt32();
+                    if (limit != 0) {
+                        split(regexp.getPattern(),theArray,str,limit);
+                    }
                 } else { // ! instanceof ESJavaRegExp, using "normal" split
                     String sep = arguments[0].toString();
                     if (sep.length() == 0) {
@@ -312,6 +315,9 @@ public class StringObject extends BuiltinFunctionObject {
         @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
+            if (thisObject instanceof ESString) {
+                return thisObject;
+            }
             if (thisObject instanceof StringPrototype) {
                 return ((StringPrototype) thisObject).value;
             }
@@ -330,10 +336,10 @@ public class StringObject extends BuiltinFunctionObject {
         @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
-            String str = thisObject.toString();
+            String str = thisObject.callToString();
             int pos = 0;
             if (arguments.length > 0) {
-                pos = arguments[0].toInt32();
+                pos = (int)arguments[0].toInteger();
             }
             if (pos >= 0 && pos < str.length()) {
                 char c[] = { str.charAt(pos) };
@@ -354,10 +360,10 @@ public class StringObject extends BuiltinFunctionObject {
         @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
-            String str = thisObject.toString();
+            String str = thisObject.callToString();
             int pos = 0;
             if (arguments.length > 0) {
-                pos = arguments[0].toInt32();
+                pos = (int)arguments[0].toInteger();
             }
             if (pos >= 0 && pos < str.length()) {
                 char c = str.charAt(pos);
@@ -443,28 +449,23 @@ public class StringObject extends BuiltinFunctionObject {
         private static final long serialVersionUID = 1L;
 
         StringPrototypeSubstring(String name, Evaluator evaluator, FunctionPrototype fp) throws EcmaScriptException {
-            super(fp, evaluator, name, 1);
+            super(fp, evaluator, name, 2);
         }
 
         @Override
         public ESValue invoke(String str, ESValue[] arguments) throws EcmaScriptException {
-            int start = 0;
-            int end = str.length();
-            if (arguments.length > 0) {
-                start = arguments[0].toInt32();
-            }
+            int start = (int)getArg(arguments,0).toInteger();
             if (start < 0) {
                 start = 0;
             } else if (start > str.length()) {
                 start = str.length();
             }
-            if (arguments.length > 1) {
-                end = arguments[1].toInt32();
-                if (end < 0) {
-                    end = 0;
-                } else if (end > str.length()) {
-                    end = str.length();
-                }
+            ESValue endValue = getArg(arguments,1);
+            int end = (endValue.getTypeOf() == EStypeUndefined) ? str.length() : (int)endValue.toInteger();
+            if (end < 0) {
+                end = 0;
+            } else if (end > str.length()) {
+                end = str.length();
             }
             if (start > end) {
                 int x = start;
