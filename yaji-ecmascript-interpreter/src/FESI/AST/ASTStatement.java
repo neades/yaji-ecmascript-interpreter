@@ -5,9 +5,6 @@ package FESI.AST;
 import FESI.Parser.EcmaScript;
 
 public class ASTStatement extends SimpleNode {
-    /**
-	 * 
-	 */
     private static final long serialVersionUID = -847892398470193741L;
 
     public ASTStatement(int id) {
@@ -30,5 +27,10 @@ public class ASTStatement extends SimpleNode {
     @Override
     public Object jjtAccept(EcmaScriptVisitor visitor, Object data) {
         return visitor.visit(this, data);
+    }
+    
+    @Override
+    public void addLabel(String label) {
+        ((SimpleNode)jjtGetChild(0)).addLabel(label);
     }
 }

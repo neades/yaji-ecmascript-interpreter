@@ -2,6 +2,8 @@
 
 package FESI.AST;
 
+import java.util.HashSet;
+
 import org.yaji.log.ILog;
 import org.yaji.log.Logs;
 
@@ -238,4 +240,17 @@ public abstract class SimpleNode implements Node, EcmaScriptConstants {
     protected static final boolean isOctal(char c1) {
         return (c1 >= '0') && (c1 <= '7');
     }
+    private HashSet<String> labelSet;
+
+    public void addLabel(String label) {
+        if (labelSet == null) {
+            labelSet = new HashSet<String>();
+        }
+        labelSet.add(label);
+    }
+    
+    public boolean labelSetContains(String label) {
+        return labelSet == null ? false : labelSet.contains(label);
+    }
+
 }
