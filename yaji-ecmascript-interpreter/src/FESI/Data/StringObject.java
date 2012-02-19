@@ -135,37 +135,160 @@ public class StringObject extends BuiltinFunctionObject {
         }
     }
 
-    private static class StringPrototypeReplace extends BuiltinFunctionObject {
+    private static class StringPrototypeReplace extends CoercedStringFunction {
         private static final long serialVersionUID = -5972680989663620329L;
 
         StringPrototypeReplace(String name, Evaluator evaluator,
                 FunctionPrototype fp) throws EcmaScriptException {
-            super(fp, evaluator, name, 1);
+            super(fp, evaluator, name, 2);
         }
 
         @Override
-        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
+        public ESValue invoke(String str, ESValue[] arguments)
                 throws EcmaScriptException {
-            if (arguments.length < 2) {
-                throw new EcmaScriptException(
-                        "replace requires 2 arguments: pattern and replacement string");
+            ESValue searchValue = getArg(arguments,0);
+            ESValue replaceValue = getArg(arguments,1);
+            if (searchValue instanceof RegExpPrototype) {
+                RegExpPrototype pattern = (RegExpPrototype) searchValue;
+                Matcher matcher = pattern.getPattern().matcher(str);
+                if (replaceValue.isCallable()) {
+                    ESString string = new ESString(str);
+                    StringBuilder sb = new StringBuilder();
+                    int lastIndex = 0;
+                    while (matcher.find()) {
+                        int groupCount = matcher.groupCount();
+                        ESValue[] params = new ESValue[groupCount+3];
+                        params[0] = new ESString(matcher.group());
+                        for (int i=1; i<=groupCount; i++) {
+                            params[i] = new ESString(matcher.group(i));
+                        }
+                        params[groupCount+1] = ESNumber.valueOf(matcher.start());
+                        params[groupCount+2] = string;
+                        String replacement = replaceValue.callFunction(null, params).callToString();
+                        if (lastIndex < matcher.start()) {
+                            sb.append(str.substring(lastIndex, matcher.start()));
+                        }
+                        sb.append(replacement);
+                        lastIndex = matcher.end();
+                        if (!pattern.isGlobal()) {
+                            break;
+                        }
+                    }
+                    sb.append(str.substring(lastIndex,str.length()));
+                    return new ESString(sb.toString());
+                }
+                return replaceUsingRegexpSimpleReplacement(str,replaceValue,
+                        pattern, matcher);
             }
-            String str = thisObject.toString();
-            RegExpPrototype pattern;
-            if (arguments[0] instanceof RegExpPrototype) {
-                pattern = (RegExpPrototype) arguments[0];
-            } else {
-                throw new EcmaScriptException(
-                        "The replace argument must be a RegExp");
-            }
-            Matcher matcher = pattern.getPattern().matcher(str);
-            String replacement = arguments[1].toString();
-
-            if (pattern.isGlobal()) {
-                return new ESString(matcher.replaceAll(replacement));
-            }
-            return new ESString(matcher.replaceFirst(replacement));
+            return replaceSimpleString(str, searchValue, replaceValue);
         }
+
+        public ESValue replaceUsingRegexpSimpleReplacement(String str,
+                ESValue replaceValue, RegExpPrototype pattern, Matcher matcher)
+                throws EcmaScriptException {
+            String replacement = replaceValue.callToString();
+            StringBuilder sb = new StringBuilder();
+            int lastIndex = 0;
+            while (matcher.find()) {
+                if (lastIndex < matcher.start()) {
+                    sb.append(str.substring(lastIndex, matcher.start()));
+                }
+                boolean inSubstitution = false;
+                int groupIndex = -1;
+                for ( char ch : replacement.toCharArray()) {
+                    if (inSubstitution) {
+                        switch ( ch ) {
+                        case '$':
+                            sb.append(ch);
+                            break;
+                        case '&':
+                            sb.append(str.substring(matcher.start(),matcher.end()));
+                            break;
+                        case '`': // preceeding
+                            sb.append(str.substring(0,matcher.start()));
+                            break;
+                        case '\'': // following
+                            sb.append(str.substring(matcher.end()));
+                            break;
+                        case '0': groupIndex = 0; break;
+                        case '1': groupIndex = 1; break;
+                        case '2': groupIndex = 2; break;
+                        case '3': groupIndex = 3; break;
+                        case '4': groupIndex = 4; break;
+                        case '5': groupIndex = 5; break;
+                        case '6': groupIndex = 6; break;
+                        case '7': groupIndex = 7; break;
+                        case '8': groupIndex = 8; break;
+                        case '9': groupIndex = 9; break;
+                            
+                        default:
+                            sb.append('$');
+                            sb.append(ch);
+                        }
+                        inSubstitution = false;
+                    } else if (groupIndex != -1){
+                        boolean isDigit = Character.isDigit(ch);
+                        if (isDigit) {
+                            groupIndex = groupIndex * 10 + (ch - '0');
+                        }
+                        if (groupIndex == 0) {
+                            sb.append("$0");
+                            if (ch == 0) {
+                                sb.append('0');
+                            }
+                        } else {
+                            sb.append(matcher.group(groupIndex));
+                        }
+                        if (!isDigit) {
+                            if (ch == '$') {
+                                inSubstitution = true;
+                            } else {
+                                sb.append(ch);
+                            }
+                        }
+                        groupIndex = -1;
+                    } else {
+                        if (ch == '$') {
+                            inSubstitution = true;
+                        } else {
+                            sb.append(ch);
+                        }
+                    }
+                }
+                if (groupIndex != -1) {
+                    if (groupIndex == 0) {
+                        sb.append("$0");
+                    } else {
+                        sb.append(matcher.group(groupIndex));
+                    }
+                } else if (inSubstitution) {
+                    sb.append('$');
+                }
+                lastIndex = matcher.end();
+                if (!pattern.isGlobal()) {
+                    break;
+                }
+            }
+            sb.append(str.substring(lastIndex,str.length()));
+            return new ESString(sb.toString());
+        }
+
+        public ESValue replaceSimpleString(String str, ESValue searchValue,
+                ESValue replaceValue) throws EcmaScriptException {
+            String searchString = searchValue.callToString();
+            int index = str.indexOf(searchString);
+            if (index == -1) {
+                return new ESString(str);
+            }
+            
+            String replacementString = replaceValue.isCallable() ?
+                replaceValue.callFunction(null, new ESValue[] { new ESString(searchString), ESNumber.valueOf(index), new ESString(str) }).callToString()
+              : replaceValue.callToString();
+            int endOfSearch = index + searchString.length();
+            String replace = str.substring(0, index) + replacementString + str.substring(endOfSearch) ;
+            return new ESString(replace);
+        }
+        
     }
 
     private static class StringPrototypeMatch extends BuiltinFunctionObject {
@@ -229,6 +352,9 @@ public class StringObject extends BuiltinFunctionObject {
             int groupCount = m.groupCount();
             // Add segments before each match found
             while(m.find()) {
+                if (m.end() == 0 || m.start() == input.length()) {
+                    continue;
+                }
                 String match = input.subSequence(index, m.start()).toString();
                 matchList.putProperty(matchListSize++,new ESString(match));
                 if (matchListSize == limit) {
@@ -270,12 +396,11 @@ public class StringObject extends BuiltinFunctionObject {
                         split(regexp.getPattern(),theArray,str,limit);
                     }
                 } else { // ! instanceof ESJavaRegExp, using "normal" split
-                    String sep = arguments[0].toString();
+                    String sep = arguments[0].callToString();
                     if (sep.length() == 0) {
                         int l = str.length();
                         for (int i = 0; i < l; i++) {
-                            theArray.putProperty((long)i,new ESString(str
-                                    .substring(i, i + 1)));
+                            theArray.putProperty((long)i,new ESString(str.substring(i, i + 1)));
                         }
                     } else {
                         int i = 0;
