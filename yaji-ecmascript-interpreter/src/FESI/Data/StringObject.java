@@ -342,7 +342,7 @@ public class StringObject extends BuiltinFunctionObject {
             super(fp, evaluator, name, 2);
         }
 
-        private void split(Pattern pattern, ESObject matchList, CharSequence input, int limit) throws EcmaScriptException {
+        private void split(Pattern pattern, ESObject matchList, CharSequence input, long limit) throws EcmaScriptException {
             int index = 0;
             boolean matchLimited = limit > 0;
             Matcher m = pattern.matcher(input);
@@ -385,36 +385,39 @@ public class StringObject extends BuiltinFunctionObject {
         public ESValue invoke(String str, ESValue[] arguments)
                 throws EcmaScriptException {
             ESObject theArray = this.getEvaluator().createArray();
-            if (arguments.length <= 0) {
-                theArray.putProperty(0L, new ESString(str));
-            } else {
-                if (arguments[0] instanceof RegExpPrototype) {
-                    RegExpPrototype regexp = (RegExpPrototype) arguments[0];
-                    ESValue limitValue = getArg(arguments,1);
-                    int limit = (limitValue.getTypeOf() == EStypeUndefined) ? Integer.MAX_VALUE : limitValue.toInt32();
-                    if (limit != 0) {
+            ESValue separatorValue = getArg(arguments,0);
+            ESValue limitValue = getArg(arguments,1);
+            long limit = limitValue.getTypeOf() == EStypeUndefined ? 0xffffffffL : limitValue.toUInt32();
+            String sep = separatorValue instanceof RegExpPrototype ? null : separatorValue.callToString();
+            if (limit != 0) {
+                if (separatorValue.getTypeOf() == EStypeUndefined) {
+                    theArray.putProperty(0L, new ESString(str));
+                } else {
+                    if (sep == null) {
+                        RegExpPrototype regexp = (RegExpPrototype) separatorValue;
                         split(regexp.getPattern(),theArray,str,limit);
-                    }
-                } else { // ! instanceof ESJavaRegExp, using "normal" split
-                    String sep = arguments[0].callToString();
-                    if (sep.length() == 0) {
-                        int l = str.length();
-                        for (int i = 0; i < l; i++) {
-                            theArray.putProperty((long)i,new ESString(str.substring(i, i + 1)));
+                    } else { // ! instanceof ESJavaRegExp, using "normal" split
+                        if (sep.length() == 0) {
+                            int l = str.length();
+                            for (int i = 0; i < l; i++) {
+                                theArray.putProperty((long)i,new ESString(str.substring(i, i + 1)));
+                            }
+                        } else {
+                            int i = 0;
+                            int start = 0;
+                            while (i < limit) {
+                                int pos = str.indexOf(sep, start);
+                                if (pos < 0) {
+                                    theArray.putProperty((long)i,new ESString(str.substring(start)));
+                                    break;
+                                }
+                                theArray.putProperty((long)i,new ESString(str.substring(start, pos)));
+                                start = pos + sep.length();
+                                i++;
+                            }
                         }
-                    } else {
-                        int i = 0;
-                        int start = 0;
-                        while (start < str.length()) {
-                            int pos = str.indexOf(sep, start);
-                            if (pos < 0)
-                                pos = str.length();
-                            theArray.putProperty((long)i,new ESString(str.substring(start, pos)));
-                            start = pos + sep.length();
-                            i++;
-                        }
-                    }
-                } 
+                    } 
+                }
             }
             return theArray;
         }
