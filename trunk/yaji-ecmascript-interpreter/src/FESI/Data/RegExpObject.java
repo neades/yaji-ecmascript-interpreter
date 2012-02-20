@@ -114,8 +114,8 @@ class RegExpObject extends BuiltinFunctionObject {
         return flags;
     }
 
-    private String argToString(ESValue v) {
-        return (v == ESUndefined.theUndefined)?"":v.toString();
+    private String argToString(ESValue v) throws EcmaScriptException {
+        return (v == ESUndefined.theUndefined)?"":v.callToString();
     }
     
 
