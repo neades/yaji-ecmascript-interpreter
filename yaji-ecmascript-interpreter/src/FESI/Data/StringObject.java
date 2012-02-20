@@ -92,12 +92,12 @@ public class StringObject extends BuiltinFunctionObject {
         @Override
         public ESValue invoke(String str, ESValue[] arguments) throws EcmaScriptException {
             int strLength = str.length();
-            int start = getArgAsInt32(arguments,0);
+            int start = (int)getArg(arguments,0).toInteger();
             if (start < 0) {
                 start = Math.max(strLength + start,0);
             }
             ESValue endValue = getArg(arguments,1);
-            int end = (endValue.getTypeOf() == EStypeUndefined) ? strLength : endValue.toInt32();
+            int end = (endValue.getTypeOf() == EStypeUndefined) ? strLength : (int)endValue.toInteger();
             if (end < 0) {
                 end = Math.max(strLength + end,0);
             } else {
