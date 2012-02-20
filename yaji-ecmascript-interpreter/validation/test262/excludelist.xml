@@ -21,4 +21,7 @@
   <test id="15.2.3.14-3-4">Assumes an ordering to keys</test>
   <test id="15.2.3.14-3-1">Assumes an ordering to keys</test>
   <test id="15.2.3.14-2-8">Assumes an ordering to keys</test>
+  <test id="S15.5.4.11_A3_T1">Assumes implementation of $nn where nn>m</test>
+  <test id="S15.5.4.11_A3_T2">Assumes implementation of $nn where nn>m</test>
+  <test id="S15.5.4.11_A3_T3">Assumes implementation of $nn where nn>m</test>
 </excludeList>
