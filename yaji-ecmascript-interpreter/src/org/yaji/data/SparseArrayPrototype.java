@@ -171,6 +171,8 @@ public class SparseArrayPrototype extends ESObject {
         }
         if (requestedLength < length) {
             propertyValue = ESNumber.valueOf(length);
+        } else {
+            propertyValue = ESNumber.valueOf(requestedLength);
         }
         return propertyValue;
     }

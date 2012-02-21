@@ -291,7 +291,7 @@ public class StringObject extends BuiltinFunctionObject {
         
     }
 
-    private static class StringPrototypeMatch extends BuiltinFunctionObject {
+    private static class StringPrototypeMatch extends CoercedStringFunction {
         private static final long serialVersionUID = -4817060573308387732L;
 
         StringPrototypeMatch(String name, Evaluator evaluator,
@@ -300,37 +300,42 @@ public class StringObject extends BuiltinFunctionObject {
         }
 
         @Override
-        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
-                throws EcmaScriptException {
-            if (arguments.length < 1) {
-                throw new EcmaScriptException(
-                        "match requires 1 pattern argument");
-            }
-            String str = thisObject.toString();
+        public ESValue invoke(String str, ESValue[] arguments) throws EcmaScriptException {
+            ESValue regexp = getArg(arguments,0);
             RegExpPrototype pattern;
-            if (arguments[0] instanceof RegExpPrototype) {
-                pattern = (RegExpPrototype) arguments[0];
+            if (regexp instanceof RegExpPrototype) {
+                pattern = (RegExpPrototype) regexp;
             } else {
-                throw new EcmaScriptException(
-                        "The match argument must be a RegExp");
+                ESValue regExpObject = getEvaluator().getGlobalObject().getProperty("RegExp","RegExp".hashCode());
+                pattern = (RegExpPrototype) regExpObject.doConstruct(new ESValue[] { regexp });
             }
-            Matcher matcher = pattern.getPattern().matcher(str);
+            if (!pattern.isGlobal()) {
+                return pattern.exec( new ESString(str) );
+            }
+            
+            pattern.setLastIndex(0);
 
-            boolean result = matcher.find();
-            if (result) {
-                // at least one match
-                ESObject resultArray = this.getEvaluator().createArray();
-                resultArray.putProperty(StandardProperty.INDEXstring, ESNumber
-                        .valueOf(matcher.start()), StandardProperty.INDEXhash);
-                resultArray.putProperty(StandardProperty.INPUTstring, new ESString(str),
-                        StandardProperty.INPUThash);
-                for (int i = 0; i <= matcher.groupCount(); i++) {
-                    resultArray.putProperty((long)i,
-                            new ESString(matcher.group(i)));
-                } // for
-                return resultArray;
+            ESObject resultArray = this.getEvaluator().createArray();
+            long n =0;
+            int previousLastIndex = 0;
+            boolean lastMatch = true;
+            while (lastMatch) {
+                ESValue value = pattern.exec(new ESString(str) );
+                lastMatch = value != ESNull.theNull;
+                if (lastMatch) {
+                    int thisIndex = pattern.getLastIndex();
+                    if (thisIndex == previousLastIndex) {
+                        previousLastIndex = thisIndex + 1;
+                        pattern.setLastIndex(previousLastIndex);
+                    } else {
+                        previousLastIndex = thisIndex;
+                    }
+                    ESValue matchStr = ((ESObject)value).getProperty(0L);
+                    resultArray.putProperty(n, matchStr);
+                    n ++;
+                }
             }
-            return ESNull.theNull;
+            return n == 0 ? ESNull.theNull : resultArray;
         }
     }
 
