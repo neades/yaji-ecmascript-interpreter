@@ -678,6 +678,9 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         try {
             ESValue ob = acceptNull(node.jjtGetChild(1).jjtAccept(this,
                     FOR_VALUE));
+            if (ob == ESNull.theNull || ob == ESUndefined.theUndefined) {
+                return data;
+            }
             ESObject obj = ob.toESObject(evaluator);
             boolean directEnumeration = obj.isDirectEnumerator();
             for (Enumeration<String> e = obj.getProperties(); e
@@ -745,6 +748,10 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
 
             ESValue ob = acceptNull(node.jjtGetChild(2).jjtAccept(this,
                     FOR_VALUE));
+            if (ob == ESNull.theNull || ob == ESUndefined.theUndefined) {
+                return data;
+            }
+
             ESObject obj = ob.toESObject(evaluator);
             boolean directEnumeration = obj.isDirectEnumerator();
             for (Enumeration<String> e = obj.getProperties(); e

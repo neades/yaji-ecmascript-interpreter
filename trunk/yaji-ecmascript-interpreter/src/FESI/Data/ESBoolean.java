@@ -208,4 +208,9 @@ public final class ESBoolean extends ESPrimitive {
     protected boolean sameValueTypeChecked(ESValue other) throws EcmaScriptException {
         return booleanValue() == other.booleanValue();
     }
+    
+    @Override
+    public ESValue toESNumber() throws EcmaScriptException {
+        return this == TRUE ? ESNumber.valueOf(1) : ESNumber.valueOf(0);
+    }
 }

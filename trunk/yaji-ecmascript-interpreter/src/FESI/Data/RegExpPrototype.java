@@ -98,13 +98,14 @@ public class RegExpPrototype extends ESObject {
     }
 
     ESValue exec(ESValue value) throws EcmaScriptException {
-        String str = value.toString();
+        String str = value.callToString();
         String string;
         int startIndex = 0;
         if (isGlobal()) {
-            if (getLastIndex() >= 0 && getLastIndex() <= str.length()) {
-                string = str.substring(getLastIndex());
-                startIndex = getLastIndex();
+            int lastIndex = getLastIndex();
+            if (lastIndex >= 0 && lastIndex <= str.length()) {
+                string = str.substring(lastIndex);
+                startIndex = lastIndex;
             } else {
                 setLastIndex(0);
                 return ESNull.theNull;
@@ -120,7 +121,9 @@ public class RegExpPrototype extends ESObject {
             resultArray.putProperty(StandardProperty.INDEXstring, ESNumber.valueOf(matcher.start()), StandardProperty.INDEXhash);
             resultArray.putProperty(StandardProperty.INPUTstring, new ESString(str),StandardProperty.INPUThash);
             for (int i = 0; i <= matcher.groupCount(); i++) {
-                resultArray.putProperty((long)i,new ESString(matcher.group(i)));
+                String group = matcher.group(i);
+                ESValue groupValue = group != null ? new ESString(group) : ESUndefined.theUndefined;
+                resultArray.putProperty((long)i,groupValue);
             } // for
             setLastIndex(matcher.end() + startIndex);
             return resultArray;
@@ -145,11 +148,11 @@ public class RegExpPrototype extends ESObject {
         return getProperty(StandardProperty.SOURCEstring,StandardProperty.SOURCEhash).callToString();
     }
 
-    private int getLastIndex() throws EcmaScriptException {
+    public int getLastIndex() throws EcmaScriptException {
         return getProperty(StandardProperty.LAST_INDEXstring,StandardProperty.LAST_INDEXhash).toInt32();
     }
 
-    private void setLastIndex(int lastIndex) throws EcmaScriptException {
+    void setLastIndex(int lastIndex) throws EcmaScriptException {
         putProperty(StandardProperty.LAST_INDEXstring,ESNumber.valueOf(lastIndex),StandardProperty.LAST_INDEXhash);
     }
 

@@ -584,6 +584,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
             for (ESValue esValue : arguments) {
                 thisObject.putProperty(length++, esValue);
             }
+            setLength(thisObject, length);
             return ESNumber.valueOf(length);
         }
     }
