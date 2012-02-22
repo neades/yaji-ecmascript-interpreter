@@ -30,6 +30,7 @@ import FESI.Exceptions.ProgrammingError;
 import FESI.Exceptions.ReferenceError;
 import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
+import FESI.Interpreter.IDescriptor;
 import FESI.Interpreter.ScopeChain;
 
 /**
@@ -113,7 +114,7 @@ public class ESArguments extends ESObject {
         }
         
         @Override
-        public ESValue defineProperty(String propertyName, ESObject desc)
+        public ESValue defineProperty(String propertyName, IDescriptor desc)
                 throws EcmaScriptException {
             ESValue result = super.defineProperty(propertyName, desc);
             if (argumentMap != null) {

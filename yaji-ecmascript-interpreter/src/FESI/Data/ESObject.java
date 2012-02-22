@@ -26,11 +26,12 @@ import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
 import FESI.Interpreter.FesiHashtable;
 import FESI.Interpreter.FesiHashtable.IReporter;
+import FESI.Interpreter.IDescriptor;
 import FESI.Interpreter.IPropertyDescriptor;
 import FESI.Interpreter.ScopeChain;
 import FESI.Util.EvaluatorAccess;
 
-public abstract class ESObject extends ESValue {
+public abstract class ESObject extends ESValue implements IDescriptor {
 
     private static final long serialVersionUID = 3620418273409576807L;
 
@@ -1304,7 +1305,7 @@ public abstract class ESObject extends ESValue {
         return hasNoPropertyMap() ? null : getPropertyMap().getOwnPropertyDescriptor(propertyName,getEvaluator());
     }
 
-    public ESValue defineProperty(final String propertyName, ESObject desc) throws EcmaScriptException {
+    public ESValue defineProperty(final String propertyName, IDescriptor desc) throws EcmaScriptException {
         getPropertyMap().defineProperty(propertyName,desc, new IReporter() {
             
             public boolean reject(String message) throws TypeError{
