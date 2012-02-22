@@ -24,4 +24,6 @@
   <test id="S15.5.4.11_A3_T1">Assumes implementation of $nn where nn>m</test>
   <test id="S15.5.4.11_A3_T2">Assumes implementation of $nn where nn>m</test>
   <test id="S15.5.4.11_A3_T3">Assumes implementation of $nn where nn>m</test>
+  <test id="S15.4.4.4_A1_T4">Adding a completely sparse array should not be adding when concating</test>
+  <test id="15.4.4.4-5-c-i-1">Test seems to miss that the first line of concat calls ToObject as it checks for a primitive number rather than an object</test>
 </excludeList>
