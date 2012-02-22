@@ -720,7 +720,7 @@ public class FesiHashtable implements Cloneable, java.io.Serializable {
         public boolean reject(String message) throws TypeError;
     }
     
-    public boolean defineProperty(String propertyName, ESObject desc, IReporter reporter, boolean extensible, Evaluator evaluator) throws EcmaScriptException {
+    public boolean defineProperty(String propertyName, IDescriptor desc, IReporter reporter, boolean extensible, Evaluator evaluator) throws EcmaScriptException {
         int propertNameHash = propertyName.hashCode();
         HashtableEntry e = getHashtableEntry(propertyName, propertNameHash);
         boolean enumerable = false;

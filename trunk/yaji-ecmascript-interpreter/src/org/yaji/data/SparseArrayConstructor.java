@@ -656,13 +656,48 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
 
     private static final class ArrayPrototypeConcat extends
             AbstractArrayPrototypeFunction {
+        /*
+        private final class SimpleDescriptor implements IDescriptor {
+            private ESValue value;
+            private final boolean writable;
+            private final boolean enumerable;
+            private final boolean configurable;
+
+            public SimpleDescriptor(ESValue value, boolean writable, boolean enumerable, boolean configurable) {
+                this.value = value;
+                this.writable = writable;
+                this.enumerable = enumerable;
+                this.configurable = configurable;
+                
+            }
+            
+            public ESValue getPropertyIfAvailable(String propertyName, int hashCode)
+                    throws EcmaScriptException {
+                if (hashCode == StandardProperty.CONFIGURABLEhash && propertyName.equals(StandardProperty.CONFIGURABLEstring)) {
+                    return ESBoolean.valueOf(configurable);
+                } else if (hashCode == StandardProperty.ENUMERABLEhash && propertyName.equals(StandardProperty.ENUMERABLEstring)) {
+                    return ESBoolean.valueOf(enumerable);
+                } else if (hashCode == StandardProperty.VALUEhash && propertyName.equals(StandardProperty.VALUEstring)) {
+                    return value;
+                } else if (hashCode == StandardProperty.WRITABLEhash && propertyName.equals(StandardProperty.WRITABLEstring)) {
+                    return ESBoolean.valueOf(writable);
+                }
+
+                return null;
+            }
+
+            public void setValue(ESValue v) {
+                value = v;
+            }
+        }
+         */
         private static final long serialVersionUID = 8819892791499592087L;
 
         private ArrayPrototypeConcat(ESObject functionPrototype,
                 Evaluator evaluator, String functionName, int length) throws EcmaScriptException {
             super(functionPrototype, evaluator, functionName, length);
         }
-
+        
         @Override
         public ESValue callFunction(ESObject thisObject, ESValue[] arguments) throws EcmaScriptException {
             ESObject result = createArray();
@@ -680,7 +715,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
                         n++;
                     }
                 } else {
-                    result.putProperty(n++, v);
+                    result.putOwnProperty(n++, v);
                 }
             }
             return result;
@@ -813,13 +848,13 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
             return new ESString(sb.toString());
         }
 
-        private String getSeparator(ESValue[] arguments) {
+        private String getSeparator(ESValue[] arguments) throws EcmaScriptException {
             ESValue arg = getArg(arguments,0);
             String separator;
             if (arg.getTypeOf() == EStypeUndefined) {
                 separator = ",";
             } else {
-                separator = arg.toString();
+                separator = arg.callToString();
             }
             return separator;
         }
@@ -832,7 +867,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
             if (property.getTypeOf() == EStypeUndefined || property.getTypeOf() == EStypeNull) {
                 propertyAsString = "";
             } else {
-                propertyAsString = property.toString();
+                propertyAsString = property.callToString();
             }
             return propertyAsString;
         }

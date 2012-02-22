@@ -17,6 +17,7 @@ import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.RangeError;
 import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
+import FESI.Interpreter.IDescriptor;
 
 public class SparseArrayPrototype extends ESObject {
 
@@ -46,20 +47,23 @@ public class SparseArrayPrototype extends ESObject {
 
     private void putProperty(long index, String indexString,
             ESValue propertyValue) throws EcmaScriptException {
-        updateLength(index, isStrictMode());
         super.putProperty(indexString, propertyValue, indexString.hashCode());
+        updateLength(index, isStrictMode());
     }
 
     @Override
     public void putOwnProperty(long index, ESValue propertyValue)
             throws EcmaScriptException {
-        updateLength(index, isStrictMode());
         super.putOwnProperty(index, propertyValue);
+        updateLength(index, isStrictMode());
     }
     
     private void updateLength(long index, boolean shouldThrow) throws EcmaScriptException {
         long length = getLength();
         if (index >= length) {
+            if (index >= 0xFFFFFFFFL) {
+                throw new RangeError("Index is greater than possible maximum");
+            }
             if (index > length) {
                 if (sparseValues == null) {
                     sparseValues = new UInt32BitSet();
@@ -81,11 +85,15 @@ public class SparseArrayPrototype extends ESObject {
         if (lengthProperty.longValue() != length) {
             throw new RangeError("Array: Maximum length is "+0xFFFFFFFFL);
         }
+        if (length != lengthProperty.doubleValue()) {
+            throw new RangeError("Array: Length must be an integer value");
+        }
+
         return length;
     }
     
     @Override
-    public ESValue defineProperty(String propertyName, ESObject desc)
+    public ESValue defineProperty(String propertyName, IDescriptor desc)
             throws EcmaScriptException {
         if (isAllDigits(propertyName)) {
             long longResult = Long.parseLong(propertyName);
@@ -99,8 +107,9 @@ public class SparseArrayPrototype extends ESObject {
                 if (newLen != propertyValue.doubleValue()) {
                     throw new RangeError("Array[[defineProperty]]: Length must be an integer value");
                 }
-                desc = copyDescriptor(desc);
-                desc.putProperty(StandardProperty.VALUEstring, ESNumber.valueOf(newLen), StandardProperty.VALUEhash);
+                ESObject descriptor = copyDescriptor(desc);
+                desc = descriptor;
+                descriptor.putProperty(StandardProperty.VALUEstring, ESNumber.valueOf(newLen), StandardProperty.VALUEhash);
                 long currentLength = getLength();
                 if (newLen < currentLength) {
                     if (!canPut(StandardProperty.LENGTHstring,StandardProperty.LENGTHhash)) {
@@ -108,7 +117,7 @@ public class SparseArrayPrototype extends ESObject {
                     }
                     ESValue newPropertyValue = trimArray(propertyValue);
                     if (newPropertyValue != propertyValue) {
-                        desc.putProperty(StandardProperty.VALUEstring, newPropertyValue, StandardProperty.VALUEhash);
+                        descriptor.putProperty(StandardProperty.VALUEstring, newPropertyValue, StandardProperty.VALUEhash);
                         super.defineProperty(propertyName, desc);
                         throw new TypeError("Cannot change length of array because element is not configurable");
                     }
@@ -119,7 +128,7 @@ public class SparseArrayPrototype extends ESObject {
         return super.defineProperty(propertyName, desc);
     }
     
-    private ESObject copyDescriptor(ESObject desc) throws EcmaScriptException {
+    private ESObject copyDescriptor(IDescriptor desc) throws EcmaScriptException {
         ESObject copy = ObjectObject.createObject(getEvaluator());
         copyPropertyIfSet(desc, copy, StandardProperty.CONFIGURABLEstring, StandardProperty.CONFIGURABLEhash);
         copyPropertyIfSet(desc, copy, StandardProperty.ENUMERABLEstring, StandardProperty.ENUMERABLEhash);
@@ -130,7 +139,7 @@ public class SparseArrayPrototype extends ESObject {
         return copy;
     }
 
-    protected void copyPropertyIfSet(ESObject desc, ESObject copy, String propertyName, int propertyNameHashCode)
+    protected void copyPropertyIfSet(IDescriptor desc, ESObject copy, String propertyName, int propertyNameHashCode)
             throws EcmaScriptException {
         ESValue value = desc.getPropertyIfAvailable(propertyName, propertyNameHashCode);
         if (value != null) {
