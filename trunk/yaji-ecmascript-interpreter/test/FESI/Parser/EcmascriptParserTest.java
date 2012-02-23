@@ -415,6 +415,17 @@ public class EcmascriptParserTest {
                     + "    <x>" + eol 
                     + "    Statement" + eol 
                     + "     StatementList" + eol
+                },
+                {  "var f = new (F());",
+                    "Program" + eol 
+                    + " Statement" + eol 
+                    + "  VariableDeclaration" + eol 
+                    + "   <f>" + eol 
+                    + "   AllocationExpression" + eol
+                    + "    CompositeReference" +  eol
+                    + "     <F>" +  eol
+                    + "     FunctionCallParameters" + eol
+                    + "    FunctionCallParameters" + eol
                 }
                 
            });
