@@ -78,11 +78,6 @@ public class DatePrototype extends ESObject {
         return "Date";
     }
 
-    @Override
-    public String getTypeofString() {
-        return "Date";
-    }
-
     /**
      * Set the year value of the date. BEWARE: Fixed as base 1900 !
      * 
