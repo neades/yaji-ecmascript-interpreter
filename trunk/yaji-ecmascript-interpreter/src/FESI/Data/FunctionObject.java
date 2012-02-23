@@ -52,12 +52,15 @@ public class FunctionObject extends BuiltinFunctionObject implements
 
         FunctionPrototypeToString(String name, Evaluator evaluator,
                 FunctionPrototype fp) throws EcmaScriptException {
-            super(fp, evaluator, name, 1);
+            super(fp, evaluator, name, 0);
         }
 
         @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
+            if (! (thisObject instanceof FunctionPrototype) ){
+                throw new TypeError("Cannot apply Function.prototype.toString to non-function object");
+            }
             String s = "function "
                     + ((FunctionPrototype) thisObject)
                             .getFunctionName()
