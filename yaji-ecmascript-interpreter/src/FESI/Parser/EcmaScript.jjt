@@ -1044,6 +1044,13 @@ void AllocationExpression() #void :
             ) 
            )
            #AllocationExpression( 2 )
+         | ( "(" Expression() ")"
+            ( 
+             ( 
+              (Arguments() #FunctionCallParameters) ( PrimarySuffix() {  stack.add(jjtree.popNode()); } )* ) 
+             )? #FunctionCallParameters( jjtree.nodeArity() == 0 
+            ) 
+           ) #AllocationExpression( 2 )
           )
     {
       for( Node node : stack ) {
