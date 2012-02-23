@@ -358,7 +358,7 @@ public class Runner {
         public void execute() {
             long start = System.currentTimeMillis();
             try {
-                boolean passed = executeTest(testFile, testName);
+                boolean passed = executeTest(testFile, testName, negative);
                 if (negative) {
                     passed = !passed;
                 }
@@ -369,7 +369,7 @@ public class Runner {
         }
     }
     
-    private boolean executeTest(File file, String testName) throws IOException {
+    private boolean executeTest(File file, String testName, boolean negative) throws IOException {
         Evaluator evaluator = new Evaluator();
         currentEvaluator.set(evaluator);
         evaluator.setDefaultTimeZone(TimeZone.getTimeZone("UTC"));
@@ -379,7 +379,9 @@ public class Runner {
             evaluator.evaluate(file);
             passed = true;
         } catch (Throwable e) {
-            logException(e);
+            if (!negative) {
+                logException(e);
+            }
         } finally {
             currentEvaluator.set(null);
         }
