@@ -379,7 +379,9 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
             for(int k=0; k<argLength; k++) {
                 thisObject.putProperty((long)k, getArg(arguments,k));
             }
-            return ESNumber.valueOf(length+argLength);
+            ESNumber result = ESNumber.valueOf(length+argLength);
+            thisObject.putProperty(StandardProperty.LENGTHstring, result, StandardProperty.LENGTHhash);
+            return result;
         }
     }
 
@@ -915,7 +917,7 @@ public class SparseArrayConstructor extends BuiltinFunctionObject {
         case 0:
             break;
         case 1:
-            if (arguments[0].isNumberValue()) {
+            if (arguments[0] instanceof ESNumber) {
                 if (arguments[0].isUInt32()) {
                     sparseArrayPrototype.putProperty(StandardProperty.LENGTHstring,arguments[0],StandardProperty.LENGTHhash);
                     break;
