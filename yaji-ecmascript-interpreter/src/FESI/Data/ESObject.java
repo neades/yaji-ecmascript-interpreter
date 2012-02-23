@@ -833,7 +833,7 @@ public abstract class ESObject extends ESValue implements IDescriptor {
     @Override
     public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
             throws EcmaScriptException {
-        throw new EcmaScriptException("No function defined on: " + this);
+        throw new TypeError("No function defined on: " + this);
     }
 
     /**
