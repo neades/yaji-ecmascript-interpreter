@@ -188,15 +188,6 @@ public class SparseArrayPrototypeTest extends EvaluatorTestCase {
     }
     
     @Test
-    public void popFromArrayWithDodgyLengthLeavesLengthAsZero() throws Exception {
-        ESObject array = arrayObject.doConstruct(ESValue.EMPTY_ARRAY);
-        array.putProperty(StandardProperty.LENGTHstring, s("X"));
-        array.doIndirectCall(evaluator, array, "pop", ESValue.EMPTY_ARRAY);
-        ESValue length = array.getProperty(StandardProperty.LENGTHstring,StandardProperty.LENGTHhash);
-        assertEquals(n(0L),length);
-    }
-    
-    @Test
     public void pushValue() throws Exception {
         ESObject array = arrayObject.doConstruct(new ESValue[] { n(1), s("two") });
         ESValue value = array.doIndirectCall(evaluator, array, "push", new ESValue[] { n(3) });
