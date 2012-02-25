@@ -115,9 +115,9 @@ public class SparseArrayPrototype extends ESObject {
                     if (!canPut(StandardProperty.LENGTHstring,StandardProperty.LENGTHhash)) {
                         throw new TypeError("Cannot change length of array because the length is read only");
                     }
-                    ESValue newPropertyValue = trimArray(propertyValue);
-                    if (newPropertyValue != propertyValue) {
-                        descriptor.putProperty(StandardProperty.VALUEstring, newPropertyValue, StandardProperty.VALUEhash);
+                    long actualLength = trimArray(propertyValue);
+                    if (actualLength != newLen) {
+                        descriptor.putProperty(StandardProperty.VALUEstring, ESNumber.valueOf(actualLength), StandardProperty.VALUEhash);
                         super.defineProperty(propertyName, desc);
                         throw new TypeError("Cannot change length of array because element is not configurable");
                     }
@@ -159,13 +159,13 @@ public class SparseArrayPrototype extends ESObject {
             }
         } else {
             if (StandardProperty.LENGTHhash == propertyHash && StandardProperty.LENGTHstring.equals(propertyName)) {
-                propertyValue = trimArray(propertyValue);
+                propertyValue = ESNumber.valueOf(trimArray(propertyValue));
             }
             super.putProperty(propertyName, propertyValue, propertyHash);
         }
     }
 
-    protected ESValue trimArray(ESValue propertyValue)
+    protected long trimArray(ESValue propertyValue)
             throws EcmaScriptException, RangeError {
         long requestedLength = validateLength(propertyValue);
         long length = getLength();
@@ -178,12 +178,7 @@ public class SparseArrayPrototype extends ESObject {
                 }
             }
         }
-        if (requestedLength < length) {
-            propertyValue = ESNumber.valueOf(length);
-        } else {
-            propertyValue = ESNumber.valueOf(requestedLength);
-        }
-        return propertyValue;
+        return (requestedLength < length) ? length : requestedLength;
     }
     
     private long decrement(long length) {

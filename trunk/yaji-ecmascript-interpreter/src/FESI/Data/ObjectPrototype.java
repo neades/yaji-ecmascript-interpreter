@@ -43,15 +43,8 @@ public class ObjectPrototype extends ESObject {
         @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
-            String result;
-            if (thisObject == ESUndefined.theUndefined) {
-                result = "[object Undefined]";
-            } else if (thisObject == ESNull.theNull) {
-                result = "[object Null]";
-            }
             ESObject esObject = thisObject.toESObject(getEvaluator());
-            result = "[object " + esObject.getESClassName()
-                    + "]";
+            String result = "[object " + esObject.getESClassName() + "]";
             return new ESString(result);
         }
     }
@@ -67,7 +60,7 @@ public class ObjectPrototype extends ESObject {
         @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
-            return thisObject;
+            return thisObject.toESObject(getEvaluator());
         }
     }
 
