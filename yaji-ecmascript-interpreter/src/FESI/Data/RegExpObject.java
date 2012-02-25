@@ -11,7 +11,27 @@ class RegExpObject extends BuiltinFunctionObject {
     private static final long serialVersionUID = 5695969400216749530L;
     private final ESObject regExpPrototype;
     
-    private static class ESRegExpPrototypetestMethod extends BuiltinFunctionObject {
+    private static abstract class RegExpBuiltInFunctionObject extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 7234287006807912962L;
+
+        RegExpBuiltInFunctionObject(FunctionPrototype fp, Evaluator evaluator,
+                String name, int length) throws EcmaScriptException {
+            super(fp, evaluator, name, length);
+        }
+        
+        @Override
+        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
+                throws EcmaScriptException {
+            if (thisObject instanceof RegExpPrototype) {
+                return callFunction((RegExpPrototype)thisObject, arguments);
+            }
+            throw new TypeError("RegExp.prototype."+getFunctionName()+" can only be applied to a RegExp instance");
+        }
+        
+        protected abstract ESValue callFunction(RegExpPrototype thisRegexp, ESValue[] arguments) throws EcmaScriptException;
+    }
+    
+    private static class ESRegExpPrototypetestMethod extends RegExpBuiltInFunctionObject {
         private static final long serialVersionUID = -1530678844987141170L;
 
         ESRegExpPrototypetestMethod(String name, Evaluator evaluator,
@@ -20,15 +40,14 @@ class RegExpObject extends BuiltinFunctionObject {
         }
 
         @Override
-        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
+        public ESValue callFunction(RegExpPrototype pattern, ESValue[] arguments)
                 throws EcmaScriptException {
             ESValue string = (arguments.length < 1)?ESUndefined.theUndefined:arguments[0];
-            RegExpPrototype pattern = (RegExpPrototype) thisObject;
             return ESBoolean.valueOf(pattern.exec(string) != ESNull.theNull);
         }
     }
 
-    private static class ESRegExpPrototypeExecMethod extends BuiltinFunctionObject {
+    private static class ESRegExpPrototypeExecMethod extends RegExpBuiltInFunctionObject {
         private static final long serialVersionUID = 6552738494467189408L;
 
         ESRegExpPrototypeExecMethod(String name, Evaluator evaluator,
@@ -37,15 +56,14 @@ class RegExpObject extends BuiltinFunctionObject {
         }
 
         @Override
-        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
+        public ESValue callFunction(RegExpPrototype pattern, ESValue[] arguments)
                 throws EcmaScriptException {
             ESValue string = (arguments.length < 1)?ESUndefined.theUndefined:arguments[0];
-            RegExpPrototype pattern = (RegExpPrototype) thisObject;
             return pattern.exec(string);
         }
     }
 
-    private static class ESRegExpPrototypeToStringMethod extends BuiltinFunctionObject {
+    private static class ESRegExpPrototypeToStringMethod extends RegExpBuiltInFunctionObject {
         private static final long serialVersionUID = 6552738494467189408L;
 
         ESRegExpPrototypeToStringMethod(String name, Evaluator evaluator,
@@ -54,12 +72,7 @@ class RegExpObject extends BuiltinFunctionObject {
         }
 
         @Override
-        public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
-                throws EcmaScriptException {
-            if (!(thisObject instanceof RegExpPrototype)) {
-                throw new TypeError("Regexp.prototype.toString cannot be applied to non-regexp object");
-            }
-            RegExpPrototype regexp = (RegExpPrototype) thisObject;
+        public ESValue callFunction(RegExpPrototype regexp, ESValue[] arguments) {
             return new ESString(regexp.toString());
         }
     }

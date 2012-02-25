@@ -727,7 +727,7 @@ public class StringObject extends BuiltinFunctionObject {
         if (arguments.length == 0) {
             return new ESString("");
         }
-        return new ESString(arguments[0].toString());
+        return arguments[0].toESString();
 
     }
 
