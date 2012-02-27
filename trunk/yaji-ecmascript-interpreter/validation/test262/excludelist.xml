@@ -27,4 +27,13 @@
   <test id="S15.4.4.4_A1_T4">Adding a completely sparse array should not be adding when concating</test>
   <test id="15.4.4.4-5-c-i-1">Test seems to miss that the first line of concat calls ToObject as it checks for a primitive number rather than an object</test>
   <test id="S15.2.4.2_A13">The first line of Object.prototype.toString should convert this ToObject - with Null should throw TypeError but test expects it to work</test>
+  <test id="S15.2.4.4_A15">See issue 171.</test>
+  <test id="S15.2.4.4_A14">See issue 171.</test>
+  <test id="S15.2.4.2_A12">Testing Object.prototype.toString. Passes null but spec says ToObject should be applied to this and ToObject says that it should throw TypeError for null</test>
+  <test id="S15.10.6.2_A1_T6">See issue 157</test>
+  <test id="S15.10.2.8_A2_T1">See issue 157</test>
+  <!--
+  <test id="S15.10.2.5_A1_T5">See issue 157</test>
+  -->
+  <test id="S15.10.2.5_A1_T4">See issue 157</test>
 </excludeList>

@@ -54,7 +54,7 @@ public class ObjectPrototype extends ESObject {
 
         ObjectPrototypeValueOf(String name, Evaluator evaluator,
                 FunctionPrototype fp) throws EcmaScriptException {
-            super(fp, evaluator, name, 1);
+            super(fp, evaluator, name, 0);
         }
 
         @Override

@@ -362,7 +362,7 @@ public class Runner {
                 if (negative) {
                     passed = !passed;
                 }
-                logTestResult(testName, passed, System.currentTimeMillis()-start);
+                logTestResult(testName, passed, negative, System.currentTimeMillis()-start);
             } catch(Throwable t) {
                 t.printStackTrace();
             }
@@ -407,20 +407,24 @@ public class Runner {
         return testPath.substring(rootLength, testPath.length()-3);
     }
 
-    private synchronized void logTestResult(String testName, boolean passed, long duration) {
+    private synchronized void logTestResult(String testName, boolean passed, boolean negative, long duration) {
         testCount ++;
         logger.println();
         if (passed) {
-            logger.print("Result " + testName + " SUCCESS (");
+            logger.print("Result " + testName + " SUCCESS");
             testPassed ++;
             System.out.print('.');
         } else {
-            logger.print("Result " + testName + " FAIL (");
+            logger.print("Result " + testName + " FAIL");
             System.out.print('E');
         }
         if (testCount % 80 == 0) {
             System.out.println();
         }
+        if (negative) {
+            logger.print(" -ve");
+        }
+        logger.print(" (");
         toReadableDuration(logger, duration);
         logger.println(")");
         System.out.flush();

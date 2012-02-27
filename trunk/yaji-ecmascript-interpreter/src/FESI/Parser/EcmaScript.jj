@@ -316,7 +316,7 @@ TOKEN: {
     "[" (<REGULAR_EXPRESSION_CLASS_CHAR>)* "]"
   >
 | <# REGULAR_EXPRESSION_CLASS_CHAR:
-    ~[ "\r" , "\n" , "\u2028" , "\u2029", "*", "\\", "[" ]
+    ~[ "\r" , "\n" , "\u2028" , "\u2029", "\\", "]" ]
     | <REGULAR_EXPRESSION_BACKSLASH_SEQUENCE>
   >
 }

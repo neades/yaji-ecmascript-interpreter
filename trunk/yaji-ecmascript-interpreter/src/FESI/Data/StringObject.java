@@ -19,8 +19,9 @@ package FESI.Data;
 
 import java.text.Collator;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import org.yaji.regex.Matcher;
+import org.yaji.regex.Pattern;
 
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
