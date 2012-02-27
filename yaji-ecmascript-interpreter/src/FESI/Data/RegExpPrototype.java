@@ -1,8 +1,6 @@
 package FESI.Data;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
+import org.yaji.regex.Regex;
 
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Interpreter.Evaluator;
@@ -10,7 +8,7 @@ import FESI.Interpreter.Evaluator;
 public class RegExpPrototype extends ESObject {
 
     private static final long serialVersionUID = 1319585947413414602L;
-    private Pattern pattern = null; // null means no valid pattern
+    private org.yaji.regex.Pattern pattern = null; // null means no valid pattern
 
     // Prototype constructor
     public RegExpPrototype(ESObject prototype, Evaluator evaluator) throws EcmaScriptException {
@@ -40,7 +38,7 @@ public class RegExpPrototype extends ESObject {
         putProperty(StandardProperty.LAST_INDEXstring, WRITEABLE, ESUndefined.theUndefined);
     }
 
-    public Pattern getPattern() throws EcmaScriptException {
+    public org.yaji.regex.Pattern getPattern() throws EcmaScriptException {
 
         if (pattern == null) {
             compile();
@@ -50,16 +48,12 @@ public class RegExpPrototype extends ESObject {
 
     public void compile() throws EcmaScriptException {
         // Recompile the pattern
-        try {
-            pattern = Pattern.compile(getSource(),
-                    (isIgnoreCase() ? Pattern.CASE_INSENSITIVE : 0)
-                    | (isMultiline() ? Pattern.MULTILINE : 0));
-        } catch (PatternSyntaxException e) {
-            throw new EcmaScriptException("PatternSyntaxException: /"
-                    + getSource() + "/", e);
-        }
+        pattern = Regex.compile(getSource(),
+                    (isIgnoreCase() ? Regex.CASE_INSENSITIVE : 0)
+                    | (isMultiline() ? Regex.MULTILINE: 0));
     }
 
+    
     @Override
     public String getESClassName() {
         return "RegExp";
@@ -113,12 +107,12 @@ public class RegExpPrototype extends ESObject {
         } else {
             string = str;
         }
-        Matcher matcher = getPattern().matcher(string);
+        org.yaji.regex.Matcher matcher = getPattern().matcher(string);
         boolean result = matcher.find();
         if (result) {
             // at least one match
             ESObject resultArray = getEvaluator().createArray();
-            resultArray.putProperty(StandardProperty.INDEXstring, ESNumber.valueOf(matcher.start()), StandardProperty.INDEXhash);
+            resultArray.putProperty(StandardProperty.INDEXstring, ESNumber.valueOf(matcher.start()+startIndex), StandardProperty.INDEXhash);
             resultArray.putProperty(StandardProperty.INPUTstring, new ESString(str),StandardProperty.INPUThash);
             for (int i = 0; i <= matcher.groupCount(); i++) {
                 String group = matcher.group(i);

@@ -426,8 +426,20 @@ public class EcmascriptParserTest {
                     + "     <F>" +  eol
                     + "     FunctionCallParameters" + eol
                     + "    FunctionCallParameters" + eol
+                },
+                { "x = /[*&$]{3}/.exec(\"123*&$abc\");",
+                    "Program" + eol 
+                    + " Statement" + eol 
+                    + "  AssignmentExpression" + eol 
+                    + "   <x>" + eol 
+                    + "   <\"=\">" + eol 
+                    + "   CompositeReference" + eol 
+                    + "    /[*&$]{3}/" + eol 
+                    + "    PropertyIdentifierReference" + eol 
+                    + "     <exec>" + eol 
+                    + "    FunctionCallParameters" + eol 
+                    + "     [123*&$abc]" + eol 
                 }
-                
            });
     }
 

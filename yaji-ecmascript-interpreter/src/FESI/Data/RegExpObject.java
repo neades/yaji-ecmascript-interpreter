@@ -31,19 +31,18 @@ class RegExpObject extends BuiltinFunctionObject {
         protected abstract ESValue callFunction(RegExpPrototype thisRegexp, ESValue[] arguments) throws EcmaScriptException;
     }
     
-    private static class ESRegExpPrototypetestMethod extends RegExpBuiltInFunctionObject {
+    private static class ESRegExpPrototypetestMethod extends ESRegExpPrototypeExecMethod {
         private static final long serialVersionUID = -1530678844987141170L;
 
         ESRegExpPrototypetestMethod(String name, Evaluator evaluator,
                 FunctionPrototype fp) throws EcmaScriptException {
-            super(fp, evaluator, name, 1);
+            super(name, evaluator, fp);
         }
 
         @Override
         public ESValue callFunction(RegExpPrototype pattern, ESValue[] arguments)
                 throws EcmaScriptException {
-            ESValue string = (arguments.length < 1)?ESUndefined.theUndefined:arguments[0];
-            return ESBoolean.valueOf(pattern.exec(string) != ESNull.theNull);
+            return ESBoolean.valueOf(super.callFunction(pattern, arguments) != ESNull.theNull);
         }
     }
 

@@ -111,4 +111,17 @@ public class RegExpPrototypeTest extends EvaluatorTestCase {
         RegExpPrototype regexp = new RegExpPrototype(evaluator.getRegExpPrototype(), evaluator, "([a-z])B([a-z])B","g");
         assertEquals(new ESString("/([a-z])B([a-z])B/g"),regexp.doIndirectCall(evaluator, regexp, "toString", ESValue.EMPTY_ARRAY));
     }
+ //    
+//    @Test
+//    public void scratch() {
+//        Pattern p = Pattern.compile("\\u000a", Pattern.DOTALL);
+//        assertTrue(p.matcher("\n").find());
+//    }
+    
+    @Test
+    public void emptyCharRangeShouldntMatch() throws Exception {
+        RegExpPrototype regexp = new RegExpPrototype(evaluator.getRegExpPrototype(), evaluator, "[]","");
+        ESValue result = regexp.doIndirectCall(evaluator, regexp, "exec", new ESValue[] { new ESString("a[b\\n[]\\tc]d") });
+        assertEquals(ESNull.theNull, result);
+    }
 }

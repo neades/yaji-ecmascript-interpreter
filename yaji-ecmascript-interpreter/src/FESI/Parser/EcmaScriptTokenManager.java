@@ -1070,9 +1070,6 @@ private int jjMoveNfa_0(int startState, int curPos)
                      jjCheckNAddStates(0, 3);
                   break;
                case 20:
-                  if ((0xfffffbffffffdbffL & l) != 0L)
-                     jjCheckNAddStates(23, 25);
-                  break;
                case 22:
                   if ((0xffffffffffffdbffL & l) != 0L)
                      jjCheckNAddStates(23, 25);
@@ -1111,9 +1108,6 @@ private int jjMoveNfa_0(int startState, int curPos)
                   jjCheckNAddTwoStates(25, 26);
                   break;
                case 34:
-                  if ((0xfffffbffffffdbffL & l) != 0L)
-                     jjCheckNAddStates(26, 28);
-                  break;
                case 36:
                   if ((0xffffffffffffdbffL & l) != 0L)
                      jjCheckNAddStates(26, 28);
@@ -1413,7 +1407,7 @@ private int jjMoveNfa_0(int startState, int curPos)
                      jjCheckNAddStates(23, 25);
                   break;
                case 20:
-                  if ((0xffffffffe7ffffffL & l) != 0L)
+                  if ((0xffffffffcfffffffL & l) != 0L)
                      jjCheckNAddStates(23, 25);
                   break;
                case 21:
@@ -1470,7 +1464,7 @@ private int jjMoveNfa_0(int startState, int curPos)
                      jjCheckNAddStates(26, 28);
                   break;
                case 34:
-                  if ((0xffffffffe7ffffffL & l) != 0L)
+                  if ((0xffffffffcfffffffL & l) != 0L)
                      jjCheckNAddStates(26, 28);
                   break;
                case 35:
@@ -3548,8 +3542,8 @@ public Token getNextToken()
            curChar = input_stream.readChar();
            continue;
         }
-        catch (java.io.IOException e1) { 
-            // shouldn't happen
+        catch (java.io.IOException e1) {
+            // Not expected
         }
      }
      int error_line = input_stream.getEndLine();

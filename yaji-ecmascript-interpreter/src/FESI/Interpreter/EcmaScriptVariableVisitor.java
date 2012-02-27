@@ -53,6 +53,7 @@ import FESI.AST.ASTProgram;
 import FESI.AST.ASTPropertyIdentifierReference;
 import FESI.AST.ASTPropertyNameAndValue;
 import FESI.AST.ASTPropertyValueReference;
+import FESI.AST.ASTRegexp;
 import FESI.AST.ASTReturnStatement;
 import FESI.AST.ASTSetAccessor;
 import FESI.AST.ASTStatement;
@@ -434,6 +435,11 @@ public class EcmaScriptVariableVisitor extends AbstractEcmaScriptVisitor impleme
     @Override
     public Object visit(ASTSwitchStatement node, Object data) {
         // TODO is this correct
+        return data;
+    }
+    
+    @Override
+    public Object visit(ASTRegexp node, Object data) {
         return data;
     }
 }
