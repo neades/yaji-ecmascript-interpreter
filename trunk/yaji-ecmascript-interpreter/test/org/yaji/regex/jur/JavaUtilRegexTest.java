@@ -31,4 +31,14 @@ public class JavaUtilRegexTest {
         assertEquals("[\\u000a\\u000b]",JavaUtilRegex.convertRegExp("[\\12\\13]"));
     }
 
+    @Test
+    public void shouldConvertControlCodeToHex() throws Exception {
+        assertEquals("\\u0001",JavaUtilRegex.convertRegExp("\\ca"));
+    }
+
+    @Test
+    public void shouldConvertZeroToNull() throws Exception {
+        assertEquals("\\u0000",JavaUtilRegex.convertRegExp("\\0"));
+    }
+
 }

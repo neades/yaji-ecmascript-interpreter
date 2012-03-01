@@ -15,7 +15,7 @@ public class JavaUtilRegex implements RegexImplementation {
 
     public org.yaji.regex.Pattern compile(String regex, int flags) throws EcmaScriptException {
         try {
-        return new JavaUtilRegexPattern(Pattern.compile(convertRegExp(regex), convertFlags(flags)));
+            return new JavaUtilRegexPattern(Pattern.compile(convertRegExp(regex), convertFlags(flags)));
         } catch(PatternSyntaxException e) {
             throw new SyntaxError("PatternSyntaxException: /" + regex + "/", e);
 
@@ -70,11 +70,31 @@ public class JavaUtilRegex implements RegexImplementation {
                 return this;
             }
         };
+        public final static State CONTROLESCAPE = new State() {
+            @Override
+            public State process(char c, StringBuilder sb) {
+                int controlCode = c % 32;
+                sb.append("\\u00");
+                if (controlCode < 16) {
+                    sb.append("0");
+                }
+                sb.append(Integer.toHexString(controlCode));
+                return NORMAL;
+            }
+        };
         public final static State NORMAL_INESCAPE = new State() {
             @Override
             public State process(char c, StringBuilder sb) {
-                sb.append('\\');
-                sb.append(c);
+                switch(c) {
+                case '0':
+                    sb.append("\\u0000");
+                    break;
+                case 'c':
+                    return CONTROLESCAPE;
+                default:
+                    sb.append('\\');
+                    sb.append(c);
+                }
                 return NORMAL;
             }
         };
@@ -136,18 +156,18 @@ public class JavaUtilRegex implements RegexImplementation {
         
         public abstract State process(char c, StringBuilder sb);
     }
-    private static Pattern shouldConvert = Pattern.compile("((\\\\b)|(\\[(\\^)?\\])|(\\\\\\d))");
+//    private static Pattern shouldConvert = Pattern.compile("((\\\\b)|(\\[(\\^)?\\])|(\\\\\\d)|(\\\\0)|(\\\\c)");
     protected static String convertRegExp(String source) {
        
-        if (shouldConvert.matcher(source).find()) {
+        //if (shouldConvert.matcher(source).find()) {
             StringBuilder sb = new StringBuilder(source.length());
             State state = State.NORMAL;
             for( char c : source.toCharArray()) {
                state = state.process(c, sb); 
             }
             return sb.toString();
-        }
-        return source;
+//        }
+//        return source;
     }
 
 

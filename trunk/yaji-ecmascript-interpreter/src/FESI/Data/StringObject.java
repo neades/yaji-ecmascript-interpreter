@@ -348,7 +348,7 @@ public class StringObject extends BuiltinFunctionObject {
             super(fp, evaluator, name, 2);
         }
 
-        private void split(Pattern pattern, ESObject matchList, CharSequence input, long limit) throws EcmaScriptException {
+        private void split(Pattern pattern, ESObject matchList, String input, long limit) throws EcmaScriptException {
             int index = 0;
             boolean matchLimited = limit > 0;
             Matcher m = pattern.matcher(input);
@@ -695,16 +695,12 @@ public class StringObject extends BuiltinFunctionObject {
         @Override
         public ESValue callFunction(ESValue thisObject,
                 ESValue[] arguments) throws EcmaScriptException {
-            ESObject sp = this.getEvaluator().getStringPrototype();
-            StringPrototype theObject = new StringPrototype(sp, this
-                    .getEvaluator());
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < arguments.length; i++) {
                 char c = (char) (arguments[i].toUInt16());
                 sb.append(c);
             }
-            theObject.value = new ESString(sb.toString());
-            return theObject;
+            return new ESString(sb.toString());
         }
     }
 

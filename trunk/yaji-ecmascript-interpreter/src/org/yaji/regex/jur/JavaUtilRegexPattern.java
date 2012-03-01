@@ -12,7 +12,7 @@ class JavaUtilRegexPattern implements Pattern {
         this.pattern = pattern;
     }
 
-    public Matcher matcher(CharSequence string) {
+    public Matcher matcher(String string) {
         return new JavaUtilRegexMatcher(pattern.matcher(string));
     }
     

@@ -32,8 +32,17 @@
   <test id="S15.2.4.2_A12">Testing Object.prototype.toString. Passes null but spec says ToObject should be applied to this and ToObject says that it should throw TypeError for null</test>
   <test id="S15.10.6.2_A1_T6">See issue 157</test>
   <test id="S15.10.2.8_A2_T1">See issue 157</test>
-  <!--
-  <test id="S15.10.2.5_A1_T5">See issue 157</test>
-  -->
   <test id="S15.10.2.5_A1_T4">See issue 157</test>
+  <test id="S15.10.2.12_A2_T1">Until Java 7 Unicode isn't handled properly by java.util.regex</test>
+  <test id="S15.10.2.12_A2_T2">Until Java 7 Unicode isn't handled properly by java.util.regex</test>
+  <test id="S15.10.2.12_A2_T3">Until Java 7 Unicode isn't handled properly by java.util.regex</test>
+  <test id="S15.10.2.12_A4_T5">Until Java 7 Unicode isn't handled properly by java.util.regex</test>
+  <test id="S15.10.2.12_A6_T2">Until Java 7 Unicode isn't handled properly by java.util.regex</test>
+  <test id="S15.10.2.12_A6_T3">Until Java 7 Unicode isn't handled properly by java.util.regex</test>
+  <test id="S15.10.2.12_A1_T1">Until Java 7 Unicode isn't handled properly by java.util.regex</test>
+  <test id="S15.10.2.12_A1_T2">Until Java 7 Unicode isn't handled properly by java.util.regex</test>
+  <test id="S15.10.2.11_A1_T7">Java Regex treats backref before referenced group as not-matching. JS expects it to match</test>
+  <test id="S15.10.2.11_A1_T5">Java Regex treats backref before referenced group as not-matching. JS expects it to match</test>
+  <test id="S15.10.2.10_A5.1_T1">This test should fail as /\undefined/ should be illegal.</test>
+  <test id="S15.10.2.10_A2.1_T3">Until Java 7 Unicode isn't handled properly by java.util.regex</test>
 </excludeList>
