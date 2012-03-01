@@ -11,7 +11,19 @@ public class Regex {
 
     public static final int MULTILINE = java.util.regex.Pattern.MULTILINE;
     
-    private static RegexImplementation implementation = new JavaUtilRegex();
+    private static RegexImplementation implementation = getImplementation();
+
+    public static RegexImplementation getImplementation() {
+        /*
+        try {
+            Class.forName("jregex.Pattern");
+            return new JRegex();
+        } catch (ClassNotFoundException e) {
+            // Ignore because we will just use the default
+        }
+        */
+        return new JavaUtilRegex();
+    }
     
     public static Pattern compile(String string,int flags) throws EcmaScriptException {
         return implementation.compile(string, flags);

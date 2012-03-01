@@ -3542,8 +3542,8 @@ public Token getNextToken()
            curChar = input_stream.readChar();
            continue;
         }
-        catch (java.io.IOException e1) {
-            // Not expected
+        catch (java.io.IOException e1) { 
+            // Should not happen
         }
      }
      int error_line = input_stream.getEndLine();
