@@ -972,6 +972,11 @@ public class Evaluator implements Serializable {
 
     private List<ILocaleListener> localeListeners = new ArrayList<ILocaleListener>();
 
+    public interface EvaluationResultBuilder {
+        public EvaluationResult getEvaluationResult(ESValue theValue,EcmaScriptEvaluateVisitor evaluationVisitor)
+                throws EcmaScriptException;
+    
+    }
     /**
      * subevaluator - Evaluate a function node (inside a program evaluation)
      * 
@@ -990,13 +995,34 @@ public class Evaluator implements Serializable {
     public ESValue evaluateFunction(ASTStatementList node, EvaluationSource es,
             ESObject variableObject, List<String> localVariableNames,
             ESObject thisObject) throws EcmaScriptException {
-        return evaluateFunctionInScope(node,es, variableObject,
-                localVariableNames, thisObject, null, true).value;
+        return evaluateFunctionInScope(node, es, variableObject, localVariableNames, thisObject, null);
     }
-    public EvaluationResult evaluateFunctionInScope(ASTStatementList node,
+    public ESValue evaluateFunctionInScope(ASTStatementList node, EvaluationSource es,
+            ESObject variableObject, List<String> localVariableNames,
+            ESValue thisObject, ScopeChain scopeChain) throws EcmaScriptException {
+        return evaluateStatementList(node, es, variableObject, localVariableNames, thisObject, scopeChain, new EvaluationResultBuilder() {
+            public EvaluationResult getEvaluationResult(ESValue theValue,
+                    EcmaScriptEvaluateVisitor evaluationVisitor)
+                            throws EcmaScriptException {
+                int cc = evaluationVisitor.getCompletionCode();
+                if (cc == EcmaScriptEvaluateVisitor.C_NORMAL) {
+                    theValue = ESUndefined.theUndefined; // ES5.1 13.2.1.6
+                } else 
+                    if ((cc != EcmaScriptEvaluateVisitor.C_NORMAL)
+                            && (cc != EcmaScriptEvaluateVisitor.C_RETURN)) {
+                        throw new EcmaScriptException("Unexpected "
+                                + evaluationVisitor.getCompletionCodeString()
+                                + " in function");
+                    }
+                return new EvaluationResult(theValue,cc);
+            }
+
+        }).value;
+    }
+    public EvaluationResult evaluateStatementList(ASTStatementList node,
                 EvaluationSource es, ESObject variableObject,
                 List<String> localVariableNames, ESValue thisObject,
-                ScopeChain scopeChain, boolean normalReturnsUndefined) throws EcmaScriptException {
+                ScopeChain scopeChain, EvaluationResultBuilder evaluationResultBuilder) throws EcmaScriptException {
         ESValue theValue = ESUndefined.theUndefined;
 
         ESObject savedVariableObject = currentVariableObject;
@@ -1021,17 +1047,7 @@ public class Evaluator implements Serializable {
             evaluationVisitor.setRepresentationOptimisation(
                     useRepresentationOptimisation, representationOutputBuffer);
             theValue = evaluationVisitor.evaluateFunction(node, es);
-            int cc = evaluationVisitor.getCompletionCode();
-            if (cc == EcmaScriptEvaluateVisitor.C_NORMAL && normalReturnsUndefined) {
-                theValue = ESUndefined.theUndefined; // ES5.1 13.2.1.6
-            } else 
-                if ((cc != EcmaScriptEvaluateVisitor.C_NORMAL)
-                    && (cc != EcmaScriptEvaluateVisitor.C_RETURN)) {
-                throw new EcmaScriptException("Unexpected "
-                        + evaluationVisitor.getCompletionCodeString()
-                        + " in function");
-            }
-            return new EvaluationResult(theValue,cc);
+            return evaluationResultBuilder.getEvaluationResult(theValue, evaluationVisitor);
         } finally {
             currentVariableObject = savedVariableObject;
             theScopeChain = previousScopeChain;
