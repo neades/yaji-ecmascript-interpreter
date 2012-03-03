@@ -693,7 +693,7 @@ class URIHandler {
                     k += 2;
                     if ((b & 0x80) == 0) {
                         if (reservedSet.get(b)) {
-                            sb.append(string,start,start-k);
+                            sb.append(string,start,k-start+1);
                         } else {
                             sb.append((char)b);
                         }
@@ -725,7 +725,7 @@ class URIHandler {
                         int v = utf8transformFrom(octets);
                         if (v < 0x10000) {
                             if (reservedSet.get(v)) {
-                                sb.append(string,start,start-k);
+                                sb.append(string,start,start-k+1);
                             } else {
                                 sb.append((char)v);
                             }
