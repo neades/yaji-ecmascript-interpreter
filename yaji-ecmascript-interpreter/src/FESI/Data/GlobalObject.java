@@ -28,6 +28,7 @@ import org.yaji.data.SparseArrayConstructor;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.EcmaScriptParseException;
 import FESI.Exceptions.ProgrammingError;
+import FESI.Exceptions.URIError;
 import FESI.Interpreter.Evaluator;
 
 /**
@@ -569,6 +570,7 @@ class URIHandler {
     private static final BitSet UNESCAPED_SET = new BitSet();
     private static final BitSet RESERVED_SET = new BitSet();
     private static final BitSet UNESCAPED_AND_RESERVED_SET = new BitSet();
+    private static final BitSet EMPTY_SET = new BitSet();
 
     static {
         for (int i = 'a'; i <= 'z'; i++) {
@@ -616,7 +618,7 @@ class URIHandler {
         try {
             writer = new OutputStreamWriter(buf, ENCODING);
         } catch (UnsupportedEncodingException e) {
-            throw new EcmaScriptException(e.getMessage());
+            throw new URIError(e.getMessage());
         }
         StringBuilder sb = new StringBuilder(len);
         
@@ -626,7 +628,9 @@ class URIHandler {
                     : UNESCAPED_SET.get(c)) {
                 sb.append((char) c);
             } else {
-                // Translate to UTF-8
+                if (c >= 0xDC00 && c <= 0xDFFF) {
+                    throw new URIError("Invalid Unicode Character");
+                }
                 try {
                     writer.write(c);
                     if (c >= 0xD800 && c <= 0xDBFF) {
@@ -642,7 +646,11 @@ class URIHandler {
                             if (c2 >= 0xDC00 && c2 <= 0xDFFF) {
                                 writer.write(c2);
                                 i++;
+                            } else {
+                                throw new URIError("Invalid unicode surrogate pair");
                             }
+                        } else {
+                            throw new URIError("Unterminated unicode surrogate pair");
                         }
                     }
                     writer.flush();
@@ -661,58 +669,194 @@ class URIHandler {
         return sb.toString();
     }
 
+    
+    private static class Decoder {
+        private StringBuilder sb = new StringBuilder();
+        private char[] string;
+        private final BitSet reservedSet;
+        private int k;
+        
+        public Decoder(String s, BitSet reservedSet) {
+            this.reservedSet = reservedSet;
+            string = s.toCharArray();
+            k = 0;
+        }
+        
+        public String decode() throws URIError {
+            while (k < string.length) {
+                char c = string[k];
+                if (c != '%') {
+                    sb.append(c);
+                } else {
+                    int start = k;
+                    int b = decodeHexEscape();
+                    k += 2;
+                    if ((b & 0x80) == 0) {
+                        if (reservedSet.get(b)) {
+                            sb.append(string,start,start-k);
+                        } else {
+                            sb.append((char)b);
+                        }
+                    } else {
+                        int n = 1;
+                        while ( ((b << n) & 0x80) != 0) {
+                            n++;
+                        }
+                        if (n == 1 || n > 4) {
+                            throw newException("Invalid UTF sequence");
+                        }
+                        byte [] octets = new byte[n];
+                        octets[0] = (byte)b;
+                        if (k + (3 * (n - 1)) >= string.length) {
+                            throw newException("Incomplete multi-byte escape");
+                        }
+                        for(int j=1; j<n; j++) {
+                            k++;
+                            if (string[k] != '%') {
+                                throw newException("Incomplete multi-byte escape");
+                            }
+                            b = decodeHexEscape();
+                            if ( (b & 0xc0) != 0x80) {
+                                throw newException("Invalid UTF sequence");
+                            }
+                            octets[j] = (byte)b;
+                            k += 2;
+                        }
+                        int v = utf8transformFrom(octets);
+                        if (v < 0x10000) {
+                            if (reservedSet.get(v)) {
+                                sb.append(string,start,start-k);
+                            } else {
+                                sb.append((char)v);
+                            }
+                        } else {
+                            int l = ((v - 0x10000) & 0x3ff) | 0xDC00;
+                            int h = (((v - 0x10000)>>10) & 0x3ff) | 0xD800;
+                            sb.append((char)h).append((char)l);
+                        }
+                    }
+                }
+                k++;
+            }
+            return sb.toString();
+        }
+
+        /*
+           Char. number range  |        UTF-8 octet sequence
+              (hexadecimal)    |              (binary)
+           --------------------+---------------------------------------------
+           0000 0000-0000 007F | 0xxxxxxx
+           0000 0080-0000 07FF | 110xxxxx 10xxxxxx
+           0000 0800-0000 FFFF | 1110xxxx 10xxxxxx 10xxxxxx
+           0001 0000-0010 FFFF | 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+ 
+
+         */
+        private int utf8transformFrom(byte[] octets) throws URIError {
+            byte b = octets[0];
+            if ( (b & 0x80) == 0) {
+                return b;
+            }
+            if ((b & 0xE0) == 0xC0) {
+                int h = b & 0x1f;
+//                if (h == 0) {
+//                    throw newException("Invalid UTF-8 encoding");
+//                }
+                int l = bits(octets[1]);
+                return (h<<6)+l;
+            }
+            if ((b & 0xF0) == 0xE0) {
+                int h = b & 0xf;
+//                if (h == 0) {
+//                    throw newException("Invalid UTF-8 encoding");
+//                }
+                int m = bits(octets[1]);
+                int l = bits(octets[2]);
+                return (h<<12)+(m<<6)+l;
+            }
+            if ((b & 0xf8) != 0xF0) {
+                throw newException("Invalid UTF-8 encoding");
+            }
+            int h = b & 7;
+//            if (h == 0) {
+//                throw newException("Invalid UTF-8 encoding");
+//            }
+            int m1 = bits(octets[1]);
+            int m2 = bits(octets[2]);
+            int l = bits(octets[3]);
+            return (h<<18)+(m1<<12)+(m2<<6)+l;
+        }
+        
+        int bits(int b) throws URIError {
+            if ((b & 0xc0) != 0x80) {
+                throw newException("Invalid UTF-8 encoding");
+            }
+            return b & 0x3f;
+        }
+
+        public URIError newException(String reason) {
+            return new URIError(reason+" in URI "+(new String(string)) + " position "+k);
+        }
+
+        public int decodeHexEscape() throws URIError {
+            if ((k+2) >= string.length) {
+                throw new URIError("Incomplete hex literal found at end of URI");
+            }
+            int k1 = toHexDigit(string[k+1]);
+            int k2 = toHexDigit(string[k+2]);
+            if (k1 == -1 || k2 == -1){
+                throw new URIError("Invalid hex literal found in URI "+(new String(string))+" position "+k);
+            }
+            int b = 16*k1 + k2;
+            return b;
+        }
+
+        private int toHexDigit(char c) {
+            switch(c) {
+            case '0':
+                return 0;
+            case '1':
+                return 1;
+            case '2':
+                return 2;
+            case '3':
+                return 3;
+            case '4':
+                return 4;
+            case '5':
+                return 5;
+            case '6':
+                return 6;
+            case '7':
+                return 7;
+            case '8':
+                return 8;
+            case '9':
+                return 9;
+            case 'a':
+            case 'A':
+                return 10;
+            case 'b':
+            case 'B':
+                return 11;
+            case 'c':
+            case 'C':
+                return 12;
+            case 'd':
+            case 'D':
+                return 13;
+            case 'e':
+            case 'E':
+                return 14;
+            case 'f':
+            case 'F':
+                return 15;
+            }
+            return -1;
+        }
+    }
     public static String decode(String s, boolean unescapeReserved)
             throws EcmaScriptException {
-        int len = s.length();
-        
-        int i = 0;
-        char c;
-        byte[] buf = new byte[len];
-        StringBuilder sb = new StringBuilder();
-        
-        while (i < len) {
-            c = s.charAt(i);
-            if (c != '%') {
-                sb.append(c);
-                i++;
-            } else {
-                try {
-                    int j = 0;
-
-                    while (((i + 2) < len) && (c == '%')) {
-                        String hexStr = s.substring(i + 1, i + 3);
-                        byte intVal = (byte) Integer.parseInt(hexStr, 16);
-                        if (unescapeReserved && intVal > 0
-                                && RESERVED_SET.get(intVal)) {
-                            byte[] hexBytes = hexStr.getBytes();
-                            buf[j++] = '%';
-                            buf[j++] = hexBytes[0];
-                            buf[j++] = hexBytes[1];
-                        } else {
-                            buf[j++] = intVal;
-                        }
-
-                        i += 3;
-                        if (i < len) {
-                            c = s.charAt(i);
-                        }
-                    }
-
-                    if ((i < len) && (c == '%')) {
-                        throw new EcmaScriptException(
-                                "Incomplete hex literal found at end of URI");
-                    }
-                    
-                    try {
-                        sb.append(new String(buf, 0, j, ENCODING));
-                    } catch (UnsupportedEncodingException e) {
-                        throw new EcmaScriptException(e.getMessage());
-                    }
-                } catch (NumberFormatException e) {
-                    throw new EcmaScriptException(e.getMessage());
-                }
-            }
-        }
-        return sb.toString();
+        return new Decoder(s,unescapeReserved?RESERVED_SET:EMPTY_SET).decode();
     }
 }

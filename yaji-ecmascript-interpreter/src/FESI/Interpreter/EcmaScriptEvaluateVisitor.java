@@ -1949,7 +1949,15 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
             List<String> lvn = new ArrayList<String>();
             scopeObject.putProperty(propertyName, (ESValue) data, propertyName.hashCode());
             
-            EvaluationResult evaluationResult = evaluator.evaluateFunctionInScope(statementNode, es, scopeObject, lvn, evaluator.getThisObject(),evaluator.getScopeChain(), false);
+            EvaluationResult evaluationResult = evaluator.evaluateStatementList(statementNode, es, scopeObject, lvn, evaluator.getThisObject(),evaluator.getScopeChain(), new Evaluator.EvaluationResultBuilder() {
+            public EvaluationResult getEvaluationResult(ESValue theValue,
+                EcmaScriptEvaluateVisitor evaluationVisitor)
+                        throws EcmaScriptException {
+            int cc = evaluationVisitor.getCompletionCode();
+
+            return new EvaluationResult(theValue,cc);
+            }
+         });
             result = evaluationResult.value;
             completionCode = evaluationResult.completionCode;
         } catch (EcmaScriptException e) {
