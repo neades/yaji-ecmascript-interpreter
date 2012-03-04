@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.BitSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.yaji.data.SparseArrayConstructor;
 
@@ -37,7 +39,118 @@ import FESI.Interpreter.Evaluator;
 public class GlobalObject extends ObjectPrototype {
     private static final long serialVersionUID = -4033899977752030036L;
     public static boolean useSparse = true;
+
+    private static class GlobalObjectParseFloat extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        private static Pattern decimalValidator = Pattern.compile("^[+-]?(([0-9]+\\.?[0-9]*)|(\\.?[0-9]+))([eE][+-]?[0-9]+)?");
+        
+        GlobalObjectParseFloat(String name, Evaluator evaluator,
+                FunctionPrototype fp) throws EcmaScriptException {
+            super(fp, evaluator, name, 1);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            if (arguments.length < 1) {
+                return ESNumber.NaN;
+            }
+            String s = ESString.trim(arguments[0].callToString());
+            if (s.startsWith("Infinity") || s.startsWith("+Infinity")) {
+                return ESNumber.valueOf(Double.POSITIVE_INFINITY);
+            }
+            if (s.startsWith("-Infinity")) {
+                return ESNumber.valueOf(Double.NEGATIVE_INFINITY);
+            }
+            Matcher matcher = decimalValidator.matcher(s);
+            
+            double d = Double.NaN;
+            if (matcher.find()) {
+                matcher.end();
+                s = s.substring(0, matcher.end());
+                try {
+                    d = Double.parseDouble(s);
+                } catch (NumberFormatException e) {
+                    // will still be NaN
+                }
+            }
+            return ESNumber.valueOf(d);
+        }
+    }
     
+    private static class GlobalObjectParseInt extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        GlobalObjectParseInt(String name, Evaluator evaluator,
+                FunctionPrototype fp) throws EcmaScriptException {
+            super(fp, evaluator, name, 2);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            if (arguments.length < 1) {
+                return ESNumber.NaN;
+            }
+            String s = ESString.trim(arguments[0].callToString());
+            int radix = 10;
+            int start = 0;
+            radix = (int) getArg(arguments,1).toUInt32();
+            if (radix == 0) {
+                radix = 10;
+                if (s.startsWith("0x") || s.startsWith("0X")) {
+                    radix = 16;
+                    start = 2;
+                }
+            } else {
+                if (radix < 2 || radix > 36) {
+                    return ESNumber.valueOf(Double.NaN);
+                }
+                if (radix == 16) {
+                    if (s.startsWith("0x") || s.startsWith("0X")) {
+                        start = 2;
+                    }
+                }
+            }
+            double d = Double.NaN;
+            if (s.length() > 0) {
+                int sign = 1;
+                if (s.charAt(0) == '-') {
+                    sign = -1;
+                    start = 1;
+                } else if (s.charAt(0) == '+') {
+                    start = 1;
+                }
+
+                for (int i = start; i < s.length(); i++) {
+                    char c = s.charAt(i);
+                    int digit = 0;
+                    if (c >= '0' && c <= '9') {
+                        digit = c - '0';
+                    } else if (c >= 'a' && c <= 'z') {
+                        digit = c - 'a' + 10;
+                    } else if (c >= 'A' && c <= 'Z') {
+                        digit = c - 'A' + 10;
+                    } else {
+                        break;
+                    }
+                    if (digit >= radix) {
+                        break;
+                    }
+                    if (d != d) {
+                        d = digit;
+                    } else {
+                        d = d * radix + digit;
+                    }
+                }
+                d *= sign;
+            }
+            return ESNumber.valueOf(d);
+        }
+    }
+
+
     private GlobalObject(ESObject prototype, Evaluator evaluator) {
         super(prototype, evaluator);
     }
@@ -105,8 +218,7 @@ public class GlobalObject extends ObjectPrototype {
                         return result;
                     }
                     if (!(arguments[0] instanceof ESString)) {
-                        result
-                                .putProperty(StandardProperty.VALUEstring, arguments[0],
+                        result.putProperty(StandardProperty.VALUEstring, arguments[0],
                                         StandardProperty.VALUEhash);
                         result.putProperty(StandardProperty.ERRORstring, ESNull.theNull,
                                 StandardProperty.ERRORhash);
@@ -159,8 +271,9 @@ public class GlobalObject extends ObjectPrototype {
                         return arguments[0];
                     String program = arguments[0].toString();
                     ESValue value = ESUndefined.theUndefined;
+                    Evaluator evaluator = this.getEvaluator();
                     try {
-                        value = this.getEvaluator().evaluateEvalString(program);
+                        value = evaluator.evaluateEvalString(program);
                     } catch (EcmaScriptParseException e) {
                         e.setNeverIncomplete();
                         throw e;
@@ -169,125 +282,6 @@ public class GlobalObject extends ObjectPrototype {
                 }
             }
 
-            class GlobalObjectParseInt extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                GlobalObjectParseInt(String name, Evaluator evaluator,
-                        FunctionPrototype fp) throws EcmaScriptException {
-                    super(fp, evaluator, name, 2);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    if (arguments.length < 1)
-                        return ESNumber.valueOf(Double.NaN);
-                    int radix = 10;
-                    String s = arguments[0].callToString().trim();
-                    if (arguments.length > 1) {
-                        radix = arguments[1].toInt32();
-                        if (radix < 2 || radix > 36)
-                            return ESNumber.valueOf(Double.NaN);
-                        if (radix == 16) {
-                            if (s.startsWith("0x") || s.startsWith("0X")) {
-                                s = s.substring(2);
-                            }
-                        }
-                    } else {
-                        if (s.startsWith("0x") || s.startsWith("0X")) {
-                            s = s.substring(2);
-                            radix = 16;
-                        } else if (s.length() > 0 && s.charAt(0) == '0') {
-                            radix = 8;
-                        }
-                    }
-                    double d = Double.NaN;
-                    int k = -1;
-                    for (int i = 0; i < s.length() && k == -1; i++) {
-                        char c = s.charAt(i);
-                        switch (radix) {
-                        case 2:
-                            if (c < '0' || '1' < c)
-                                k = i;
-                            break;
-                        case 8:
-                            if (c < '0' || '7' < c)
-                                k = i;
-                            break;
-                        case 10:
-                            if (c < '0' || '9' < c)
-                                k = i;
-                            break;
-                        case 16:
-                            if ((c < '0' || '9' < c) && (c < 'a' || 'f' < c)
-                                    && (c < 'A' || 'F' < c))
-                                k = i;
-                            break;
-                        default:
-                            throw new EcmaScriptException(
-                                    "Only radix 2,8,10 and 16 supported");
-                        }
-                    }
-                    if (k > 0)
-                        s = s.substring(0, k);
-                    if (s.length() > 0) {
-                        try {
-                            d = Long.parseLong(s, radix);
-                        } catch (NumberFormatException e) {
-                            // do nothing
-                        }
-                    }
-                    return ESNumber.valueOf(d);
-                }
-            }
-
-            class GlobalObjectParseFloat extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                GlobalObjectParseFloat(String name, Evaluator evaluator,
-                        FunctionPrototype fp) throws EcmaScriptException {
-                    super(fp, evaluator, name, 1);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    if (arguments.length < 1)
-                        return ESNumber.valueOf(Double.NaN);
-                    String s = arguments[0].callToString().trim();
-                    Double d = new Double(Double.NaN);
-                    int i; // approximate look for a prefix
-                    boolean efound = false;
-                    boolean dotfound = false;
-                    for (i = 0; i < s.length(); i++) {
-                        char c = s.charAt(i);
-                        if ('0' <= c && c <= '9')
-                            continue;
-                        if (c == '+' || c == '-')
-                            continue; // accept sequences of signs...
-                        if (c == 'e' || c == 'E') {
-                            if (efound)
-                                break;
-                            efound = true;
-                            continue;
-                        }
-                        if (c == '.') {
-                            if (dotfound || efound)
-                                break;
-                            dotfound = true;
-                            continue;
-                        }
-                        break;
-                    }
-                    s = s.substring(0, i);
-                    try {
-                        d = Double.valueOf(s);
-                    } catch (NumberFormatException e) {
-                        // do nothing
-                    }
-                    return ESNumber.valueOf(d.doubleValue());
-                }
-            }
 
             class GlobalObjectEscape extends BuiltinFunctionObject {
                 private static final long serialVersionUID = 1L;
@@ -387,7 +381,7 @@ public class GlobalObject extends ObjectPrototype {
                         ESValue[] arguments) throws EcmaScriptException {
                     if (arguments.length < 1)
                         return ESUndefined.theUndefined;
-                    double d = arguments[0].doubleValue();
+                    double d = arguments[0].toESNumber().doubleValue();
                     return ESBoolean.valueOf(Double.isNaN(d));
                 }
             }
@@ -404,8 +398,8 @@ public class GlobalObject extends ObjectPrototype {
                         ESValue[] arguments) throws EcmaScriptException {
                     if (arguments.length < 1)
                         return ESUndefined.theUndefined;
-                    double d = arguments[0].doubleValue();
-                    return ESBoolean.valueOf(!Double.isInfinite(d));
+                    double d = arguments[0].toESNumber().doubleValue();
+                    return ESBoolean.valueOf(!Double.isInfinite(d) && !Double.isNaN(d));
                 }
             }
             class GlobalObjectURIHandler extends BuiltinFunctionObject {
@@ -859,4 +853,5 @@ class URIHandler {
             throws EcmaScriptException {
         return new Decoder(s,unescapeReserved?RESERVED_SET:EMPTY_SET).decode();
     }
+
 }
