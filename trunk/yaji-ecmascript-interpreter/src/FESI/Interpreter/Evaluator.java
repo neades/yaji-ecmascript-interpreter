@@ -62,6 +62,7 @@ import FESI.Data.JSGlobalWrapper;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.EcmaScriptLexicalException;
 import FESI.Exceptions.EcmaScriptParseException;
+import FESI.Exceptions.SyntaxError;
 import FESI.Extensions.Extension;
 import FESI.Parser.EcmaScript;
 import FESI.Parser.ParseException;
@@ -746,7 +747,7 @@ public class Evaluator implements Serializable {
                                                      // result
 
             if (evaluationVisitor.getCompletionCode() != EcmaScriptEvaluateVisitor.C_NORMAL) {
-                throw new EcmaScriptException("Unexpected "
+                throw new SyntaxError("Unexpected "
                         + evaluationVisitor.getCompletionCodeString()
                         + " in eval parameter top level");
             }
