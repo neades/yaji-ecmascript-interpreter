@@ -19,6 +19,7 @@ package FESI.Data;
 
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
+import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator;
 
 /**
@@ -64,6 +65,57 @@ public class BooleanObject extends BuiltinFunctionObject {
         return theObject;
     }
 
+    // For booleanPrototype
+    private static abstract class AbstractBooleanPrototypeFunctionObject extends BuiltinFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        AbstractBooleanPrototypeFunctionObject(FunctionPrototype fp, Evaluator evaluator,String name, int length) throws EcmaScriptException {
+            super(fp, evaluator, name, length);
+        }
+
+        @Override
+        public ESValue callFunction(ESValue thisObject,
+                ESValue[] arguments) throws EcmaScriptException {
+            ESBoolean booleanValue;
+            if (thisObject instanceof ESBoolean) {
+                booleanValue = (ESBoolean) thisObject;
+            } else if (thisObject instanceof BooleanPrototype) {
+                booleanValue = ((BooleanPrototype) thisObject).value;
+            } else {
+                throw new TypeError("Boolean.prototype."+getFunctionName()+" is only applicable to a boolean");
+            }
+            return callFunction(booleanValue);
+        }
+        protected abstract ESValue callFunction(ESBoolean booleanValue) throws EcmaScriptException;
+    }
+    private static class BooleanPrototypeToString extends AbstractBooleanPrototypeFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        BooleanPrototypeToString(String name, Evaluator evaluator,
+                FunctionPrototype fp) throws EcmaScriptException {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        protected ESValue callFunction(ESBoolean booleanValue) throws EcmaScriptException {
+            return new ESString(booleanValue.toString());
+        }
+    }
+    private static class BooleanPrototypeValueOf extends AbstractBooleanPrototypeFunctionObject {
+        private static final long serialVersionUID = 1L;
+
+        BooleanPrototypeValueOf(String name, Evaluator evaluator,
+                FunctionPrototype fp) throws EcmaScriptException {
+            super(fp, evaluator, name, 0);
+        }
+
+        @Override
+        protected ESValue callFunction(ESBoolean booleanValue) throws EcmaScriptException {
+            return booleanValue;
+        }
+
+    }
+
     /**
      * Utility function to create the single Boolean object
      * 
@@ -85,38 +137,6 @@ public class BooleanObject extends BuiltinFunctionObject {
         BooleanObject booleanObject = new BooleanObject(functionPrototype,
                 evaluator);
         try {
-            // For booleanPrototype
-            class BooleanPrototypeToString extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                BooleanPrototypeToString(String name, Evaluator evaluator,
-                        FunctionPrototype fp) throws EcmaScriptException {
-                    super(fp, evaluator, name, 1);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    ESValue v = ((BooleanPrototype) thisObject).value;
-                    String s = v.toString();
-                    return new ESString(s);
-                }
-            }
-            class BooleanPrototypeValueOf extends BuiltinFunctionObject {
-                private static final long serialVersionUID = 1L;
-
-                BooleanPrototypeValueOf(String name, Evaluator evaluator,
-                        FunctionPrototype fp) throws EcmaScriptException {
-                    super(fp, evaluator, name, 1);
-                }
-
-                @Override
-                public ESValue callFunction(ESValue thisObject,
-                        ESValue[] arguments) throws EcmaScriptException {
-                    return ((BooleanPrototype) thisObject).value;
-                }
-            }
-
             booleanObject.putProperty(StandardProperty.PROTOTYPEstring, 0, booleanPrototype);
             booleanObject.putProperty("length", 0, ESNumber.valueOf(1));
 
