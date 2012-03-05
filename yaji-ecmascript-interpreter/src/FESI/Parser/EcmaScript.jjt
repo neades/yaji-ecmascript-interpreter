@@ -802,8 +802,10 @@ TOKEN :
 | < NE: "!=" > : DEFAULT
 | < SC_OR: "||" > : DEFAULT
 | < SC_AND: "&&" > : DEFAULT
-| < INCR: "++" > : DEFAULT
-| < DECR: "--" > : DEFAULT
+| < INCR: "++" > { if (matchedToken.specialToken != null && matchedToken.specialToken.kind == EOL) { matchedToken.kind = NL_INCR; } } : DEFAULT
+| < NL_INCR: "\n++" > : DEFAULT
+| < DECR: "--" > { if (matchedToken.specialToken != null && matchedToken.specialToken.kind == EOL) { matchedToken.kind = NL_DECR; } } : DEFAULT
+| < NL_DECR: "\n--" > : DEFAULT
 | < PLUS: "+" > : DEFAULT
 | < MINUS: "-" > : DEFAULT
 | < STAR: "*" > : DEFAULT
@@ -1124,7 +1126,7 @@ void PostfixOp() #Operator :
   Token t;
 }
 {
-  ( "++" | "--")
+  ( <INCR> | <DECR> )
   {
     jjtThis.setOperator(getToken(0).kind);
   }
@@ -1148,7 +1150,7 @@ void UnaryOp() #Operator :
   Token t;
 }
 { 
-  ( "delete" | "void" | "typeof" | "++" | "--" | "+" | "-" | "~" | "!" )
+  ( "delete" | "void" | "typeof" | <INCR> | <NL_INCR> | <DECR> | <NL_DECR> | "+" | "-" | "~" | "!" )
   {
     jjtThis.setOperator(getToken(0).kind);
   }
