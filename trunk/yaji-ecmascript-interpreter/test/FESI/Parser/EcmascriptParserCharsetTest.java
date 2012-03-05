@@ -6,6 +6,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 
 import org.junit.Test;
 
@@ -41,17 +42,8 @@ public class EcmascriptParserCharsetTest {
 
     @Test
     public void shouldParseUTF8ZWNJ() throws Exception {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         String source = "var abcd" + '\u200C' + "1234 = true;";
-
-        InputStreamReader reader = new InputStreamReader(
-                new ByteArrayInputStream(source.getBytes("UTF-8")), "UTF-8");
-        EcmaScript es = new EcmaScript(reader);
-        EcmaScriptDumpVisitor dumper = new EcmaScriptDumpVisitor(
-                new PrintStream(baos,true,"UTF-8"));
-        dumper.visit(es.Program(), null);
-
-        String result = new String(baos.toByteArray(),"UTF-8");
+        String result = parse(source);
         String expected = "Program" + eol 
                 + " Statement" + eol
                 + "  VariableDeclaration" + eol 
@@ -60,11 +52,10 @@ public class EcmascriptParserCharsetTest {
 
         assertEquals("Parsing " + source, expected, result);
     }
-    
-    @Test
-    public void shouldParseUTF8ZWJ() throws Exception {
+
+    public String parse(String source) throws UnsupportedEncodingException,
+            ParseException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        String source = "var abcd" + '\u200D' + "1234 = true;";
 
         InputStreamReader reader = new InputStreamReader(
                 new ByteArrayInputStream(source.getBytes("UTF-8")), "UTF-8");
@@ -74,6 +65,13 @@ public class EcmascriptParserCharsetTest {
         dumper.visit(es.Program(), null);
 
         String result = new String(baos.toByteArray(),"UTF-8");
+        return result;
+    }
+    
+    @Test
+    public void shouldParseUTF8ZWJ() throws Exception {
+        String source = "var abcd" + '\u200D' + "1234 = true;";
+        String result = parse(source);
         String expected = "Program" + eol
             + " Statement" + eol
             + "  VariableDeclaration" + eol
@@ -81,5 +79,19 @@ public class EcmascriptParserCharsetTest {
             + "   [true]" + eol;
 
         assertEquals("Parsing " + source, expected, result);
+    }
+    
+    @Test(expected=ParseException.class)
+    public void shouldFailWithIncrementOnNextLine() throws Exception {
+        System.out.println(parse("x\n++"));
+    }
+    
+    @Test
+    public void shouldSucceedWithIncrementOnSameLine() throws Exception {
+        assertEquals("Program" + eol +
+        		" Statement" + eol +
+        		"  PostfixExpression" + eol + 
+        		"   <x>" + eol +
+        		"   <\"++\">" + eol, parse("x ++"));
     }
 }

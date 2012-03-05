@@ -220,51 +220,55 @@ public interface EcmaScriptConstants {
   /** RegularExpression Id. */
   int INCR = 106;
   /** RegularExpression Id. */
-  int DECR = 107;
+  int NL_INCR = 107;
   /** RegularExpression Id. */
-  int PLUS = 108;
+  int DECR = 108;
   /** RegularExpression Id. */
-  int MINUS = 109;
+  int NL_DECR = 109;
   /** RegularExpression Id. */
-  int STAR = 110;
+  int PLUS = 110;
   /** RegularExpression Id. */
-  int SLASH = 111;
+  int MINUS = 111;
   /** RegularExpression Id. */
-  int BIT_AND = 112;
+  int STAR = 112;
   /** RegularExpression Id. */
-  int BIT_OR = 113;
+  int SLASH = 113;
   /** RegularExpression Id. */
-  int XOR = 114;
+  int BIT_AND = 114;
   /** RegularExpression Id. */
-  int REM = 115;
+  int BIT_OR = 115;
   /** RegularExpression Id. */
-  int LSHIFT = 116;
+  int XOR = 116;
   /** RegularExpression Id. */
-  int RSIGNEDSHIFT = 117;
+  int REM = 117;
   /** RegularExpression Id. */
-  int RUNSIGNEDSHIFT = 118;
+  int LSHIFT = 118;
   /** RegularExpression Id. */
-  int PLUSASSIGN = 119;
+  int RSIGNEDSHIFT = 119;
   /** RegularExpression Id. */
-  int MINUSASSIGN = 120;
+  int RUNSIGNEDSHIFT = 120;
   /** RegularExpression Id. */
-  int STARASSIGN = 121;
+  int PLUSASSIGN = 121;
   /** RegularExpression Id. */
-  int SLASHASSIGN = 122;
+  int MINUSASSIGN = 122;
   /** RegularExpression Id. */
-  int ANDASSIGN = 123;
+  int STARASSIGN = 123;
   /** RegularExpression Id. */
-  int ORASSIGN = 124;
+  int SLASHASSIGN = 124;
   /** RegularExpression Id. */
-  int XORASSIGN = 125;
+  int ANDASSIGN = 125;
   /** RegularExpression Id. */
-  int REMASSIGN = 126;
+  int ORASSIGN = 126;
   /** RegularExpression Id. */
-  int LSHIFTASSIGN = 127;
+  int XORASSIGN = 127;
   /** RegularExpression Id. */
-  int RSIGNEDSHIFTASSIGN = 128;
+  int REMASSIGN = 128;
   /** RegularExpression Id. */
-  int RUNSIGNEDSHIFTASSIGN = 129;
+  int LSHIFTASSIGN = 129;
+  /** RegularExpression Id. */
+  int RSIGNEDSHIFTASSIGN = 130;
+  /** RegularExpression Id. */
+  int RUNSIGNEDSHIFTASSIGN = 131;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -382,7 +386,9 @@ public interface EcmaScriptConstants {
     "\"||\"",
     "\"&&\"",
     "\"++\"",
+    "\"\\n++\"",
     "\"--\"",
+    "\"\\n--\"",
     "\"+\"",
     "\"-\"",
     "\"*\"",

@@ -1194,7 +1194,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
             ESValue vr;
             if (operator == INCR) {
                 vr = result.increment();
-            } else if (operator == DECR) {
+            } else if (operator == DECR ) {
                 vr = result.decrement();
             } else {
                 throw new ProgrammingError("Bad operator");
@@ -1256,7 +1256,8 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                 }
             }
                 break;
-            case INCR: {
+            case INCR:
+            case NL_INCR: {
                 Object lvo = node.jjtGetChild(1).jjtAccept(this, FOR_REFERENCE);
                 ESReference lv;
                 if (lvo instanceof ESReference) {
@@ -1270,7 +1271,8 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                 evaluator.putValue(lv, r);
             }
                 break;
-            case DECR: {
+            case DECR:
+            case NL_DECR: {
                 Object lvo = node.jjtGetChild(1).jjtAccept(this, FOR_REFERENCE);
                 ESReference lv;
                 if (lvo instanceof ESReference) {
