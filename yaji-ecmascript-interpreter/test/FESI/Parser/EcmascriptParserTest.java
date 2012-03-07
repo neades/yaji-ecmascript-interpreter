@@ -439,6 +439,14 @@ public class EcmascriptParserTest {
                     + "     <exec>" + eol 
                     + "    FunctionCallParameters" + eol 
                     + "     [123*&$abc]" + eol 
+                },
+                { "new new String;",
+                    "Program" + eol 
+                    + " Statement" + eol  
+                    + "  AllocationExpression" + eol  
+                    + "   AllocationExpression" + eol  
+                    + "    <String>" + eol 
+                    + "    FunctionCallParameters" + eol  
                 }
            });
     }

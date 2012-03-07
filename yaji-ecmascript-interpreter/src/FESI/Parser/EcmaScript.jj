@@ -1840,8 +1840,9 @@ void AllocationExpression()       :
                    jjtreeCloseNodeScope(jjtn007);
                  }
                }
-/*@egen*/                        ) ( PrimarySuffix() {  stack.add(jjtree.popNode()); } )* ) 
-             )?/*@bgen(jjtree)*/
+/*@egen*/                        ) ( PrimarySuffix() {  stack.add(jjtree.popNode()); } )* 
+             ) 
+            )?/*@bgen(jjtree)*/
             } catch (Throwable jjte008) {
               if (jjtc008) {
                 jjtree.clearNodeScope(jjtn008);
@@ -1862,8 +1863,7 @@ void AllocationExpression()       :
                 jjtreeCloseNodeScope(jjtn008);
               }
             }
-/*@egen*/                                                  
-              
+/*@egen*/                                                    
            )/*@bgen(jjtree)*/
            } catch (Throwable jjte009) {
              if (jjtc009) {
@@ -1957,8 +1957,7 @@ void AllocationExpression()       :
                 jjtreeCloseNodeScope(jjtn011);
               }
             }
-/*@egen*/                                                  
-              
+/*@egen*/                                                    
            )/*@bgen(jjtree)*/
            } catch (Throwable jjte012) {
              if (jjtc012) {
@@ -1981,6 +1980,36 @@ void AllocationExpression()       :
              }
            }
 /*@egen*/                           
+          |/*@bgen(jjtree) AllocationExpression */
+            {
+              ASTAllocationExpression jjtn013 = new ASTAllocationExpression(JJTALLOCATIONEXPRESSION);
+              boolean jjtc013 = true;
+              jjtree.openNodeScope(jjtn013);
+              jjtreeOpenNodeScope(jjtn013);
+            }
+            try {
+/*@egen*/ AllocationExpression()/*@bgen(jjtree)*/
+            } catch (Throwable jjte013) {
+              if (jjtc013) {
+                jjtree.clearNodeScope(jjtn013);
+                jjtc013 = false;
+              } else {
+                jjtree.popNode();
+              }
+              if (jjte013 instanceof RuntimeException) {
+                throw (RuntimeException)jjte013;
+              }
+              if (jjte013 instanceof ParseException) {
+                throw (ParseException)jjte013;
+              }
+              throw (Error)jjte013;
+            } finally {
+              if (jjtc013) {
+                jjtree.closeNodeScope(jjtn013, true);
+                jjtreeCloseNodeScope(jjtn013);
+              }
+            }
+/*@egen*/                       
           )
     {
       for( Node node : stack ) {
@@ -1988,6 +2017,7 @@ void AllocationExpression()       :
       }
     }
 }
+
 	
 // ES5 -11.1.4 Array Initialiser
 void ArrayLiteral()               : 
