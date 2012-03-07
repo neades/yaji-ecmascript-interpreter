@@ -1144,27 +1144,30 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
 
     @Override
     public Object visit(ASTAllocationExpression node, Object data) {
-        node.assertTwoChildren();
+        node.assertAtLeastOneChild();
         ESValue result = null;
         try {
             Node baseNode = node.jjtGetChild(0);
             // Can be any expression (in fact a a.b.c sequence) [code bizare
             // here]
             ESValue constr = acceptNull(baseNode.jjtAccept(this, FOR_VALUE));
-            Node compositor = node.jjtGetChild(1);
-            if (compositor instanceof ASTFunctionCallParameters) {
-                ASTFunctionCallParameters fc = (ASTFunctionCallParameters) compositor;
-                ESValue[] arguments = (ESValue[]) fc.jjtAccept(this, FOR_VALUE);
-                result = constr.doConstruct(
-                        arguments);
-                if (result == null) {
-                    throw new EcmaScriptException("new " + compositor
-                            + " did not return an object");
-                }
-                completionCode = C_NORMAL;
+            if (node.jjtGetNumChildren() == 1) { 
+                result = constr.doConstruct(ESValue.EMPTY_ARRAY);
             } else {
-                throw new ProgrammingError("Bad AST");
+                Node compositor = node.jjtGetChild(1);
+                if (compositor instanceof ASTFunctionCallParameters) {
+                    ASTFunctionCallParameters fc = (ASTFunctionCallParameters) compositor;
+                    ESValue[] arguments = (ESValue[]) fc.jjtAccept(this, FOR_VALUE);
+                    result = constr.doConstruct(
+                            arguments);
+                } else {
+                    throw new ProgrammingError("Bad AST");
+                }
             }
+            if (result == null) {
+                throw new EcmaScriptException("new did not return an object");
+            }
+            completionCode = C_NORMAL;
         } catch (EcmaScriptException e) {
             throw new PackagedException(e, node);
         }

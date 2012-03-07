@@ -1041,18 +1041,18 @@ void AllocationExpression() #void :
             ( ( Identifier() ( NewSuffix() )* ) #CompositeReference(>1) )
             ( 
              ( 
-              (Arguments() #FunctionCallParameters) ( PrimarySuffix() {  stack.add(jjtree.popNode()); } )* ) 
-             )? #FunctionCallParameters( jjtree.nodeArity() == 0 
-            ) 
+              (Arguments() #FunctionCallParameters) ( PrimarySuffix() {  stack.add(jjtree.popNode()); } )* 
+             ) 
+            )? #FunctionCallParameters( jjtree.nodeArity() == 0 ) 
            )
            #AllocationExpression( 2 )
          | ( "(" Expression() ")"
             ( 
              ( 
               (Arguments() #FunctionCallParameters) ( PrimarySuffix() {  stack.add(jjtree.popNode()); } )* ) 
-             )? #FunctionCallParameters( jjtree.nodeArity() == 0 
-            ) 
+             )? #FunctionCallParameters( jjtree.nodeArity() == 0 ) 
            ) #AllocationExpression( 2 )
+          | AllocationExpression() #AllocationExpression 
           )
     {
       for( Node node : stack ) {
@@ -1060,6 +1060,7 @@ void AllocationExpression() #void :
       }
     }
 }
+
 	
 // ES5 -11.1.4 Array Initialiser
 void ArrayLiteral() #ArrayLiteral : 
