@@ -17,14 +17,17 @@
 
 package FESI.Data;
 
+import java.io.IOException;
 import java.util.Enumeration;
+
+import org.yaji.json.JsonState;
 
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Interpreter.Evaluator;
 import FESI.Interpreter.FesiHashtable;
 import FESI.Interpreter.ScopeChain;
 
-class StringPrototype extends ESObject {
+public class StringPrototype extends ESObject {
     private static final long serialVersionUID = 1434073915774458544L;
 
     ESString value = new ESString("");
@@ -134,4 +137,16 @@ class StringPrototype extends ESObject {
         }
         return descriptor;
     }
+    
+    @Override
+    public boolean canJson() {
+        return true;
+    }
+    
+    @Override
+    public void toJson(Appendable appendable, JsonState state,
+            String parentPropertyName) throws IOException, EcmaScriptException {
+        value.toJson(appendable, state, parentPropertyName);
+    }
+
 }

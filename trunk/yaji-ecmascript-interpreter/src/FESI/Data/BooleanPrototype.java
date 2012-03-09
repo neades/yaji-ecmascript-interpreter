@@ -17,6 +17,10 @@
 
 package FESI.Data;
 
+import java.io.IOException;
+
+import org.yaji.json.JsonState;
+
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Interpreter.Evaluator;
 
@@ -71,4 +75,14 @@ class BooleanPrototype extends ESObject {
         return true;
     }
 
+    @Override
+    public boolean canJson() {
+        return true;
+    }
+    
+    @Override
+    public void toJson(Appendable appendable, JsonState state,
+            String parentPropertyName) throws IOException, EcmaScriptException {
+        value.toJson(appendable, state, parentPropertyName);
+    }
 }

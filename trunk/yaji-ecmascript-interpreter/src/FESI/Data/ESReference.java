@@ -34,6 +34,7 @@ public class ESReference {
     private ESObject base; // null means a property of the global object
     private String propertyName; // Should never be null for a valid reference
     private int hash; // hashCode of propertyName
+    private final boolean configurable;
 
     /**
      * Create a new reference given a base and a property name
@@ -44,8 +45,9 @@ public class ESReference {
      *            - may not be null
      * @param hash
      *            - hashCode of propertyName
+     * @param configurable 
      */
-    public ESReference(ESValue base, String propertyName, int hash) {
+    public ESReference(ESValue base, String propertyName, int hash, boolean configurable) {
         // Make sure the property name is not null
         if (propertyName == null) {
             throw new NullPointerException("propertyName");
@@ -53,6 +55,7 @@ public class ESReference {
         this.base = (ESObject) base;
         this.propertyName = propertyName;
         this.hash = hash;
+        this.configurable = configurable;
     }
 
     /**
@@ -127,10 +130,18 @@ public class ESReference {
     public void putValue(ESObject g, ESValue v) throws EcmaScriptException {
         if (base == null) {
             if (g != null) {
-                g.putProperty(propertyName, v, hash);
+                if (configurable) {
+                    g.putProperty(propertyName, v, hash);
+                } else {
+                    g.putNonconfigurableProperty(propertyName, v, hash);
+                }
             }
         } else {
-            base.putProperty(propertyName, v, hash);
+            if (configurable) {
+                base.putProperty(propertyName, v, hash);
+            } else {
+                base.putNonconfigurableProperty(propertyName, v, hash);
+            }
         }
     }
 

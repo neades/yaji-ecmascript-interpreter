@@ -28,5 +28,8 @@ public class ErrorPrototype extends ESObject {
         });
     }
 
-    
+    @Override
+    public String getESClassName() {
+        return "Error";
+    }
 }
