@@ -17,7 +17,7 @@ public class JsonObject extends ESObject {
     protected JsonObject(ESObject prototype, Evaluator evaluator, ESObject functionPrototype) throws EcmaScriptException {
         super(prototype, evaluator);
         
-        putHiddenProperty("parse", new BuiltinFunctionObject(functionPrototype,evaluator,"parse",1) {
+        putHiddenProperty("parse", new BuiltinFunctionObject(functionPrototype,evaluator,"parse",2) {
             private static final long serialVersionUID = 1L;
             @Override
             public ESValue callFunction(ESValue thisObject, ESValue[] arguments)
@@ -35,7 +35,7 @@ public class JsonObject extends ESObject {
                 }
             }
         });
-        putHiddenProperty("stringify", new BuiltinFunctionObject(functionPrototype,evaluator,"stringify",1) {
+        putHiddenProperty("stringify", new BuiltinFunctionObject(functionPrototype,evaluator,"stringify",3) {
             private static final long serialVersionUID = 1L;
             @Override
             public ESValue callFunction(ESValue thisObject, ESValue[] arguments)

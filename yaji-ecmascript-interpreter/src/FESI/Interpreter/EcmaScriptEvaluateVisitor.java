@@ -1101,7 +1101,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                 // System.out.println("--->Build ref cb: " + currentBase +
                 // " pn: " + propertyName + "<---"); // ********
                 result = new ESReference(currentBase, propertyName,
-                        propertyName.hashCode());
+                        propertyName.hashCode(), true);
             }
 
             return result;
@@ -1344,9 +1344,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                     ESValue v2p = v2.toESPrimitive();
                     // System.out.println("v1p = " + v1 + " v2p = " + v2);
                     if ((v1p instanceof ESString) || (v2p instanceof ESString)) {
-                        // Note: Convert v1/2 instead of v1/2p for correct
-                        // behaviour of "" + Object;
-                        result = concatenateStrings(v1, v2);
+                        result = concatenateStrings(v1p, v2p);
                     } else {
                         result = v1.addValue(v2);
                     }
@@ -1555,7 +1553,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                     // N.B.: could also be achieved by modifying the ESNumber 
                     // value were it not final (presumably for performance)
                     ESValue baseValue = lv.getBase();
-                    if (baseValue.isArray()) {
+                    if (baseValue != null && baseValue.isArray()) {
                         ESObject o = (ESObject) baseValue;
                         result = o.getProperty(StandardProperty.LENGTHstring, StandardProperty.LENGTHhash);
                     }

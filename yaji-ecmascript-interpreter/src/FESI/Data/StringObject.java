@@ -70,7 +70,7 @@ public class StringObject extends BuiltinFunctionObject {
 
         StringPrototypeToString(String name, Evaluator evaluator,
                 FunctionPrototype fp) throws EcmaScriptException {
-            super(fp, evaluator, name, 1);
+            super(fp, evaluator, name, 0);
         }
 
         @Override

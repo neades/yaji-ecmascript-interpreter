@@ -709,11 +709,23 @@ public abstract class ESObject extends ESValue implements IDescriptor {
     
     public void putProperty(String propertyName, int flags, ESValue propertyValue)
                 throws EcmaScriptException {
-        propertyName = propertyName.intern();
         int hash = propertyName.hashCode();
+        propertyName = propertyName.intern();
         getPropertyMap().put(propertyName, hash, FesiHashtable.Flag.fromBoolean((flags&ENUMERABLE) == 0),
                 FesiHashtable.Flag.fromBoolean((flags&WRITEABLE) == 0), propertyValue, 
                 FesiHashtable.Flag.fromBoolean((flags&CONFIGURABLE) != 0));
+    }
+    
+    public void putNonconfigurableProperty(String propertyName, ESValue propertyValue, int hash) throws EcmaScriptException {
+        FesiHashtable propertyMap = getPropertyMap();
+        IPropertyDescriptor desc = getOwnPropertyDescriptor(propertyName, hash);
+        if (desc == null) {
+            propertyMap.put(propertyName.intern(), hash, FesiHashtable.Flag.Default,
+                    FesiHashtable.Flag.Default, propertyValue, 
+                    FesiHashtable.Flag.False);
+        } else {
+        putOwnProperty(propertyName, propertyValue, hash, desc);
+        }
     }
 
     /**

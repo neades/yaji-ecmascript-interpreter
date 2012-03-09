@@ -231,7 +231,7 @@ public class ConstructedFunctionObject extends FunctionPrototype {
                 functionName, evaluationSource, sourceString, arguments,
                 localVariableNames, aFunctionAST, scopeChain, isStrictMode);
         ObjectPrototype thePrototype = ObjectObject.createObject(evaluator);
-        theNewFunction.putHiddenProperty(StandardProperty.PROTOTYPEstring, thePrototype);
+        theNewFunction.putProperty(StandardProperty.PROTOTYPEstring, WRITEABLE, thePrototype);
         thePrototype.putHiddenProperty("constructor", theNewFunction);
         return theNewFunction;
     }

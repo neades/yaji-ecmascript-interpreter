@@ -18,6 +18,10 @@
 package FESI.Data;
 
 
+import java.io.IOException;
+
+import org.yaji.json.JsonState;
+
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.RangeError;
 import FESI.Interpreter.Evaluator;
@@ -25,7 +29,7 @@ import FESI.Interpreter.Evaluator;
 /**
  * Implements the prototype and is the class of all Number objects
  */
-class NumberPrototype extends ESObject {
+public class NumberPrototype extends ESObject {
     private static final long serialVersionUID = 5851526384066944881L;
     // The value
     protected ESNumber value = ESNumber.valueOf(0.0);
@@ -225,5 +229,16 @@ class NumberPrototype extends ESObject {
         }
         return s.toString();
     }
-      
+    
+    @Override
+    public boolean canJson() {
+        return true;
+    }
+    
+    @Override
+    public void toJson(Appendable appendable, JsonState state,
+            String parentPropertyName) throws IOException, EcmaScriptException {
+        value.toJson(appendable, state, parentPropertyName);
+    }
+
 }

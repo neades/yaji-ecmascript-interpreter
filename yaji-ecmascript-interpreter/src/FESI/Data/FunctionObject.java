@@ -17,6 +17,7 @@
 
 package FESI.Data;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
 
@@ -28,6 +29,8 @@ import FESI.AST.ASTStatementList;
 import FESI.AST.EcmaScriptTreeConstants;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.EcmaScriptParseException;
+import FESI.Exceptions.ProgrammingError;
+import FESI.Exceptions.SyntaxError;
 import FESI.Exceptions.TypeError;
 import FESI.Interpreter.EcmaScriptVariableVisitor;
 import FESI.Interpreter.Evaluator;
@@ -186,6 +189,24 @@ public class FunctionObject extends BuiltinFunctionObject implements
         return doConstruct(arguments);
     }
 
+    private static class CloseableStringReader extends StringReader {
+
+        private boolean isClosed;
+
+        public CloseableStringReader(String trimmedParams) {
+            super(trimmedParams);
+        }
+        
+        @Override
+        public void close() {
+            super.close();
+            isClosed = true;
+        }
+        
+        public boolean isClosed() {
+            return isClosed;
+        }
+    }
     // overrides - build a new function
     @Override
     public ESObject doConstruct(ESValue[] arguments)
@@ -201,10 +222,10 @@ public class FunctionObject extends BuiltinFunctionObject implements
             if (i > 0) {
                 parameters.append(',');
             }
-            String arg = arguments[i].toString();
+            String arg = arguments[i].callToString();
             parameters.append(arg);
         }
-        String body = nArgs == 0 ? "" : arguments[i].toString();
+        String body = nArgs == 0 ? "" : arguments[i].callToString();
 
         String trimmedParams = parameters.toString().trim();
 
@@ -217,17 +238,24 @@ public class FunctionObject extends BuiltinFunctionObject implements
         if (trimmedParams.length() == 0) {
             fpl = new ASTFormalParameterList(JJTFORMALPARAMETERLIST);
         } else {
-            StringReader is = new java.io.StringReader(trimmedParams);
+            CloseableStringReader is = new CloseableStringReader(trimmedParams);
             parser = new EcmaScript(is);
             try {
                 fpl = (ASTFormalParameterList) parser.FormalParameterList();
-                is.close();
+                
+                if (!is.isClosed() && is.ready()) {
+                    throw new SyntaxError("All arguments passed to function constructor could not be parsed as parameters");
+                }
             } catch (ParseException e) {
                 if (debugParse) {
                     log.asError("[[PARSING ERROR DETECTED: (debugParse true)]]", e);
                 }
                 throw new EcmaScriptParseException(e,
                         new StringEvaluationSource(fullFunctionText, null));
+            } catch (IOException e) {
+                throw new ProgrammingError("Unexpected IOException parsing arguments for function");
+            } finally {
+                is.close();
             }
         }
         if (body.length() > 0) {

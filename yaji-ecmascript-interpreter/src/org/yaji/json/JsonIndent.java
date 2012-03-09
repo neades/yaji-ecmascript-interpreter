@@ -5,6 +5,8 @@ import java.util.Stack;
 import FESI.Data.ESNumber;
 import FESI.Data.ESString;
 import FESI.Data.ESValue;
+import FESI.Data.NumberPrototype;
+import FESI.Data.StringPrototype;
 import FESI.Exceptions.EcmaScriptException;
 
 public abstract class JsonIndent {
@@ -44,12 +46,12 @@ public abstract class JsonIndent {
 
     public static JsonIndent create(ESValue indent) throws EcmaScriptException {
         StringBuilder spaces = new StringBuilder();
-        if (indent instanceof ESNumber) {
+        if (indent instanceof ESNumber || indent instanceof NumberPrototype) {
             int nSpaces = Math.min(10, indent.toInt32());
             for(int i=0; i<nSpaces; i++) {
                 spaces.append(' ');
             }
-        } else if (indent instanceof ESString) {
+        } else if (indent instanceof ESString || indent instanceof StringPrototype) {
             String string = indent.toString();
             if (string.length()>10) {
                 spaces.append(string.substring(0,10));

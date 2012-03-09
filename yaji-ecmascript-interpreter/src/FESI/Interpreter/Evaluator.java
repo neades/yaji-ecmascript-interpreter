@@ -154,7 +154,7 @@ public class Evaluator implements Serializable {
         varDeclarationVisitor = new EcmaScriptVariableVisitor();
         // evaluationVisitor = new EcmaScriptEvaluateVisitor(this);
         globalObject = GlobalObject.makeGlobalObject(this);
-        globalScope = new ScopeChain(globalObject, null);
+        globalScope = new ScopeChain(globalObject, null, false, false);
         packageObject = new ESPackages(this);
         extensions = new Hashtable<String, Object>(); // forget extensions
     }
@@ -668,7 +668,7 @@ public class Evaluator implements Serializable {
             throws EcmaScriptException {
         if (!currentVariableObject.hasProperty(name, hashCode)) {
             ESReference newVar = new ESReference(currentVariableObject, name,
-                    hashCode);
+                    hashCode, false);
             newVar.putValue(currentVariableObject, ESUndefined.theUndefined);
         }
     }
@@ -1036,7 +1036,7 @@ public class Evaluator implements Serializable {
         } else {
             currentThisObject = (thisObject == ESUndefined.theUndefined || thisObject == ESNull.theNull || thisObject == null) ? getGlobalObject() : thisObject.toESObject(this);
         }
-        theScopeChain = new ScopeChain(variableObject, (scopeChain != null) ? scopeChain : globalScope);
+        theScopeChain = new ScopeChain(variableObject, (scopeChain != null) ? scopeChain : globalScope, false, false);
         EvaluationSource savedEvaluationSource = currentEvaluationSource;
         currentEvaluationSource = es;
         try {
@@ -1092,7 +1092,7 @@ public class Evaluator implements Serializable {
     public EvaluationResult evaluateWith(ASTStatement node, ESObject scopeObject, EvaluationSource es) throws EcmaScriptException {
         ESValue theValue = ESUndefined.theUndefined;
 
-        theScopeChain = new ScopeChain(scopeObject, theScopeChain == null ? globalScope : theScopeChain, true);
+        theScopeChain = new ScopeChain(scopeObject, theScopeChain == null ? globalScope : theScopeChain, true, false);
         try {
             EcmaScriptEvaluateVisitor evaluationVisitor = newEcmaScriptEvaluateVisitor();
             theValue = evaluationVisitor.evaluateWith(node, es);
@@ -1132,7 +1132,7 @@ public class Evaluator implements Serializable {
         if (thisObject == null) {
             currentThisObject = globalObject;
         } else {
-            theScopeChain = new ScopeChain(thisObject.toESObject(this), theScopeChain);
+            theScopeChain = new ScopeChain(thisObject.toESObject(this), theScopeChain, false, false);
             currentThisObject = thisObject;
         }
 
