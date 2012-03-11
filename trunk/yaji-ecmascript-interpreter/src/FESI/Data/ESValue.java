@@ -154,7 +154,8 @@ public abstract class ESValue implements java.io.Serializable {
         if (Double.isInfinite(value) || Double.isNaN(value)) {
             return 0;
         }
-        return (int) value;
+        long l = (long) value;
+        return (int) l;
     }
 
     /**
@@ -439,7 +440,7 @@ public abstract class ESValue implements java.io.Serializable {
 
     public int compareNumbers(ESValue v2) throws EcmaScriptException {
         double d1 = doubleValue();
-        double d2 = v2.doubleValue();
+        double d2 = v2.toESNumber().doubleValue();
         int c;
         if (Double.isNaN(d1) || Double.isNaN(d2)) {
             c = ESValue.COMPARE_UNDEFINED;

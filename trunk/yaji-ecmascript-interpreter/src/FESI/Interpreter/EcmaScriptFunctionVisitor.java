@@ -120,12 +120,12 @@ public class EcmaScriptFunctionVisitor extends AbstractEcmaScriptVisitor impleme
         GlobalObject go = evaluator.getGlobalObject();
         try {
             ESReference newVar = new ESReference(go, idNode.getName(), idNode
-                    .hashCode(), false);
+                    .hashCode());
             ConstructedFunctionObject func = ConstructedFunctionObject
                     .makeNewConstructedFunction(evaluator, idNode.getName(),
                             fes, node.getSourceString(), fpl.getArguments(),
                             variableNames, sl, null, node.isStrictMode());
-            evaluator.putValue(newVar, func);
+            newVar.putValue(go, func, false);
         } catch (EcmaScriptException e) {
             throw new PackagedException(e, node);
         }

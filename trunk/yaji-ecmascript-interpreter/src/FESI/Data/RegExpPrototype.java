@@ -35,7 +35,8 @@ public class RegExpPrototype extends ESObject {
         putProperty(StandardProperty.GLOBALstring,0,ESBoolean.valueOf(global));
         putProperty(StandardProperty.IGNORE_CASEstring,0,ESBoolean.valueOf(ignoreCase));
         putProperty(StandardProperty.MULTILINEstring,0,ESBoolean.valueOf(multiline));
-        putProperty(StandardProperty.LAST_INDEXstring, WRITEABLE, ESUndefined.theUndefined);
+        putProperty(StandardProperty.LAST_INDEXstring, WRITEABLE, ESNumber.valueOf(0));
+        getPattern();
     }
 
     public org.yaji.regex.Pattern getPattern() throws EcmaScriptException {

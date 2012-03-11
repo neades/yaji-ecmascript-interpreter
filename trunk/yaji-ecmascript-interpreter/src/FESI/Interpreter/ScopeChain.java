@@ -31,7 +31,6 @@ public class ScopeChain implements java.io.Serializable {
     private final ScopeChain previousElement;
     private final ESObject thisElement;
     private final boolean provideThis;
-    private boolean configurable;
 
     /**
      * CReate a new scope chain linked to a previous one (which is null only for
@@ -45,12 +44,7 @@ public class ScopeChain implements java.io.Serializable {
      */
     @Deprecated
     public ScopeChain(ESObject thisElement, ScopeChain previousElement) {
-        this(thisElement,previousElement,false, false);
-    }
-
-    @Deprecated
-    public ScopeChain(ESObject thisElement, ScopeChain previousElement, boolean provideThis) {
-        this(thisElement, previousElement, provideThis, false);
+        this(thisElement,previousElement,false);
     }
 
     /**
@@ -62,11 +56,10 @@ public class ScopeChain implements java.io.Serializable {
      * @param previousElement
      *            previous object in scope chain
      */
-    public ScopeChain(ESObject thisElement, ScopeChain previousElement, boolean provideThis, boolean configurable) {
+    public ScopeChain(ESObject thisElement, ScopeChain previousElement, boolean provideThis) {
         this.previousElement = previousElement;
         this.thisElement = thisElement;
         this.provideThis = provideThis;
-        this.configurable = configurable;
     }
 
     /**
@@ -110,11 +103,11 @@ public class ScopeChain implements java.io.Serializable {
         ScopeChain theChain = this;
         do {
             if (theChain.thisElement.hasProperty(identifier, hash)) {
-                return new ESReference(theChain.thisElement, identifier, hash, true);
+                return new ESReference(theChain.thisElement, identifier, hash);
             }
             theChain = theChain.previousElement;
         } while (theChain != null);
-        return new ESReference(null, identifier, hash, this.configurable);
+        return new ESReference(null, identifier, hash);
     }
 
     /**

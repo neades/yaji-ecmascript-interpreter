@@ -157,13 +157,16 @@ public class JavaUtilRegex implements RegexImplementation {
         public abstract State process(char c, StringBuilder sb);
     }
 //    private static Pattern shouldConvert = Pattern.compile("((\\\\b)|(\\[(\\^)?\\])|(\\\\\\d)|(\\\\0)|(\\\\c)");
-    protected static String convertRegExp(String source) {
+    protected static String convertRegExp(String source) throws EcmaScriptException {
        
         //if (shouldConvert.matcher(source).find()) {
             StringBuilder sb = new StringBuilder(source.length());
             State state = State.NORMAL;
             for( char c : source.toCharArray()) {
                state = state.process(c, sb); 
+            }
+            if (state != State.NORMAL) {
+                throw new SyntaxError("Invalid RegExp '"+source+"'");
             }
             return sb.toString();
 //        }

@@ -447,6 +447,33 @@ public class EcmascriptParserTest {
                     + "   AllocationExpression" + eol  
                     + "    <String>" + eol 
                     + "    FunctionCallParameters" + eol  
+                },
+                { "x = new /x/();",
+                    "Program" + eol 
+                    + " Statement" + eol 
+                    + "  AssignmentExpression" + eol 
+                    + "   <x>" + eol 
+                    + "   <\"=\">" + eol 
+                    + "   AllocationExpression" + eol 
+                    + "    /x/" + eol 
+                    + "    FunctionCallParameters" + eol 
+                },
+                { "for((function(){throw \"NoInExpression\";})();;) {}",
+                    "Program" + eol 
+                    + " Statement" + eol 
+                    + "  ForStatement" + eol 
+                    + "   CompositeReference" + eol 
+                    + "    FunctionExpression" + eol 
+                    + "     FormalParameterList" + eol 
+                    + "     StatementList" + eol 
+                    + "      Statement" + eol 
+                    + "       ThrowStatement" + eol 
+                    + "        [NoInExpression]" + eol 
+                    + "    FunctionCallParameters" + eol 
+                    + "   EmptyExpression" + eol 
+                    + "   EmptyExpression" + eol 
+                    + "   Statement" + eol 
+                    + "    StatementList" + eol 
                 }
            });
     }

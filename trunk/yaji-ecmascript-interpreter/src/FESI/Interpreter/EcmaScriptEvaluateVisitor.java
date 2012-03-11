@@ -93,6 +93,7 @@ import FESI.Data.RegExpPrototype;
 import FESI.Data.StandardProperty;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
+import FESI.Exceptions.SyntaxError;
 import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator.EvaluationResult;
 import FESI.Parser.EcmaScriptConstants;
@@ -293,61 +294,75 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
      *------------------------------------------------------------------*/
 
     // EcmaScript standard 11.8.5
-    private int compare(ESValue v1, ESValue v2) throws EcmaScriptException {
-        ESValue v1p = v1.toESPrimitive(ESValue.EStypeNumber);
-        ESValue v2p = v2.toESPrimitive(ESValue.EStypeNumber);
-        // System.out.println("v1p = " + v1 + " v2p = " + v2);
-        if ((v1p instanceof ESString) && (v2p instanceof ESString)) {
-            // Note: Convert v1/2 instead of v1/2p for correct
-            // behaviour of "" + Object;
-            String s1 = v1.toString();
-            String s2 = v2.toString();
+    private int compare(ESValue x, ESValue y, boolean swapped) throws EcmaScriptException {
+        ESValue px;
+        ESValue py;
+        if (swapped) {
+            py = y.toESPrimitive(ESValue.EStypeNumber);
+            px = x.toESPrimitive(ESValue.EStypeNumber);
+        } else {
+            px = x.toESPrimitive(ESValue.EStypeNumber);
+            py = y.toESPrimitive(ESValue.EStypeNumber);
+        }
+        if ((px instanceof ESString) && (py instanceof ESString)) {
+            String s1 = px.toString();
+            String s2 = py.toString();
             int c = s1.compareTo(s2);
-            // System.out.println("CS: '"+ s1 + "' " +c+ " '" + s2 + "'");
             return (c < 0) ? ESValue.COMPARE_TRUE : ESValue.COMPARE_FALSE;
         }
-        int c = v1.compareNumbers(v2);
-        // System.out.println("CN: '"+ d1 + "' " +c+ " '" + d2 + "'");
-        return c;
+        return x.toESNumber().compareNumbers(y);
     }
 
-    // EcmaScript standard 11.9.3
-    private boolean equal(ESValue v1, ESValue v2) throws EcmaScriptException {
+    /**
+       EcmaScript standard 11.9.3
+       If x is null and y is undefined, return true.
+       If x is undefined and y is null, return true.
+       If Type(x) is Number and Type(y) is String, return the result of the comparison x == ToNumber(y).
+       If Type(x) is String and Type(y) is Number, return the result of the comparison ToNumber(x) == y.
+       If Type(x) is Boolean, return the result of the comparison ToNumber(x) == y.
+       If Type(y) is Boolean, return the result of the comparison x == ToNumber(y).
+       If Type(x) is either String or Number and Type(y) is Object, return the result of the comparison x == ToPrimitive(y).
+       If Type(x) is Object and Type(y) is either String or Number, return the result of the comparison ToPrimitive(x) == y.
+     * @param x
+     * @param y
+     * @return
+     * @throws EcmaScriptException
+     */
+    private boolean equal(ESValue x, ESValue y) throws EcmaScriptException {
 
         // Not possible to optimize same object, as NaN != NaN
 
-        if (v1.getTypeOf() == v2.getTypeOf()) {
+        if (x.getTypeOf() == y.getTypeOf()) {
             // Same types
-            return v1.equalsSameType(v2);
+            return x.equalsSameType(y);
         }
 
-        if (v1 instanceof ESUndefined && v2 instanceof ESNull) {
+        if (x instanceof ESUndefined && y instanceof ESNull) {
             return true;
         }
-        if (v2 instanceof ESUndefined && v1 instanceof ESNull) {
+        if (x instanceof ESNull && y instanceof ESUndefined) {
             return true;
         }
 
-        if ((v1 instanceof ESNumber && v2 instanceof ESString)
-                || (v2 instanceof ESNumber && v1 instanceof ESString)) {
-            double d1 = v1.doubleValue();
-            double d2 = v2.doubleValue();
-            return (d1 == d2);
+        if (x instanceof ESNumber && y instanceof ESString) {
+            return x.equalsSameType(y.toESNumber());
+        }
+        if (x instanceof ESString && y instanceof ESNumber) {
+            return y.equalsSameType(x.toESNumber());
         }
 
-        if (v1 instanceof ESBoolean || v2 instanceof ESBoolean) {
-            double d1 = v1.doubleValue();
-            double d2 = v2.doubleValue();
-            return (d1 == d2);
+        if (x instanceof ESBoolean) {
+            return equal(x.toESNumber(),y);
+        }
+        if (y instanceof ESBoolean) {
+            return equal(x,y.toESNumber());
         }
 
-        if ((v1 instanceof ESNumber && v2 instanceof ESObject)
-                || (v1 instanceof ESString && v2 instanceof ESObject)) {
-            return equal(v1, v2.toESPrimitive());
+        if ((x instanceof ESNumber || x instanceof ESString) && y instanceof ESObject) {
+            return equal(x, y.toESPrimitive());
         }
-        if ((v2 instanceof ESNumber && v1 instanceof ESObject)
-                || (v2 instanceof ESString && v1 instanceof ESObject)) {
-            return equal(v2, v1.toESPrimitive());
+        if (x instanceof ESObject && (y instanceof ESNumber || y instanceof ESString)) {
+            return equal(x.toESPrimitive(),y);
         }
 
         return false;
@@ -384,14 +399,24 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
     @Override
     public Object visit(ASTStatementList node, Object data) {
         int n = node.jjtGetNumChildren();
-        // Return ESUndefined for empty statement lists (for
-        // example generated by calling 'function(){}')
-        Object result = ESUndefined.theUndefined;
+        Object result = null;
         for (int i = 0; i < n; i++) {
             if (completionCode != C_NORMAL)
                 return result;
             Node statement = node.jjtGetChild(i);
             Object s = statement.jjtAccept(this, FOR_VALUE);
+            if (completionCode == C_BREAK) {
+                if (targetLabel != null && node.labelSetContains(targetLabel)) {
+                    completionCode = C_NORMAL;
+                    targetLabel = null;
+                }
+            } else if (completionCode == C_CONTINUE) {
+                if (targetLabel != null && node.labelSetContains(targetLabel)) {
+                    completionCode = C_NORMAL;
+                    targetLabel = null;
+                }
+            }
+
             if (s != null) {
                 result = s;
             }
@@ -559,7 +584,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
 
     @Override
     public Object visit(ASTForStatement node, Object data) {
-        Object result = null;
+        Object theValue = null;
         try {
             node.assertFourChildren();
             // Evaluate first expression if present
@@ -573,16 +598,19 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                 testValue = acceptNull(testNode.jjtAccept(this, FOR_VALUE));
             }
             while (testValue.booleanValue()) {
-                result = node.jjtGetChild(3).jjtAccept(this, FOR_VALUE);
+                Object result = node.jjtGetChild(3).jjtAccept(this, FOR_VALUE);
+                if (result != null) {
+                    theValue = result;
+                }
 
                 if (completionCode == C_RETURN) {
-                    return result;
+                    return theValue;
                 } else if (completionCode == C_BREAK) {
                     if (targetLabel == null || node.labelSetContains(targetLabel)) {
                         completionCode = C_NORMAL;
                         targetLabel = null;
                     }
-                    return result;
+                    return theValue;
                 } else if (completionCode == C_CONTINUE) {
                     if (targetLabel == null || node.labelSetContains(targetLabel)) {
                         node.jjtGetChild(2).jjtAccept(this, FOR_VALUE);
@@ -595,7 +623,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                         completionCode = C_NORMAL;
                         targetLabel = null;
                     } else {
-                        return result;
+                        return theValue;
                     }
                 } else {
                     node.jjtGetChild(2).jjtAccept(this, FOR_VALUE);
@@ -611,7 +639,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
         } catch (EcmaScriptException e) {
             throw new PackagedException(e, node);
         }
-        return result;
+        return theValue;
     }
 
     // Assume that in 12.6.2, for var, step 7, should be goto 17
@@ -1101,7 +1129,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                 // System.out.println("--->Build ref cb: " + currentBase +
                 // " pn: " + propertyName + "<---"); // ********
                 result = new ESReference(currentBase, propertyName,
-                        propertyName.hashCode(), true);
+                        propertyName.hashCode());
             }
 
             return result;
@@ -1217,25 +1245,28 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
             int operator = ((ASTOperator) (node.jjtGetChild(0))).getOperator();
             switch (operator) {
             case DELETE: {
-                Object lvo = node.jjtGetChild(1).jjtAccept(this, FOR_REFERENCE);
-                ESReference lv;
-                if (lvo instanceof ESReference) {
-                    lv = (ESReference) lvo;
-                } else {
-                    throw new EcmaScriptException("Value '" + lvo.toString()
-                            + "' is not a property reference");
+                Node firstChild = node.jjtGetChild(1);
+                if (evaluator.isStrictMode() && firstChild instanceof ASTIdentifier) {
+                    throw new SyntaxError("Cannot delete a variable, function argument or function in strict mode");
                 }
-                ESValue base = lv.getBase();
-                String propertyName = lv.getPropertyName();
-                if (base instanceof ESObject) {
-                    r = ESBoolean.valueOf(((ESObject) base).deleteProperty(
-                            propertyName, propertyName.hashCode()));
+                Object lvo = firstChild.jjtAccept(this, FOR_REFERENCE);
+                if (lvo instanceof ESReference) {
+                    ESReference lv = (ESReference) lvo;
+                    ESValue base = lv.getBase();
+                    String propertyName = lv.getPropertyName();
+                    if (base instanceof ESObject) {
+                        r = ESBoolean.valueOf(((ESObject) base).deleteProperty(
+                                propertyName, propertyName.hashCode()));
+                    } else {
+                        r = ESBoolean.valueOf(true);
+                    }
                 } else {
                     r = ESBoolean.valueOf(true);
                 }
             }
                 break;
             case VOID:
+                node.jjtGetChild(1).jjtAccept(this, FOR_VALUE);
                 r = ESUndefined.theUndefined;
                 break;
             case TYPEOF: {
@@ -1367,34 +1398,36 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                 }
                     break;
                 case LSHIFT: {
-                    result = ESNumber.valueOf(v1.toInt32() << v2.toUInt32());
+                    result = ESNumber.valueOf(v1.toInt32() << (v2.toUInt32()&0x1f));
                 }
                     break;
                 case RSIGNEDSHIFT: {
-                    result = ESNumber.valueOf(v1.toInt32() >> v2.toUInt32());
+                    int lnum = v1.toInt32();
+                    long rnum = v2.toUInt32()&0x1f;
+                    result = ESNumber.valueOf(lnum >> rnum);
                 }
                     break;
                 case RUNSIGNEDSHIFT: {
-                    result = ESNumber.valueOf(v1.toUInt32() >>> v2.toUInt32());
+                    result = ESNumber.valueOf(v1.toUInt32() >>> (v2.toUInt32()&0x1f));
                 }
                     break;
                 case LT: {
-                    int compareCode = compare(v1, v2);
+                    int compareCode = compare(v1, v2, false);
                     result = ESBoolean.valueOf(compareCode == ESValue.COMPARE_TRUE);
                 }
                     break;
                 case GT: {
-                    int compareCode = compare(v2, v1);
+                    int compareCode = compare(v2, v1, true);
                     result = ESBoolean.valueOf(compareCode == ESValue.COMPARE_TRUE);
                 }
                     break;
                 case LE: {
-                    int compareCode = compare(v2, v1);
+                    int compareCode = compare(v2, v1, true);
                     result = ESBoolean.valueOf(compareCode == ESValue.COMPARE_FALSE);
                 }
                     break;
                 case GE: {
-                    int compareCode = compare(v1, v2);
+                    int compareCode = compare(v1, v2, false);
                     result = ESBoolean.valueOf(compareCode == ESValue.COMPARE_FALSE);
                 }
                     break;
