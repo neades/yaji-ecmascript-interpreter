@@ -4,7 +4,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import FESI.AST.ASTAssignmentExpression;
+import FESI.AST.ASTCatch;
 import FESI.AST.ASTCompositeReference;
+import FESI.AST.ASTForVarInStatement;
+import FESI.AST.ASTForVarStatement;
 import FESI.AST.ASTFunctionDeclaration;
 import FESI.AST.ASTFunctionExpression;
 import FESI.AST.ASTGetAccessor;
@@ -35,7 +38,7 @@ public class StrictMode extends AbstractEcmaScriptVisitor {
 
         private boolean strict;
 
-        public StrictModeState(ASTProgram program, boolean strictMode) {
+        public StrictModeState(boolean strictMode) {
             strict = strictMode;
         }
 
@@ -54,12 +57,17 @@ public class StrictMode extends AbstractEcmaScriptVisitor {
     }
     
     public static SimpleNode validate(ASTProgram program, boolean strictMode) {
-        StrictMode strictModeVisitor = new StrictMode();
-        StrictModeState state = new StrictModeState(program, strictMode);
-        lookAheadForDirectives(program,state);
-        strictModeVisitor.visit(program, state);
-        program.setStrictMode(state.isStrictMode());
+        boolean isStrict = validate((Node)program, strictMode);
+        program.setStrictMode(isStrict);
         return program;
+    }
+
+    public static boolean validate(Node program, boolean strictMode) {
+        StrictMode strictModeVisitor = new StrictMode();
+        StrictModeState state = new StrictModeState(strictMode);
+        lookAheadForDirectives(program,state);
+        program.jjtAccept(strictModeVisitor, state);
+        return state.isStrictMode();
     }
 
     private static void lookAheadForDirectives(Node statementList,
@@ -215,6 +223,24 @@ public class StrictMode extends AbstractEcmaScriptVisitor {
         if (isStrictMode(data)) {
             throw createException("'with' statement not permitted.", node);
         }
+        return super.visit(node, data);
+    }
+    
+    @Override
+    public Object visit(ASTForVarInStatement node, Object data) {
+        checkEvalAndArguments(node, data, 0);
+        return super.visit(node, data);
+    }
+    
+    @Override
+    public Object visit(ASTForVarStatement node, Object data) {
+        checkEvalAndArguments(node, data, 0);
+        return super.visit(node, data);
+    }
+    
+    @Override
+    public Object visit(ASTCatch node, Object data) {
+        checkEvalAndArguments(node, data, 0);
         return super.visit(node, data);
     }
     

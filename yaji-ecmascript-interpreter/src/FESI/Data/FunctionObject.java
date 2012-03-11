@@ -258,11 +258,13 @@ public class FunctionObject extends BuiltinFunctionObject implements
                 is.close();
             }
         }
+        boolean strictMode = getEvaluator().isStrictMode();
         if (body.length() > 0) {
             StringReader is = new java.io.StringReader(body.toString());
             parser = new EcmaScript(is);
             try {
                 sl = (ASTStatementList) parser.StatementList();
+                strictMode = StrictMode.validate(sl, false);
                 is.close();
             } catch (ParseException e) {
                 if (debugParse) {
@@ -284,7 +286,7 @@ public class FunctionObject extends BuiltinFunctionObject implements
 
         theFunction = ConstructedFunctionObject.makeNewConstructedFunction(
                 getEvaluator(), "anonymous", fes, fullFunctionText, fpl
-                        .getArguments(), variableNames, sl, null,StrictMode.hasStrictModeDirective(sl));
+                        .getArguments(), variableNames, sl, null,strictMode);
 
         return theFunction;
     }

@@ -6,7 +6,7 @@ import FESI.Interpreter.Evaluator;
 public class ErrorPrototype extends ESObject {
     private static final long serialVersionUID = 5169400913129240083L;
     
-    public ErrorPrototype(ObjectPrototype objectPrototype, Evaluator evaluator) throws EcmaScriptException {
+    public ErrorPrototype(ESObject objectPrototype, Evaluator evaluator) throws EcmaScriptException {
         super(objectPrototype,evaluator);
         
         putHiddenProperty("toString", new BuiltinFunctionObject(evaluator.getFunctionPrototype(),evaluator,"toString",1) {
@@ -26,6 +26,13 @@ public class ErrorPrototype extends ESObject {
                 return new ESString(name + ": " + esmessage.toString());
             }
         });
+    }
+    
+    public ErrorPrototype(ESObject objectPrototype, Evaluator evaluator, ESValue message) throws EcmaScriptException {
+        super(objectPrototype,evaluator);
+        if (message.getTypeOf() != EStypeUndefined) {
+            putProperty("message",message,"message".hashCode());
+        }
     }
 
     @Override

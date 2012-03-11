@@ -1779,7 +1779,7 @@ void AllocationExpression()       :
                 jjtreeOpenNodeScope(jjtn006);
               }
               try {
-/*@egen*/ ( Identifier() ( NewSuffix() )* )/*@bgen(jjtree)*/
+/*@egen*/ ( ( Identifier() | RegexpLiteral() ) ( NewSuffix() )* )/*@bgen(jjtree)*/
               } catch (Throwable jjte006) {
                 if (jjtc006) {
                   jjtree.clearNodeScope(jjtn006);

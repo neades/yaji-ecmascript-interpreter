@@ -3610,7 +3610,7 @@ public Token getNextToken()
            continue;
         }
         catch (java.io.IOException e1) { 
-            // shouldn't happen
+            // Not expected
         }
      }
      int error_line = input_stream.getEndLine();

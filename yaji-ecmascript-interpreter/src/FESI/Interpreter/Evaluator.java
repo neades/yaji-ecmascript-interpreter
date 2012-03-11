@@ -59,6 +59,7 @@ import FESI.Data.ESWrapper;
 import FESI.Data.GlobalObject;
 import FESI.Data.IObjectProfiler;
 import FESI.Data.JSGlobalWrapper;
+import FESI.Data.ObjectObject;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.EcmaScriptLexicalException;
 import FESI.Exceptions.EcmaScriptParseException;
@@ -154,7 +155,7 @@ public class Evaluator implements Serializable {
         varDeclarationVisitor = new EcmaScriptVariableVisitor();
         // evaluationVisitor = new EcmaScriptEvaluateVisitor(this);
         globalObject = GlobalObject.makeGlobalObject(this);
-        globalScope = new ScopeChain(globalObject, null, false, false);
+        globalScope = new ScopeChain(globalObject, null, false);
         packageObject = new ESPackages(this);
         extensions = new Hashtable<String, Object>(); // forget extensions
     }
@@ -647,10 +648,9 @@ public class Evaluator implements Serializable {
      *                In case of any error during evaluation
      * @return the resulting value
      */
-    public ESValue doIndirectCall(ESObject thisObject, String functionName,
-            int hash, ESValue[] arguments) throws EcmaScriptException {
-        return theScopeChain.doIndirectCall(this, thisObject, functionName,
-                hash, arguments);
+    public ESValue doIndirectCall(ESObject thisObject, String functionName, int hash, ESValue[] arguments)
+            throws EcmaScriptException {
+        return theScopeChain.doIndirectCall(this, thisObject, functionName, hash, arguments);
     }
 
     /**
@@ -667,9 +667,8 @@ public class Evaluator implements Serializable {
     public void createVariable(String name, int hashCode)
             throws EcmaScriptException {
         if (!currentVariableObject.hasProperty(name, hashCode)) {
-            ESReference newVar = new ESReference(currentVariableObject, name,
-                    hashCode, false);
-            newVar.putValue(currentVariableObject, ESUndefined.theUndefined);
+            ESReference newVar = new ESReference(currentVariableObject, name, hashCode);
+            newVar.putValue(currentVariableObject, ESUndefined.theUndefined, false);
         }
     }
 
@@ -710,7 +709,9 @@ public class Evaluator implements Serializable {
         }
         java.io.StringReader is = new java.io.StringReader(theSource);
         EcmaScript parser = new EcmaScript(is);
-        parser.setStrict(isStrictMode());
+        if (directCallEval) {
+            parser.setStrict(isStrictMode());
+        }
         try {
             // ASTProgram n = parser.Program();
             programNode = (ASTProgram) parser.Program();
@@ -732,13 +733,23 @@ public class Evaluator implements Serializable {
         }
 
         ESObject savedVariableObject = currentVariableObject;
-        currentVariableObject = globalObject;
+        boolean savedStrictMode = strictMode;
 
         try {
 
             functionDeclarationVisitor.processFunctionDeclarations(programNode,
                     es);
-            varDeclarationVisitor.processVariableDeclarations(programNode, es);
+            List<String> variableDeclarations = varDeclarationVisitor.processVariableDeclarations(programNode, es);
+            strictMode = programNode.isStrictMode();
+            if (strictMode || savedStrictMode) {
+                currentVariableObject = ObjectObject.createObject(this);
+            } else {
+                currentVariableObject = globalObject;
+            }
+            for (String variable : variableDeclarations) {
+                createVariable(variable, variable.hashCode());
+            }
+
             EcmaScriptEvaluateVisitor evaluationVisitor = newEcmaScriptEvaluateVisitor();
             theValue = evaluationVisitor.evaluateProgram(programNode, es);
 
@@ -753,6 +764,8 @@ public class Evaluator implements Serializable {
             }
         } finally {
             currentVariableObject = savedVariableObject;
+            strictMode = savedStrictMode;
+            setDirectCallToEval(false);
         }
 
         return theValue;
@@ -972,6 +985,7 @@ public class Evaluator implements Serializable {
     private TimeZone defaultTimeZone;
 
     private List<ILocaleListener> localeListeners = new ArrayList<ILocaleListener>();
+    private boolean directCallEval = false;
 
     public interface EvaluationResultBuilder {
         public EvaluationResult getEvaluationResult(ESValue theValue,EcmaScriptEvaluateVisitor evaluationVisitor)
@@ -1036,7 +1050,7 @@ public class Evaluator implements Serializable {
         } else {
             currentThisObject = (thisObject == ESUndefined.theUndefined || thisObject == ESNull.theNull || thisObject == null) ? getGlobalObject() : thisObject.toESObject(this);
         }
-        theScopeChain = new ScopeChain(variableObject, (scopeChain != null) ? scopeChain : globalScope, false, false);
+        theScopeChain = new ScopeChain(variableObject, (scopeChain != null) ? scopeChain : globalScope, false);
         EvaluationSource savedEvaluationSource = currentEvaluationSource;
         currentEvaluationSource = es;
         try {
@@ -1092,7 +1106,7 @@ public class Evaluator implements Serializable {
     public EvaluationResult evaluateWith(ASTStatement node, ESObject scopeObject, EvaluationSource es) throws EcmaScriptException {
         ESValue theValue = ESUndefined.theUndefined;
 
-        theScopeChain = new ScopeChain(scopeObject, theScopeChain == null ? globalScope : theScopeChain, true, false);
+        theScopeChain = new ScopeChain(scopeObject, theScopeChain == null ? globalScope : theScopeChain, true);
         try {
             EcmaScriptEvaluateVisitor evaluationVisitor = newEcmaScriptEvaluateVisitor();
             theValue = evaluationVisitor.evaluateWith(node, es);
@@ -1132,7 +1146,7 @@ public class Evaluator implements Serializable {
         if (thisObject == null) {
             currentThisObject = globalObject;
         } else {
-            theScopeChain = new ScopeChain(thisObject.toESObject(this), theScopeChain, false, false);
+            theScopeChain = new ScopeChain(thisObject.toESObject(this), theScopeChain, false);
             currentThisObject = thisObject;
         }
 
@@ -1530,5 +1544,9 @@ public class Evaluator implements Serializable {
             return SparseArrayConstructor.createArray(this, ESValue.EMPTY_ARRAY);
         }
         return ArrayObject.createArray(this,ESValue.EMPTY_ARRAY);
+    }
+
+    public void setDirectCallToEval(boolean directCallEval) {
+        this.directCallEval = directCallEval;
     }
 }

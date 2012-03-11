@@ -78,7 +78,7 @@ class RegExpObject extends BuiltinFunctionObject {
 
     public RegExpObject(String name, Evaluator evaluator,
             FunctionPrototype fp, ESObject regExpPrototype) throws EcmaScriptException {
-        super(fp, evaluator, name, 1);
+        super(fp, evaluator, name, 2);
         this.regExpPrototype = regExpPrototype;
         regExpPrototype.putHiddenProperty("test", new ESRegExpPrototypetestMethod(
                 "test", evaluator, fp));

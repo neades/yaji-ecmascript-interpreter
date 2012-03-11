@@ -32,6 +32,7 @@ import FESI.Exceptions.EcmaScriptParseException;
 import FESI.Exceptions.ProgrammingError;
 import FESI.Exceptions.URIError;
 import FESI.Interpreter.Evaluator;
+import FESI.Interpreter.ScopeChain;
 
 /**
  * Implements the EmcaScript 'global' object
@@ -150,7 +151,27 @@ public class GlobalObject extends ObjectPrototype {
         }
     }
 
+    @Override
+    public ESValue doIndirectCall(Evaluator evaluator, ESObject target,
+            String functionName, ESValue[] arguments)
+                    throws EcmaScriptException, NoSuchMethodException {
+        if (functionName.equals("eval")) {
+            getEvaluator().setDirectCallToEval(true);
+        }
+        return super.doIndirectCall(evaluator, target, functionName, arguments);
+    }
 
+    @Override
+    public ESValue doIndirectCallInScope(Evaluator evaluator,
+            ScopeChain previousScope, ESObject thisObject, String functionName,
+            int hash, ESValue[] arguments) throws EcmaScriptException {
+        if (functionName.equals("eval")) {
+            getEvaluator().setDirectCallToEval(true);
+        }
+        return super.doIndirectCallInScope(evaluator, previousScope, thisObject,
+                functionName, hash, arguments);
+    }
+    
     private GlobalObject(ESObject prototype, Evaluator evaluator) {
         super(prototype, evaluator);
     }
@@ -479,7 +500,6 @@ public class GlobalObject extends ObjectPrototype {
             ESObject globalObjectRegExp = new RegExpObject(StandardProperty.REG_EXPstring,
                     evaluator, functionPrototype, esRegExpPrototype);
             globalObjectRegExp.putProperty(StandardProperty.PROTOTYPEstring, 0, esRegExpPrototype);
-            globalObjectRegExp.putHiddenProperty("length", ESNumber.valueOf(1));
 
             esRegExpPrototype.putHiddenProperty("constructor", globalObjectRegExp);
         

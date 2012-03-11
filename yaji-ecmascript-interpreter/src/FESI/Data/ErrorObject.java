@@ -72,14 +72,7 @@ public class ErrorObject extends BuiltinFunctionObject {
     @Override
     public ESObject doConstruct(final ESValue[] arguments)
             throws EcmaScriptException {
-        ESObject error = new ESObject(getPrototypeProperty(),getEvaluator()) {
-            private static final long serialVersionUID = -5191230380035994792L;
-        {
-            if (arguments.length > 0 && arguments[0].getTypeOf() != EStypeUndefined) {
-                putProperty("message",arguments[0],"message".hashCode());
-            }
-        }};
-        return error;
+        return  new ErrorPrototype(getPrototypeProperty(),getEvaluator(), getArg(arguments,0));
     }
     
     public static ErrorObject make(Evaluator evaluator,

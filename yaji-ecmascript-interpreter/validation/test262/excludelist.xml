@@ -46,4 +46,12 @@
   <test id="S15.10.2.11_A1_T5">Java Regex treats backref before referenced group as not-matching. JS expects it to match</test>
   <test id="S15.10.2.10_A5.1_T1">This test should fail as /\undefined/ should be illegal.</test>
   <test id="S15.10.2.10_A2.1_T3">Until Java 7 Unicode isn't handled properly by java.util.regex</test>
+  <test id="S15.10.1_A1_T15">Java RegExp doesn't detect two successive quantifiers as an error</test>
+  <test id="S15.10.1_A1_T13">Java RegExp doesn't detect two successive quantifiers as an error</test>
+  <test id="S15.10.1_A1_T16">Java RegExp doesn't detect two successive quantifiers as an error</test>
+  <test id="S15.10.1_A1_T14">Java RegExp doesn't detect two successive quantifiers as an error</test>
+  <test id="S15.10.1_A1_T3">Java RegExp doesn't detect two successive quantifiers as an error</test>
+  <test id="S12.6.3_A2.2">See issue 49</test>
+  <test id="S12.6.3_A2.1">See issue 49</test>
+  <test id="S12.6.3_A2">See issue 49</test>
 </excludeList>
