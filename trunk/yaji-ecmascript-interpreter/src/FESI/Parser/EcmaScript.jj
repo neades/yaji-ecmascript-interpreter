@@ -1060,6 +1060,74 @@ void Identifier()             :
 /*@egen*/
 }
 
+void IdentifierName()             :
+{/*@bgen(jjtree) Identifier */
+        ASTIdentifier jjtn000 = new ASTIdentifier(JJTIDENTIFIER);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+        jjtreeOpenNodeScope(jjtn000);
+/*@egen*/
+	Token t;
+}
+{/*@bgen(jjtree) Identifier */
+        try {
+/*@egen*/
+	( t=<IDENTIFIER>
+	| t=<BREAK>
+    | t=<CONTINUE>
+    | t=<DELETE>
+    | t=<ELSE>
+    | t=<FOR>
+    | t=<FUNCTION>
+    | t=<IF>
+    | t=<IN>
+    | t=<NEW>
+    | t=<RETURN>
+    | t=<THIS>
+    | t=<TYPEOF>
+    | t=<VAR>
+    | t=<VOID>
+    | t=<WHILE>
+    | t=<WITH>
+    | t=<CASE>
+    | t=<CATCH>
+    | t=<CLASS>
+    | t=<CONST>
+    | t=<DEBUGGER>
+    | t=<_DEFAULT>
+    | t=<DO>
+    | t=<ENUM>
+    | t=<EXPORT>
+    | t=<EXTENDS>
+    | t=<FINALLY>
+    | t=<IMPORT>
+    | t=<SUPER>
+    | t=<SWITCH>
+    | t=<THROW>
+    | t=<TRY>
+    | t=<INSTANCEOF>
+    | t=<TRUE>
+    | t=<FALSE>
+    | t=<NULL>
+    | t=<GET>
+    | t=<SET> )/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+    jjtreeCloseNodeScope(jjtn000);
+  }
+/*@egen*/
+  {
+    jjtn000.setName(t.image);
+  }/*@bgen(jjtree)*/
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+            jjtreeCloseNodeScope(jjtn000);
+          }
+        }
+/*@egen*/	
+}
 
 /*---------------------------------------------*
  * THE ECMASCRIPT LANGUAGE GRAMMAR STARTS HERE *
@@ -1509,7 +1577,7 @@ void PrimarySuffix()       :
             jjtreeOpenNodeScope(jjtn003);
           }
           try {
-/*@egen*/ ( "." Identifier() )/*@bgen(jjtree)*/
+/*@egen*/ ( "." IdentifierName() )/*@bgen(jjtree)*/
           } catch (Throwable jjte003) {
             if (jjtc003) {
               jjtree.clearNodeScope(jjtn003);
@@ -2233,7 +2301,7 @@ void PropertyName()       :
 {
 }
 {
-	( Identifier()
+	( IdentifierName()
 	| StringLiteral()
 	| NumericLiteral() )
 }

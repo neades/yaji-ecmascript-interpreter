@@ -181,6 +181,12 @@ public class StrictMode extends AbstractEcmaScriptVisitor {
             isGet = true;
         } else if (child instanceof ASTSetAccessor) {
             isSet = true;
+            
+            Node identifierNode = node.jjtGetChild(2);
+            if (identifierNode instanceof ASTIdentifier) {
+                ASTIdentifier arg = (ASTIdentifier)identifierNode;
+                throwSyntaxIfinvalidIdentifierInStrictMode(node, arg.getName());
+            }
         }
         child = node.jjtGetChild(1);
         if (child instanceof ASTIdentifier) {

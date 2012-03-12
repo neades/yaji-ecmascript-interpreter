@@ -474,6 +474,16 @@ public class EcmascriptParserTest {
                     + "   EmptyExpression" + eol 
                     + "   Statement" + eol 
                     + "    StatementList" + eol 
+                },
+                { "var o = { null: true };",
+                    "Program" + eol
+                    + " Statement" + eol
+                    + "  VariableDeclaration" + eol
+                    + "   <o>" + eol
+                    + "   ObjectLiteral" + eol
+                    + "    PropertyNameAndValue" + eol
+                    + "     <null>" + eol
+                    + "     [true]" + eol
                 }
            });
     }
