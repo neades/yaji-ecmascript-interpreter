@@ -1046,7 +1046,7 @@ public class Evaluator implements Serializable {
 
         currentVariableObject = variableObject;
         if (isStrictMode()) {
-            currentThisObject = thisObject;
+            currentThisObject = ( thisObject == globalObject ) ? ESUndefined.theUndefined : thisObject;
         } else {
             currentThisObject = (thisObject == ESUndefined.theUndefined || thisObject == ESNull.theNull || thisObject == null) ? getGlobalObject() : thisObject.toESObject(this);
         }

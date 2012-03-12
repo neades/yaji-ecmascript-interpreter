@@ -930,6 +930,54 @@ void Identifier() #Identifier :
   }
 }
 
+void IdentifierName() #Identifier :
+{
+	Token t;
+}
+{
+	( t=<IDENTIFIER>
+	| t=<BREAK>
+    | t=<CONTINUE>
+    | t=<DELETE>
+    | t=<ELSE>
+    | t=<FOR>
+    | t=<FUNCTION>
+    | t=<IF>
+    | t=<IN>
+    | t=<NEW>
+    | t=<RETURN>
+    | t=<THIS>
+    | t=<TYPEOF>
+    | t=<VAR>
+    | t=<VOID>
+    | t=<WHILE>
+    | t=<WITH>
+    | t=<CASE>
+    | t=<CATCH>
+    | t=<CLASS>
+    | t=<CONST>
+    | t=<DEBUGGER>
+    | t=<_DEFAULT>
+    | t=<DO>
+    | t=<ENUM>
+    | t=<EXPORT>
+    | t=<EXTENDS>
+    | t=<FINALLY>
+    | t=<IMPORT>
+    | t=<SUPER>
+    | t=<SWITCH>
+    | t=<THROW>
+    | t=<TRY>
+    | t=<INSTANCEOF>
+    | t=<TRUE>
+    | t=<FALSE>
+    | t=<NULL>
+    | t=<GET>
+    | t=<SET> )
+  {
+    jjtThis.setName(t.image);
+  }	
+}
 
 /*---------------------------------------------*
  * THE ECMASCRIPT LANGUAGE GRAMMAR STARTS HERE *
@@ -994,7 +1042,7 @@ void PrimarySuffix() #void :
 {
 	( ( Arguments() ) #FunctionCallParameters )
 | 	( ( "[" Expression() "]" ) #PropertyValueReference )
-| 	( ( "." Identifier() ) # PropertyIdentifierReference )
+| 	( ( "." IdentifierName() ) # PropertyIdentifierReference )
 }
 
 
@@ -1104,7 +1152,7 @@ void PropertyName() #void :
 {
 }
 {
-	( Identifier()
+	( IdentifierName()
 	| StringLiteral()
 	| NumericLiteral() )
 }

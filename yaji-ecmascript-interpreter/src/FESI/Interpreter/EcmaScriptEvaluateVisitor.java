@@ -1823,14 +1823,14 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
             if (previous != null) {
                 if ((!previous.isAccessorDescriptor() && value.isAccessorDescriptor())
                         || (previous.isAccessorDescriptor() && !value.isAccessorDescriptor())) {
-                    throw new EcmaScriptException(
+                    throw new SyntaxError(
                             "Object literal may not have data and accessor property with the same name");
                 }
 
                 if (previous.isAccessorDescriptor() && value.isAccessorDescriptor()
                         && (previous.hasGetAccessorDescriptor() && value.hasGetAccessorDescriptor())
                         || (previous.hasSetAccessorDescriptor() && value.hasSetAccessorDescriptor())) {
-                    throw new EcmaScriptException(
+                    throw new SyntaxError(
                             "Object literal may not have multiple get/set accessors with the same name");
                 }
                 

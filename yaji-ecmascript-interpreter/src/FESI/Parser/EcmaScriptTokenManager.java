@@ -3599,7 +3599,7 @@ public Token getNextToken()
            curChar = input_stream.readChar();
            continue;
         }
-        catch (java.io.IOException e1) {
+        catch (java.io.IOException e1) { 
             // not expected
         }
      }
