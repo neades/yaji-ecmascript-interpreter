@@ -93,6 +93,7 @@ import FESI.Data.RegExpPrototype;
 import FESI.Data.StandardProperty;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
+import FESI.Exceptions.ReferenceError;
 import FESI.Exceptions.SyntaxError;
 import FESI.Exceptions.TypeError;
 import FESI.Interpreter.Evaluator.EvaluationResult;
@@ -726,7 +727,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                 if (lvo instanceof ESReference) {
                     lv = (ESReference) lvo;
                 } else {
-                    throw new EcmaScriptException("Value '" + lvo.toString()
+                    throw new ReferenceError("Value '" + lvo.toString()
                             + "' is not an assignable object or property");
                 }
                 evaluator.putValue(lv, s);
@@ -958,7 +959,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                             // System.out.println("--->NB = " + newBase +
                             // "<---");
                             if (newBase instanceof ESUndefined) {
-                                throw new EcmaScriptException("Variable '" + propertyName
+                                throw new TypeError("Variable '" + propertyName
                                         + "' has an undefined value");
                             }
                         } else {
@@ -970,7 +971,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                             newBase = currentBase.getProperty(propertyName,
                                     propertyName.hashCode());
                             if (newBase instanceof ESUndefined) {
-                                throw new EcmaScriptException("The property '"
+                                throw new TypeError("The property '"
                                         + propertyName
                                         + "' is not defined in object '"
                                         + currentBase.toString() + "'");
@@ -1117,19 +1118,18 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                 // We want a reference - therefore it cannot be just a value, it
                 // must be a delayed reference.
                 if (lastResult == null) {
-                    throw new EcmaScriptException(
-                            "'undefined' is not an assignable value");
-                }
-                if (currentProperty == null) {
-                    throw new EcmaScriptException("'" + lastResult.toString()
+                    result = new ESReference( "'undefined' is not an assignable value");
+                } else if (currentProperty == null) {
+                    result = new ESReference("'" + lastResult.toString()
                             + "' is not an assignable value");
+                } else {
+                    ESObject currentBase = lastResult.toESObject(evaluator);
+                    String propertyName = currentProperty.toString();
+                    // System.out.println("--->Build ref cb: " + currentBase +
+                    // " pn: " + propertyName + "<---"); // ********
+                    result = new ESReference(currentBase, propertyName,
+                            propertyName.hashCode());
                 }
-                ESObject currentBase = lastResult.toESObject(evaluator);
-                String propertyName = currentProperty.toString();
-                // System.out.println("--->Build ref cb: " + currentBase +
-                // " pn: " + propertyName + "<---"); // ********
-                result = new ESReference(currentBase, propertyName,
-                        propertyName.hashCode());
             }
 
             return result;
@@ -1217,11 +1217,11 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
             if (lvo instanceof ESReference) {
                 lv = (ESReference) lvo;
             } else {
-                throw new EcmaScriptException("Value '" + lvo.toString()
+                throw new ReferenceError("Value '" + lvo.toString()
                         + "' is not an assignable object or property");
             }
             int operator = ((ASTOperator) (node.jjtGetChild(1))).getOperator();
-            result = lv.getValue();
+            result = lv.getValue().toESNumber();
             ESValue vr;
             if (operator == INCR) {
                 vr = result.increment();
@@ -1253,8 +1253,8 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                 if (lvo instanceof ESReference) {
                     ESReference lv = (ESReference) lvo;
                     ESValue base = lv.getBase();
-                    String propertyName = lv.getPropertyName();
                     if (base instanceof ESObject) {
+                        String propertyName = lv.getPropertyName();
                         r = ESBoolean.valueOf(((ESObject) base).deleteProperty(
                                 propertyName, propertyName.hashCode()));
                     } else {
@@ -1297,7 +1297,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                 if (lvo instanceof ESReference) {
                     lv = (ESReference) lvo;
                 } else {
-                    throw new EcmaScriptException("Value '" + lvo.toString()
+                    throw new ReferenceError("Value '" + lvo.toString()
                             + "' is not an assignable object or property");
                 }
                 ESValue v = lv.getValue();
@@ -1312,7 +1312,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                 if (lvo instanceof ESReference) {
                     lv = (ESReference) lvo;
                 } else {
-                    throw new EcmaScriptException("Value '" + lvo.toString()
+                    throw new ReferenceError("Value '" + lvo.toString()
                             + "' is not an assignable object or property");
                 }
                 ESValue v = lv.getValue();
@@ -1501,8 +1501,6 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                         FOR_VALUE));
                 i++;
             }
-            // Normalize to primitive - could be optimized...
-            result = ESBoolean.valueOf(result.booleanValue());
         } catch (EcmaScriptException e) {
             throw new PackagedException(e, node);
         }
@@ -1521,9 +1519,6 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                         FOR_VALUE));
                 i++;
             }
-            // Normalize to primitive - could be optimized...
-            result = ESBoolean.valueOf(result.booleanValue());
-
         } catch (EcmaScriptException e) {
             throw new PackagedException(e, node);
         }
@@ -1567,7 +1562,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
             if (lvo instanceof ESReference) {
                 lv = (ESReference) lvo;
             } else {
-                throw new EcmaScriptException("Value '" + lvo.toString()
+                throw new ReferenceError("Value '" + lvo.toString()
                         + "' is not an assignable object or property");
             }
 

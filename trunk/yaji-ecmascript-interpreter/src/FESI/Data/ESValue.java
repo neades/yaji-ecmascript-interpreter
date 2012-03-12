@@ -413,7 +413,7 @@ public abstract class ESValue implements java.io.Serializable {
     }
 
     public ESValue decrement() throws EcmaScriptException {
-        double dv = doubleValue();
+        double dv = toESNumber().doubleValue();
         dv--;
         return ESNumber.valueOf(dv);
     }

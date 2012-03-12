@@ -803,9 +803,9 @@ TOKEN :
 | < SC_OR: "||" > : DEFAULT
 | < SC_AND: "&&" > : DEFAULT
 | < INCR: "++" > { if (matchedToken.specialToken != null && matchedToken.specialToken.kind == EOL) { matchedToken.kind = NL_INCR; } } : DEFAULT
-| < NL_INCR: "\n++" > : DEFAULT
+| < NL_INCR: [ "\r" , "\n" , "\u2028" , "\u2029"] "++" > : DEFAULT
 | < DECR: "--" > { if (matchedToken.specialToken != null && matchedToken.specialToken.kind == EOL) { matchedToken.kind = NL_DECR; } } : DEFAULT
-| < NL_DECR: "\n--" > : DEFAULT
+| < NL_DECR: [ "\r" , "\n" , "\u2028" , "\u2029"] "--" > : DEFAULT
 | < PLUS: "+" > : DEFAULT
 | < MINUS: "-" > : DEFAULT
 | < STAR: "*" > : DEFAULT
@@ -1038,7 +1038,7 @@ void AllocationExpression() #void :
             #AllocationExpression( 2 )
            )
          | (
-            ( ( ( Identifier() | RegexpLiteral() ) ( NewSuffix() )* ) #CompositeReference(>1) )
+            ( ( ( Identifier() | Literal() ) ( NewSuffix() )* ) #CompositeReference(>1) )
             ( 
              ( 
               (Arguments() #FunctionCallParameters) ( PrimarySuffix() {  stack.add(jjtree.popNode()); } )* 

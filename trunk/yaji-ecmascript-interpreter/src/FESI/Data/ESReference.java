@@ -34,6 +34,7 @@ public class ESReference {
     private ESObject base; // null means a property of the global object
     private String propertyName; // Should never be null for a valid reference
     private int hash; // hashCode of propertyName
+    private String error;
 
     /**
      * Create a new reference given a base and a property name
@@ -53,6 +54,10 @@ public class ESReference {
         this.base = (ESObject) base;
         this.propertyName = propertyName;
         this.hash = hash;
+    }
+
+    public ESReference(String string) {
+        this.error = string;
     }
 
     /**
@@ -106,6 +111,9 @@ public class ESReference {
      *                if the value is not defined
      */
     public ESValue getValue() throws EcmaScriptException {
+        if (error != null) {
+            return null;
+        }
         if (base == null) {
             throw new EcmaScriptException("Variable '" + propertyName
                     + "' does not exist in the scope chain", NativeErrorObject.REFERENCE_ERROR);
@@ -128,6 +136,9 @@ public class ESReference {
         putValue(g,v,true);
     }
     public void putValue(ESObject g, ESValue v, boolean configurable) throws EcmaScriptException {
+        if (error != null) {
+            throw new EcmaScriptException(error);
+        }
         if (base == null) {
             if (g != null) {
                 if (configurable) {
@@ -151,6 +162,9 @@ public class ESReference {
      * @return a string
      */
     public String toDetailString() {
+        if (error != null) {
+            return error;
+        }
         return "ES:*<" + ((base == null) ? "null" : base.toString()) + ":"
                 + propertyName + ">";
     }
@@ -166,6 +180,9 @@ public class ESReference {
      */
     @Override
     public String toString() {
+        if (error != null) {
+            return error;
+        }
         return ((base == null) ? "" : ("{" + base.toString() + "}."))
                 + propertyName;
     }
