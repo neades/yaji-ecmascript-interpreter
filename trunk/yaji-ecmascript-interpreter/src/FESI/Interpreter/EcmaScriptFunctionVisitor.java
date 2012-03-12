@@ -28,8 +28,6 @@ import FESI.AST.ASTStatementList;
 import FESI.AST.AbstractEcmaScriptVisitor;
 import FESI.AST.SimpleNode;
 import FESI.Data.ConstructedFunctionObject;
-import FESI.Data.ESReference;
-import FESI.Data.GlobalObject;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.ProgrammingError;
 import FESI.Parser.EcmaScriptConstants;
@@ -117,15 +115,13 @@ public class EcmaScriptFunctionVisitor extends AbstractEcmaScriptVisitor impleme
 
         if (debug)
             System.out.println("FUNC DECL: " + idNode.getName());
-        GlobalObject go = evaluator.getGlobalObject();
         try {
-            ESReference newVar = new ESReference(go, idNode.getName(), idNode
-                    .hashCode());
+            String name = idNode.getName();
             ConstructedFunctionObject func = ConstructedFunctionObject
-                    .makeNewConstructedFunction(evaluator, idNode.getName(),
+                    .makeNewConstructedFunction(evaluator, name,
                             fes, node.getSourceString(), fpl.getArguments(),
                             variableNames, sl, null, node.isStrictMode());
-            newVar.putValue(go, func, false);
+            evaluator.createFunction(name, name.hashCode(), func);
         } catch (EcmaScriptException e) {
             throw new PackagedException(e, node);
         }
