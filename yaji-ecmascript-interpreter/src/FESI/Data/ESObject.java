@@ -902,7 +902,7 @@ public abstract class ESObject extends ESValue implements IDescriptor {
                 return prototype.doIndirectCallInScope(evaluator, previousScope, thisObject, functionName, hash, arguments);
             }
             if (previousScope == null) {
-                throw new EcmaScriptException("no global function named '"
+                throw new ReferenceError("no global function named '"
                         + functionName + "'");
             }
             return previousScope.doIndirectCall(evaluator, thisObject,

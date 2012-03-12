@@ -924,7 +924,7 @@ public class ESWrapper extends ESObject {
                     arguments);
         } catch (NoSuchMethodException e) {
             if (previousScope == null) {
-                throw new EcmaScriptException("no global function named '"
+                throw new ReferenceError("no global function named '"
                         + functionName + "'");
             }
             return previousScope.doIndirectCall(evaluator, thisObject,

@@ -809,9 +809,9 @@ TOKEN :
 | < SC_OR: "||" > : DEFAULT
 | < SC_AND: "&&" > : DEFAULT
 | < INCR: "++" > { if (matchedToken.specialToken != null && matchedToken.specialToken.kind == EOL) { matchedToken.kind = NL_INCR; } } : DEFAULT
-| < NL_INCR: "\n++" > : DEFAULT
+| < NL_INCR: [ "\r" , "\n" , "\u2028" , "\u2029"] "++" > : DEFAULT
 | < DECR: "--" > { if (matchedToken.specialToken != null && matchedToken.specialToken.kind == EOL) { matchedToken.kind = NL_DECR; } } : DEFAULT
-| < NL_DECR: "\n--" > : DEFAULT
+| < NL_DECR: [ "\r" , "\n" , "\u2028" , "\u2029"] "--" > : DEFAULT
 | < PLUS: "+" > : DEFAULT
 | < MINUS: "-" > : DEFAULT
 | < STAR: "*" > : DEFAULT
@@ -1779,7 +1779,7 @@ void AllocationExpression()       :
                 jjtreeOpenNodeScope(jjtn006);
               }
               try {
-/*@egen*/ ( ( Identifier() | RegexpLiteral() ) ( NewSuffix() )* )/*@bgen(jjtree)*/
+/*@egen*/ ( ( Identifier() | Literal() ) ( NewSuffix() )* )/*@bgen(jjtree)*/
               } catch (Throwable jjte006) {
                 if (jjtc006) {
                   jjtree.clearNodeScope(jjtn006);
