@@ -16,7 +16,7 @@ public class EvaluatorTestCase {
     protected GlobalObject globalObject;
 
     protected void setUp() throws Exception {
-        evaluator = new Evaluator();
+        evaluator = createEvaluator();
         EvaluatorAccess.setAccessor(new IEvaluatorAccess() {
             
             public Evaluator getEvaluator() {
@@ -28,6 +28,10 @@ public class EvaluatorTestCase {
         objectObject = (BuiltinFunctionObject) globalObject.getProperty("Object","Object".hashCode());
         arrayObject = (BuiltinFunctionObject) globalObject.getProperty("Array","Array".hashCode());
         dateObject = (BuiltinFunctionObject) globalObject.getProperty("Date");
+    }
+
+    public Evaluator createEvaluator() {
+        return new Evaluator();
     }
     
     protected void tearDown() throws Exception {

@@ -8,8 +8,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import FESI.AST.ASTProgram;
+import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.TypeError;
 import FESI.Interpreter.EcmaScriptFunctionVisitor;
+import FESI.Interpreter.Evaluator;
 import FESI.Parser.EcmaScript;
 
 
@@ -26,6 +28,20 @@ public class FunctionConstructorTest extends EvaluatorTestCase {
         functionVisitor.visit((ASTProgram)es.Program(), null);
 
         function = (ESObject) evaluator.getGlobalObject().getProperty("blah","blah".hashCode());
+    }
+    
+    @Override
+    public Evaluator createEvaluator() {
+        return new Evaluator() {
+            private static final long serialVersionUID = 7077427617445434910L;
+
+            @Override
+            public void createFunction(String name, int hashCode, ESValue value)
+                    throws EcmaScriptException {
+                currentVariableObject = globalObject;
+                super.createFunction(name, hashCode, value);
+            }
+        };
     }
     @Test public void shouldImplementCallOnFunctionDeclarations() throws Exception {
         ESValue value = function.doIndirectCall(evaluator, function, "call", new ESValue[] { evaluator.getGlobalObject() });

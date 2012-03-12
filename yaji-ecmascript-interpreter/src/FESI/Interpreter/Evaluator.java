@@ -59,7 +59,6 @@ import FESI.Data.ESWrapper;
 import FESI.Data.GlobalObject;
 import FESI.Data.IObjectProfiler;
 import FESI.Data.JSGlobalWrapper;
-import FESI.Data.ObjectObject;
 import FESI.Exceptions.EcmaScriptException;
 import FESI.Exceptions.EcmaScriptLexicalException;
 import FESI.Exceptions.EcmaScriptParseException;
@@ -126,7 +125,7 @@ public class Evaluator implements Serializable {
 
     // Current environment
     protected ScopeChain theScopeChain = null;
-    private ESObject currentVariableObject = null;
+    protected ESObject currentVariableObject = null;
     private ESValue currentThisObject = null;
     private EvaluationSource currentEvaluationSource = null;
 
@@ -666,10 +665,20 @@ public class Evaluator implements Serializable {
      */
     public void createVariable(String name, int hashCode)
             throws EcmaScriptException {
+        createVariable(name, hashCode, ESUndefined.theUndefined);
+    }
+
+    public void createVariable(String name, int hashCode, ESValue value)
+            throws EcmaScriptException {
         if (!currentVariableObject.hasProperty(name, hashCode)) {
             ESReference newVar = new ESReference(currentVariableObject, name, hashCode);
-            newVar.putValue(currentVariableObject, ESUndefined.theUndefined, false);
+            newVar.putValue(currentVariableObject, value, false);
         }
+    }
+    public void createFunction(String name, int hashCode, ESValue value)
+            throws EcmaScriptException {
+        ESReference newVar = new ESReference(currentVariableObject, name, hashCode);
+        newVar.putValue(currentVariableObject, value, false);
     }
 
     /**
@@ -731,21 +740,23 @@ public class Evaluator implements Serializable {
             }
             throw new EcmaScriptLexicalException(e, es);
         }
+        ScopeChain previousScopeChain = theScopeChain;
+
+        EvaluationSource savedEvaluationSource = currentEvaluationSource;
+        currentEvaluationSource = es;
 
         ESObject savedVariableObject = currentVariableObject;
         boolean savedStrictMode = strictMode;
 
         try {
 
-            functionDeclarationVisitor.processFunctionDeclarations(programNode,
-                    es);
-            List<String> variableDeclarations = varDeclarationVisitor.processVariableDeclarations(programNode, es);
             strictMode = programNode.isStrictMode();
             if (strictMode || savedStrictMode) {
-                currentVariableObject = ObjectObject.createObject(this);
-            } else {
-                currentVariableObject = globalObject;
+                currentVariableObject = GlobalObject.makeGlobalObject(this);
+                theScopeChain = new ScopeChain(currentVariableObject, null, false);
             }
+            functionDeclarationVisitor.processFunctionDeclarations(programNode,es);
+            List<String> variableDeclarations = varDeclarationVisitor.processVariableDeclarations(programNode, es);
             for (String variable : variableDeclarations) {
                 createVariable(variable, variable.hashCode());
             }
@@ -764,6 +775,8 @@ public class Evaluator implements Serializable {
             }
         } finally {
             currentVariableObject = savedVariableObject;
+            currentEvaluationSource = savedEvaluationSource;
+            theScopeChain = previousScopeChain;
             strictMode = savedStrictMode;
             setDirectCallToEval(false);
         }
