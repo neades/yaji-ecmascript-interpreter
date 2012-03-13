@@ -8,6 +8,8 @@ import FESI.Data.ESNull;
 import FESI.Data.ESNumber;
 import FESI.Data.ESString;
 import FESI.Data.ESValue;
+import FESI.Exceptions.SyntaxError;
+import FESI.Interpreter.PackagedException;
 import FESI.Parser.EcmaScript;
 
 public class ASTLiteral extends SimpleNode {
@@ -43,7 +45,7 @@ public class ASTLiteral extends SimpleNode {
         return theValue;
     }
 
-    public void setStringValue(String image) {
+    public void setStringValue(String image, boolean strictMode) {
         int length = image.length();
         StringBuilder sb = new StringBuilder(length);
         forloop: for (int i = 0; i < length; i++) {
@@ -89,9 +91,15 @@ public class ASTLiteral extends SimpleNode {
                     i += 4;
                 } else if (c >= '0' && c <= '7') {
                     c = (char) (octval(c));
+                    if (c != '0' && strictMode) {
+                        failHandlingOctalInStrictMode();
+                    }
                     if ((i+1) < length) {
                         char c1 = image.charAt(i + 1);
                         if (isOctal(c1)) {
+                            if (strictMode) {
+                                failHandlingOctalInStrictMode();
+                            }
                             i++;
                             c = (char) ((c << 3) | octval(c1));
                             if (i < length && c <= '\037') {
@@ -115,6 +123,10 @@ public class ASTLiteral extends SimpleNode {
             sb.append(c);
         }
         theValue = new ESString(sb.toString());
+    }
+
+    public void failHandlingOctalInStrictMode() {
+        throw new PackagedException(new SyntaxError("Octal literals are not allowed in Strict Mode"), this);
     }
 
     public void setDecimalValue(String image) {

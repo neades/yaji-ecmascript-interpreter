@@ -40,6 +40,8 @@ PARSER_BEGIN(EcmaScript)
 package FESI.Parser;
 
 import FESI.AST.*;
+import FESI.Exceptions.SyntaxError;
+import FESI.Interpreter.PackagedException;
 
 @SuppressWarnings("all")
 public class EcmaScript {
@@ -106,6 +108,7 @@ public class EcmaScript {
 	}
 
     private boolean strictMode = false;
+    private boolean firstElement = true;
 }
 PARSER_END(EcmaScript)
 
@@ -844,6 +847,9 @@ void NumericLiteral() #Literal :
 |
   t = <OCTAL_LITERAL>
   {
+    if (strictMode && ! t.image.equals("0")) {
+      throw new PackagedException(new SyntaxError("Octal literals are not allowed in Strict Mode"), jjtThis);
+    }
     jjtThis.setOctalValue(t.image);
   }
 |
@@ -1164,7 +1170,11 @@ void StringLiteral() #Literal :
 {
   t = <STRING_LITERAL>
   {
-    jjtThis.setStringValue(t.image.substring(1,t.image.length()-1));
+    String value = t.image.substring(1,t.image.length()-1);
+    if (firstElement && value.equals("use strict")) {
+    	strictMode = true;
+    }
+    jjtThis.setStringValue(value,strictMode);
   }
 }
 
@@ -1894,7 +1904,8 @@ SimpleNode FormalParameterList() #FormalParameterList :
 SimpleNode Program() #Program :
 {}
 {
-  ( SourceElement() )*  <EOF>
+  { firstElement = true; }
+  ( SourceElement() { firstElement = false; } )*  <EOF>
   { return StrictMode.validate(jjtThis,strictMode); }
 }
 

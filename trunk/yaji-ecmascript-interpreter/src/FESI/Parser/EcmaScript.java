@@ -5,6 +5,8 @@ import FESI.AST.*;
 
 
 import FESI.AST.*;
+import FESI.Exceptions.SyntaxError;
+import FESI.Interpreter.PackagedException;
 
 @SuppressWarnings("all")
 public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, EcmaScriptConstants {/*@bgen(jjtree)*/
@@ -71,6 +73,7 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
         }
 
     private boolean strictMode = false;
+    private boolean firstElement = true;
 
   final public void NumericLiteral() throws ParseException {
  /*@bgen(jjtree) Literal */
@@ -92,6 +95,9 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
     jjtreeCloseNodeScope(jjtn000);
+    if (strictMode && ! t.image.equals("0")) {
+      {if (true) throw new PackagedException(new SyntaxError("Octal literals are not allowed in Strict Mode"), jjtn000);}
+    }
     jjtn000.setOctalValue(t.image);
         break;
       case HEX_LITERAL:
@@ -2119,7 +2125,11 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
     jjtreeCloseNodeScope(jjtn000);
-    jjtn000.setStringValue(t.image.substring(1,t.image.length()-1));
+    String value = t.image.substring(1,t.image.length()-1);
+    if (firstElement && value.equals("use strict")) {
+        strictMode = true;
+    }
+    jjtn000.setStringValue(value,strictMode);
     } finally {
     if (jjtc000) {
       jjtree.closeNodeScope(jjtn000, true);
@@ -6119,6 +6129,7 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
   jjtree.openNodeScope(jjtn000);
   jjtreeOpenNodeScope(jjtn000);
     try {
+    firstElement = true;
       label_49:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -6173,6 +6184,7 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
           break label_49;
         }
         SourceElement();
+                      firstElement = false;
       }
       jj_consume_token(0);
     jjtree.closeNodeScope(jjtn000, true);
@@ -6410,40 +6422,8 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     finally { jj_save(8, xla); }
   }
 
-  private boolean jj_3R_86() {
-    if (jj_scan_token(SC_OR)) return true;
-    if (jj_3R_85()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_274() {
-    if (jj_3R_277()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_278()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3R_164() {
-    if (jj_3R_174()) return true;
-    return false;
-  }
-
   private boolean jj_3R_206() {
     if (jj_3R_165()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_195() {
-    if (jj_3R_205()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_68() {
-    if (jj_3R_78()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_79()) jj_scanpos = xsp;
     return false;
   }
 
@@ -6453,12 +6433,8 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_83() {
-    if (jj_scan_token(LBRACE)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_164()) jj_scanpos = xsp;
-    if (jj_scan_token(RBRACE)) return true;
+  private boolean jj_3R_195() {
+    if (jj_3R_205()) return true;
     return false;
   }
 
@@ -6482,13 +6458,12 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_184() {
-    if (jj_3R_87()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_191() {
-    if (jj_3R_205()) return true;
+  private boolean jj_3R_83() {
+    if (jj_scan_token(LBRACE)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_164()) jj_scanpos = xsp;
+    if (jj_scan_token(RBRACE)) return true;
     return false;
   }
 
@@ -6508,6 +6483,16 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
+  private boolean jj_3R_184() {
+    if (jj_3R_87()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_191() {
+    if (jj_3R_205()) return true;
+    return false;
+  }
+
   private boolean jj_3R_194() {
     if (jj_3R_100()) return true;
     return false;
@@ -6523,11 +6508,6 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
       if (jj_3R_185()) { jj_scanpos = xsp; break; }
     }
     if (jj_scan_token(RBRACKET)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_183() {
-    if (jj_3R_101()) return true;
     return false;
   }
 
@@ -6557,13 +6537,8 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_197() {
-    if (jj_3R_188()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_208()) { jj_scanpos = xsp; break; }
-    }
+  private boolean jj_3R_183() {
+    if (jj_3R_101()) return true;
     return false;
   }
 
@@ -6583,6 +6558,16 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
+  private boolean jj_3R_197() {
+    if (jj_3R_188()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_208()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
   private boolean jj_3R_182() {
     if (jj_scan_token(LPAREN)) return true;
     if (jj_3R_118()) return true;
@@ -6593,24 +6578,14 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_193() {
-    if (jj_3R_52()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_196() {
-    if (jj_3R_188()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_207()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
   private boolean jj_3R_104() {
     if (jj_3R_115()) return true;
     if (jj_3R_103()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_193() {
+    if (jj_3R_52()) return true;
     return false;
   }
 
@@ -6620,6 +6595,16 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     while (true) {
       xsp = jj_scanpos;
       if (jj_3R_282()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_196() {
+    if (jj_3R_188()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_207()) { jj_scanpos = xsp; break; }
     }
     return false;
   }
@@ -6640,16 +6625,6 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_192() {
-    if (jj_3R_188()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_206()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
   private boolean jj_3R_85() {
     if (jj_3R_94()) return true;
     Token xsp;
@@ -6666,9 +6641,13 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_213() {
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_87()) return true;
+  private boolean jj_3R_192() {
+    if (jj_3R_188()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_206()) { jj_scanpos = xsp; break; }
+    }
     return false;
   }
 
@@ -6679,6 +6658,12 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
       xsp = jj_scanpos;
       if (jj_3R_126()) { jj_scanpos = xsp; break; }
     }
+    return false;
+  }
+
+  private boolean jj_3R_213() {
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_87()) return true;
     return false;
   }
 
@@ -6742,13 +6727,6 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_212() {
-    if (jj_scan_token(LBRACKET)) return true;
-    if (jj_3R_118()) return true;
-    if (jj_scan_token(RBRACKET)) return true;
-    return false;
-  }
-
   private boolean jj_3R_94() {
     if (jj_3R_103()) return true;
     Token xsp;
@@ -6762,6 +6740,23 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
   private boolean jj_3R_114() {
     if (jj_3R_124()) return true;
     if (jj_3R_113()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_212() {
+    if (jj_scan_token(LBRACKET)) return true;
+    if (jj_3R_118()) return true;
+    if (jj_scan_token(RBRACKET)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_125() {
+    if (jj_3R_133()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_134()) { jj_scanpos = xsp; break; }
+    }
     return false;
   }
 
@@ -6786,13 +6781,12 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_125() {
-    if (jj_3R_133()) return true;
+  private boolean jj_3R_262() {
+    if (jj_scan_token(_DEFAULT)) return true;
+    if (jj_scan_token(COLON)) return true;
     Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_134()) { jj_scanpos = xsp; break; }
-    }
+    xsp = jj_scanpos;
+    if (jj_3R_273()) jj_scanpos = xsp;
     return false;
   }
 
@@ -6808,15 +6802,6 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
 
   private boolean jj_3R_203() {
     if (jj_3R_209()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_262() {
-    if (jj_scan_token(_DEFAULT)) return true;
-    if (jj_scan_token(COLON)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_273()) jj_scanpos = xsp;
     return false;
   }
 
@@ -6850,13 +6835,13 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_167() {
-    if (jj_3R_178()) return true;
+  private boolean jj_3R_115() {
+    if (jj_scan_token(BIT_OR)) return true;
     return false;
   }
 
-  private boolean jj_3R_115() {
-    if (jj_scan_token(BIT_OR)) return true;
+  private boolean jj_3R_167() {
+    if (jj_3R_178()) return true;
     return false;
   }
 
@@ -6870,19 +6855,6 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_177() {
-    if (jj_scan_token(DOT)) return true;
-    if (jj_3R_65()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_176() {
-    if (jj_scan_token(LBRACKET)) return true;
-    if (jj_3R_118()) return true;
-    if (jj_scan_token(RBRACKET)) return true;
-    return false;
-  }
-
   private boolean jj_3R_283() {
     if (jj_3R_285()) return true;
     Token xsp;
@@ -6890,24 +6862,6 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
       xsp = jj_scanpos;
       if (jj_3R_286()) { jj_scanpos = xsp; break; }
     }
-    return false;
-  }
-
-  private boolean jj_3R_165() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_175()) {
-    jj_scanpos = xsp;
-    if (jj_3R_176()) {
-    jj_scanpos = xsp;
-    if (jj_3R_177()) return true;
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_175() {
-    if (jj_3R_188()) return true;
     return false;
   }
 
@@ -6928,9 +6882,40 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
+  private boolean jj_3R_177() {
+    if (jj_scan_token(DOT)) return true;
+    if (jj_3R_65()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_176() {
+    if (jj_scan_token(LBRACKET)) return true;
+    if (jj_3R_118()) return true;
+    if (jj_scan_token(RBRACKET)) return true;
+    return false;
+  }
+
   private boolean jj_3R_288() {
     if (jj_3R_132()) return true;
     if (jj_3R_143()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_165() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_175()) {
+    jj_scanpos = xsp;
+    if (jj_3R_176()) {
+    jj_scanpos = xsp;
+    if (jj_3R_177()) return true;
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_175() {
+    if (jj_3R_188()) return true;
     return false;
   }
 
@@ -6956,16 +6941,6 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_99() {
-    if (jj_scan_token(SUPER)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_172() {
-    if (jj_3R_165()) return true;
-    return false;
-  }
-
   private boolean jj_3R_133() {
     if (jj_3R_138()) return true;
     Token xsp;
@@ -6976,8 +6951,13 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_166() {
-    if (jj_3R_52()) return true;
+  private boolean jj_3R_99() {
+    if (jj_scan_token(SUPER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_172() {
+    if (jj_3R_165()) return true;
     return false;
   }
 
@@ -6997,14 +6977,14 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_173() {
-    if (jj_3R_165()) return true;
-    return false;
-  }
-
   private boolean jj_3R_144() {
     if (jj_3R_132()) return true;
     if (jj_3R_143()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_166() {
+    if (jj_3R_52()) return true;
     return false;
   }
 
@@ -7013,23 +6993,13 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_171() {
+  private boolean jj_3R_173() {
     if (jj_3R_165()) return true;
     return false;
   }
 
   private boolean jj_3R_249() {
     if (jj_3R_259()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_163() {
-    if (jj_3R_165()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_170() {
-    if (jj_3R_165()) return true;
     return false;
   }
 
@@ -7054,8 +7024,23 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
+  private boolean jj_3R_171() {
+    if (jj_3R_165()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_163() {
+    if (jj_3R_165()) return true;
+    return false;
+  }
+
   private boolean jj_3R_248() {
     if (jj_3R_118()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_170() {
+    if (jj_3R_165()) return true;
     return false;
   }
 
@@ -7066,24 +7051,6 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
       xsp = jj_scanpos;
       if (jj_3R_288()) { jj_scanpos = xsp; break; }
     }
-    return false;
-  }
-
-  private boolean jj_3R_162() {
-    if (jj_3R_165()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_84() {
-    if (jj_scan_token(FUNCTION)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_166()) jj_scanpos = xsp;
-    if (jj_scan_token(LPAREN)) return true;
-    xsp = jj_scanpos;
-    if (jj_3R_167()) jj_scanpos = xsp;
-    if (jj_scan_token(RPAREN)) return true;
-    if (jj_3R_168()) return true;
     return false;
   }
 
@@ -7102,13 +7069,26 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
+  private boolean jj_3R_162() {
+    if (jj_3R_165()) return true;
+    return false;
+  }
+
   private boolean jj_3R_247() {
     if (jj_3R_52()) return true;
     return false;
   }
 
-  private boolean jj_3R_92() {
-    if (jj_3R_101()) return true;
+  private boolean jj_3R_84() {
+    if (jj_scan_token(FUNCTION)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_166()) jj_scanpos = xsp;
+    if (jj_scan_token(LPAREN)) return true;
+    xsp = jj_scanpos;
+    if (jj_3R_167()) jj_scanpos = xsp;
+    if (jj_scan_token(RPAREN)) return true;
+    if (jj_3R_168()) return true;
     return false;
   }
 
@@ -7127,6 +7107,26 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
+  private boolean jj_3R_131() {
+    if (jj_3R_137()) return true;
+    if (jj_3R_130()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_92() {
+    if (jj_3R_101()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_233() {
+    if (jj_scan_token(RETURN)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_248()) jj_scanpos = xsp;
+    if (true) { jj_la = 0; jj_scanpos = jj_lastpos; return false;}
+    return false;
+  }
+
   private boolean jj_3R_91() {
     if (jj_scan_token(LPAREN)) return true;
     if (jj_3R_118()) return true;
@@ -7139,9 +7139,13 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_131() {
-    if (jj_3R_137()) return true;
-    if (jj_3R_130()) return true;
+  private boolean jj_3R_138() {
+    if (jj_3R_143()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_144()) { jj_scanpos = xsp; break; }
+    }
     return false;
   }
 
@@ -7170,22 +7174,12 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_233() {
-    if (jj_scan_token(RETURN)) return true;
+  private boolean jj_3R_232() {
+    if (jj_scan_token(BREAK)) return true;
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3R_248()) jj_scanpos = xsp;
+    if (jj_3R_247()) jj_scanpos = xsp;
     if (true) { jj_la = 0; jj_scanpos = jj_lastpos; return false;}
-    return false;
-  }
-
-  private boolean jj_3R_138() {
-    if (jj_3R_143()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_144()) { jj_scanpos = xsp; break; }
-    }
     return false;
   }
 
@@ -7199,12 +7193,9 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_232() {
-    if (jj_scan_token(BREAK)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_247()) jj_scanpos = xsp;
-    if (true) { jj_la = 0; jj_scanpos = jj_lastpos; return false;}
+  private boolean jj_3R_149() {
+    if (jj_3R_137()) return true;
+    if (jj_3R_148()) return true;
     return false;
   }
 
@@ -7244,18 +7235,17 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_149() {
-    if (jj_3R_137()) return true;
-    if (jj_3R_148()) return true;
-    return false;
-  }
-
   private boolean jj_3R_231() {
     if (jj_scan_token(CONTINUE)) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_246()) jj_scanpos = xsp;
     if (true) { jj_la = 0; jj_scanpos = jj_lastpos; return false;}
+    return false;
+  }
+
+  private boolean jj_3R_268() {
+    if (jj_3R_118()) return true;
     return false;
   }
 
@@ -7266,6 +7256,11 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
       xsp = jj_scanpos;
       if (jj_3R_163()) { jj_scanpos = xsp; break; }
     }
+    return false;
+  }
+
+  private boolean jj_3R_267() {
+    if (jj_3R_118()) return true;
     return false;
   }
 
@@ -7294,16 +7289,6 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
 
   private boolean jj_3R_71() {
     if (jj_3R_82()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_268() {
-    if (jj_3R_118()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_267() {
-    if (jj_3R_118()) return true;
     return false;
   }
 
@@ -7530,6 +7515,42 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
+  private boolean jj_3R_148() {
+    if (jj_3R_135()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_153()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_245() {
+    if (jj_3R_258()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_244() {
+    if (jj_3R_257()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_243() {
+    if (jj_3R_257()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_294() {
+    if (jj_3R_147()) return true;
+    if (jj_3R_140()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_242() {
+    if (jj_3R_256()) return true;
+    return false;
+  }
+
   private boolean jj_3R_65() {
     Token xsp;
     xsp = jj_scanpos;
@@ -7651,42 +7672,6 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_148() {
-    if (jj_3R_135()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_153()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_245() {
-    if (jj_3R_258()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_244() {
-    if (jj_3R_257()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_243() {
-    if (jj_3R_257()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_294() {
-    if (jj_3R_147()) return true;
-    if (jj_3R_140()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_242() {
-    if (jj_3R_256()) return true;
-    return false;
-  }
-
   private boolean jj_3R_241() {
     if (jj_3R_255()) return true;
     return false;
@@ -7754,6 +7739,12 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
+  private boolean jj_3R_296() {
+    if (jj_3R_152()) return true;
+    if (jj_3R_145()) return true;
+    return false;
+  }
+
   private boolean jj_3R_52() {
     Token xsp;
     xsp = jj_scanpos;
@@ -7764,12 +7755,6 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     if (jj_scan_token(54)) return true;
     }
     }
-    return false;
-  }
-
-  private boolean jj_3R_296() {
-    if (jj_3R_152()) return true;
-    if (jj_3R_145()) return true;
     return false;
   }
 
@@ -7805,16 +7790,6 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_112() {
-    if (jj_scan_token(UNTERMINATED_STRING_LITERAL)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_111() {
-    if (jj_3R_121()) return true;
-    return false;
-  }
-
   private boolean jj_3R_146() {
     if (jj_3R_152()) return true;
     if (jj_3R_145()) return true;
@@ -7827,13 +7802,13 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_110() {
-    if (jj_3R_120()) return true;
+  private boolean jj_3R_112() {
+    if (jj_scan_token(UNTERMINATED_STRING_LITERAL)) return true;
     return false;
   }
 
-  private boolean jj_3R_109() {
-    if (jj_3R_119()) return true;
+  private boolean jj_3R_111() {
+    if (jj_3R_121()) return true;
     return false;
   }
 
@@ -7847,8 +7822,8 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_108() {
-    if (jj_3R_66()) return true;
+  private boolean jj_3R_110() {
+    if (jj_3R_120()) return true;
     return false;
   }
 
@@ -7856,6 +7831,27 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     if (jj_3R_52()) return true;
     if (jj_scan_token(COLON)) return true;
     if (jj_3R_214()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_109() {
+    if (jj_3R_119()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_239() {
+    if (jj_3R_254()) return true;
+    if (true) { jj_la = 0; jj_scanpos = jj_lastpos; return false;}
+    return false;
+  }
+
+  private boolean jj_3R_108() {
+    if (jj_3R_66()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_238() {
+    if (jj_3R_253()) return true;
     return false;
   }
 
@@ -7886,17 +7882,6 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_239() {
-    if (jj_3R_254()) return true;
-    if (true) { jj_la = 0; jj_scanpos = jj_lastpos; return false;}
-    return false;
-  }
-
-  private boolean jj_3R_238() {
-    if (jj_3R_253()) return true;
-    return false;
-  }
-
   private boolean jj_3R_228() {
     Token xsp;
     xsp = jj_scanpos;
@@ -7920,11 +7905,6 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_121() {
-    if (jj_scan_token(REGULAR_EXPRESSION_LITERAL)) return true;
-    return false;
-  }
-
   private boolean jj_3R_293() {
     if (jj_3R_295()) return true;
     Token xsp;
@@ -7938,6 +7918,11 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
   private boolean jj_3R_298() {
     if (jj_3R_156()) return true;
     if (jj_3R_150()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_121() {
+    if (jj_scan_token(REGULAR_EXPRESSION_LITERAL)) return true;
     return false;
   }
 
@@ -7968,25 +7953,20 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_120() {
-    if (jj_scan_token(NULL)) return true;
-    return false;
-  }
-
   private boolean jj_3R_151() {
     if (jj_3R_156()) return true;
     if (jj_3R_150()) return true;
     return false;
   }
 
-  private boolean jj_3R_81() {
-    if (jj_scan_token(ASSIGN)) return true;
-    if (jj_3R_87()) return true;
+  private boolean jj_3R_120() {
+    if (jj_scan_token(NULL)) return true;
     return false;
   }
 
-  private boolean jj_3R_129() {
-    if (jj_scan_token(FALSE)) return true;
+  private boolean jj_3R_81() {
+    if (jj_scan_token(ASSIGN)) return true;
+    if (jj_3R_87()) return true;
     return false;
   }
 
@@ -8008,12 +7988,27 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
+  private boolean jj_3R_129() {
+    if (jj_scan_token(FALSE)) return true;
+    return false;
+  }
+
   private boolean jj_3R_295() {
     if (jj_3R_297()) return true;
     Token xsp;
     while (true) {
       xsp = jj_scanpos;
       if (jj_3R_298()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_54() {
+    if (jj_3R_62()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_63()) { jj_scanpos = xsp; break; }
     }
     return false;
   }
@@ -8030,16 +8025,6 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
 
   private boolean jj_3R_128() {
     if (jj_scan_token(TRUE)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_54() {
-    if (jj_3R_62()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_63()) { jj_scanpos = xsp; break; }
-    }
     return false;
   }
 
@@ -8060,18 +8045,13 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_77() {
-    if (jj_scan_token(FLOATING_POINT_LITERAL)) return true;
-    return false;
-  }
-
   private boolean jj_3R_190() {
     if (jj_3R_204()) return true;
     return false;
   }
 
-  private boolean jj_3R_76() {
-    if (jj_scan_token(HEX_LITERAL)) return true;
+  private boolean jj_3R_77() {
+    if (jj_scan_token(FLOATING_POINT_LITERAL)) return true;
     return false;
   }
 
@@ -8090,8 +8070,8 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_75() {
-    if (jj_scan_token(OCTAL_LITERAL)) return true;
+  private boolean jj_3R_76() {
+    if (jj_scan_token(HEX_LITERAL)) return true;
     return false;
   }
 
@@ -8165,27 +8145,6 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_67() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_74()) {
-    jj_scanpos = xsp;
-    if (jj_3R_75()) {
-    jj_scanpos = xsp;
-    if (jj_3R_76()) {
-    jj_scanpos = xsp;
-    if (jj_3R_77()) return true;
-    }
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_74() {
-    if (jj_scan_token(DECIMAL_LITERAL)) return true;
-    return false;
-  }
-
   private boolean jj_3R_225() {
     if (jj_3R_236()) return true;
     return false;
@@ -8212,6 +8171,11 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
+  private boolean jj_3R_75() {
+    if (jj_scan_token(OCTAL_LITERAL)) return true;
+    return false;
+  }
+
   private boolean jj_3R_219() {
     if (jj_3R_230()) return true;
     return false;
@@ -8235,6 +8199,27 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
 
   private boolean jj_3R_216() {
     if (jj_3R_227()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_67() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_74()) {
+    jj_scanpos = xsp;
+    if (jj_3R_75()) {
+    jj_scanpos = xsp;
+    if (jj_3R_76()) {
+    jj_scanpos = xsp;
+    if (jj_3R_77()) return true;
+    }
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_74() {
+    if (jj_scan_token(DECIMAL_LITERAL)) return true;
     return false;
   }
 
@@ -8367,11 +8352,6 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_198() {
-    if (jj_3R_87()) return true;
-    return false;
-  }
-
   private boolean jj_3R_53() {
     if (jj_3R_60()) return true;
     Token xsp;
@@ -8390,11 +8370,8 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_185() {
-    if (jj_scan_token(COMMA)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_198()) jj_scanpos = xsp;
+  private boolean jj_3R_198() {
+    if (jj_3R_87()) return true;
     return false;
   }
 
@@ -8405,6 +8382,14 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
       xsp = jj_scanpos;
       if (jj_3R_127()) { jj_scanpos = xsp; break; }
     }
+    return false;
+  }
+
+  private boolean jj_3R_185() {
+    if (jj_scan_token(COMMA)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_198()) jj_scanpos = xsp;
     return false;
   }
 
@@ -8432,14 +8417,14 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_202() {
-    if (jj_3R_174()) return true;
-    return false;
-  }
-
   private boolean jj_3R_69() {
     if (jj_3R_80()) return true;
     if (jj_3R_60()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_202() {
+    if (jj_3R_174()) return true;
     return false;
   }
 
@@ -8451,6 +8436,20 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
+  private boolean jj_3R_60() {
+    if (jj_3R_68()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_69()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_97() {
+    if (jj_3R_80()) return true;
+    if (jj_3R_87()) return true;
+    return false;
+  }
+
   private boolean jj_3R_187() {
     if (jj_scan_token(COMMA)) return true;
     Token xsp;
@@ -8459,11 +8458,11 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_60() {
+  private boolean jj_3R_79() {
+    if (jj_scan_token(HOOK)) return true;
+    if (jj_3R_53()) return true;
+    if (jj_scan_token(COLON)) return true;
     if (jj_3R_68()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_69()) jj_scanpos = xsp;
     return false;
   }
 
@@ -8488,12 +8487,6 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_97() {
-    if (jj_3R_80()) return true;
-    if (jj_3R_87()) return true;
-    return false;
-  }
-
   private boolean jj_3R_57() {
     if (jj_3R_65()) return true;
     return false;
@@ -8505,11 +8498,11 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_79() {
-    if (jj_scan_token(HOOK)) return true;
-    if (jj_3R_53()) return true;
-    if (jj_scan_token(COLON)) return true;
-    if (jj_3R_68()) return true;
+  private boolean jj_3R_87() {
+    if (jj_3R_96()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_97()) jj_scanpos = xsp;
     return false;
   }
 
@@ -8526,11 +8519,18 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_87() {
-    if (jj_3R_96()) return true;
+  private boolean jj_3R_210() {
+    if (jj_3R_214()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_204() {
     Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_97()) jj_scanpos = xsp;
+    if (jj_3R_210()) return true;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_210()) { jj_scanpos = xsp; break; }
+    }
     return false;
   }
 
@@ -8541,8 +8541,11 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_210() {
-    if (jj_3R_214()) return true;
+  private boolean jj_3R_106() {
+    if (jj_scan_token(HOOK)) return true;
+    if (jj_3R_118()) return true;
+    if (jj_scan_token(COLON)) return true;
+    if (jj_3R_96()) return true;
     return false;
   }
 
@@ -8556,13 +8559,9 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_204() {
-    Token xsp;
-    if (jj_3R_210()) return true;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_210()) { jj_scanpos = xsp; break; }
-    }
+  private boolean jj_3R_280() {
+    if (jj_scan_token(SC_OR)) return true;
+    if (jj_3R_116()) return true;
     return false;
   }
 
@@ -8580,14 +8579,6 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
-  private boolean jj_3R_106() {
-    if (jj_scan_token(HOOK)) return true;
-    if (jj_3R_118()) return true;
-    if (jj_scan_token(COLON)) return true;
-    if (jj_3R_96()) return true;
-    return false;
-  }
-
   private boolean jj_3R_186() {
     Token xsp;
     xsp = jj_scanpos;
@@ -8598,12 +8589,6 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     if (jj_3R_201()) return true;
     }
     }
-    return false;
-  }
-
-  private boolean jj_3R_280() {
-    if (jj_scan_token(SC_OR)) return true;
-    if (jj_3R_116()) return true;
     return false;
   }
 
@@ -8647,6 +8632,20 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     return false;
   }
 
+  private boolean jj_3R_86() {
+    if (jj_scan_token(SC_OR)) return true;
+    if (jj_3R_85()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_274() {
+    if (jj_3R_277()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_278()) jj_scanpos = xsp;
+    return false;
+  }
+
   private boolean jj_3R_207() {
     if (jj_3R_165()) return true;
     return false;
@@ -8657,6 +8656,19 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_187()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_164() {
+    if (jj_3R_174()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_68() {
+    if (jj_3R_78()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_79()) jj_scanpos = xsp;
     return false;
   }
 

@@ -155,7 +155,6 @@ public class StrictMode extends AbstractEcmaScriptVisitor {
             for (int i=0; i<numChildren; i++) {
                 Node child = node.jjtGetChild(i);
                 GetOrSet property = getPropertyName((ASTPropertyNameAndValue)child);
-                throwSyntaxIfinvalidIdentifierInStrictMode(node,property.getName());
                 GetOrSet existing = propertyNames.get(property.getName());
                 if (existing != null) {
                     if ( existing.matches(property)) {

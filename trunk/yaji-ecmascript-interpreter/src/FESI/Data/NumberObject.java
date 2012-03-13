@@ -48,7 +48,7 @@ public class NumberObject extends BuiltinFunctionObject {
         if (arguments.length == 0) {
             return ESNumber.valueOf(0.0);
         }
-        return ESNumber.valueOf(arguments[0].doubleValue());
+        return arguments[0].toESNumber();
 
     }
 
@@ -60,7 +60,7 @@ public class NumberObject extends BuiltinFunctionObject {
         ESObject np = getEvaluator().getNumberPrototype();
         theObject = new NumberPrototype(np, getEvaluator());
         if (arguments.length > 0) {
-            theObject.value = ESNumber.valueOf(arguments[0].doubleValue());
+            theObject.value = ESNumber.valueOf(arguments[0].toESNumber().doubleValue());
         } else {
             theObject.value = ESNumber.valueOf(0.0);
         }

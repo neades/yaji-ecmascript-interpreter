@@ -43,6 +43,8 @@ import FESI.AST.*;
 
 
 import FESI.AST.*;
+import FESI.Exceptions.SyntaxError;
+import FESI.Interpreter.PackagedException;
 
 @SuppressWarnings("all")
 public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants/*@egen*/ {/*@bgen(jjtree)*/
@@ -112,6 +114,7 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants/*@ege
 	}
 
     private boolean strictMode = false;
+    private boolean firstElement = true;
 }
 PARSER_END(EcmaScript)
 
@@ -869,6 +872,9 @@ void NumericLiteral()          :
   }
 /*@egen*/
   {
+    if (strictMode && ! t.image.equals("0")) {
+      throw new PackagedException(new SyntaxError("Octal literals are not allowed in Strict Mode"), jjtn000);
+    }
     jjtn000.setOctalValue(t.image);
   }
 |
@@ -2326,7 +2332,11 @@ void StringLiteral()          :
   }
 /*@egen*/
   {
-    jjtn000.setStringValue(t.image.substring(1,t.image.length()-1));
+    String value = t.image.substring(1,t.image.length()-1);
+    if (firstElement && value.equals("use strict")) {
+    	strictMode = true;
+    }
+    jjtn000.setStringValue(value,strictMode);
   }/*@bgen(jjtree)*/
   } finally {
     if (jjtc000) {
@@ -5327,7 +5337,8 @@ SimpleNode Program()          :
 {/*@bgen(jjtree) Program */
   try {
 /*@egen*/
-  ( SourceElement() )*  <EOF>/*@bgen(jjtree)*/
+  { firstElement = true; }
+  ( SourceElement() { firstElement = false; } )*  <EOF>/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
