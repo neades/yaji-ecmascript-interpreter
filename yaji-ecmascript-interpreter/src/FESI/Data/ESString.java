@@ -149,7 +149,7 @@ public final class ESString extends ESPrimitive {
             String str = trim(toString());
             if (str.length() == 0) {
                 value = 0.0;
-            } else if (str.startsWith("0x")) {
+            } else if (str.length() > 2 && str.charAt(0) == '0' && isX(str.charAt(1)) ) {
                 value = Integer.decode(str).doubleValue();
             } else {
                 value = (Double.valueOf(str)).doubleValue();
@@ -158,6 +158,10 @@ public final class ESString extends ESPrimitive {
             value = Double.NaN;
         }
         return value;
+    }
+
+    private boolean isX(char charAt) {
+        return charAt == 'x' || charAt == 'X';
     }
 
     // overrides

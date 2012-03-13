@@ -108,6 +108,15 @@ public class EcmascriptParserStrictModeTest extends EvaluatorTestCase {
         ecmaScript.Program();
     }
 
+    @Test(expected=SyntaxError.class)
+    public void shouldntAllowOctalLiterals() throws Exception {
+        expectPackagedException("'use strict'; var x=010;");
+    }
+    
+    @Test(expected=SyntaxError.class)
+    public void shouldntAllowOctalLiteralsInStrings() throws Exception {
+        expectPackagedException("'use strict'; var x='\\377';");
+    }
     private void expectPackagedException(String programText)
             throws ParseException, Exception {
         EcmaScript ecmaScript = new EcmaScript(new StringReader(programText));

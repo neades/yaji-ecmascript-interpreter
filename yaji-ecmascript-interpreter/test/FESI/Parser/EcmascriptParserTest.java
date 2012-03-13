@@ -484,6 +484,16 @@ public class EcmascriptParserTest {
                     + "    PropertyNameAndValue" + eol
                     + "     <null>" + eol
                     + "     [true]" + eol
+                },
+                { "0x1",
+                    "Program" + eol
+                    + " Statement" + eol
+                    + "  [1]" + eol
+                },
+                { "0X1",
+                    "Program" + eol
+                    + " Statement" + eol
+                    + "  [1]" + eol
                 }
            });
     }

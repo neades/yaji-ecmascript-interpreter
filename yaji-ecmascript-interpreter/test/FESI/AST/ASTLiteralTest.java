@@ -49,7 +49,7 @@ public class ASTLiteralTest {
     @Test
     public void test() {
         ASTLiteral literal = new ASTLiteral(0);
-        literal.setStringValue(input);
+        literal.setStringValue(input,false);
         assertEquals(testName,output,literal.getValue().toString());
     }
 
