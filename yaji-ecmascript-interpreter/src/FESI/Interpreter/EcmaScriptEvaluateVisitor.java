@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import org.yaji.data.ESAccessorValue;
-
 import FESI.AST.ASTAllocationExpression;
 import FESI.AST.ASTAndExpressionSequence;
 import FESI.AST.ASTArrayLiteral;
@@ -1756,27 +1754,37 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
     @Override
     public Object visit(ASTObjectLiteral node, Object data) {
         ESObject result = ObjectObject.createObject(evaluator);
+        ESObject properties = ObjectObject.createObject(evaluator);
         int numChildren = node.jjtGetNumChildren();
         for (int i=0; i<numChildren; i++) {
-            node.jjtGetChild(i).jjtAccept(this, result);
+            node.jjtGetChild(i).jjtAccept(this, properties);
+        }
+        try {
+            ObjectObject.defineProperties(result, properties, evaluator);
+        } catch (EcmaScriptException e) {
+            throw new PackagedException(e, node);
         }
         return result;
     }
 
     @Override
     public Object visit(ASTPropertyNameAndValue node, Object data) {
+        ESObject properties = (ESObject) data;
+        
         Node nameNode = node.jjtGetChild(0);
         if (nameNode == null) {
             throw new ProgrammingError("Bad AST in function expression");
         }
 
         try {
-            String property;
-            ESValue value;
+            ESObject descriptor;
             if (nameNode instanceof ASTGetAccessor) {
                 node.assertThreeChildren();
 
-                property = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+                String property = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+                descriptor = getDescriptor(properties, property, StandardProperty.VALUEstring, StandardProperty.GETstring);
+                
+                
                 FunctionEvaluationSource fes = new FunctionEvaluationSource(
                         evaluationSource, property);
                 ASTStatementList sl = (ASTStatementList) (node.jjtGetChild(2));
@@ -1787,12 +1795,13 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                                 new String[0], variableNames, sl,
                                 evaluator.getScopeChain(), StrictMode.hasStrictModeDirective(sl));
 
-                value = new ESAccessorValue();
-                value.setGetAccessorDescriptor(cfo);
+                descriptor.putProperty(StandardProperty.GETstring, cfo, StandardProperty.GEThash);
             } else if (nameNode instanceof ASTSetAccessor) {
                 node.assertFourChildren();
 
-                property = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+                String property = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+                descriptor = getDescriptor(properties, property, StandardProperty.VALUEstring, StandardProperty.SETstring);
+
                 FunctionEvaluationSource fes = new FunctionEvaluationSource(
                         evaluationSource, property);
                 ASTStatementList sl = (ASTStatementList) (node.jjtGetChild(3));
@@ -1803,51 +1812,55 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                                 new String[] { ((ASTIdentifier) node.jjtGetChild(2))
                                 .getName() }, variableNames, sl, evaluator.getScopeChain(), StrictMode.hasStrictModeDirective(sl));
 
-                value = new ESAccessorValue();
-                value.setSetAccessorDescriptor(cfo);
+                descriptor.putProperty(StandardProperty.SETstring, cfo, StandardProperty.SEThash);
             } else {
                 node.assertTwoChildren();
-                property = nameNode.toString();
+                String property;
                 if (nameNode instanceof ASTIdentifier) {
                     ASTIdentifier identifier = (ASTIdentifier) nameNode;
                     property = identifier.getName();
                 } else {
                     property = nameNode.jjtAccept(this, FOR_VALUE).toString();
                 }
-                value = (ESValue) node.jjtGetChild(1).jjtAccept(this, FOR_VALUE);
-            }
-
-            ESObject object = (ESObject) data;
-
-            ESValue previous = object.getOwnProperty(property, property.hashCode());
-            if (previous != null) {
-                if ((!previous.isAccessorDescriptor() && value.isAccessorDescriptor())
-                        || (previous.isAccessorDescriptor() && !value.isAccessorDescriptor())) {
-                    throw new SyntaxError(
-                            "Object literal may not have data and accessor property with the same name");
-                }
-
-                if (previous.isAccessorDescriptor() && value.isAccessorDescriptor()
-                        && (previous.hasGetAccessorDescriptor() && value.hasGetAccessorDescriptor())
-                        || (previous.hasSetAccessorDescriptor() && value.hasSetAccessorDescriptor())) {
-                    throw new SyntaxError(
-                            "Object literal may not have multiple get/set accessors with the same name");
+                if (evaluator.isStrictMode()) {
+                    descriptor = getDescriptor(properties, property, StandardProperty.VALUEstring, StandardProperty.GETstring, StandardProperty.SETstring);
+                } else {
+                    descriptor = getDescriptor(properties, property, StandardProperty.GETstring, StandardProperty.SETstring);
                 }
                 
-                if (previous.hasSetAccessorDescriptor()) {
-                    value.setSetAccessorDescriptor(previous.getSetAccessorDescriptor());
-                }
-                
-                if (previous.hasGetAccessorDescriptor()) {
-                    value.setGetAccessorDescriptor(previous.getGetAccessorDescriptor());
-                }
+                ESValue value = (ESValue) node.jjtGetChild(1).jjtAccept(this, FOR_VALUE);
+                descriptor.putProperty(StandardProperty.VALUEstring, value, StandardProperty.VALUEhash);
+                descriptor.putProperty(StandardProperty.WRITABLEstring, ESBoolean.TRUE, StandardProperty.WRITABLEhash);
             }
-            
-            object.putOwnProperty(property, value, property.hashCode());
-            return object;
+            descriptor.putProperty(StandardProperty.CONFIGURABLEstring, ESBoolean.TRUE, StandardProperty.CONFIGURABLEhash);
+            descriptor.putProperty(StandardProperty.ENUMERABLEstring, ESBoolean.TRUE, StandardProperty.ENUMERABLEhash);
+
         } catch (EcmaScriptException e) {
             throw new PackagedException(e, node);
         }
+        return data;
+    }
+    
+    private void assertDescriptorDoesntContain(ESObject descriptor, String ... propertyNames) throws EcmaScriptException {
+        for (String propertyName : propertyNames) {
+            if (descriptor.hasProperty(propertyName, propertyName.hashCode())) {
+                throw new SyntaxError("Invalid object literal - Already defined "+propertyName);
+            }
+        }
+    }
+
+    private ESObject getDescriptor(ESObject properties, String property, String ... propertyNames)
+            throws EcmaScriptException {
+        ESValue descriptorValue = properties.getOwnProperty(property, property.hashCode());
+        ESObject descriptor;
+        if (descriptorValue == null) {
+            descriptor = ObjectObject.createObject(evaluator);
+            properties.putProperty(property, ESObject.WRITEABLE|ESObject.CONFIGURABLE|ESObject.ENUMERABLE, descriptor);
+        } else {
+            descriptor = (ESObject) descriptorValue;
+            assertDescriptorDoesntContain(descriptor, propertyNames);
+        }
+        return descriptor;
     }
 
     @Override
