@@ -32,16 +32,6 @@ public class EcmascriptParserStrictModeTest extends EvaluatorTestCase {
     }
 
     @Test(expected=SyntaxError.class)
-    public void cannotCallPropertyEval() throws Exception {
-        expectPackagedException("'use strict'; var a = { eval: 2};");
-    }
-
-    @Test(expected=SyntaxError.class)
-    public void cannotCallPropertyArguments() throws Exception {
-        expectPackagedException("'use strict'; var a = { arguments: 2};");
-    }
-
-    @Test(expected=SyntaxError.class)
     public void cannotDefineTwoGetAccessors() throws Exception {
         expectPackagedException("'use strict'; var a = { get x() { return 1; }, get x() { return 2; } };");
     }
