@@ -268,6 +268,11 @@ public class ObjectObject extends BuiltinFunctionObject {
 
     private ESValue defineProperties(ESObject object, ESObject p)
             throws EcmaScriptException {
+        Evaluator evaluator = getEvaluator();
+        return defineProperties(object, p, evaluator);
+    }
+
+    public static ESValue defineProperties(ESObject object, ESObject p, Evaluator evaluator) throws EcmaScriptException, TypeError {
         Enumeration<String> ownPropertyNames = p.keys();
         while (ownPropertyNames.hasMoreElements()) {
             String propertyName = ownPropertyNames.nextElement();
@@ -275,7 +280,7 @@ public class ObjectObject extends BuiltinFunctionObject {
             if (!(desc instanceof ESObject)) {
                 throw new TypeError("Object.defineProperties: property "+propertyName+" must have an object as its descriptor");
             }
-            object.defineProperty(propertyName,desc.toESObject(getEvaluator()));
+            object.defineProperty(propertyName,desc.toESObject(evaluator));
         }
         return object;
     }
