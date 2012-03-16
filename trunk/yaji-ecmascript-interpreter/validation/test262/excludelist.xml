@@ -54,4 +54,6 @@
   <test id="S12.6.3_A2.2">See issue 49</test>
   <test id="S12.6.3_A2.1">See issue 49</test>
   <test id="S12.6.3_A2">See issue 49</test>
+  <test id="S10.2.1_A4_T2">depends on function declaration in function</test>
+  <test id="S10.2.1_A4_T1">depends on function declaration in function</test>
 </excludeList>
