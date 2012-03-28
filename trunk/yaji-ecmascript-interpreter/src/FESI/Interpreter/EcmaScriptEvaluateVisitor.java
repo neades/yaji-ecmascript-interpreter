@@ -76,6 +76,7 @@ import FESI.AST.AbstractEcmaScriptVisitor;
 import FESI.AST.Node;
 import FESI.AST.SimpleNode;
 import FESI.Data.ConstructedFunctionObject;
+import FESI.Data.ESAppendable;
 import FESI.Data.ESArguments;
 import FESI.Data.ESBoolean;
 import FESI.Data.ESLoader;
@@ -467,8 +468,8 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                         && REPRESENTATION_RESULT_NAME.equals(lv
                                 .getPropertyName())) {
                     ESString initialValue = (ESString) rv;
-                    rv = new ESString(representationOutputBuffer);
-                    ((ESString) rv).appendString(initialValue, evaluator);
+                    rv = new ESAppendable(representationOutputBuffer);
+                    ((ESAppendable) rv).appendString(initialValue, evaluator);
                 }
                 lv.putValue(null, rv); // null because the variable should be
                                        // undefined!
@@ -1593,11 +1594,8 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                 case PLUSASSIGN: {
                     ESValue v1p = v1.toESPrimitive();
                     ESValue v2p = v2.toESPrimitive();
-                    if (useRepresentationOptimisation
-                            && v1 instanceof ESString
-                            && REPRESENTATION_RESULT_NAME.equals(lv
-                                    .getPropertyName())) {
-                        ((ESString) v1).appendString(v2, evaluator);
+                    if (v1 instanceof ESAppendable) {
+                        ((ESAppendable) v1).appendString(v2, evaluator);
                         result = v1;
                     } else if ((v1p instanceof ESString)
                             || (v2p instanceof ESString)) {
@@ -1673,21 +1671,27 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
 
     private ESValue concatenateStrings(ESValue v1, ESValue v2) {
 
-        IAppendable appendable = evaluator.createAppendable(16, 1024);
 
-        if (v1 instanceof ESString) {
-            ((ESString) v1).appendSelfToAppendable(appendable);
-        } else {
+        if (v1 instanceof ESAppendable) {
+            IAppendable appendable = evaluator.createAppendable(16, 1024);
+            ((ESAppendable) v1).appendSelfToAppendable(appendable);
+            if (v2 instanceof ESAppendable) {
+                ((ESAppendable) v2).appendSelfToAppendable(appendable);
+            } else {
+                appendable.append(v2.toString());
+            }
+
+            return new ESAppendable(appendable);
+        }
+
+        if (v2 instanceof ESAppendable) {
+            IAppendable appendable = evaluator.createAppendable(16, 1024);
             appendable.append(v1.toString());
+            ((ESAppendable) v2).appendSelfToAppendable(appendable);
+            return new ESAppendable(appendable);
         }
 
-        if (v2 instanceof ESString) {
-            ((ESString) v2).appendSelfToAppendable(appendable);
-        } else {
-            appendable.append(v2.toString());
-        }
-
-        return new ESString(appendable);
+        return new ESString(v1.toString()+v2.toString());
     }
 
     @Override

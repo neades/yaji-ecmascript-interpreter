@@ -60,7 +60,7 @@ public class StringObject extends BuiltinFunctionObject {
 
         @Override
         public ESValue invoke(String string, ESValue[] arguments) throws EcmaScriptException {
-            return new ESString(ESString.trim(string));
+            return new ESString(ESStringPrimitive.trim(string));
         }
     }
 
@@ -515,7 +515,7 @@ public class StringObject extends BuiltinFunctionObject {
             for (ESValue argument : arguments) {
                 appendable.append(argument.callToString());
             }
-            return new ESString(appendable);
+            return new ESString(appendable.toString());
         }
     }
     
