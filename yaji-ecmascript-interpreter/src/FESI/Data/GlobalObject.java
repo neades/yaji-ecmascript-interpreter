@@ -57,7 +57,7 @@ public class GlobalObject extends ObjectPrototype {
             if (arguments.length < 1) {
                 return ESNumber.NaN;
             }
-            String s = ESString.trim(arguments[0].callToString());
+            String s = ESStringPrimitive.trim(arguments[0].callToString());
             if (s.startsWith("Infinity") || s.startsWith("+Infinity")) {
                 return ESNumber.valueOf(Double.POSITIVE_INFINITY);
             }
@@ -94,7 +94,7 @@ public class GlobalObject extends ObjectPrototype {
             if (arguments.length < 1) {
                 return ESNumber.NaN;
             }
-            String s = ESString.trim(arguments[0].callToString());
+            String s = ESStringPrimitive.trim(arguments[0].callToString());
             int radix = 10;
             int start = 0;
             radix = (int) getArg(arguments,1).toUInt32();

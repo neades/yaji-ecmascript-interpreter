@@ -258,7 +258,7 @@ public abstract class ESLoader extends ESObject {
         } else if (obj instanceof String) {
             return new ESString((String) obj);
         } else if (obj instanceof IAppendable) {
-            return new ESString((IAppendable) obj);
+            return new ESAppendable((IAppendable) obj);
         } else if (isPrimitiveNumberClass(obj.getClass())) {
             return ESNumber.valueOf(((Number) obj).doubleValue());
         } else if (obj instanceof Boolean) {
