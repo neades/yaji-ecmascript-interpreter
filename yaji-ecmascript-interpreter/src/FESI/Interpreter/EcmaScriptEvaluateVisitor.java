@@ -1373,7 +1373,7 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                     ESValue v1p = v1.toESPrimitive();
                     ESValue v2p = v2.toESPrimitive();
                     // System.out.println("v1p = " + v1 + " v2p = " + v2);
-                    if ((v1p instanceof ESString) || (v2p instanceof ESString)) {
+                    if ((v1p.isStringValue()) || (v2p.isStringValue())) {
                         result = concatenateStrings(v1p, v2p);
                     } else {
                         result = v1.addValue(v2);
@@ -1597,8 +1597,8 @@ public class EcmaScriptEvaluateVisitor extends AbstractEcmaScriptVisitor impleme
                     if (v1 instanceof ESAppendable) {
                         ((ESAppendable) v1).appendString(v2, evaluator);
                         result = v1;
-                    } else if ((v1p instanceof ESString)
-                            || (v2p instanceof ESString)) {
+                    } else if ((v1p.isStringValue())
+                            || (v2p.isStringValue())) {
                         // Note: Convert v1/2 instead of v1/2p for correct
                         // behaviour of "" + Object;
                         result = concatenateStrings(v1, v2);
