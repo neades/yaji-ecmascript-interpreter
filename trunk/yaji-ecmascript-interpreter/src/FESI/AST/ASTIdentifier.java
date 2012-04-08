@@ -8,6 +8,8 @@ import FESI.Parser.ParseException;
 
 public class ASTIdentifier extends SimpleNode {
     private static final long serialVersionUID = 2673088409445831343L;
+    private static final int ZWNJ_CODE = 0x200C;
+    private static final int ZWJ_CODE = 0x200D;
     private ESString identifierName = null;
     private int hash = 0;
 
@@ -55,6 +57,9 @@ public class ASTIdentifier extends SimpleNode {
                         }
                     }
                     i += 4;
+                    if (!isValid(c, i == 5)) {
+                        throw new ParseException("Invalid character \\u" + Integer.toHexString(c) + " in identifier");
+                    }
                 }
             }
             
@@ -64,6 +69,47 @@ public class ASTIdentifier extends SimpleNode {
         identifierName = sb.toString();
         this.identifierName = new ESString(identifierName);
         this.hash = identifierName.hashCode();
+    }
+
+    private boolean isValid(char c, boolean isStart) {
+        int characterType = Character.getType(c);
+        if (isStart) {
+            return isIdentifierStart(c, characterType);
+        }
+        return isIdentifierPart(c, characterType);
+    }
+    private boolean isIdentifierStart(int c, int characterType) {
+        return isUnicodeLetter(characterType) || c == '\\' || c == '$' || c == '_';
+    }
+    private boolean isUnicodeLetter(int characterType) {
+        return characterType == Character.UPPERCASE_LETTER
+            || characterType == Character.LOWERCASE_LETTER
+            || characterType == Character.TITLECASE_LETTER
+            || characterType == Character.MODIFIER_LETTER
+            || characterType == Character.OTHER_LETTER
+            || characterType == Character.LETTER_NUMBER;
+    }
+    
+    private boolean isIdentifierPart(int c, int characterType) {
+        return isIdentifierStart(c, characterType)
+                || isUnicodeCombiningMark(characterType)
+                || isUnicodeDigit(characterType)
+                || isUnicodeConnectorPunctuation(characterType)
+                || c == ZWNJ_CODE
+                || c == ZWJ_CODE;
+    }
+
+    private boolean isUnicodeConnectorPunctuation(int characterType) {
+        return characterType == Character.CONNECTOR_PUNCTUATION;
+    }
+
+    private boolean isUnicodeDigit(int characterType) {
+        return characterType == Character.DECIMAL_DIGIT_NUMBER;
+    }
+
+    private boolean isUnicodeCombiningMark(int characterType) {
+        return characterType == Character.COMBINING_SPACING_MARK 
+                || characterType == Character.NON_SPACING_MARK;
     }
 
     @Override
