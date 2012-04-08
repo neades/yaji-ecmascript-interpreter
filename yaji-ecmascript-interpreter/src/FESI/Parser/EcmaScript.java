@@ -6422,6 +6422,19 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     finally { jj_save(8, xla); }
   }
 
+  private boolean jj_3R_164() {
+    if (jj_3R_174()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_68() {
+    if (jj_3R_78()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_79()) jj_scanpos = xsp;
+    return false;
+  }
+
   private boolean jj_3R_206() {
     if (jj_3R_165()) return true;
     return false;
@@ -8656,19 +8669,6 @@ public class EcmaScript/*@bgen(jjtree)*/implements EcmaScriptTreeConstants, Ecma
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_187()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3R_164() {
-    if (jj_3R_174()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_68() {
-    if (jj_3R_78()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_79()) jj_scanpos = xsp;
     return false;
   }
 

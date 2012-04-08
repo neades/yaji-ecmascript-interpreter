@@ -928,7 +928,7 @@ public class DateObject extends BuiltinFunctionObject {
         int ms = dateComponents[MILLISECOND_POSITION];
         // Using current current locale, set it to the specified time
         Date time = mktime(timeZone, year, month, day, hour, minute, second, ms);
-        if (time.before(MIN_DATE) || time.after(MAX_DATE)) {
+        if (time.compareTo(MIN_DATE) <= 0 || time.after(MAX_DATE)) {
             return null;
         }
         return time;
