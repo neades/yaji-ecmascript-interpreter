@@ -113,7 +113,7 @@ public class EcmaScript {
 PARSER_END(EcmaScript)
 
 /* WHITE SPACE - 7.2 */
-<DEFAULT,NOREGEXP>
+<DEFAULT,NOREGEXP,NOEOL>
 SKIP : 
 {
 	< TAB: 	"\u0009" >
@@ -142,25 +142,33 @@ SKIP :
 		"\u3000" /* IDEOGRAPHIC SPACE */
 	] >
 }
+TOKEN : {
+    < #LF: "\n" >
+|   < #CR: "\r" >
+|   < #LS: "\u2028" >
+|   < #PS: "\u2029" >
+}
 
 /* 7.3 - LINE TERMINATORS */
 <DEFAULT,NOREGEXP>
 SPECIAL_TOKEN : 
 {
 	< EOL: <CR>(<LF>)?|<LF>|<LS>|<PS> >
-|   < #LF: "\n" >
-|   < #CR: "\r" >
-|   < #LS: "\u2028" >
-|   < #PS: "\u2029" >
+}
+
+<NOEOL>
+TOKEN :
+{
+	< NO_SKIP_EOL: <CR>(<LF>)?|<LF>|<LS>|<PS> >
 }
 
 /* 7.4 - COMMENTS */
-<DEFAULT,NOREGEXP>
+<DEFAULT,NOREGEXP, NOEOL>
 SPECIAL_TOKEN : {
 	< SINGLE_LINE_COMMENT: "//" (~["\n", "\r", "\u2028", "\u2029"])* >
 }
 
-<DEFAULT,NOREGEXP>
+<DEFAULT,NOREGEXP,NOEOL>
 MORE :
 {
   "/*" : IN_MULTI_LINE_COMMENT
@@ -180,11 +188,11 @@ MORE :
 
 /* RESERVED WORDS AND LITERALS EcmaScript 7.4 */
 
-<DEFAULT,NOREGEXP>
+<DEFAULT,NOREGEXP,NOEOL>
 TOKEN :
 {
-  < BREAK: "break" > : DEFAULT
-| < CONTINUE: "continue" > : DEFAULT
+  < BREAK: "break" > : NOEOL
+| < CONTINUE: "continue" > : NOEOL
 | < DELETE: "delete" > : DEFAULT
 | < ELSE: "else" > : DEFAULT
 | < FOR: "for" > : DEFAULT
@@ -192,7 +200,7 @@ TOKEN :
 | < IF: "if" > : DEFAULT
 | < IN: "in" > : DEFAULT
 | < NEW: "new" > : DEFAULT
-| < RETURN: "return" > : DEFAULT
+| < RETURN: "return" > : NOEOL
 | < THIS: "this" > : DEFAULT
 | < TYPEOF: "typeof" > : DEFAULT
 | < VAR: "var" > : DEFAULT
@@ -215,7 +223,7 @@ TOKEN :
 | < IMPORT: "import" > : DEFAULT
 | < SUPER: "super" > : DEFAULT
 | < SWITCH: "switch" > : DEFAULT
-| < THROW: "throw" > : DEFAULT
+| < THROW: "throw" > : NOEOL
 | < TRY: "try" > : DEFAULT
 | < INSTANCEOF: "instanceof" > : DEFAULT
 
@@ -232,7 +240,7 @@ TOKEN :
  * FLoating points literals are too permissive (ONLY ONE LEADING ZERO ALLOWED)
  */
 
-<DEFAULT,NOREGEXP>
+<DEFAULT,NOREGEXP,NOEOL>
 TOKEN :
 {
   < DECIMAL_LITERAL: ["1"-"9"] (["0"-"9"])* > : NOREGEXP
@@ -282,7 +290,7 @@ TOKEN :
   >
 }
 
-<DEFAULT>
+<DEFAULT,NOEOL>
 TOKEN: {
   < REGULAR_EXPRESSION_LITERAL:
     "/"
@@ -318,7 +326,7 @@ TOKEN: {
 
 /* IDENTIFIERS */
 
-<DEFAULT,NOREGEXP>
+<DEFAULT,NOREGEXP,NOEOL>
 TOKEN :
 {
   < IDENTIFIER: <IDENTIFIER_START> (<IDENTIFIER_PART>)* > : NOREGEXP
@@ -763,14 +771,14 @@ TOKEN :
   < #ZWJ: "\u200C"> /* Zero width non-joiner (ZWNJ) */
 }
 
-<DEFAULT,NOREGEXP>
+<DEFAULT,NOREGEXP,NOEOL>
 TOKEN : 
 {
   < HEX_DIGIT: ["0"-"9"] | ["a"-"f"] | ["A"-"F"] >
 }
 
 /* SEPARATORS */
-<DEFAULT,NOREGEXP>
+<DEFAULT,NOREGEXP,NOEOL>
 TOKEN :
 {
   < LPAREN: "(" > : DEFAULT
@@ -785,7 +793,7 @@ TOKEN :
 }
 
 /* OPERATORS */
-<DEFAULT,NOREGEXP>
+<DEFAULT,NOREGEXP,NOEOL>
 TOKEN :
 {
   < ASSIGN: "=" > : DEFAULT
@@ -1762,19 +1770,26 @@ void ExpressionInES() #ExpressionList(>1) :
  void ContinueStatement() #ContinueStatement :
  {}
  {
- 	"continue" [ Identifier() ] Sc()
+ 	"continue" (  <NO_SKIP_EOL> 
+ 	             | ";"
+ 	             | Identifier() Sc() )
  }
  
  void BreakStatement() #BreakStatement :
  {}
  {
- 	"break" [ Identifier() ] Sc()
+ 	"break" ( <NO_SKIP_EOL> 
+ 	        | ";"
+ 	        | Identifier()  Sc() )
  }
  
  void ReturnStatement() #ReturnStatement :
  {}
  {
-     "return" ( [ Expression() ] ) #EmptyExpression(jjtree.nodeArity()==0) Sc()
+     "return"  ( <NO_SKIP_EOL> 
+ 	        	| ";"
+     			| Expression()  Sc()
+     ) #EmptyExpression(jjtree.nodeArity()==0)
  }
  
  void WithStatement() #WithStatement :

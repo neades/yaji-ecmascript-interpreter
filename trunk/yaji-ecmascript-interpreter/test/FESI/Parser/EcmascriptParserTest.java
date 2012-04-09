@@ -494,6 +494,24 @@ public class EcmascriptParserTest {
                     "Program" + eol
                     + " Statement" + eol
                     + "  [1]" + eol
+                },
+                { "var test7_3_1\u2028prop = 66;",
+                    "Program" + eol
+                    + " Statement" + eol
+                    + "  VariableDeclaration" + eol
+                    + "   <test7_3_1>" + eol
+                    + " Statement" + eol
+                    + "  AssignmentExpression" + eol
+                    + "   <prop>" + eol
+                    + "   <\"=\">" + eol
+                    + "   [66]" + eol
+                },
+                { "continue\nlabel;",
+                "Program" + eol 
+                + " Statement" + eol
+                + "  ContinueStatement" + eol
+                + " Statement" + eol
+                + "  <label>" + eol
                 }
            });
     }
@@ -505,12 +523,16 @@ public class EcmascriptParserTest {
     }
 
     @Test
-    public void shouldParse() throws Exception {
+    public void shouldParse() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         EcmaScript es = new EcmaScript(new StringReader(source));
         EcmaScriptDumpVisitor dumper = new EcmaScriptDumpVisitor(new PrintStream(baos));
-        dumper.visit(es.Program(),null);
+        try {
+            dumper.visit(es.Program(),null);
+        } catch (ParseException e) {
+            throw new AssertionError(e.getMessage()+"\nwhile processing : \n"+source);
+        }
         
         String result = new String(baos.toByteArray());
         assertEquals("Parsing "+source,expected,result);
